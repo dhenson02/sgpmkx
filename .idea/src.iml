@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/diff_match_patch_20121119" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/bower" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/codemirror" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/consolidate" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-browserify" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-contrib-cssmin" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-contrib-uglify" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-contrib-watch" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-purifycss" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-requirejs" />
+      <excludeFolder url="file://$MODULE_DIR$/old" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

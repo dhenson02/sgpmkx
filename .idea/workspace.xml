@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="" />
+    <ignored path="src.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CommittedChangesCache">
+    <option name="initialCount" value="1500" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="src" />
+  </component>
+  <component name="FileEditorManager">
+    <splitter split-orientation="horizontal" split-proportion="0.5774292">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="manager2b.aspx" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.33333334">
+                  <caret line="16" column="14" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Gruntfile.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="106" column="38" selection-start-line="106" selection-start-column="38" selection-end-line="106" selection-end-column="38" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="helpers.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/helpers.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+                  <folding>
+                    <element signature="e#350#1458#0" expanded="false" />
+                    <element signature="e#1501#1694#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="content3.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/content3.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.7631579">
+                  <caret line="567" column="0" selection-start-line="567" selection-start-column="0" selection-end-line="567" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="store.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/store.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="domStore.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/domStore.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="pageview.css" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/pageview.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.47807017">
+                  <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="Html5" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/main2.min.js" />
+        <option value="$PROJECT_DIR$/markdown-it.min.js" />
+        <option value="$PROJECT_DIR$/handlers.js" />
+        <option value="$PROJECT_DIR$/events.js" />
+        <option value="$PROJECT_DIR$/content.pha.aspx" />
+        <option value="$PROJECT_DIR$/pha.js" />
+        <option value="$PROJECT_DIR$/content.aspx" />
+        <option value="$PROJECT_DIR$/editor.js" />
+        <option value="$PROJECT_DIR$/modal.css" />
+        <option value="$PROJECT_DIR$/1.css" />
+        <option value="$PROJECT_DIR$/full.html" />
+        <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/test.html" />
+        <option value="$PROJECT_DIR$/app.pre.js" />
+        <option value="$PROJECT_DIR$/content.js" />
+        <option value="$PROJECT_DIR$/actions.js" />
+        <option value="$PROJECT_DIR$/render.js" />
+        <option value="$PROJECT_DIR$/virtualDom.js" />
+        <option value="$PROJECT_DIR$/virtualDom.min.js" />
+        <option value="$PROJECT_DIR$/content2.js" />
+        <option value="$PROJECT_DIR$/domStore.js" />
+        <option value="$PROJECT_DIR$/access.js" />
+        <option value="$PROJECT_DIR$/content3a.js" />
+        <option value="$PROJECT_DIR$/content3b.js" />
+        <option value="$PROJECT_DIR$/manager.js" />
+        <option value="$PROJECT_DIR$/helpers.js" />
+        <option value="$PROJECT_DIR$/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/store.js" />
+        <option value="$PROJECT_DIR$/manager2b.aspx" />
+        <option value="$PROJECT_DIR$/pageview.css" />
+        <option value="$PROJECT_DIR$/content3.js" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1" />
+    <option name="y" value="27" />
+    <option name="width" value="2562" />
+    <option name="height" value="1024" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>CSS</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="options.lastSelected" value="configurable.group.appearance" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="FullScreen" value="false" />
+    <property name="DefaultHtmlFileTemplate" value="Html5" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="JavaScriptLanguageLevel" value="ES5" />
+    <property name="JavaScriptPreferStrict" value="true" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="js.eslint.nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="js.eslint.eslintPackage" value="" />
+    <property name="recentsLimit" value="5" />
+    <property name="restartRequiresConfirmation" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JavaScript Debug.test.html">
+    <configuration default="false" name="test.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/test.html">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.test.html" />
+    </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.test.html" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="" />
+      <created>1437005519578</created>
+      <option name="number" value="Default" />
+      <updated>1437005519578</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24848178" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17421603" sideWeight="0.5013796" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39953542" sideWeight="0.49862042" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myShow1" value="true" />
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="51" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="63" column="21" selection-start-line="63" selection-start-column="21" selection-end-line="63" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="23" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="370" column="46" selection-start-line="370" selection-start-column="46" selection-end-line="370" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="10" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="757" column="59" selection-start-line="757" selection-start-column="59" selection-end-line="757" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="96" column="41" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="602" column="34" selection-start-line="602" selection-start-column="34" selection-end-line="602" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="95" column="24" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="78" selection-start-line="8" selection-start-column="78" selection-end-line="8" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="615" column="20" selection-start-line="615" selection-start-column="20" selection-end-line="615" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/events.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/helpers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/events.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.09760274">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.pha.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="38" selection-start-line="2" selection-start-column="38" selection-end-line="2" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css.bak">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.8148148">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor3.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.056631893">
+          <caret line="2" column="61" selection-start-line="0" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toys.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13649425">
+          <caret line="5" column="36" selection-start-line="0" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/markdown-it.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15373564">
+          <caret line="5" column="3671" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main2.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17097701">
+          <caret line="60" column="69" selection-start-line="0" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="22" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/full.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22720478">
+          <caret line="131" column="100" selection-start-line="131" selection-start-column="100" selection-end-line="131" selection-end-column="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.730827">
+          <caret line="613" column="30" selection-start-line="613" selection-start-column="30" selection-end-line="613" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="945" column="34" selection-start-line="945" selection-start-column="34" selection-end-line="945" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.pre.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="24" selection-start-line="84" selection-start-column="24" selection-end-line="84" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4054878">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old/content3.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34114203">
+          <caret line="772" column="1" selection-start-line="772" selection-start-column="1" selection-end-line="772" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old/content4.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.3777453">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/actions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/render.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="532" column="0" selection-start-line="532" selection-start-column="0" selection-end-line="532" selection-end-column="0" />
+          <folding>
+            <element signature="e#989#2240#0" expanded="false" />
+            <element signature="e#3189#3734#0" expanded="false" />
+            <element signature="e#3766#6113#0" expanded="false" />
+            <element signature="e#6140#7734#0" expanded="false" />
+            <element signature="e#7761#9347#0" expanded="false" />
+            <element signature="e#9383#9389#0" expanded="false" />
+            <element signature="e#9421#9427#0" expanded="false" />
+            <element signature="e#9455#9639#0" expanded="false" />
+            <element signature="e#11345#12156#0" expanded="false" />
+            <element signature="e#12182#12927#0" expanded="false" />
+            <element signature="e#12953#13121#0" expanded="false" />
+            <element signature="e#13160#13304#0" expanded="false" />
+            <element signature="e#13330#14043#0" expanded="false" />
+            <element signature="e#14067#14987#0" expanded="false" />
+            <element signature="e#15753#17125#0" expanded="false" />
+            <element signature="e#17760#18676#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store-dist.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domStore-dist.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="48" selection-start-line="3" selection-start-column="48" selection-end-line="3" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content3b.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="66" selection-start-line="0" selection-start-column="66" selection-end-line="0" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="39" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
+          <folding>
+            <element signature="e#557#1411#0" expanded="false" />
+            <element signature="e#2536#3243#0" expanded="false" />
+            <element signature="e#3300#4411#0" expanded="false" />
+            <element signature="e#4450#4818#0" expanded="false" />
+            <element signature="e#4857#5641#0" expanded="false" />
+            <element signature="e#5684#6482#0" expanded="false" />
+            <element signature="e#6524#8871#0" expanded="false" />
+            <element signature="e#8908#10502#0" expanded="false" />
+            <element signature="e#10539#12125#0" expanded="false" />
+            <element signature="e#12163#12347#0" expanded="false" />
+            <element signature="e#12383#12551#0" expanded="false" />
+            <element signature="e#13356#14543#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content3a.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.72327965">
+          <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
+          <folding>
+            <element signature="e#2139#2293#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domStore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="106" column="38" selection-start-line="106" selection-start-column="38" selection-end-line="106" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/helpers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+          <folding>
+            <element signature="e#350#1458#0" expanded="false" />
+            <element signature="e#1501#1694#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="16" column="14" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.47807017">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content3.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7631579">
+          <caret line="567" column="0" selection-start-line="567" selection-start-column="0" selection-end-line="567" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

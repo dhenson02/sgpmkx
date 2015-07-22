@@ -1,0 +1,31 @@
+// ==ClosureCompiler==
+// @compilation_level WHITESPACE_ONLY
+// @output_file_name default.js
+// @code_url https://raw.githubusercontent.com/es-shims/es5-shim/master/es5-shim.min.js
+// @code_url https://raw.githubusercontent.com/es-shims/es5-shim/master/es5-sham.min.js
+// @code_url https://raw.githubusercontent.com/paulmillr/console-polyfill/master/index.js
+// @code_url https://raw.githubusercontent.com/aFarkas/html5shiv/master/dist/html5shiv.min.js
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/reqwest/1.1.5/reqwest.min.js
+// @code_url https://raw.githubusercontent.com/wilsonpage/event/master/build/event.min.js
+// @code_url https://raw.githubusercontent.com/wilsonpage/fastdom/master/index.js
+// ==/ClosureCompiler==
+
+// These must be added manually due to use of `char` reserved word in the main file.  Seek and destroy/replace then paste everything.
+https://cdnjs.cloudflare.com/ajax/libs/markdown-it/4.2.2/markdown-it.js
+
+or just use the minified version:
+
+// ==ClosureCompiler==
+// @compilation_level WHITESPACE_ONLY
+// @output_file_name default.js
+// @code_url https://raw.githubusercontent.com/es-shims/es5-shim/master/es5-shim.min.js
+// @code_url https://raw.githubusercontent.com/es-shims/es5-shim/master/es5-sham.min.js
+// @code_url https://raw.githubusercontent.com/paulmillr/console-polyfill/master/index.js
+// @code_url https://raw.githubusercontent.com/aFarkas/html5shiv/master/dist/html5shiv.min.js
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/reqwest/1.1.5/reqwest.min.js
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/markdown-it/4.2.2/markdown-it.min.js
+// @code_url https://raw.githubusercontent.com/wilsonpage/event/master/build/event.min.js
+// @code_url https://raw.githubusercontent.com/wilsonpage/fastdom/master/index.js
+// dunno bout this one yet
+// @code_url https://raw.githubusercontent.com/flatiron/director/master/build/director.js
+// ==/ClosureCompiler==

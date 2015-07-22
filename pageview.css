@@ -1,0 +1,646 @@
+@charset "UTF-8";
+
+html{
+  /*overflow-y:scroll;*/
+  -webkit-font-smoothing:subpixel-antialiased;
+  -moz-osx-font-smoothing:greyscale;
+  zoom:1;
+  *zoom:1;
+  font-size: 100%;
+}
+
+body{
+  margin:0;
+  padding:0;
+  border:0;
+  width:100%;
+  height:100%;
+  position: relative;
+}
+
+::-moz-selection{
+  background-color:#4183D7;
+  color: #FAFAFA;
+}
+
+::selection{
+  background-color:#4183D7;
+  color: #FAFAFA;
+}
+
+#wrapper *, #wrapper :after, #wrapper :before{
+  -webkit-box-sizing:border-box!important;
+  -moz-box-sizing:border-box!important;
+  box-sizing:border-box!important
+}
+
+.loading, .nochange{
+  opacity:.35;
+  pointer-events:none
+}
+
+#wrapper {
+  font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
+  font-size:18px;
+  overflow:hidden;
+  min-width:100%;
+}
+
+#content {
+  top: 1em;
+  min-width:100%;
+  font-size: 100%;
+  position:relative;
+  min-height:720px;
+  max-height:100%;
+  height:100%
+}
+
+#content.fullPage{
+  width:100%;
+  min-height:min-content;
+  right:auto;
+  left:auto;
+  bottom:auto;
+  overflow:visible
+}
+
+#contentWrap{
+  opacity:1;
+  position:relative;
+  color:#444;
+  overflow:visible;
+  min-height:540px;
+  height:85%;
+  margin:20px;
+  top:50px;
+  bottom:0;
+  left:0;
+  right:0;
+}
+
+.fullPage #contentWrap{
+  position:relative;
+  top:auto;
+  bottom:auto;
+  right:auto;
+  left:auto;
+  margin:20px auto;
+  min-height:min-content;
+  max-height:100%;
+  height:100%;
+  width:100%;
+  max-width:800px;
+}
+
+#buttons {
+  /*z-index:1;*/
+  width:100%;
+  margin:0 auto;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  bottom: 100%;
+}
+
+.fullPage #buttons  {
+  max-width: 960px;
+}
+
+.btn{
+  /*z-index:1;*/
+  opacity: 1;
+  position:relative;
+  color:#FAFAFA;
+  cursor:pointer;
+  line-height:1.5;
+  float:right;
+  border-radius:4px;
+  margin:5px 20px;
+  border: 2px dashed transparent;
+  text-shadow:0 1px 0 #404040;
+  text-shadow:0 1px 0 rgba(0,0,0,.35);
+  border-bottom:2px solid #666;
+  width:auto;
+}
+
+.btn.loading {
+  border-color: #BBB;
+  border-style: dashed;
+}
+
+.btn > span {
+  display:block;
+  text-align:center;
+  padding:5px 13px
+}
+
+#toggleButton {
+  background-color: #555;
+  letter-spacing: 1px;
+  float:left;
+  clear:left;
+  color:#FAFAFA;
+  /*width:auto;*/
+  font-weight:bold;
+}
+
+#toggleButton:active {
+  background-color:#FAFAFA;
+  color:#555;
+  border-color: #555;
+}
+
+#cheatSheetButton {
+  color: #222;
+  border-color: #222;
+  float: left;
+  display: block;
+  opacity: 1;
+  /*text-decoration: underline;*/
+}
+
+#saveButton{
+  /*width:auto;*/
+  background-color:#4183D7
+}
+
+#saveButton:active{
+  background-color:#446CB3
+}
+
+#createButton{
+  background-color:#00BA6A;
+  /*background-color:#8800BA;*/
+  /*color:#222*/
+  /*width:auto;*/
+}
+
+#createButton:active{
+  background-color: #0E870E;
+  /*background-color:#943494;*/
+  /*color:#FAFAFA*/
+}
+
+#deleteButton{
+  float:right;
+  background-color: #BBB;
+  /*background-color:#FF5F54;*/
+  /*width:auto*/
+}
+
+#deleteButton:active{
+  background-color: #999;
+  /*background-color:#B23229*/
+}
+
+.fullPage #saveButton,
+.fullPage #createButton,
+.fullPage #deleteButton,
+.fullPage #titleField,
+.fullPage #cheatSheet,
+.fullPage #input,
+.fullPage #cheatSheetButton,
+#cheatSheet {
+  opacity:0;
+  display:none;
+  pointer-events: none;
+  z-index: -1;
+}
+
+#input{
+  display:block;
+  opacity:1;
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:50%;
+  height:100%;
+  overflow:auto;
+  font-size:14px;
+  /*max-width: 640px;*/
+}
+
+#output{
+  display:block;
+  opacity:1;
+  text-rendering:optimizeLegibility;
+  position:absolute;
+  color:#555;
+  /* This will hide the scrollbar on most browsers */
+  right:-17px;
+  left:50%;
+  top:0;
+  bottom:0;
+  overflow:auto;
+  padding:10px 10px 10px 20px;
+  line-height:1.5;
+  max-width: 960px;
+  border: 4px dashed transparent;
+}
+
+.fullPage #output{
+  position:relative;
+  background-color:transparent;
+  border-color:transparent;
+  left:auto;
+  top:auto;
+  right:auto;
+  bottom:auto;
+  overflow:visible
+}
+
+#contentWrap.cheatSheet {
+  position: relative;
+  /*top: 400px;*/
+}
+
+#cheatSheet.cheatSheet {
+  height: 300px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#wrapper.loading,
+#content.loading,
+#contentWrap.loading,
+#input.loading,
+#output.loading {
+  border-color: #BBB;
+  opacity: .35;
+}
+
+#output a{
+  color:#0645ad;
+  text-decoration:none
+}
+
+#output a:visited{
+  color:#0b0080
+}
+
+#output a:hover{
+  color:#06e
+}
+
+#output a:active{
+  color:#faa700
+}
+
+#output a:focus{
+  outline:dotted thin
+}
+
+#output a:active,#output a:hover{
+  outline:0
+}
+
+#output p{
+  margin: 1em 0
+}
+
+#content img{
+  max-width:100%
+}
+
+#wrapper h1,#wrapper h2,#wrapper h3,#wrapper h4,#wrapper h5,#wrapper h6{
+  font-weight:200;
+  line-height:1;
+}
+#output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
+  color:#111;
+}
+
+#wrapper h4,#wrapper h5,#wrapper h6{
+  font-weight:700
+}
+
+#wrapper h1{
+  font-size:2.5em
+}
+
+#wrapper h2{
+  /*font-size:2em;*/
+  padding-bottom:10px;
+  border:none;
+  border-bottom:1px solid;
+  border-bottom-color:#DDD;
+  border-bottom-color:rgba(0,0,0,.1)
+}
+
+#wrapper h3{
+  font-size:1.5em
+}
+
+#wrapper h4{
+  font-size:1.2em
+}
+
+#wrapper h5{
+  font-size:1em
+}
+
+#wrapper h6{
+  font-size:.9em
+}
+
+#output blockquote{
+  font-size:.925em;
+  color:#999;
+  margin:0;
+  padding-left:3em;
+  border-left:.5em #EEE solid
+}
+
+#wrapper hr{
+  display:block;
+  color:#DFDFDF;
+  height:8px;
+  margin:2em 0;
+  padding:0;
+  border:none;
+  border-top:8px dotted;
+}
+
+#output code,#output pre{
+  color:#000;
+  font-family:"Ubuntu Mono","Lucida Console",Consolas,"Lucida Grande","Liberation Mono",Menlo,Courier,monospace;
+  font-size:.94em;
+  border-radius:3px;
+  background-color:#FAFAFA;
+  border:1px solid #DDD
+}
+
+#output pre{
+  white-space:pre;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  padding:10px
+}
+
+#output pre code{
+  border:0!important;
+  background:0 0!important;
+  line-height:1.3em
+}
+
+#output code{
+  padding:2px 3px
+}
+
+#output sub,#output sup{
+  font-size:75%;
+  line-height:0;
+  position:relative;
+  vertical-align:baseline
+}
+
+#output sup{
+  top:-.5em
+}
+
+#output sub{
+  bottom:-.25em
+}
+
+#output ol,#output ul{
+  margin:1em 0;
+  padding:0 0 0 2em
+}
+
+#output li p:last-child{
+  margin:0
+}
+
+#output dd{
+  margin:0 0 0 2em
+}
+
+#content img{
+  border:0;
+  -ms-interpolation-mode:bicubic;
+  vertical-align:middle
+}
+
+#content table{
+  border-collapse:collapse;
+  border-spacing:0
+}
+
+#output td,#output th{
+  vertical-align:top;
+  padding:4px 10px;
+  border:1px solid #bbb
+}
+
+#output tr:nth-child(even) td,tr:nth-child(even) th{
+  background:#eee
+}
+
+#wrapper input[type="text"],
+#wrapper select,
+.modalOverlay input[type="text"],
+.modalOverlay select {
+  background-color: #FAFAFA;
+  color: #4183D7;
+  font-size: 2em;
+  border: 1px solid;
+  padding: .5em .33em;
+  outline: 0;
+  outline: none;
+  float: none;
+  font-family: inherit;
+  display: block;
+  line-height: 1;
+  margin-bottom: 1em;
+  text-align: left;
+}
+
+#wrapper #titleField {
+  margin:5px 20px;
+  float: right;
+}
+
+#wrapper .CodeMirror.CodeMirror{
+  position:absolute;
+  border:1px solid #CCC;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:auto;
+  height:auto
+}
+
+#wrapper .CodeMirror pre{
+  line-height:1.5
+}
+
+#wrapper .CodeMirror-scroll{
+  padding:30px
+}
+
+#wrapper .cm-header-1{
+  font-size:2em
+}
+
+#wrapper .cm-header-2{
+  font-size:1.75em
+}
+
+#wrapper .cm-header-3{
+  font-size:1.5em
+}
+
+#wrapper .cm-header-4{
+  font-size:1.3em
+}
+
+#wrapper .cm-header-5{
+  font-size:1.2em
+}
+
+#wrapper .cm-header-6{
+  font-size:1.15em
+}
+
+#wrapper .cm-quote{
+  color:#90A959;
+  font-style:italic;
+  margin:0;
+  padding-left:3em;
+  border-left:.5em #EEE solid
+}
+
+/**
+ * Thanks to codrops for the quick and easy inspiration for cross-browser CSS overlay + modal.
+ * http://tympanus.net/codrops/2013/11/07/css-overlay-techniques/
+ */
+
+.modalOverlay{
+  display:block;
+  position:fixed;
+  top:0;
+  left:0;
+  min-width:100%;
+  min-height:100%;
+}
+
+.modalBg{
+  /*z-index:10;*/
+  position:absolute;
+  display:block;
+  background-color:#222;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  opacity:.75;
+}
+
+.modal {
+  display:block;
+  min-width:25em;
+  max-height: 45em;
+  position: fixed;
+  top: 10%;
+  left: 20%;
+  right: 20%;
+  bottom: 10%;
+  background-color:#FAFAFA;
+  border: 3px solid;
+  padding: 40px;
+  font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
+  /*z-index:11;*/
+  text-align: left;
+}
+
+.modal .header {
+  position: relative;
+  text-align:left;
+  font-size:2.333em;
+  text-transform: lowercase;
+}
+
+.modal .header > h2 {
+  margin: 0;
+  padding-bottom: 20px;
+}
+
+.modal label{
+  font-size: 1.333em;
+  position: relative;
+  text-align: left;
+}
+
+.modal select:before {
+  position: relative;
+  display: inline;
+  content: "Choose parent category:";
+}
+
+.modal .btn {
+  position: relative;
+  font-size:24px;
+  line-height: 1;
+  margin:18px auto;
+  float: none;
+}
+
+.okButton {
+  /*background-color:#188EA8;*/
+  color:#FAFAFA;
+  /*background-color: #F62459;*/
+  background-color: #4183D7;
+  font-weight: bold;
+  width: 50%;
+  padding: 24px 16px;
+}
+
+.cancelButton {
+  background-color:#FAFAFA;
+  /*color:#0E778E;*/
+  /*color:#F62459;*/
+  color: #446CB3;
+  border:1px solid;
+  padding:12px 16px;
+  width: 30%;
+}
+
+.modalButtons {
+  text-align:center;
+  position:relative;
+  /*padding-top: 20px;*/
+  /*bottom:20px;*/
+}
+
+@media all and (max-width:1024px){
+  #content{
+    min-width:fit-content
+  }
+
+  #input{
+    display:block;
+    padding-left:10px;
+    width:auto;
+    right:0
+  }
+
+  #output{
+    display:none
+  }
+
+  .fullPage #contentWrap,
+  .fullPage #buttons {
+    max-width:720px;
+    width:100%
+  }
+
+  .fullPage #output{
+    display:block
+  }
+}
