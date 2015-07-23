@@ -219,7 +219,7 @@ body{
   top:0;
   left:0;
   bottom:0;
-  width:50%;
+  width:45%;
   height:100%;
   overflow:auto;
   font-size:14px;
@@ -234,7 +234,7 @@ body{
   color:#555;
   /* This will hide the scrollbar on most browsers */
   right:-17px;
-  left:50%;
+  left:55%;
   top:0;
   bottom:0;
   overflow:auto;
