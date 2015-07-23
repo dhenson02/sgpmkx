@@ -88,7 +88,7 @@
 
   function savePage ( event ) {
     event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+    //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
     var self = event.currentTarget || event.srcElement || this;
 
@@ -279,7 +279,7 @@
     var patches = diff(app.modalDOM, freshDOM);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
-    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 275, display: "block" });
+    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 150, display: "block" });
     addEvent("keyup", document, handleCancel);
   }
 
@@ -351,7 +351,7 @@
       handleChange(event, options, callback);
     }
     return (
-      h(".modalOverlay", { style: { zIndex: 7 } }, [
+      h(".modalOverlay", { style: { zIndex: 7, opacity: 0, display: "none" } }, [
         h(".modalBg", { onclick: cancel }),
         h(".modal", [
           h(".header", options.title),
@@ -376,12 +376,15 @@
   }
 
   function modalSuicide () {
-    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 275, display: "none" });
-    var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
-    var patches = diff(app.modalDOM, destroyModal);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = destroyModal;
-    removeEvent("keyup", document, handleCancel);
+    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 150, display: "none",
+      complete: function () {
+        var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
+        var patches = diff(app.modalDOM, destroyModal);
+        app.modalOverlay = patch(app.modalOverlay, patches);
+        app.modalDOM = destroyModal;
+        removeEvent("keyup", document, handleCancel);
+      }
+    });
   }
 
   function toggleEditor () {
@@ -391,7 +394,7 @@
     app.animating = true;
     var hasFullPage = regFullPage.test(app.domRefs.content.className);
     var className = ( hasFullPage ) ? app.domRefs.content.className.replace(regFullPage, "") : app.domRefs.content.className + " fullPage";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
+    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.content.className = className;
         app.domRefs.contentWrap.className = "";
@@ -402,7 +405,7 @@
         else {
           app.domRefs.titleField.setAttribute("disabled", "disabled");
         }
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
+        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
           complete: function () {
             if ( hasFullPage ) {
               app.domRefs.editor.refresh();
@@ -423,11 +426,11 @@
     var hasCheatSheet = regCheatSheet.test(app.domRefs.contentWrap.className);
     var className = ( hasCheatSheet ) ? "" : "cheatSheet";
     var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
+    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.cheatSheet.className = className;
         app.domRefs.contentWrap.className = contentWrapClass;
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
+        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
           complete: function () {
             app.animating = false;
           }
