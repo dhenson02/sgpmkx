@@ -113,12 +113,11 @@
         console.log(e); console.log(self); console.log(self.childNodes[0]);
       }
 
-
       if (app.domRefs.buttons.tempSaveText) {
         clearTimeout(app.domRefs.buttons.tempSaveText);
       }
       app.domRefs.buttons.tempSaveText = setTimeout(function() {
-        self.childNodes[0].innerHTML = "Save";
+        try { self.childNodes[0].innerHTML = "Save"; } catch (e) {console.log(e, self, self.childNodes[0]);}
         self.className = self.className.replace(regNoChange, "");
       }, 2000);
       return false;
@@ -277,7 +276,7 @@
     var patches = diff(app.modalDOM, freshDOM);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
-    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 75, display: "block" });
+    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 275, display: "block" });
     addEvent("keyup", document, handleCancel);
   }
 
@@ -338,7 +337,7 @@
           h(".header", options.title),
           h("label", options.text.concat([
             ( options.type === "new" ) && (h("input.modalInput", { type: "text", tabIndex: 0, autofocus: "", onkeyup: ok })) || null,
-            ( options.type === "new" ) && (h("select.menuItems", { tabIndex: 1, onkeyup: ok }, [app.menuItems || null])) || null
+            ( options.type === "new" ) && (h("select.menuItems", { tabIndex: 1, onkeyup: ok }, app.menuItems || null)) || null
           ])),
           h(".modalButtons", [
             h(".okButton.btn", { tabIndex: 2, onclick: ok, role: "button" }, [
@@ -354,7 +353,7 @@
   }
 
   function modalSuicide () {
-    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 75, display: "none" });
+    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 275, display: "none" });
     var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
     var patches = diff(app.modalDOM, destroyModal);
     app.modalOverlay = patch(app.modalOverlay, patches);
@@ -369,11 +368,18 @@
     app.animating = true;
     var hasFullPage = regFullPage.test(app.domRefs.content.className);
     var className = ( hasFullPage ) ? app.domRefs.content.className.replace(regFullPage, "") : app.domRefs.content.className + " fullPage";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 50,
+    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
       complete: function () {
         app.domRefs.content.className = className;
         app.domRefs.contentWrap.className = "";
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 75,
+        app.domRefs.cheatSheet.className = "";
+        if ( hasFullPage ) {
+          app.domRefs.titleField.removeAttribute("disabled");
+        }
+        else {
+          app.domRefs.titleField.setAttribute("disabled", "disabled");
+        }
+        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
           complete: function () {
             if ( hasFullPage ) {
               app.domRefs.editor.refresh();
@@ -394,11 +400,11 @@
     var hasCheatSheet = regCheatSheet.test(app.domRefs.contentWrap.className);
     var className = ( hasCheatSheet ) ? "" : "cheatSheet";
     var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 50,
+    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
       complete: function () {
         app.domRefs.cheatSheet.className = className;
         app.domRefs.contentWrap.className = contentWrapClass;
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 75,
+        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
           complete: function () {
             app.animating = false;
           }
@@ -420,6 +426,13 @@
         editor: null
       });
       refreshDOM = render("editor");
+      modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+      patches = diff(app.modalDOM, modalRefreshDOM);
+      if (patches.length > 1) {
+        app.modalOverlay = patch(app.modalOverlay, patches);
+        app.modalDOM = modalRefreshDOM;
+        modalSuicide();
+      }
     }
     else {
       refreshDOM = render();
@@ -428,14 +441,8 @@
     app.rootNode = patch(app.rootNode, patches);
     app.dirtyDOM = refreshDOM;
 
-    modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-    patches = diff(app.modalDOM, modalRefreshDOM);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = modalRefreshDOM;
-
     app.domRefs = new DOMRef();
     app.domRefs.set();
-    modalSuicide();
   }
 
   function update ( e ) {
@@ -452,9 +459,6 @@
     app.dirtyDOM = ( !CodeMirror ) ? render() : render("editor");
     app.rootNode = createElement(app.dirtyDOM);
 
-    app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-    app.modalOverlay = createElement(app.modalDOM);
-
     try {
       var wrapperTmp = document.getElementById("wrapper");
       wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
@@ -469,40 +473,16 @@
         document.body.appendChild(app.rootNode);
       }
     }
-    document.body.appendChild(app.modalOverlay);
+    if ( CodeMirror ) {
+      app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+      app.modalOverlay = createElement(app.modalDOM);
+      document.body.appendChild(app.modalOverlay);
+    }
 
     app.domRefs = new DOMRef();
     app.domRefs.set();
     app.router.init();
     getList();
-  }
-
-  function getList () {
-    reqwest({
-      url: app.sitePath + "_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')/items/?$select=Title,Category",
-      method: "GET",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      },
-      success: function ( data ) {
-        var page,
-          pages = {},
-          options = [];
-        while ( page = data.d.results.shift() ) {
-          pages[page.Category] = page.Title;
-          options.push(
-            h("option", { value: page.Category }, [String(page.Title)])
-          );
-        }
-        app.menuItems = h("optgroup", options);
-      },
-      error: connError
-    });
   }
 
   function setupEditor ( content ) {
@@ -524,6 +504,47 @@
     });
     app.domRefs.editor.on("change", update);
     app.domRefs.editor.refresh();
+  }
+
+  function getList () {
+    reqwest({
+      url: app.sitePath + "_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')/items/?$select=Title,Category",
+      method: "GET",
+      type: "json",
+      contentType: "application/json",
+      withCredentials: true,
+      headers: {
+        "Accept": "application/json;odata=verbose",
+        "text-Type": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose"
+      },
+      success: function ( data ) {
+        var page,
+          pages = {},
+          fhm = [],
+          comm = [];
+        while ( page = data.d.results.shift() ) {
+          pages[page.Category] = page.Title;
+          if ( page.Category.charAt(1) === "F" || page.Category.charAt(1) === "f" ) {
+            // This one is Force Health
+            fhm.push(
+              h("option", { value: page.Category }, [String(page.Title)])
+            );
+          }
+          else {
+            // Hopefully this is Comm
+            comm.push(
+              h("option", { value: page.Category }, [String(page.Title)])
+            );
+          }
+        }
+        app.menuItems = [
+          h("optgroup", { label: "Force Health Management" }, fhm),
+          h("optgroup", { label: "Community Health" }, comm)
+        ];
+      },
+      error: connError
+    });
   }
 
   function init ( path, type ) {
@@ -575,7 +596,6 @@
           '/(content|faq|forms|resources)': {
             //once: getList,
             on: function ( root, sub, type ) {
-              //console.log("--3: root = " + root + " / sub = " + sub + " / type = " + type);
               loadingSomething(true, app.domRefs.output);
               init("/" + root + "/" + sub, (type) ? type : "Content");
             }

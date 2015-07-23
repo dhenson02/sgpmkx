@@ -396,6 +396,7 @@ body{
 #wrapper #titleField {
   margin:5px 20px;
   float: right;
+  clear: both;
 }
 #wrapper .CodeMirror.CodeMirror{
   position:absolute;

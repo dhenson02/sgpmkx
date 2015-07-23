@@ -38,14 +38,12 @@ module.exports = function(grunt) {
           screwIE8: false,
           wrap: false,
           mangle: true,
-          sourceMap: false
+          sourceMap: true
         },
         files: {
           'content3.min.js': [
             'helpers.js',
-            //'actions.js',
             'content3.pre.js'
-            //'render.js',
           ]
         }
       },
@@ -56,14 +54,12 @@ module.exports = function(grunt) {
           beautify: true,
           mangle: false,
           wrap: false,
-          sourceMap: false
+          sourceMap: true
         },
         files: {
           'content3.min.js': [
             'helpers.js',
-            //'actions.js',
             'content3.pre.js'
-            //'render.js',
           ]
         }
       }
