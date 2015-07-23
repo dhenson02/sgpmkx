@@ -37,7 +37,6 @@
         h("#wrapper", [
           h("#content.fullPage", [
             h("#buttons", [
-              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" }),
               h("#toggleButton.btn", { onclick: toggleEditor, role: "button" }, [
                 h("span", ["Toggle Editor"])
               ]),
@@ -52,7 +51,8 @@
               ]),
               h("#saveButton.btn", { onclick: savePage, role: "button" }, [
                 h("span", ["Save"])
-              ])
+              ]),
+              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
             ]),
             h("#cheatSheet", ["This will be a cheat-sheet for markdown"]),
             h("#contentWrap", [
@@ -165,7 +165,8 @@
   function createPage () {
     newModal({
       title: [h("h2", ["New Page"])],
-      text: [h("h2", ["Give it a name:"])],
+      text: [h("text", ["Give it a name:"])],
+      selectLabel: [h("text", ["Select the parent category"])],
       type: "new"
     }, function ( inputValue ) {
       if ( "object" !== typeof inputValue ) {
@@ -194,7 +195,7 @@
         },
         success: function() {
           newModal({
-            title: [h("h2", [String(inputValue.title)]), h("text", ["' was created"])],
+            title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
             text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
             type: "success",
             okText: "Take me",
@@ -266,7 +267,9 @@
     options = {
       title: options.title || [h("h2", ["Info"])],
       text: options.text || [h("text", ["Click OK to continue"])],
+      selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
       type: options.type || "success",
+      path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
       okText: options.okText || "OK!",
       showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
       closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
@@ -324,6 +327,20 @@
     }
   }
 
+  function handleChange ( event, options, callback ) {
+    event = event || window.event;
+    event.preventDefault ? event.preventDefault() : event.returnValue = false;
+    //var self = event.currentTarget || event.srcElement || this;
+    var title = document.getElementById("modalInput").value.trim();
+    options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
+    var refreshDOM = freshModal( options, callback);
+    var patches = diff(app.modalDOM, refreshDOM);
+    app.modalOverlay = patch(app.modalOverlay, patches);
+    app.modalDOM = refreshDOM;
+    //document.getElementById("newPath").innerHTML = category + "/" + title;
+    return false;
+  }
+
   function freshModal ( options, callback ) {
     function ok ( event ) {
       handleOk(event, callback);
@@ -331,15 +348,21 @@
     function cancel ( event ) {
       handleCancel(event, callback);
     }
+    function change ( event ) {
+      handleChange(event, options, callback);
+    }
     return (
       h(".modalOverlay", { style: { zIndex: 7 } }, [
         h(".modalBg", { onclick: cancel }),
         h(".modal", [
           h(".header", options.title),
           h("label", options.text.concat([
-            ( options.type === "new" ) && (h("input.modalInput", { type: "text", tabIndex: 0, autofocus: "", onkeyup: ok })) || null,
-            ( options.type === "new" ) && (h("select.menuItems", { tabIndex: 1, onkeyup: ok }, app.menuItems || null)) || null
+            ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
           ])),
+          (options.selectLabel) && h("label", options.selectLabel.concat([
+            ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
+          ])),
+          h("blockquote#newPath", options.path),
           h(".modalButtons", [
             h(".okButton.btn", { tabIndex: 2, onclick: ok, role: "button" }, [
               h("span", [String(options.okText || "OK!")])

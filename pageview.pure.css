@@ -139,6 +139,12 @@ body{
   opacity: 1;
   /*text-decoration: underline;*/
 }
+#saveButton,
+#createButton,
+#deleteButton,
+#titleField {
+  float: right;
+}
 #saveButton{
   /*width:auto;*/
   background-color:#4183D7
@@ -147,24 +153,28 @@ body{
   background-color:#446CB3
 }
 #createButton{
-  background-color:#00BA6A;
+  background-color:#1A3557;
+  /*background-color:#00BA6A;*/
   /*background-color:#8800BA;*/
   /*color:#222*/
   /*width:auto;*/
 }
 #createButton:active{
-  background-color: #0E870E;
+  background-color: #3264A4;
+  /*background-color: #0E870E;*/
   /*background-color:#943494;*/
   /*color:#FAFAFA*/
 }
 #deleteButton{
   float:right;
-  background-color: #BBB;
+  background-color: #354457;
+  /*background-color: #BBB;*/
   /*background-color:#FF5F54;*/
   /*width:auto*/
 }
 #deleteButton:active{
-  background-color: #999;
+  background-color: #86ACDE;
+  /*background-color: #999;*/
   /*background-color:#B23229*/
 }
 .fullPage #saveButton,
@@ -187,7 +197,7 @@ body{
   top:0;
   left:0;
   bottom:0;
-  width:50%;
+  width:45%;
   height:100%;
   overflow:auto;
   font-size:14px;
@@ -201,7 +211,7 @@ body{
   color:#555;
   /* This will hide the scrollbar on most browsers */
   right:-17px;
-  left:50%;
+  left:55%;
   top:0;
   bottom:0;
   overflow:auto;
@@ -378,7 +388,8 @@ body{
 #wrapper input[type="text"],
 #wrapper select,
 .modalOverlay input[type="text"],
-.modalOverlay select {
+.modalOverlay select,
+.buttons .btn {
   background-color: #FAFAFA;
   color: #4183D7;
   font-size: 2em;

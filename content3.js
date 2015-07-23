@@ -36,7 +36,6 @@
         h("#wrapper", [
           h("#content.fullPage", [
             h("#buttons", [
-              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" }),
               h("#toggleButton.btn", { onclick: toggleEditor, role: "button" }, [
                 h("span", ["Toggle Editor"])
               ]),
@@ -51,7 +50,8 @@
               ]),
               h("#saveButton.btn", { onclick: savePage, role: "button" }, [
                 h("span", ["Save"])
-              ])
+              ]),
+              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
             ]),
             h("#cheatSheet", ["This will be a cheat-sheet for markdown"]),
             h("#contentWrap", [
@@ -164,7 +164,7 @@
   function createPage () {
     newModal({
       title: [h("h2", ["New Page"])],
-      text: [h("h2", ["Give it a name:"])],
+      text: [h("text", ["Give it a name:"])],
       selectLabel: [h("text", ["Select the parent category"])],
       type: "new"
     }, function ( inputValue ) {
