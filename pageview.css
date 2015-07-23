@@ -170,27 +170,31 @@ body{
 }
 
 #createButton{
-  background-color:#00BA6A;
+  background-color:#1A3557;
+  /*background-color:#00BA6A;*/
   /*background-color:#8800BA;*/
   /*color:#222*/
   /*width:auto;*/
 }
 
 #createButton:active{
-  background-color: #0E870E;
+  background-color: #3264A4;
+  /*background-color: #0E870E;*/
   /*background-color:#943494;*/
   /*color:#FAFAFA*/
 }
 
 #deleteButton{
   float:right;
-  background-color: #BBB;
+  background-color: #354457;
+  /*background-color: #BBB;*/
   /*background-color:#FF5F54;*/
   /*width:auto*/
 }
 
 #deleteButton:active{
-  background-color: #999;
+  background-color: #86ACDE;
+  /*background-color: #999;*/
   /*background-color:#B23229*/
 }
 
@@ -444,7 +448,8 @@ body{
 #wrapper input[type="text"],
 #wrapper select,
 .modalOverlay input[type="text"],
-.modalOverlay select {
+.modalOverlay select,
+.buttons .btn {
   background-color: #FAFAFA;
   color: #4183D7;
   font-size: 2em;
