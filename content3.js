@@ -356,7 +356,7 @@
         h(".modal", [
           h(".header", options.title),
           h("label", options.text.concat([
-            ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onkeyup: ok })) || null
+            ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
           ])),
           (options.selectLabel) && h("label", options.selectLabel.concat([
             ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
