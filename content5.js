@@ -1,4 +1,4 @@
-;(function ( window, document, reqwest, Router, markdownit ) {
+;(function ( window, document, reqwest, Router, undefined ) {
   if (!Object.keys) {
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
     Object.keys = (function () {
@@ -66,7 +66,7 @@
       modalOverlay: null,
       router: null,
       menuItems: null,
-      animating: false,
+      //animating: false,
       inTransition: {}
     };
 
@@ -124,7 +124,6 @@
       if ( app.inTransition[target] === true ) {
         return false;
       }
-      /* consider storing pointer info to element in use inside `item` to execute $.velocity.("finish") */
       app.inTransition[target] = true;
       if ( util.regLoading.test(target.className) === false ) {
         target.className += " loading";
@@ -335,7 +334,8 @@
     var patches = diff(app.modalDOM, freshDOM);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
-    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 150, display: "block" });
+    app.modalOverlay.style.display = "block";
+    app.modalOverlay.style.opacity = 1;
     util.addEvent("keyup", document, handleCancel);
   }
 
@@ -432,67 +432,33 @@
   }
 
   function modalSuicide () {
-    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 150, display: "none",
-      complete: function () {
-        var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
-        var patches = diff(app.modalDOM, destroyModal);
-        app.modalOverlay = patch(app.modalOverlay, patches);
-        app.modalDOM = destroyModal;
-        util.removeEvent("keyup", document, handleCancel);
-      }
-    });
+    var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
+    var patches = diff(app.modalDOM, destroyModal);
+    app.modalOverlay = patch(app.modalOverlay, patches);
+    app.modalDOM = destroyModal;
+    util.removeEvent("keyup", document, handleCancel);
   }
 
   function toggleEditor () {
-    if ( app.animating ) {
-      return false;
-    }
-    app.animating = true;
     var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
-    var className = ( hasFullPage ) ? app.domRefs.content.className.replace(util.regFullPage, "") : app.domRefs.content.className + " fullPage";
-    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
-      complete: function () {
-        app.domRefs.content.className = className;
-        app.domRefs.contentWrap.className = "";
-        app.domRefs.cheatSheet.className = "";
-        if ( hasFullPage ) {
-          app.domRefs.titleField.removeAttribute("disabled");
-        }
-        else {
-          app.domRefs.titleField.setAttribute("disabled", "disabled");
-        }
-        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
-          complete: function () {
-            if ( hasFullPage ) {
-              app.domRefs.editor.refresh();
-            }
-            app.animating = false;
-          }
-        });
-      }
-    });
+    app.domRefs.contentWrap.className = "";
+    app.domRefs.cheatSheet.className = "";
+    if ( hasFullPage ) {
+      app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
+      //app.domRefs.titleField.removeAttribute("disabled");
+      app.domRefs.editor.refresh();
+    }
+    else {
+      app.domRefs.content.className = app.domRefs.content.className + " fullPage";
+      //app.domRefs.titleField.setAttribute("disabled", "disabled");
+    }
     return false;
   }
 
   function toggleCheatSheet () {
-    if ( app.animating ) {
-      return false;
-    }
-    app.animating = true;
     var hasCheatSheet = util.regCheatSheet.test(app.domRefs.contentWrap.className);
-    var className = ( hasCheatSheet ) ? "" : "cheatSheet";
-    var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
-      complete: function () {
-        app.domRefs.cheatSheet.className = className;
-        app.domRefs.contentWrap.className = contentWrapClass;
-        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
-          complete: function () {
-            app.animating = false;
-          }
-        });
-      }
-    });
+    app.domRefs.cheatSheet.className = ( hasCheatSheet ) ? "" : "cheatSheet";
+    app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
     return false;
   }
 
@@ -752,4 +718,4 @@
 
   module.exports = app;
 
-})(window, document, reqwest, Router, markdownit);
+})(window, document, reqwest, Router);

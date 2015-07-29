@@ -26,4 +26,4 @@
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/testmgr/markdown-it.min.js"></script>
 <!--<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/testmgr/toys.min.js"></script>-->
 <script type="text/javascript" src="/kj/kx7/PublicHealth/Pages/Dev/editor3.min.js"></script>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/testmgr/content3.min.js"></script>
+<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/testmgr/main.min.js"></script>
