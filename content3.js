@@ -55,7 +55,7 @@
     Content = require("./store"),
     DOMRef = require("./domStore"),
     app = {
-      sitePath: "https://kx.afms.mil/kj/kx7/PublicHealth/",
+      sitePath: "https://kx.afms.mil/kj/kx7/PublicHealth/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
       digest: document.getElementById("__REQUESTDIGEST").value,
       pages: {},
       currentContent: new Content(),
@@ -70,8 +70,8 @@
       inTransition: {}
     };
 
-  function render ( target ) {
-    var node = (
+  function render () {
+    return (
       h("#wrapper", [
         h("#content.fullPage", [
           h("#contentWrap", [
@@ -80,40 +80,42 @@
         ])
       ])
     );
-    if ( target === "editor" ) {
-      node = (
-        h("#wrapper", [
-          h("#content.fullPage", [
-            h("#buttons", [
-              h("#toggleButton.btn", { onclick: toggleEditor, role: "button" }, [
-                h("span", ["Toggle Editor"])
-              ]),
-              h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
-                h("span", ["Cheat Sheet"])
-              ]),
-              h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
-                h("span", ["Delete"])
-              ]),
-              h("#createButton.btn", { onclick: createPage, role: "button" }, [
-                h("span", ["New"])
-              ]),
-              h("#saveButton.btn", { onclick: savePage, role: "button" }, [
-                h("span", ["Save"])
-              ]),
-              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
+  }
+  function renderEditor () {
+    return (
+      h("#wrapper", [
+        h("#content.fullPage", [
+          h("#buttons", [
+            h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
+              h("span", ["Toggle Editor"])
             ]),
-            h("#cheatSheet", ["This will be a cheat-sheet for markdown"]),
-            h("#contentWrap", [
-              h("#input", [
-                h("textarea#textarea", [String(app.currentContent.text || "")])
-              ]),
-              h("#output")
+            h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
+              h("span", ["Cheat Sheet"])
+            ]),
+            h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
+              h("span", ["Delete"])
+            ]),
+            h("#createButton.btn", { onclick: createPage, role: "button" }, [
+              h("span", ["New"])
+            ]),
+            h("#saveButton.btn", { onclick: savePage, role: "button" }, [
+              h("span", ["Save"])
+            ]),
+            h("label#titleFieldLabel", [
+              "Page title: ",
+              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
             ])
+          ]),
+          h("#cheatSheet", ["This will be a cheat-sheet for markdown"]),
+          h("#contentWrap", [
+            h("#input", [
+              h("textarea#textarea", [String(app.currentContent.text || "")])
+            ]),
+            h("#output")
           ])
         ])
-      );
-    }
-    return node;
+      ])
+    );
   }
 
   function loadingSomething ( status, target ) {
@@ -140,7 +142,11 @@
     //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
     var self = event.currentTarget || event.srcElement || this;
-
+    try {
+      console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
+      console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
+      console.log("this: " + this.nodeName); } catch (e) {
+    }}}
     if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
       self = self.parentNode.parentNode;
     }
@@ -175,7 +181,7 @@
       loadingSomething(true, app.domRefs.contentWrap);
     }
     reqwest({
-      url: app.sitePath + "_api/lists/getByTitle('" + app.currentContent.contentType + "')/items(" + app.currentContent.id + ")",
+      url: app.sitePath + "/items(" + app.currentContent.id + ")",
       method: "POST",
       data: JSON.stringify({
         '__metadata': {
@@ -222,7 +228,7 @@
       }
       loadingSomething(true, app.domRefs.contentWrap);
       reqwest({
-        url: app.sitePath + "_api/lists/getByTitle('" + app.currentContent.contentType + "')/items",
+        url: app.sitePath + "/items",
         method: "POST",
         data: JSON.stringify({
           '__metadata': {
@@ -273,7 +279,7 @@
       }
       loadingSomething(true, app.domRefs.contentWrap);
       reqwest({
-        url: app.sitePath + "_api/lists/getByTitle('" + app.currentContent.contentType + "')/items(" + app.currentContent.id + ")",
+        url: app.sitePath + "/items(" + app.currentContent.id + ")",
         method: "POST",
         type: "json",
         contentType: "application/json",
@@ -437,7 +443,7 @@
   }
 
   function toggleEditor () {
-    if (app.animating) {
+    if ( app.animating ) {
       return false;
     }
     app.animating = true;
@@ -468,7 +474,7 @@
   }
 
   function toggleCheatSheet () {
-    if (app.animating) {
+    if ( app.animating ) {
       return false;
     }
     app.animating = true;
@@ -489,37 +495,6 @@
     return false;
   }
 
-  function resetPage () {
-    var wrap,
-      refreshDOM,
-      modalRefreshDOM,
-      patches;
-    if ( app.domRefs.editor ) {
-      wrap = app.domRefs.editor.getWrapperElement();
-      wrap.parentNode.removeChild(wrap);
-      app.domRefs.set({
-        editor: null
-      });
-      refreshDOM = render("editor");
-      modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-      patches = diff(app.modalDOM, modalRefreshDOM);
-      if (patches.length > 1) {
-        app.modalOverlay = patch(app.modalOverlay, patches);
-        app.modalDOM = modalRefreshDOM;
-        modalSuicide();
-      }
-    }
-    else {
-      refreshDOM = render();
-    }
-    patches = diff(app.dirtyDOM, refreshDOM);
-    app.rootNode = patch(app.rootNode, patches);
-    app.dirtyDOM = refreshDOM;
-
-    app.domRefs = new DOMRef();
-    app.domRefs.set();
-  }
-
   function update ( e ) {
     var val = e.getValue();
     app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
@@ -527,11 +502,14 @@
   }
 
   function insertContent ( content ) {
+    console.log("Start inserting content...");
     app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
+    console.log("Supposedly finished inserting content.");
   }
 
   function pageSetup () {
-    app.dirtyDOM = ( !CodeMirror ) ? render() : render("editor");
+    console.log("Begin pageSetup...");
+    app.dirtyDOM = ( !CodeMirror ) ? render() : renderEditor();
     app.rootNode = createElement(app.dirtyDOM);
 
     try {
@@ -553,15 +531,23 @@
       app.modalOverlay = createElement(app.modalDOM);
       document.body.appendChild(app.modalOverlay);
     }
-
+    console.log("Create new domRefs...");
     app.domRefs = new DOMRef();
+    console.log("Setup new domRefs...");
     app.domRefs.set();
-    app.router.init();
-    getList();
+    console.log("Start routing stuff...");
+    if ( window.location.hash ) {
+      app.router.init();
+    }
+    else {
+      // Just for debugging - change to main page later.
+      app.router.init("/fhm/pha");
+    }
   }
 
-  function setupEditor ( content ) {
-    var refreshDOM = render("editor", content);
+  function setupEditor () {
+    console.log("Loading editor...");
+    var refreshDOM = renderEditor();
     var patches = diff(app.dirtyDOM, refreshDOM);
     app.rootNode = patch(app.rootNode, patches);
     app.dirtyDOM = refreshDOM;
@@ -574,16 +560,49 @@
         lineWrapping: true,
         theme: "neo",
         extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
-      }),
-      $contentWrap: $(app.domRefs.contentWrap)
+      })
     });
     app.domRefs.editor.on("change", update);
     app.domRefs.editor.refresh();
+    app.domRefs.buttons.childNodes[0].removeAttribute("style");
+    console.log("Editor loaded");
+  }
+
+  function resetPage () {
+    var wrap,
+      refreshDOM,
+      modalRefreshDOM,
+      patches;
+    if ( app.domRefs.editor ) {
+      wrap = app.domRefs.editor.getWrapperElement();
+      wrap.parentNode.removeChild(wrap);
+      app.domRefs.set({
+        editor: null
+      });
+      refreshDOM = renderEditor();
+      modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+      patches = diff(app.modalDOM, modalRefreshDOM);
+      if (patches.length > 1) {
+        app.modalOverlay = patch(app.modalOverlay, patches);
+        app.modalDOM = modalRefreshDOM;
+        modalSuicide();
+      }
+    }
+    else {
+      refreshDOM = render();
+    }
+    patches = diff(app.dirtyDOM, refreshDOM);
+    app.rootNode = patch(app.rootNode, patches);
+    app.dirtyDOM = refreshDOM;
+
+    app.domRefs = new DOMRef();
+    app.domRefs.set();
   }
 
   function getList () {
+    console.log("Getting list...");
     reqwest({
-      url: app.sitePath + "_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')/items/?$select=Title,Category",
+      url: app.sitePath + "/items/?$select=Title,Category",
       method: "GET",
       type: "json",
       contentType: "application/json",
@@ -594,11 +613,19 @@
         "Content-Type": "application/json;odata=verbose"
       },
       success: function ( data ) {
-        var page,
+        /**
+         * This is incredibly roundabout - I'll make it more refined when other
+         * stuff has been completed.  No sense in wasting time on it just yet.
+         */
+        var results = data.d.results,
           pages = {},
           fhm = [],
-          comm = [];
-        while ( page = data.d.results.shift() ) {
+          comm = [],
+          i = 0,
+          count = results.length,
+          page;
+        for ( ; i < count; ++i ) {
+          page = results[i];
           pages[page.Category] = page.Title;
           if ( page.Category.charAt(1) === "F" || page.Category.charAt(1) === "f" ) {
             // This one is Force Health
@@ -617,14 +644,16 @@
           h("optgroup", { label: "Force Health Management" }, fhm),
           h("optgroup", { label: "Community Health" }, comm)
         ];
+        console.log("Getting list internals complete.");
       },
       error: util.connError
     });
   }
 
-  function init ( path, type ) {
+  function init ( path ) {
+    console.log("Begin init...");
     reqwest({
-      url: app.sitePath + "_api/lists/getByTitle('" + type + "')/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
+      url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
       method: "GET",
       type: "json",
       contentType: "application/json",
@@ -645,7 +674,7 @@
           text: obj.Text || "",
           references: obj.References.results || [],
           category: obj.Category.split("/"),
-          contentType: type,
+          contentType: "Content",
           listItemType: obj.__metadata.type,
           timestamp: (Date && Date.now() || new Date())
         });
@@ -654,9 +683,9 @@
         loadingSomething(false, app.domRefs.output);
       },
       error: util.connError,
-      complete: function () {
+      complete: function() {
         if ( CodeMirror ) {
-          setupEditor(app.currentContent);
+          setupEditor();
         }
       }
     });
@@ -677,16 +706,14 @@
 
           },*/
 
-          //once: getList,
+          once: getList,
           on: function ( root, sub ) {
-            // If there's no default, forward to the content page.
-            //app.router.setRoute("/" + root + "/" + sub + "/Content");
             loadingSomething(true, app.domRefs.output);
             init("/" + root + "/" + sub);
           }
         },
 
-        //once: getList,
+        once: getList,
         on: function ( root ) {
           /*var keys = Object.keys(app.pages);
            var path = keys.indexOf(root);
@@ -703,23 +730,22 @@
            return false;
            }
            console.log("1: root transform = " + root);*/
-          console.log(root);
           loadingSomething(true, app.domRefs.output);
-          init(root);
+          init("/" + root);
         }
       }
     }
   ).configure({
-      //convert_handler_in_init: true,
-      strict: false,/*
-       recurse: "forward",*/
-      after: resetPage,
-      notfound: function () {
-        console.log("location unavailable - this is the notfound handler");
-        console.log("forwarding to PHA for kicks");
-        app.router.setRoute("/fhm/pha");
-      }
-    });
+    //convert_handler_in_init: true,
+    strict: false,/*
+     recurse: "forward",*/
+    after: resetPage,
+    notfound: function () {
+      console.log("location unavailable - this is the notfound() handler");
+      console.log("Forwarding to Travel Med for kicks");
+      app.router.setRoute("/fhm/travelmedicine");
+    }
+  });
 
   pageSetup();
 

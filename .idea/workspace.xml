@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/content3.js" afterPath="$PROJECT_DIR$/content3.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/content3.min.js" afterPath="$PROJECT_DIR$/content3.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/content3.pre.js" afterPath="$PROJECT_DIR$/content3.pre.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/helpers.js" afterPath="$PROJECT_DIR$/helpers.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pageview.min.css" afterPath="$PROJECT_DIR$/pageview.min.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pageview.pure.css" afterPath="$PROJECT_DIR$/pageview.pure.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/domStore.js" afterPath="$PROJECT_DIR$/domStore.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pageview.css" afterPath="$PROJECT_DIR$/pageview.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -68,11 +64,12 @@
           <file leaf-file-name="content3.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/content3.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.023679417">
-                  <caret line="623" column="0" selection-start-line="623" selection-start-column="0" selection-end-line="623" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.40983605">
+                  <caret line="104" column="28" selection-start-line="104" selection-start-column="28" selection-end-line="104" selection-end-column="28" />
                   <folding>
                     <element signature="e#86#1266#0" expanded="false" />
                     <element signature="e#1311#1516#0" expanded="false" />
+                    <element signature="e#21695#21869#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -92,7 +89,7 @@
             <entry file="file://$PROJECT_DIR$/domStore.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="32" column="4" selection-start-line="32" selection-start-column="4" selection-end-line="32" selection-end-column="4" />
+                  <caret line="11" column="46" selection-start-line="11" selection-start-column="46" selection-end-line="11" selection-end-column="46" />
                   <folding />
                 </state>
               </provider>
@@ -105,8 +102,8 @@
           <file leaf-file-name="pageview.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/pageview.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.6812386">
-                  <caret line="542" column="0" selection-start-line="542" selection-start-column="0" selection-end-line="543" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.5027322">
+                  <caret line="117" column="22" selection-start-line="117" selection-start-column="22" selection-end-line="117" selection-end-column="22" />
                   <folding />
                 </state>
               </provider>
@@ -152,7 +149,6 @@
         <option value="$PROJECT_DIR$/virtualDom.js" />
         <option value="$PROJECT_DIR$/virtualDom.min.js" />
         <option value="$PROJECT_DIR$/content2.js" />
-        <option value="$PROJECT_DIR$/domStore.js" />
         <option value="$PROJECT_DIR$/access.js" />
         <option value="$PROJECT_DIR$/content3a.js" />
         <option value="$PROJECT_DIR$/content3b.js" />
@@ -164,11 +160,12 @@
         <option value="$PROJECT_DIR$/content4.js" />
         <option value="$PROJECT_DIR$/modal.js" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/pageview.css" />
         <option value="$PROJECT_DIR$/helpers.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/menu.js" />
+        <option value="$PROJECT_DIR$/domStore.js" />
         <option value="$PROJECT_DIR$/content3.js" />
+        <option value="$PROJECT_DIR$/pageview.css" />
       </list>
     </option>
   </component>
@@ -359,7 +356,13 @@
       <option name="project" value="LOCAL" />
       <updated>1437626886213</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="modularized helpers.js and removed tertiary routes">
+      <created>1438131785709</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1438131785709</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -377,6 +380,7 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2483248" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -388,7 +392,6 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39953542" sideWeight="0.49862042" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -421,7 +424,8 @@
     <MESSAGE value="change event for input element added" />
     <MESSAGE value="slight style adjustments. moved elements around too" />
     <MESSAGE value="janky animation problem solved for modal open/close.  still need to fix toggler" />
-    <option name="LAST_COMMIT_MESSAGE" value="janky animation problem solved for modal open/close.  still need to fix toggler" />
+    <MESSAGE value="modularized helpers.js and removed tertiary routes" />
+    <option name="LAST_COMMIT_MESSAGE" value="modularized helpers.js and removed tertiary routes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -461,6 +465,7 @@
           <folding>
             <element signature="e#86#1266#0" expanded="false" />
             <element signature="e#1311#1516#0" expanded="false" />
+            <element signature="e#21695#21869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -520,6 +525,7 @@
           <folding>
             <element signature="e#86#1266#0" expanded="false" />
             <element signature="e#1311#1516#0" expanded="false" />
+            <element signature="e#21695#21869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -748,6 +754,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="173" column="7" selection-start-line="173" selection-start-column="7" selection-end-line="173" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -778,14 +785,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pageview.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6812386">
-          <caret line="542" column="0" selection-start-line="542" selection-start-column="0" selection-end-line="543" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Gruntfile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -802,10 +801,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-13.037037">
+          <caret line="16" column="14" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="4" selection-start-line="32" selection-start-column="4" selection-end-line="32" selection-end-column="4" />
+          <caret line="11" column="46" selection-start-line="11" selection-start-column="46" selection-end-line="11" selection-end-column="46" />
           <folding />
         </state>
       </provider>
@@ -818,22 +825,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.037037">
-          <caret line="16" column="14" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/content3.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.023679417">
-          <caret line="623" column="0" selection-start-line="623" selection-start-column="0" selection-end-line="623" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.40983605">
+          <caret line="104" column="28" selection-start-line="104" selection-start-column="28" selection-end-line="104" selection-end-column="28" />
           <folding>
             <element signature="e#86#1266#0" expanded="false" />
             <element signature="e#1311#1516#0" expanded="false" />
+            <element signature="e#21695#21869#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5027322">
+          <caret line="117" column="22" selection-start-line="117" selection-start-column="22" selection-end-line="117" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>

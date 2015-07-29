@@ -6,7 +6,6 @@ function DOMRef ( nodes ) {
     titleField: document.getElementById("titleField"),
     contentWrap: document.getElementById("contentWrap"),
     cheatSheet: document.getElementById("cheatSheet"),
-    $contentWrap: null,
     input: document.getElementById("input"),
     textarea: document.getElementById("textarea"),
     editor: null,

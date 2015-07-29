@@ -109,18 +109,20 @@ body{
 
 .btn{
   /*z-index:1;*/
+  display: inline-block;
   opacity: 1;
   position:relative;
   color:#FAFAFA;
   cursor:pointer;
   line-height:1.5;
-  float:right;
+  letter-spacing: 1px;
+  float: none;
   border-radius:4px;
   margin:5px 20px;
   border: 2px dashed transparent;
-  text-shadow:0 1px 0 #404040;
-  text-shadow:0 1px 0 rgba(0,0,0,.35);
-  border-bottom:2px solid #666;
+  text-shadow:0 1px 0 #888888;
+  text-shadow:0 1px 0 rgba(0,0,0,.5);
+  border-bottom:2px solid #222;
   width:auto;
 }
 
@@ -136,10 +138,9 @@ body{
 }
 
 #toggleButton {
-  background-color: #555;
-  letter-spacing: 1px;
-  float:left;
-  clear:left;
+  background-color: #222;
+  /*float:left;*/
+  /*clear:left;*/
   color:#FAFAFA;
   /*width:auto;*/
   font-weight:bold;
@@ -154,18 +155,15 @@ body{
 #cheatSheetButton {
   color: #222;
   border-color: #222;
-  float: left;
-  display: block;
-  opacity: 1;
+  /*float: left;*/
   /*text-decoration: underline;*/
 }
 
-#saveButton,
+/*#saveButton,
 #createButton,
-#deleteButton,
-#titleField {
+#deleteButton {
   float: right;
-}
+}*/
 
 #saveButton{
   /*width:auto;*/
@@ -192,7 +190,6 @@ body{
 }
 
 #deleteButton{
-  float:right;
   background-color: #354457;
   /*background-color: #BBB;*/
   /*background-color:#FF5F54;*/
@@ -205,10 +202,36 @@ body{
   /*background-color:#B23229*/
 }
 
+#wrapper input[type="text"],
+#wrapper select,
+.modalOverlay input[type="text"],
+.modalOverlay select {
+  background-color: #FAFAFA;
+  color: #4183D7;
+  font-size: 2em;
+  border: 1px solid;
+  padding: .5em .33em;
+  outline: 0;
+  outline: none;
+  float: none;
+  font-family: inherit;
+  display: block;
+  line-height: 1;
+  margin-bottom: 1em;
+  text-align: left;
+}
+
+#wrapper #titleFieldLabel {
+  margin:5px 20px;
+  float: left;
+  clear: both;
+  text-align: left;
+}
+
 .fullPage #saveButton,
 .fullPage #createButton,
 .fullPage #deleteButton,
-.fullPage #titleField,
+#wrapper .fullPage #titleFieldLabel,
 .fullPage #cheatSheet,
 .fullPage #input,
 .fullPage #cheatSheetButton,
@@ -450,31 +473,6 @@ body{
 
 #output tr:nth-child(even) td,tr:nth-child(even) th{
   background:#eee
-}
-
-#wrapper input[type="text"],
-#wrapper select,
-.modalOverlay input[type="text"],
-.modalOverlay select {
-  background-color: #FAFAFA;
-  color: #4183D7;
-  font-size: 2em;
-  border: 1px solid;
-  padding: .5em .33em;
-  outline: 0;
-  outline: none;
-  float: none;
-  font-family: inherit;
-  display: block;
-  line-height: 1;
-  margin-bottom: 1em;
-  text-align: left;
-}
-
-#wrapper #titleField {
-  margin:5px 20px;
-  float: right;
-  clear: both;
 }
 
 #wrapper .CodeMirror.CodeMirror{
