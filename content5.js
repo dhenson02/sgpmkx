@@ -65,7 +65,7 @@
       modalDOM: null,
       modalOverlay: null,
       router: null,
-      menuItems: [],
+      menuItems: null,
       //animating: false,
       inTransition: {}
     };
@@ -609,18 +609,21 @@
               h("option", { value: page.Category }, [String(page.Title)])
             );
           }
-          else if ( page.Category.length === 1 ) {
+          /*else if ( page.Category.length === 1 ) {
             // Homepage
             app.menuItems.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
-          }
+          }*/
         }
-        app.menuItems.concat([
+        app.menuItems = [
+          //h("option", { value: "/fhm" }, ["Force Health Management"]),
           h("optgroup", { label: "Force Health Management" }, fhm),
+          //h("option", { value: "/comm" }, ["Community Health"]),
           h("optgroup", { label: "Community Health" }, comm)
-        ]);
-        console.log("Getting list internals complete.");
+        ];
+
+        console.log("Getting list internals complete.", app.menuItems);
       },
       error: util.connError
     });
@@ -668,7 +671,11 @@
   }
 
   app.router = Router({
+      '/new': {
+        on: function () {
 
+        }
+      },
       '/(fhm|comm)': {
 
         '/(\\w+)': {

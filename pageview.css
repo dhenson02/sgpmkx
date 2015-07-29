@@ -96,7 +96,7 @@ body{
 #buttons {
   /*z-index:1;*/
   width:100%;
-  margin: 10px auto;
+  margin: 20px auto 10px;
   text-align:center;
   position:relative;
   /*overflow:hidden;*/
