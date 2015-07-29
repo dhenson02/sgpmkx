@@ -20,18 +20,18 @@ function render ( fhm, comm ) {
       h("ul", [
         h("li", [
           h("p.root-cat", [
-            h("a", {
+            h("span", /*{
               "href": "#/Comm"
-            }, [ "Community Health" ])
+            },*/ [ "Community Health" ])
           ]),
           h("hr"),
           h("ul", comm)
         ]),
         h("li", [
           h("p.root-cat", [
-            h("a", {
+            h("span", /*{
               "href": "#/FHM"
-            }, [ "Force Health Management" ])
+            },*/ [ "Force Health Management" ])
           ]),
           h("hr"),
           h("ul", fhm)

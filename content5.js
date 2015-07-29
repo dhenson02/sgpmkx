@@ -657,7 +657,7 @@
       },
       success: function ( data ) {
         if ( !data.d.results[0] ) {
-          loadingSomething(false, app.domRefs.output);
+          //loadingSomething(false, app.domRefs.output);
           // This next line is just for debugging.  Something better will replace it later.
           window.location.href = baseURL + "/Pages/land.aspx";
           return false;
