@@ -1,0 +1,51 @@
+
+#wrapper .CodeMirror.CodeMirror{
+  position:absolute;
+  border:1px solid #CCC;
+  top:90px;
+  left:0;
+  right:0;
+  bottom:0;
+  width:auto;
+  height:auto
+}
+
+#wrapper .CodeMirror pre{
+  line-height:1.5
+}
+
+#wrapper .CodeMirror-scroll{
+  padding:30px
+}
+
+#wrapper .cm-header-1{
+  font-size:2em
+}
+
+#wrapper .cm-header-2{
+  font-size:1.75em
+}
+
+#wrapper .cm-header-3{
+  font-size:1.5em
+}
+
+#wrapper .cm-header-4{
+  font-size:1.3em
+}
+
+#wrapper .cm-header-5{
+  font-size:1.2em
+}
+
+#wrapper .cm-header-6{
+  font-size:1.15em
+}
+
+#wrapper .cm-quote{
+  color:#90A959;
+  font-style:italic;
+  margin:0;
+  padding-left:3em;
+  border-left:.5em #EEE solid
+}

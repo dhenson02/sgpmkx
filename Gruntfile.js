@@ -4,7 +4,7 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          'content5.pre.js': ['content5.js', 'helpers.js', 'store.js', 'domStore.js']
+          'content5.pre.js': ['nav.js', 'content5.js', 'helpers.js', 'store.js', 'domStore.js']
         }
       }
     },
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
       options: {},
       target: {
         src: ['manager2b.aspx', 'main.min.js'],
-        css: ['pageview.css'],
+        css: ['pageview.css', 'buttons.css', 'generic.css', 'codemirror.css', 'modal.css', 'nav.css'],
         dest: 'pageview.pure.css'
       }
     },
@@ -101,7 +101,7 @@ module.exports = function(grunt) {
           spawn: false,
           atBegin: true
         },
-        files: ['content5.js', 'manager.js', 'helpers.js', 'actions.js', 'render.js', 'store*.js', 'domStore*.js'],
+        files: ['content5.js', 'nav.js', 'manager.js', 'helpers.js', 'actions.js', 'render.js', 'store*.js', 'domStore*.js'],
         tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin']
       }
     }

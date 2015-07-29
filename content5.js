@@ -54,6 +54,7 @@
     util = require("./helpers"),
     Content = require("./store"),
     DOMRef = require("./domStore"),
+    renderNav = require("./nav"),
     app = {
       sitePath: window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
       digest: document.getElementById("__REQUESTDIGEST").value,
@@ -64,15 +65,16 @@
       rootNode: null,
       modalDOM: null,
       modalOverlay: null,
+      navDOM: null,
       router: null,
       menuItems: null,
-      //animating: false,
       inTransition: {}
     };
 
   function render () {
     return (
       h("#wrapper", [
+        h("div#sideNav", [app.navDOM]),
         h("#content.fullPage", [
           h("#contentWrap", [
             h("#output")
@@ -85,6 +87,7 @@
   function renderEditor () {
     return (
       h("#wrapper", [
+        h("div#sideNav", [app.navDOM]),
         h("#content.fullPage", [
           h("#buttons", [
             h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
@@ -533,7 +536,7 @@
       })
     });
     app.domRefs.editor.on("change", update);
-    app.domRefs.editor.refresh();
+    //app.domRefs.editor.refresh();
     app.domRefs.buttons.childNodes[0].removeAttribute("style");
     console.log("Editor loaded");
   }
@@ -590,40 +593,49 @@
         var results = data.d.results,
           pages = {},
           fhm = [],
+          fhmLinks = [],
           comm = [],
+          commLinks = [],
           i = 0,
           count = results.length,
           page;
         for ( ; i < count; ++i ) {
           page = results[i];
           pages[page.Category] = page.Title;
-          if ( page.Category.charAt(1) === "F" || page.Category.charAt(1) === "f" ) {
+          if ( /^\/fhm\//i.test(page.Category) ) {
             // This one is Force Health
             fhm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
+            fhmLinks.push(
+              h("li", [
+                h("a", { href: "#" + page.Category }, [String(page.Title)]),
+                h("hr")
+              ])
+            )
           }
-          else if ( page.Category.charAt(1) === "C" || page.Category.charAt(1) === "c" ) {
+          if ( /^\/comm\//i.test(page.Category) ) {
             // This is Comm
             comm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
+            commLinks.push(
+              h("li", [
+                h("a", { href: "#" + page.Category }, [String(page.Title)]),
+                h("hr")
+              ])
+            )
           }
-          /*else if ( page.Category.length === 1 ) {
-            // Homepage
-            app.menuItems.push(
-              h("option", { value: page.Category }, [String(page.Title)])
-            );
-          }*/
         }
         app.menuItems = [
-          //h("option", { value: "/fhm" }, ["Force Health Management"]),
-          h("optgroup", { label: "Force Health Management" }, fhm),
-          //h("option", { value: "/comm" }, ["Community Health"]),
-          h("optgroup", { label: "Community Health" }, comm)
+          h("option", { value: "/FHM" }, ["Force Health Management"]),
+          h("optgroup", { label: "--Sub-Cateogries--" }, fhm),
+          h("option", { value: "/Comm" }, ["Community Health"]),
+          h("optgroup", { label: "--Sub-Cateogries--" }, comm)
         ];
-
-        console.log("Getting list internals complete.", app.menuItems);
+        app.navDOM = renderNav(fhmLinks, commLinks);
+        console.log("Getting list internals complete.");
+        pageSetup();
       },
       error: util.connError
     });
@@ -644,6 +656,7 @@
       },
       success: function ( data ) {
         if ( !data.d.results[0] ) {
+          loadingSomething(false, app.domRefs.output);
           return false;
         }
         var obj = data.d.results[0];
@@ -662,7 +675,7 @@
         loadingSomething(false, app.domRefs.output);
       },
       error: util.connError,
-      complete: function() {
+      complete: function () {
         if ( CodeMirror ) {
           setupEditor();
         }
@@ -676,7 +689,7 @@
 
         }
       },
-      '/(fhm|comm)': {
+      '/(\\w+)': {
 
         '/(\\w+)': {
 
@@ -689,14 +702,14 @@
 
           },*/
 
-          once: getList,
+          //once: getList,
           on: function ( root, sub ) {
             loadingSomething(true, app.domRefs.output);
             init("/" + root + "/" + sub);
           }
         },
 
-        once: getList,
+        //once: getList,
         on: function ( root ) {
           /*var keys = Object.keys(app.pages);
            var path = keys.indexOf(root);
@@ -726,11 +739,11 @@
     notfound: function () {
       console.log("location unavailable - this is the notfound() handler");
       console.log("Forwarding to Travel Med for kicks");
-      app.router.setRoute("/fhm/travelmedicine");
+      app.router.setRoute("/FHM/travelMedicine");
     }
   });
 
-  pageSetup();
+  getList();
 
   module.exports = app;
 

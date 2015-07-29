@@ -28,6 +28,7 @@ body{
   box-sizing:border-box!important
 }
 .loading, .nochange{
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
   opacity:.35;
   pointer-events:none
 }
@@ -36,18 +37,21 @@ body{
   font-size:18px;
   overflow:hidden;
   min-width:100%;
+  position: relative;
 }
 #content {
   /*top: 1em;*/
-  min-width:100%;
-  font-size: 100%;
   position:relative;
+  font-size: 100%;
+  height:100%;
   min-height:720px;
   max-height:100%;
-  height:100%
+  width:100%;
+  min-width: 660px;
+  float:left;
+  clear:none;
 }
 #content.fullPage{
-  width:100%;
   min-height:min-content;
   right:auto;
   left:auto;
@@ -57,38 +61,119 @@ body{
 #contentWrap{
   opacity:1;
   position:relative;
-  color:#444;
+  /*color:#444;*/
   overflow:visible;
-  min-height:540px;
+  min-height:640px;
   /*height:85%;*/
-  margin:20px;
-  margin-bottom: 0;
-  /*top:50px;*/
+  margin:10px 20px 0;
   bottom:0;
   left:0;
   right:0;
 }
 .fullPage #contentWrap{
-  position:relative;
   top:auto;
   bottom:auto;
   right:auto;
   left:auto;
   margin:20px auto;
   min-height:min-content;
-  max-height:100%;
   height:100%;
-  width:100%;
-  max-width:800px;
+  width:660px;
+}
+#wrapper input[type="text"],
+#wrapper select,
+.modalOverlay input[type="text"],
+.modalOverlay select {
+  background-color: #FAFAFA;
+  color: #4183D7;
+  font-size: 2em;
+  border: 1px solid;
+  padding: .5em .33em;
+  outline: 0;
+  outline: none;
+  float: none;
+  font-family: inherit;
+  display: block;
+  line-height: 1;
+  margin-bottom: 1em;
+  text-align: left;
+}
+#wrapper #titleFieldLabel {
+  /*margin:5px 20px;*/
+  /*float: left;
+  clear: both;*/
+  text-align: left;
+  display: block;
+}
+#wrapper #titleField {
+  width: 100%;
+}
+.fullPage #saveButton,
+.fullPage #createButton,
+.fullPage #deleteButton,
+#wrapper .fullPage #titleFieldLabel,
+.fullPage #input,
+.fullPage #cheatSheetButton,
+.fullPage #cheatSheet {
+  display:none;
+}
+#input{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:45%;
+  height:100%;
+  overflow:hidden;
+  font-size:14px;
+}
+#output{
+  text-rendering:optimizeLegibility;
+  position:absolute;
+  color:#555;
+  /* This will hide the scrollbar on most **normal** browsers */
+  right:-17px;
+  left:55%;
+  top:0;
+  bottom:0;
+  overflow:auto;
+  padding:10px 10px 10px 20px;
+  line-height:1.5;
+  max-width: 660px;
+  width: 100%;
+  border: 4px dashed transparent;
+}
+.fullPage #output{
+  position:relative;
+  background-color:transparent;
+  border-color:transparent;
+  left:auto;
+  top:auto;
+  right:auto;
+  bottom:auto;
+  overflow:visible
+}
+#cheatSheet {
+  height: 300px;
+  padding: 20px;
+}
+#wrapper.loading,
+#content.loading,
+#contentWrap.loading,
+#input.loading,
+#output.loading {
+  border-color: #BBB;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+  opacity: .35;
 }
 #buttons {
   /*z-index:1;*/
   width:100%;
-  margin:0 auto;
+  margin: 20px auto 10px;
   text-align:center;
   position:relative;
-  overflow:hidden;
-  bottom: 100%;
+  /*overflow:hidden;*/
+  /*bottom: 100%;*/
 }
 .fullPage #buttons  {
   max-width: 960px;
@@ -96,7 +181,6 @@ body{
 .btn{
   /*z-index:1;*/
   display: inline-block;
-  opacity: 1;
   position:relative;
   color:#FAFAFA;
   cursor:pointer;
@@ -104,7 +188,7 @@ body{
   letter-spacing: 1px;
   float: none;
   border-radius:4px;
-  margin:5px 20px;
+  /*margin:5px 20px;*/
   border: 2px dashed transparent;
   text-shadow:0 1px 0 #888888;
   text-shadow:0 1px 0 rgba(0,0,0,.5);
@@ -139,12 +223,7 @@ body{
   /*float: left;*/
   /*text-decoration: underline;*/
 }
-/*#saveButton,
-#createButton,
-#deleteButton {
-  float: right;
-}
-*/#saveButton{
+#saveButton{
   /*width:auto;*/
   background-color:#4183D7
 }
@@ -175,105 +254,7 @@ body{
   /*background-color: #999;*/
   /*background-color:#B23229*/
 }
-#wrapper input[type="text"],
-#wrapper select,
-.modalOverlay input[type="text"],
-.modalOverlay select {
-  background-color: #FAFAFA;
-  color: #4183D7;
-  font-size: 2em;
-  border: 1px solid;
-  padding: .5em .33em;
-  outline: 0;
-  outline: none;
-  float: none;
-  font-family: inherit;
-  display: block;
-  line-height: 1;
-  margin-bottom: 1em;
-  text-align: left;
-}
-#wrapper #titleFieldLabel {
-  margin:5px 20px;
-  /*float: left;
-  clear: both;*/
-  text-align: left;
-  display: block;
-}
-.fullPage #saveButton,
-.fullPage #createButton,
-.fullPage #deleteButton,
-#wrapper .fullPage #titleFieldLabel,
-.fullPage #cheatSheet,
-.fullPage #input,
-.fullPage #cheatSheetButton,
-#cheatSheet {
-  opacity:0;
-  display:none;
-  pointer-events: none;
-  z-index: -1;
-}
-#input{
-  display:block;
-  opacity:1;
-  position:absolute;
-  top:0;
-  left:0;
-  bottom:0;
-  width:45%;
-  height:100%;
-  overflow:auto;
-  font-size:14px;
-  /*max-width: 640px;*/
-}
-#output{
-  display:block;
-  opacity:1;
-  text-rendering:optimizeLegibility;
-  position:absolute;
-  color:#555;
-  /* This will hide the scrollbar on most browsers */
-  right:-17px;
-  left:55%;
-  top:0;
-  bottom:0;
-  overflow:auto;
-  padding:10px 10px 10px 20px;
-  line-height:1.5;
-  max-width: 960px;
-  border: 4px dashed transparent;
-}
-.fullPage #output{
-  position:relative;
-  background-color:transparent;
-  border-color:transparent;
-  left:auto;
-  top:auto;
-  right:auto;
-  bottom:auto;
-  overflow:visible
-}
-#contentWrap.cheatSheet {
-  position: relative;
-  /*top: 400px;*/
-}
-#cheatSheet.cheatSheet {
-  height: 300px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  display: block;
-  opacity: 1;
-  pointer-events: auto;
-}
-#wrapper.loading,
-#content.loading,
-#contentWrap.loading,
-#input.loading,
-#output.loading {
-  border-color: #BBB;
-  opacity: .35;
-}
-#output a{
+ #output a{
   color:#0645ad;
   text-decoration:none
 }
@@ -295,7 +276,7 @@ body{
 #output p{
   margin: 1em 0
 }
-#content img{
+#wrapper img{
   max-width:100%
 }
 #wrapper h1,#wrapper h2,#wrapper h3,#wrapper h4,#wrapper h5,#wrapper h6{
@@ -391,12 +372,12 @@ body{
 #output dd{
   margin:0 0 0 2em
 }
-#content img{
+#wrapper img{
   border:0;
   -ms-interpolation-mode:bicubic;
   vertical-align:middle
 }
-#content table{
+#wrapper table{
   border-collapse:collapse;
   border-spacing:0
 }
@@ -411,7 +392,7 @@ body{
 #wrapper .CodeMirror.CodeMirror{
   position:absolute;
   border:1px solid #CCC;
-  top:0;
+  top:90px;
   left:0;
   right:0;
   bottom:0;
@@ -453,7 +434,6 @@ body{
  * Thanks to codrops for the quick and easy inspiration for cross-browser CSS overlay + modal.
  * http://tympanus.net/codrops/2013/11/07/css-overlay-techniques/
  */.modalOverlay{
-  display:block;
   position:fixed;
   top:0;
   left:0;
@@ -463,16 +443,15 @@ body{
 .modalBg{
   /*z-index:10;*/
   position:absolute;
-  display:block;
   background-color:#222;
   top:0;
   left:0;
   bottom:0;
   right:0;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
   opacity:.75;
 }
 .modal {
-  display:block;
   min-width:25em;
   max-height: 45em;
   position: fixed;
@@ -538,7 +517,89 @@ body{
   /*padding-top: 20px;*/
   /*bottom:20px;*/
 }
- @media all and (max-width:1024px){
+#sideNav {
+  z-index: 6;
+  color:#F5F5FF;
+  position: relative;
+  float:left;
+  clear:none;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  width: 300px;
+  min-height: 720px;
+  max-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
+  font-size:18px;
+}
+#navWrap {
+  position: absolute;
+  background-color: #1c5ba2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 317px;
+  overflow: auto;
+}
+#navWrap .header {
+  display: table;
+  font-size: .875em;
+  padding: 20px 20px 0;
+}
+#navWrap .logo,
+#navWrap .text {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+#navWrap ul,
+#navWrap li {
+  list-style: none;
+  padding-left: 0;
+}
+#navWrap li li a {
+  font-size: 15px;
+  padding: 0 20px;
+  /*border-top: 1px solid; */
+}
+#navWrap .root-cat {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  padding: 20px;
+  line-height: 1.3;
+}
+#navWrap a{
+  color:#F5F5FF;
+  text-decoration:none
+}
+#navWrap a:hover{
+  color:#E5E5EE;
+}
+#navWrap a:active{
+  color:#FAA700
+}
+#navWrap a:visited{
+  color:#C0C0CC;
+}
+#navWrap a:active,#navWrap a:hover,#navWrap a:focus{
+  outline:0
+}
+#navWrap hr{
+  display:block;
+  color:#FFFFFF;
+  height:1px;
+  margin: 10px 0;
+  padding:0;
+  border:none;
+  border-top:1px solid;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  opacity: .2;
+}
+@media all and (max-width:1024px){
   #content{
  min-width:fit-content
 }
@@ -560,3 +621,4 @@ body{
  display:block
 }
 }
+  

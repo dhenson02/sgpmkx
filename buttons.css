@@ -1,0 +1,102 @@
+
+#buttons {
+  /*z-index:1;*/
+  width:100%;
+  margin: 20px auto 10px;
+  text-align:center;
+  position:relative;
+  /*overflow:hidden;*/
+  /*bottom: 100%;*/
+}
+
+.fullPage #buttons  {
+  max-width: 960px;
+}
+
+.btn{
+  /*z-index:1;*/
+  display: inline-block;
+  position:relative;
+  color:#FAFAFA;
+  cursor:pointer;
+  line-height:1.5;
+  letter-spacing: 1px;
+  float: none;
+  border-radius:4px;
+  /*margin:5px 20px;*/
+  border: 2px dashed transparent;
+  text-shadow:0 1px 0 #888888;
+  text-shadow:0 1px 0 rgba(0,0,0,.5);
+  border-bottom:2px solid #222;
+  width:auto;
+}
+
+.btn.loading {
+  border-color: #BBB;
+  border-style: dashed;
+}
+
+.btn > span {
+  display:block;
+  text-align:center;
+  padding:5px 13px
+}
+
+#toggleButton {
+  background-color: #222;
+  /*float:left;*/
+  /*clear:left;*/
+  color:#FAFAFA;
+  /*width:auto;*/
+  font-weight:bold;
+}
+
+#toggleButton:active {
+  background-color:#FAFAFA;
+  color:#555;
+  border-color: #555;
+}
+
+#cheatSheetButton {
+  color: #222;
+  border-color: #222;
+  /*float: left;*/
+  /*text-decoration: underline;*/
+}
+
+#saveButton{
+  /*width:auto;*/
+  background-color:#4183D7
+}
+
+#saveButton:active{
+  background-color:#446CB3
+}
+
+#createButton{
+  background-color:#1A3557;
+  /*background-color:#00BA6A;*/
+  /*background-color:#8800BA;*/
+  /*color:#222*/
+  /*width:auto;*/
+}
+
+#createButton:active{
+  background-color: #3264A4;
+  /*background-color: #0E870E;*/
+  /*background-color:#943494;*/
+  /*color:#FAFAFA*/
+}
+
+#deleteButton{
+  background-color: #354457;
+  /*background-color: #BBB;*/
+  /*background-color:#FF5F54;*/
+  /*width:auto*/
+}
+
+#deleteButton:active{
+  background-color: #86ACDE;
+  /*background-color: #999;*/
+  /*background-color:#B23229*/
+}
