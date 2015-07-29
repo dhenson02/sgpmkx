@@ -4,6 +4,7 @@
     fhmLinks = '',
     commLinks = '';
 
+  document.title = "USAF Public Health";
   reqwest({
     url: "/kj/kx7/PublicHealth/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')/items/?$select=Title,Category",
     method: "GET",
@@ -33,9 +34,15 @@
       }
       fhm.innerHTML = fhmLinks;
       comm.innerHTML = commLinks;
+      return true;
     },
-    error: function(error) {
+    error: function (error) {
       console.log(error);
+      return false;
+    },
+    complete: function () {
+      document.title = "USAF Public Health";
+      return true;
     }
   });
 })();

@@ -9,7 +9,7 @@ function render ( fhm, comm ) {
       }, [
         h("div.logo", [
           h("img", {
-            "src": "https://jsbin-user-assets.s3.amazonaws.com/dhenson02/phLogo48-gs.png",
+            "src": "/kj/kx7/PublicHealth/SiteAssets/Pages/landing/phLogo48-gs.png",
             "alt": "Public Health Home",
             "height": "48",
             "width": "48"
