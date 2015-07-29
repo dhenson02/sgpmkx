@@ -55,8 +55,9 @@
     Content = require("./store"),
     DOMRef = require("./domStore"),
     renderNav = require("./nav"),
+    baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
     app = {
-      sitePath: window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
+      sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
       digest: document.getElementById("__REQUESTDIGEST").value,
       pages: {},
       currentContent: new Content(),
@@ -514,7 +515,7 @@
     }
     else {
       // Just for debugging - change to main page later.
-      app.router.init("/FHM/PHA");
+      app.router.init("/");
     }
   }
 
@@ -657,6 +658,8 @@
       success: function ( data ) {
         if ( !data.d.results[0] ) {
           loadingSomething(false, app.domRefs.output);
+          // This next line is just for debugging.  Something better will replace it later.
+          window.location.href = baseURL + "/Pages/land.aspx";
           return false;
         }
         var obj = data.d.results[0];
@@ -710,9 +713,8 @@
      recurse: "forward",*/
     after: resetPage,
     notfound: function () {
-      console.log("location unavailable - this is the notfound() handler");
-      console.log("Forwarding to Travel Med for kicks");
-      app.router.setRoute("/FHM/travelMedicine");
+      //app.router.setRoute("/FHM/travelMedicine");
+      window.location.href = baseURL + "/Pages/land.aspx";
     }
   });
 

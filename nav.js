@@ -3,9 +3,9 @@ var h = require("virtual-dom/h"),
 
 function render ( fhm, comm ) {
   return (
-    h("div#navWrap", [
+    h("div#navWrap.nav", [
       h("a.header", {
-        "href": "#/"
+        "href": "land.aspx"
       }, [
         h("div.logo", [
           h("img", {

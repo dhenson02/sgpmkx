@@ -32,6 +32,12 @@ body{
   opacity:.35;
   pointer-events:none
 }
+#wrapper a {
+  text-decoration:none;
+}
+#wrapper a:active, #wrapper a:hover, #wrapper a:focus {
+  outline:0
+}
 #wrapper {
   font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
   font-size:18px;
@@ -40,21 +46,22 @@ body{
   position: relative;
 }
 #content {
-  /*top: 1em;*/
   position:relative;
+  left: 300px;
+  top:0;
+  bottom:0;
   font-size: 100%;
   height:100%;
   min-height:720px;
   max-height:100%;
-  width:100%;
-  min-width: 660px;
+  /*width:100%;*/
+  /*min-width: 660px;*/
   float:left;
   clear:none;
 }
 #content.fullPage{
-  min-height:min-content;
   right:auto;
-  left:auto;
+  /*left:auto;*/
   bottom:auto;
   overflow:visible
 }
@@ -256,7 +263,6 @@ body{
 }
  #output a{
   color:#0645ad;
-  text-decoration:none
 }
 #output a:visited{
   color:#0b0080
@@ -266,12 +272,6 @@ body{
 }
 #output a:active{
   color:#faa700
-}
-#output a:focus{
-  outline:dotted thin
-}
-#output a:active,#output a:hover{
-  outline:0
 }
 #output p{
   margin: 1em 0
@@ -517,10 +517,10 @@ body{
   /*padding-top: 20px;*/
   /*bottom:20px;*/
 }
-#sideNav {
+ #sideNav {
   z-index: 6;
   color:#F5F5FF;
-  position: relative;
+  position: absolute;
   float:left;
   clear:none;
   left: 0;
@@ -532,7 +532,7 @@ body{
   height: 100%;
   overflow: hidden;
   font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
-  font-size:18px;
+  /*font-size:18px;*/
 }
 #navWrap {
   position: absolute;
@@ -543,17 +543,23 @@ body{
   width: 317px;
   overflow: auto;
 }
-#navWrap .header {
+.nav .header {
   display: table;
-  font-size: .875em;
+  /*font-size: .875em;*/
   padding: 20px 20px 0;
 }
-#navWrap .logo,
-#navWrap .text {
+.nav .logo,
+.nav .text {
   display: table-cell;
   vertical-align: middle;
   padding-left: 5px;
   padding-right: 5px;
+}
+.nav .text {
+  font-size: 15px;
+}
+.nav .text small {
+  font-size: 9px;
 }
 #navWrap ul,
 #navWrap li {
@@ -574,7 +580,6 @@ body{
 }
 #navWrap a{
   color:#F5F5FF;
-  text-decoration:none
 }
 #navWrap a:hover{
   color:#E5E5EE;
@@ -582,13 +587,10 @@ body{
 #navWrap a:active{
   color:#FAA700
 }
-#navWrap a:visited{
+/*#navWrap a:visited{
   color:#C0C0CC;
 }
-#navWrap a:active,#navWrap a:hover,#navWrap a:focus{
-  outline:0
-}
-#navWrap hr{
+*/#navWrap hr{
   display:block;
   color:#FFFFFF;
   height:1px;
