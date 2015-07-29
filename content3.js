@@ -92,14 +92,14 @@
             h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
               h("span", ["Cheat Sheet"])
             ]),
-            h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
-              h("span", ["Delete"])
+            h("#saveButton.btn", { onclick: savePage, role: "button" }, [
+              h("span", ["Save"])
             ]),
             h("#createButton.btn", { onclick: createPage, role: "button" }, [
               h("span", ["New"])
             ]),
-            h("#saveButton.btn", { onclick: savePage, role: "button" }, [
-              h("span", ["Save"])
+            h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
+              h("span", ["Delete"])
             ]),
             h("label#titleFieldLabel", [
               "Page title: ",
