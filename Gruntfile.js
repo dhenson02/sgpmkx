@@ -5,7 +5,7 @@ module.exports = function(grunt) {
       dist: {
         files: {
           //'content3b.pre.js': ['content3b.js', 'manager.js', 'store-dist.js', 'domStore-dist.js'],
-          'content3.pre.js': ['content3.js', 'store.js', 'domStore.js']
+          'content3.pre.js': ['content3.js', 'helpers.js', 'store.js', 'domStore.js']
         }
       }
     },
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
         },
         files: {
           'content3.min.js': [
-            'helpers.js',
+            //'helpers.js',
             'content3.pre.js'
           ]
         }
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
         },
         files: {
           'content3.min.js': [
-            'helpers.js',
+            //'helpers.js',
             'content3.pre.js'
           ]
         }

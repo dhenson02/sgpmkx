@@ -1,9 +1,58 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 ;(function ( window, document, $, reqwest, Router, markdownit ) {
+  if (!Object.keys) {
+    // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+    Object.keys = (function () {
+      'use strict';
+      var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+        dontEnums = [
+          'toString',
+          'toLocaleString',
+          'valueOf',
+          'hasOwnProperty',
+          'isPrototypeOf',
+          'propertyIsEnumerable',
+          'constructor'
+        ],
+        dontEnumsLength = dontEnums.length;
+
+      return function (obj) {
+        if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+          throw new TypeError('Object.keys called on non-object');
+        }
+
+        var result = [], prop, i;
+
+        for (prop in obj) {
+          if (hasOwnProperty.call(obj, prop)) {
+            result.push(prop);
+          }
+        }
+
+        if (hasDontEnumBug) {
+          for (i = 0; i < dontEnumsLength; i++) {
+            if (hasOwnProperty.call(obj, dontEnums[i])) {
+              result.push(dontEnums[i]);
+            }
+          }
+        }
+        return result;
+      };
+    }());
+  }
+  String.prototype.toCamelCase = function() {
+    return this
+      .toLowerCase()
+      .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+      //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
+      .replace(/\s/g, '');
+  };
   var h = require("virtual-dom/h"),
     diff = require("virtual-dom/diff"),
     patch = require("virtual-dom/patch"),
     createElement = require("virtual-dom/create-element"),
+    util = require("./helpers"),
     Content = require("./store"),
     DOMRef = require("./domStore"),
     app = {
@@ -75,21 +124,21 @@
       }
       /* consider storing pointer info to element in use inside `item` to execute $.velocity.("finish") */
       app.inTransition[target] = true;
-      if ( regLoading.test(target.className) === false ) {
+      if ( util.regLoading.test(target.className) === false ) {
         target.className += " loading";
       }
     }
     else {
       setTimeout(function() {
         app.inTransition[target] = false;
-        target.className = target.className.replace(regLoading, "");
+        target.className = target.className.replace(util.regLoading, "");
       }, 200);
     }
   }
 
   function savePage ( event ) {
     event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+    //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
     var self = event.currentTarget || event.srcElement || this;
 
@@ -105,7 +154,7 @@
     });
     if (app.currentContent.text === app.currentContent.originalText &&
       app.currentContent.title === app.currentContent.originalTitle ) {
-      if( !regNoChange.test(self.className) ) {
+      if( !util.regNoChange.test(self.className) ) {
         self.className += " nochange";
       }
       try {
@@ -119,7 +168,7 @@
       }
       app.domRefs.buttons.tempSaveText = setTimeout(function() {
         try { self.childNodes[0].innerHTML = "Save"; } catch (e) {console.log(e, self, self.childNodes[0]);}
-        self.className = self.className.replace(regNoChange, "");
+        self.className = self.className.replace(util.regNoChange, "");
       }, 2000);
       return false;
     }
@@ -155,7 +204,7 @@
           showCancelButton: false
         });
       },
-      error: connError,
+      error: util.connError,
       complete: function () {
         loadingSomething(false, app.domRefs.contentWrap);
       }
@@ -204,7 +253,7 @@
             app.router.setRoute(inputValue.category);
           });
         },
-        error: connError,
+        error: util.connError,
         complete: function () {
           loadingSomething(false, app.domRefs.contentWrap);
         }
@@ -249,7 +298,7 @@
             app.router.setRoute(app.currentContent.category.join("/"));
           });
         },
-        error: connError,
+        error: util.connError,
         complete: function () {
           loadingSomething(false, app.domRefs.contentWrap);
         }
@@ -259,7 +308,7 @@
 
   function updateTitle () {
     var val = app.domRefs.titleField.value;
-    app.domRefs.output.innerHTML = md.render("# " + val + "\n" + app.currentContent.text);
+    app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
     app.currentContent.set({ title: val });
   }
 
@@ -280,8 +329,8 @@
     var patches = diff(app.modalDOM, freshDOM);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
-    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 275, display: "block" });
-    addEvent("keyup", document, handleCancel);
+    $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 150, display: "block" });
+    util.addEvent("keyup", document, handleCancel);
   }
 
   function handleOk ( event, callback ) {
@@ -352,7 +401,7 @@
       handleChange(event, options, callback);
     }
     return (
-      h(".modalOverlay", { style: { zIndex: 7 } }, [
+      h(".modalOverlay", { style: { zIndex: 7, opacity: 0, display: "none" } }, [
         h(".modalBg", { onclick: cancel }),
         h(".modal", [
           h(".header", options.title),
@@ -377,12 +426,15 @@
   }
 
   function modalSuicide () {
-    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 275, display: "none" });
-    var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
-    var patches = diff(app.modalDOM, destroyModal);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = destroyModal;
-    removeEvent("keyup", document, handleCancel);
+    $(app.modalOverlay).velocity({ opacity: 0 }, { duration: 150, display: "none",
+      complete: function () {
+        var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
+        var patches = diff(app.modalDOM, destroyModal);
+        app.modalOverlay = patch(app.modalOverlay, patches);
+        app.modalDOM = destroyModal;
+        util.removeEvent("keyup", document, handleCancel);
+      }
+    });
   }
 
   function toggleEditor () {
@@ -390,9 +442,9 @@
       return false;
     }
     app.animating = true;
-    var hasFullPage = regFullPage.test(app.domRefs.content.className);
-    var className = ( hasFullPage ) ? app.domRefs.content.className.replace(regFullPage, "") : app.domRefs.content.className + " fullPage";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
+    var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
+    var className = ( hasFullPage ) ? app.domRefs.content.className.replace(util.regFullPage, "") : app.domRefs.content.className + " fullPage";
+    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.content.className = className;
         app.domRefs.contentWrap.className = "";
@@ -403,7 +455,7 @@
         else {
           app.domRefs.titleField.setAttribute("disabled", "disabled");
         }
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
+        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
           complete: function () {
             if ( hasFullPage ) {
               app.domRefs.editor.refresh();
@@ -421,14 +473,14 @@
       return false;
     }
     app.animating = true;
-    var hasCheatSheet = regCheatSheet.test(app.domRefs.contentWrap.className);
+    var hasCheatSheet = util.regCheatSheet.test(app.domRefs.contentWrap.className);
     var className = ( hasCheatSheet ) ? "" : "cheatSheet";
-    var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    app.domRefs.$contentWrap.velocity({ opacity: 0 }, { duration: 150,
+    var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
+    $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.cheatSheet.className = className;
         app.domRefs.contentWrap.className = contentWrapClass;
-        app.domRefs.$contentWrap.velocity({ opacity: 1 }, { duration: 275,
+        $(app.domRefs.contentWrap).velocity({ opacity: 1 }, { duration: 150, display: "block",
           complete: function () {
             app.animating = false;
           }
@@ -471,12 +523,12 @@
 
   function update ( e ) {
     var val = e.getValue();
-    app.domRefs.output.innerHTML = md.render("# " + app.currentContent.title + "\n" + val);
+    app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
     app.currentContent.set({ text: val });
   }
 
   function insertContent ( content ) {
-    app.domRefs.output.innerHTML = md.render("# " + content.title + "\n" + content.text);
+    app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
   }
 
   function pageSetup () {
@@ -567,7 +619,7 @@
           h("optgroup", { label: "Community Health" }, comm)
         ];
       },
-      error: connError
+      error: util.connError
     });
   }
 
@@ -588,7 +640,7 @@
           return false;
         }
         var obj = data.d.results[0];
-        app.currentContent = new Content ({
+        app.currentContent = new Content({
           id: obj.ID,
           title: obj.Title || "",
           text: obj.Text || "",
@@ -602,7 +654,7 @@
         insertContent(app.currentContent);
         loadingSomething(false, app.domRefs.output);
       },
-      error: connError,
+      error: util.connError,
       complete: function () {
         if ( CodeMirror ) {
           setupEditor(app.currentContent);
@@ -617,43 +669,45 @@
 
         '/(\\w+)': {
 
-          '/(content|faq|forms|resources)': {
+          /*'/(content|faq|forms|resources)': {
             //once: getList,
             on: function ( root, sub, type ) {
               loadingSomething(true, app.domRefs.output);
               init("/" + root + "/" + sub, (type) ? type : "Content");
             }
+
+          },*/
+
+          //once: getList,
+          on: function ( root, sub ) {
+            // If there's no default, forward to the content page.
+            //app.router.setRoute("/" + root + "/" + sub + "/Content");
+            loadingSomething(true, app.domRefs.output);
+            init("/" + root + "/" + sub);
           }
         },
 
         //once: getList,
-        on: function ( root, sub ) {
-          // If there's no default, forward to the content page.
-          app.router.setRoute("/" + root + "/" + sub + "/Content");
-          //loadingSomething(true, app.domRefs.output);
-          //init(root, sub);
+        on: function ( root ) {
+          /*var keys = Object.keys(app.pages);
+           var path = keys.indexOf(root);
+           console.log("1: root start = " + root);
+           if ( keys && keys.length > 1 && path > -1 ) {
+           root = keys[path];
+           }
+           else if ( !keys ) {
+           console.log("race condition exists.  site nav list is too slow vs. this route handler");
+           return false;
+           }
+           else {
+           console.log("location unavailable - this is the level 1 route handler");
+           return false;
+           }
+           console.log("1: root transform = " + root);*/
+          console.log(root);
+          loadingSomething(true, app.domRefs.output);
+          init(root);
         }
-      },
-
-      //once: getList,
-      on: function ( root ) {
-        /*var keys = Object.keys(app.pages);
-        var path = keys.indexOf(root);
-        console.log("1: root start = " + root);
-        if ( keys && keys.length > 1 && path > -1 ) {
-          root = keys[path];
-        }
-        else if ( !keys ) {
-          console.log("race condition exists.  site nav list is too slow vs. this route handler");
-          return false;
-        }
-        else {
-          console.log("location unavailable - this is the level 1 route handler");
-          return false;
-        }
-        console.log("1: root transform = " + root);*/
-        loadingSomething(true, app.domRefs.output);
-        init(root, "Content");
       }
     }
   ).configure({
@@ -664,7 +718,7 @@
       notfound: function () {
         console.log("location unavailable - this is the notfound handler");
         console.log("forwarding to PHA for kicks");
-        app.router.setRoute("/fhm/pha/content");
+        app.router.setRoute("/fhm/pha");
       }
     });
 
@@ -674,7 +728,7 @@
 
 })(window, document, jQuery, reqwest, Router, markdownit);
 
-},{"./domStore":2,"./store":37,"virtual-dom/create-element":4,"virtual-dom/diff":5,"virtual-dom/h":6,"virtual-dom/patch":14}],2:[function(require,module,exports){
+},{"./domStore":2,"./helpers":3,"./store":38,"virtual-dom/create-element":5,"virtual-dom/diff":6,"virtual-dom/h":7,"virtual-dom/patch":15}],2:[function(require,module,exports){
 function DOMRef ( nodes ) {
   return {
     nodes: nodes,
@@ -713,23 +767,53 @@ function DOMRef ( nodes ) {
 module.exports = DOMRef;
 
 },{}],3:[function(require,module,exports){
+module.exports = {
+  regLoading: / ?loading/g,
+  regFullPage: / ?fullPage/g,
+  regCheatSheet: / ?cheatSheet/g,
+  regNoChange: / ?nochange/g,
+  md: markdownit({
+    highlight: function ( code, lang ) {
+      if ( lang && hljs.getLanguage(lang) ) {
+        try {
+          return hljs.highlight(lang, code).value;
+        }
+        catch ( e ) {
+        }
+      }
+      return '';
+    }
+  }),
+  addEvent: function ( evt, element, fnc ) {
+    return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));
+  },
+  removeEvent: function ( evt, element, fnc ) {
+    return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
+  },
+  connError: function ( error ) {
+    console.log("error connecting:", error);
+  }
+};
+
 
 },{}],4:[function(require,module,exports){
+
+},{}],5:[function(require,module,exports){
 var createElement = require("./vdom/create-element.js")
 
 module.exports = createElement
 
-},{"./vdom/create-element.js":16}],5:[function(require,module,exports){
+},{"./vdom/create-element.js":17}],6:[function(require,module,exports){
 var diff = require("./vtree/diff.js")
 
 module.exports = diff
 
-},{"./vtree/diff.js":36}],6:[function(require,module,exports){
+},{"./vtree/diff.js":37}],7:[function(require,module,exports){
 var h = require("./virtual-hyperscript/index.js")
 
 module.exports = h
 
-},{"./virtual-hyperscript/index.js":23}],7:[function(require,module,exports){
+},{"./virtual-hyperscript/index.js":24}],8:[function(require,module,exports){
 /*!
  * Cross-Browser Split 1.1.1
  * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
@@ -837,7 +921,7 @@ module.exports = (function split(undef) {
   return self;
 })();
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var OneVersionConstraint = require('individual/one-version');
@@ -859,7 +943,7 @@ function EvStore(elem) {
     return hash;
 }
 
-},{"individual/one-version":10}],9:[function(require,module,exports){
+},{"individual/one-version":11}],10:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -882,7 +966,7 @@ function Individual(key, value) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var Individual = require('./index.js');
@@ -906,7 +990,7 @@ function OneVersion(moduleName, version, defaultValue) {
     return Individual(key, defaultValue);
 }
 
-},{"./index.js":9}],11:[function(require,module,exports){
+},{"./index.js":10}],12:[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -925,14 +1009,14 @@ if (typeof document !== 'undefined') {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":3}],12:[function(require,module,exports){
+},{"min-document":4}],13:[function(require,module,exports){
 "use strict";
 
 module.exports = function isObject(x) {
 	return typeof x === "object" && x !== null;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var nativeIsArray = Array.isArray
 var toString = Object.prototype.toString
 
@@ -942,12 +1026,12 @@ function isArray(obj) {
     return toString.call(obj) === "[object Array]"
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var patch = require("./vdom/patch.js")
 
 module.exports = patch
 
-},{"./vdom/patch.js":19}],15:[function(require,module,exports){
+},{"./vdom/patch.js":20}],16:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook.js")
 
@@ -1046,7 +1130,7 @@ function getPrototype(value) {
     }
 }
 
-},{"../vnode/is-vhook.js":27,"is-object":12}],16:[function(require,module,exports){
+},{"../vnode/is-vhook.js":28,"is-object":13}],17:[function(require,module,exports){
 var document = require("global/document")
 
 var applyProperties = require("./apply-properties")
@@ -1094,7 +1178,7 @@ function createElement(vnode, opts) {
     return node
 }
 
-},{"../vnode/handle-thunk.js":25,"../vnode/is-vnode.js":28,"../vnode/is-vtext.js":29,"../vnode/is-widget.js":30,"./apply-properties":15,"global/document":11}],17:[function(require,module,exports){
+},{"../vnode/handle-thunk.js":26,"../vnode/is-vnode.js":29,"../vnode/is-vtext.js":30,"../vnode/is-widget.js":31,"./apply-properties":16,"global/document":12}],18:[function(require,module,exports){
 // Maps a virtual DOM tree onto a real DOM tree in an efficient manner.
 // We don't want to read all of the DOM nodes in the tree so we use
 // the in-order tree indexing to eliminate recursion down certain branches.
@@ -1181,7 +1265,7 @@ function ascending(a, b) {
     return a > b ? 1 : -1
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var applyProperties = require("./apply-properties")
 
 var isWidget = require("../vnode/is-widget.js")
@@ -1335,7 +1419,7 @@ function replaceRoot(oldRoot, newRoot) {
     return newRoot;
 }
 
-},{"../vnode/is-widget.js":30,"../vnode/vpatch.js":33,"./apply-properties":15,"./create-element":16,"./update-widget":20}],19:[function(require,module,exports){
+},{"../vnode/is-widget.js":31,"../vnode/vpatch.js":34,"./apply-properties":16,"./create-element":17,"./update-widget":21}],20:[function(require,module,exports){
 var document = require("global/document")
 var isArray = require("x-is-array")
 
@@ -1413,7 +1497,7 @@ function patchIndices(patches) {
     return indices
 }
 
-},{"./dom-index":17,"./patch-op":18,"global/document":11,"x-is-array":13}],20:[function(require,module,exports){
+},{"./dom-index":18,"./patch-op":19,"global/document":12,"x-is-array":14}],21:[function(require,module,exports){
 var isWidget = require("../vnode/is-widget.js")
 
 module.exports = updateWidget
@@ -1430,7 +1514,7 @@ function updateWidget(a, b) {
     return false
 }
 
-},{"../vnode/is-widget.js":30}],21:[function(require,module,exports){
+},{"../vnode/is-widget.js":31}],22:[function(require,module,exports){
 'use strict';
 
 var EvStore = require('ev-store');
@@ -1459,7 +1543,7 @@ EvHook.prototype.unhook = function(node, propertyName) {
     es[propName] = undefined;
 };
 
-},{"ev-store":8}],22:[function(require,module,exports){
+},{"ev-store":9}],23:[function(require,module,exports){
 'use strict';
 
 module.exports = SoftSetHook;
@@ -1478,7 +1562,7 @@ SoftSetHook.prototype.hook = function (node, propertyName) {
     }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 var isArray = require('x-is-array');
@@ -1615,7 +1699,7 @@ function errorString(obj) {
     }
 }
 
-},{"../vnode/is-thunk":26,"../vnode/is-vhook":27,"../vnode/is-vnode":28,"../vnode/is-vtext":29,"../vnode/is-widget":30,"../vnode/vnode.js":32,"../vnode/vtext.js":34,"./hooks/ev-hook.js":21,"./hooks/soft-set-hook.js":22,"./parse-tag.js":24,"x-is-array":13}],24:[function(require,module,exports){
+},{"../vnode/is-thunk":27,"../vnode/is-vhook":28,"../vnode/is-vnode":29,"../vnode/is-vtext":30,"../vnode/is-widget":31,"../vnode/vnode.js":33,"../vnode/vtext.js":35,"./hooks/ev-hook.js":22,"./hooks/soft-set-hook.js":23,"./parse-tag.js":25,"x-is-array":14}],25:[function(require,module,exports){
 'use strict';
 
 var split = require('browser-split');
@@ -1671,7 +1755,7 @@ function parseTag(tag, props) {
     return props.namespace ? tagName : tagName.toUpperCase();
 }
 
-},{"browser-split":7}],25:[function(require,module,exports){
+},{"browser-split":8}],26:[function(require,module,exports){
 var isVNode = require("./is-vnode")
 var isVText = require("./is-vtext")
 var isWidget = require("./is-widget")
@@ -1713,14 +1797,14 @@ function renderThunk(thunk, previous) {
     return renderedThunk
 }
 
-},{"./is-thunk":26,"./is-vnode":28,"./is-vtext":29,"./is-widget":30}],26:[function(require,module,exports){
+},{"./is-thunk":27,"./is-vnode":29,"./is-vtext":30,"./is-widget":31}],27:[function(require,module,exports){
 module.exports = isThunk
 
 function isThunk(t) {
     return t && t.type === "Thunk"
 }
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = isHook
 
 function isHook(hook) {
@@ -1729,7 +1813,7 @@ function isHook(hook) {
        typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"))
 }
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualNode
@@ -1738,7 +1822,7 @@ function isVirtualNode(x) {
     return x && x.type === "VirtualNode" && x.version === version
 }
 
-},{"./version":31}],29:[function(require,module,exports){
+},{"./version":32}],30:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualText
@@ -1747,17 +1831,17 @@ function isVirtualText(x) {
     return x && x.type === "VirtualText" && x.version === version
 }
 
-},{"./version":31}],30:[function(require,module,exports){
+},{"./version":32}],31:[function(require,module,exports){
 module.exports = isWidget
 
 function isWidget(w) {
     return w && w.type === "Widget"
 }
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = "2"
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var version = require("./version")
 var isVNode = require("./is-vnode")
 var isWidget = require("./is-widget")
@@ -1831,7 +1915,7 @@ function VirtualNode(tagName, properties, children, key, namespace) {
 VirtualNode.prototype.version = version
 VirtualNode.prototype.type = "VirtualNode"
 
-},{"./is-thunk":26,"./is-vhook":27,"./is-vnode":28,"./is-widget":30,"./version":31}],33:[function(require,module,exports){
+},{"./is-thunk":27,"./is-vhook":28,"./is-vnode":29,"./is-widget":31,"./version":32}],34:[function(require,module,exports){
 var version = require("./version")
 
 VirtualPatch.NONE = 0
@@ -1855,7 +1939,7 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":31}],34:[function(require,module,exports){
+},{"./version":32}],35:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = VirtualText
@@ -1867,7 +1951,7 @@ function VirtualText(text) {
 VirtualText.prototype.version = version
 VirtualText.prototype.type = "VirtualText"
 
-},{"./version":31}],35:[function(require,module,exports){
+},{"./version":32}],36:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook")
 
@@ -1927,7 +2011,7 @@ function getPrototype(value) {
   }
 }
 
-},{"../vnode/is-vhook":27,"is-object":12}],36:[function(require,module,exports){
+},{"../vnode/is-vhook":28,"is-object":13}],37:[function(require,module,exports){
 var isArray = require("x-is-array")
 
 var VPatch = require("../vnode/vpatch")
@@ -2356,7 +2440,7 @@ function appendPatch(apply, patch) {
     }
 }
 
-},{"../vnode/handle-thunk":25,"../vnode/is-thunk":26,"../vnode/is-vnode":28,"../vnode/is-vtext":29,"../vnode/is-widget":30,"../vnode/vpatch":33,"./diff-props":35,"x-is-array":13}],37:[function(require,module,exports){
+},{"../vnode/handle-thunk":26,"../vnode/is-thunk":27,"../vnode/is-vnode":29,"../vnode/is-vtext":30,"../vnode/is-widget":31,"../vnode/vpatch":34,"./diff-props":36,"x-is-array":14}],38:[function(require,module,exports){
 function Content ( page ) {
   try {
     var originalTitle = page.title;
@@ -2400,4 +2484,4 @@ function Content ( page ) {
 
 module.exports = Content;
 
-},{}]},{},[1,37,2]);
+},{}]},{},[1,3,38,2]);

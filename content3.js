@@ -1,8 +1,57 @@
 ;(function ( window, document, $, reqwest, Router, markdownit ) {
+  if (!Object.keys) {
+    // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+    Object.keys = (function () {
+      'use strict';
+      var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+        dontEnums = [
+          'toString',
+          'toLocaleString',
+          'valueOf',
+          'hasOwnProperty',
+          'isPrototypeOf',
+          'propertyIsEnumerable',
+          'constructor'
+        ],
+        dontEnumsLength = dontEnums.length;
+
+      return function (obj) {
+        if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+          throw new TypeError('Object.keys called on non-object');
+        }
+
+        var result = [], prop, i;
+
+        for (prop in obj) {
+          if (hasOwnProperty.call(obj, prop)) {
+            result.push(prop);
+          }
+        }
+
+        if (hasDontEnumBug) {
+          for (i = 0; i < dontEnumsLength; i++) {
+            if (hasOwnProperty.call(obj, dontEnums[i])) {
+              result.push(dontEnums[i]);
+            }
+          }
+        }
+        return result;
+      };
+    }());
+  }
+  String.prototype.toCamelCase = function() {
+    return this
+      .toLowerCase()
+      .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+      //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
+      .replace(/\s/g, '');
+  };
   var h = require("virtual-dom/h"),
     diff = require("virtual-dom/diff"),
     patch = require("virtual-dom/patch"),
     createElement = require("virtual-dom/create-element"),
+    util = require("./helpers"),
     Content = require("./store"),
     DOMRef = require("./domStore"),
     app = {
@@ -74,14 +123,14 @@
       }
       /* consider storing pointer info to element in use inside `item` to execute $.velocity.("finish") */
       app.inTransition[target] = true;
-      if ( regLoading.test(target.className) === false ) {
+      if ( util.regLoading.test(target.className) === false ) {
         target.className += " loading";
       }
     }
     else {
       setTimeout(function() {
         app.inTransition[target] = false;
-        target.className = target.className.replace(regLoading, "");
+        target.className = target.className.replace(util.regLoading, "");
       }, 200);
     }
   }
@@ -104,7 +153,7 @@
     });
     if (app.currentContent.text === app.currentContent.originalText &&
       app.currentContent.title === app.currentContent.originalTitle ) {
-      if( !regNoChange.test(self.className) ) {
+      if( !util.regNoChange.test(self.className) ) {
         self.className += " nochange";
       }
       try {
@@ -118,7 +167,7 @@
       }
       app.domRefs.buttons.tempSaveText = setTimeout(function() {
         try { self.childNodes[0].innerHTML = "Save"; } catch (e) {console.log(e, self, self.childNodes[0]);}
-        self.className = self.className.replace(regNoChange, "");
+        self.className = self.className.replace(util.regNoChange, "");
       }, 2000);
       return false;
     }
@@ -154,7 +203,7 @@
           showCancelButton: false
         });
       },
-      error: connError,
+      error: util.connError,
       complete: function () {
         loadingSomething(false, app.domRefs.contentWrap);
       }
@@ -203,7 +252,7 @@
             app.router.setRoute(inputValue.category);
           });
         },
-        error: connError,
+        error: util.connError,
         complete: function () {
           loadingSomething(false, app.domRefs.contentWrap);
         }
@@ -248,7 +297,7 @@
             app.router.setRoute(app.currentContent.category.join("/"));
           });
         },
-        error: connError,
+        error: util.connError,
         complete: function () {
           loadingSomething(false, app.domRefs.contentWrap);
         }
@@ -258,7 +307,7 @@
 
   function updateTitle () {
     var val = app.domRefs.titleField.value;
-    app.domRefs.output.innerHTML = md.render("# " + val + "\n" + app.currentContent.text);
+    app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
     app.currentContent.set({ title: val });
   }
 
@@ -280,7 +329,7 @@
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
     $(app.modalOverlay).velocity({ opacity: 1 }, { duration: 150, display: "block" });
-    addEvent("keyup", document, handleCancel);
+    util.addEvent("keyup", document, handleCancel);
   }
 
   function handleOk ( event, callback ) {
@@ -382,7 +431,7 @@
         var patches = diff(app.modalDOM, destroyModal);
         app.modalOverlay = patch(app.modalOverlay, patches);
         app.modalDOM = destroyModal;
-        removeEvent("keyup", document, handleCancel);
+        util.removeEvent("keyup", document, handleCancel);
       }
     });
   }
@@ -392,8 +441,8 @@
       return false;
     }
     app.animating = true;
-    var hasFullPage = regFullPage.test(app.domRefs.content.className);
-    var className = ( hasFullPage ) ? app.domRefs.content.className.replace(regFullPage, "") : app.domRefs.content.className + " fullPage";
+    var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
+    var className = ( hasFullPage ) ? app.domRefs.content.className.replace(util.regFullPage, "") : app.domRefs.content.className + " fullPage";
     $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.content.className = className;
@@ -423,9 +472,9 @@
       return false;
     }
     app.animating = true;
-    var hasCheatSheet = regCheatSheet.test(app.domRefs.contentWrap.className);
+    var hasCheatSheet = util.regCheatSheet.test(app.domRefs.contentWrap.className);
     var className = ( hasCheatSheet ) ? "" : "cheatSheet";
-    var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
+    var contentWrapClass = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
     $(app.domRefs.contentWrap).velocity({ opacity: 0 }, { duration: 150, display: "none",
       complete: function () {
         app.domRefs.cheatSheet.className = className;
@@ -473,12 +522,12 @@
 
   function update ( e ) {
     var val = e.getValue();
-    app.domRefs.output.innerHTML = md.render("# " + app.currentContent.title + "\n" + val);
+    app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
     app.currentContent.set({ text: val });
   }
 
   function insertContent ( content ) {
-    app.domRefs.output.innerHTML = md.render("# " + content.title + "\n" + content.text);
+    app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
   }
 
   function pageSetup () {
@@ -569,7 +618,7 @@
           h("optgroup", { label: "Community Health" }, comm)
         ];
       },
-      error: connError
+      error: util.connError
     });
   }
 
@@ -590,7 +639,7 @@
           return false;
         }
         var obj = data.d.results[0];
-        app.currentContent = new Content ({
+        app.currentContent = new Content({
           id: obj.ID,
           title: obj.Title || "",
           text: obj.Text || "",
@@ -604,7 +653,7 @@
         insertContent(app.currentContent);
         loadingSomething(false, app.domRefs.output);
       },
-      error: connError,
+      error: util.connError,
       complete: function () {
         if ( CodeMirror ) {
           setupEditor(app.currentContent);
@@ -619,43 +668,45 @@
 
         '/(\\w+)': {
 
-          '/(content|faq|forms|resources)': {
+          /*'/(content|faq|forms|resources)': {
             //once: getList,
             on: function ( root, sub, type ) {
               loadingSomething(true, app.domRefs.output);
               init("/" + root + "/" + sub, (type) ? type : "Content");
             }
+
+          },*/
+
+          //once: getList,
+          on: function ( root, sub ) {
+            // If there's no default, forward to the content page.
+            //app.router.setRoute("/" + root + "/" + sub + "/Content");
+            loadingSomething(true, app.domRefs.output);
+            init("/" + root + "/" + sub);
           }
         },
 
         //once: getList,
-        on: function ( root, sub ) {
-          // If there's no default, forward to the content page.
-          app.router.setRoute("/" + root + "/" + sub + "/Content");
-          //loadingSomething(true, app.domRefs.output);
-          //init(root, sub);
+        on: function ( root ) {
+          /*var keys = Object.keys(app.pages);
+           var path = keys.indexOf(root);
+           console.log("1: root start = " + root);
+           if ( keys && keys.length > 1 && path > -1 ) {
+           root = keys[path];
+           }
+           else if ( !keys ) {
+           console.log("race condition exists.  site nav list is too slow vs. this route handler");
+           return false;
+           }
+           else {
+           console.log("location unavailable - this is the level 1 route handler");
+           return false;
+           }
+           console.log("1: root transform = " + root);*/
+          console.log(root);
+          loadingSomething(true, app.domRefs.output);
+          init(root);
         }
-      },
-
-      //once: getList,
-      on: function ( root ) {
-        /*var keys = Object.keys(app.pages);
-        var path = keys.indexOf(root);
-        console.log("1: root start = " + root);
-        if ( keys && keys.length > 1 && path > -1 ) {
-          root = keys[path];
-        }
-        else if ( !keys ) {
-          console.log("race condition exists.  site nav list is too slow vs. this route handler");
-          return false;
-        }
-        else {
-          console.log("location unavailable - this is the level 1 route handler");
-          return false;
-        }
-        console.log("1: root transform = " + root);*/
-        loadingSomething(true, app.domRefs.output);
-        init(root, "Content");
       }
     }
   ).configure({
@@ -666,7 +717,7 @@
       notfound: function () {
         console.log("location unavailable - this is the notfound handler");
         console.log("forwarding to PHA for kicks");
-        app.router.setRoute("/fhm/pha/content");
+        app.router.setRoute("/fhm/pha");
       }
     });
 
