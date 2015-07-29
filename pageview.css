@@ -35,6 +35,7 @@ body{
 }
 
 .loading, .nochange{
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
   opacity:.35;
   pointer-events:none
 }
@@ -68,13 +69,11 @@ body{
 #contentWrap{
   opacity:1;
   position:relative;
-  color:#444;
+  /*color:#444;*/
   overflow:visible;
-  min-height:540px;
+  min-height:640px;
   /*height:85%;*/
-  margin:20px;
-  margin-bottom: 0;
-  /*top:50px;*/
+  margin:10px 20px 0;
   bottom:0;
   left:0;
   right:0;
@@ -97,11 +96,11 @@ body{
 #buttons {
   /*z-index:1;*/
   width:100%;
-  margin:0 auto;
+  margin: 10px auto;
   text-align:center;
   position:relative;
-  overflow:hidden;
-  bottom: 100%;
+  /*overflow:hidden;*/
+  /*bottom: 100%;*/
 }
 
 .fullPage #buttons  {
@@ -111,7 +110,6 @@ body{
 .btn{
   /*z-index:1;*/
   display: inline-block;
-  opacity: 1;
   position:relative;
   color:#FAFAFA;
   cursor:pointer;
@@ -119,7 +117,7 @@ body{
   letter-spacing: 1px;
   float: none;
   border-radius:4px;
-  margin:5px 20px;
+  /*margin:5px 20px;*/
   border: 2px dashed transparent;
   text-shadow:0 1px 0 #888888;
   text-shadow:0 1px 0 rgba(0,0,0,.5);
@@ -223,48 +221,43 @@ body{
 }
 
 #wrapper #titleFieldLabel {
-  margin:5px 20px;
+  /*margin:5px 20px;*/
   /*float: left;
   clear: both;*/
   text-align: left;
   display: block;
 }
 
+#wrapper #titleField {
+  width: 100%;
+}
+
 .fullPage #saveButton,
 .fullPage #createButton,
 .fullPage #deleteButton,
 #wrapper .fullPage #titleFieldLabel,
-.fullPage #cheatSheet,
 .fullPage #input,
 .fullPage #cheatSheetButton,
-#cheatSheet {
-  opacity:0;
+.fullPage #cheatSheet {
   display:none;
-  pointer-events: none;
-  z-index: -1;
 }
 
 #input{
-  display:block;
-  opacity:1;
   position:absolute;
   top:0;
   left:0;
   bottom:0;
   width:45%;
   height:100%;
-  overflow:auto;
+  overflow:hidden;
   font-size:14px;
-  /*max-width: 640px;*/
 }
 
 #output{
-  display:block;
-  opacity:1;
   text-rendering:optimizeLegibility;
   position:absolute;
   color:#555;
-  /* This will hide the scrollbar on most browsers */
+  /* This will hide the scrollbar on most **normal** browsers */
   right:-17px;
   left:55%;
   top:0;
@@ -287,18 +280,9 @@ body{
   overflow:visible
 }
 
-#contentWrap.cheatSheet {
-  position: relative;
-  /*top: 400px;*/
-}
-
-#cheatSheet.cheatSheet {
+#cheatSheet {
   height: 300px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  display: block;
-  opacity: 1;
-  pointer-events: auto;
+  padding: 40px;
 }
 
 #wrapper.loading,
@@ -307,6 +291,7 @@ body{
 #input.loading,
 #output.loading {
   border-color: #BBB;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
   opacity: .35;
 }
 
@@ -480,7 +465,7 @@ body{
 #wrapper .CodeMirror.CodeMirror{
   position:absolute;
   border:1px solid #CCC;
-  top:0;
+  top:90px;
   left:0;
   right:0;
   bottom:0;
@@ -534,7 +519,6 @@ body{
  */
 
 .modalOverlay{
-  display:block;
   position:fixed;
   top:0;
   left:0;
@@ -545,17 +529,16 @@ body{
 .modalBg{
   /*z-index:10;*/
   position:absolute;
-  display:block;
   background-color:#222;
   top:0;
   left:0;
   bottom:0;
   right:0;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
   opacity:.75;
 }
 
 .modal {
-  display:block;
   min-width:25em;
   max-height: 45em;
   position: fixed;

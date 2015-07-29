@@ -65,7 +65,7 @@
       modalDOM: null,
       modalOverlay: null,
       router: null,
-      menuItems: null,
+      menuItems: [],
       //animating: false,
       inTransition: {}
     };
@@ -101,15 +101,15 @@
             ]),
             h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
               h("span", ["Delete"])
-            ]),
-            h("label#titleFieldLabel", [
-              "Page title: ",
-              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
             ])
           ]),
-          h("#cheatSheet", ["This will be a cheat-sheet for markdown"]),
+          h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
           h("#contentWrap", [
             h("#input", [
+              h("label#titleFieldLabel", [
+                "Page title: ",
+                h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
+              ]),
               h("textarea#textarea", [String(app.currentContent.text || "")])
             ]),
             h("#output")
@@ -334,8 +334,6 @@
     var patches = diff(app.modalDOM, freshDOM);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = freshDOM;
-    app.modalOverlay.style.display = "block";
-    app.modalOverlay.style.opacity = 1;
     util.addEvent("keyup", document, handleCancel);
   }
 
@@ -407,7 +405,7 @@
       handleChange(event, options, callback);
     }
     return (
-      h(".modalOverlay", { style: { zIndex: 7, opacity: 0, display: "none" } }, [
+      h(".modalOverlay", { style: { zIndex: 7 } }, [
         h(".modalBg", { onclick: cancel }),
         h(".modal", [
           h(".header", options.title),
@@ -432,7 +430,8 @@
   }
 
   function modalSuicide () {
-    var destroyModal = h(".modalOverlay", { style: { display: "none", opacity: 0 }});
+    app.modalOverlay.style.display = "none";
+    var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
     var patches = diff(app.modalDOM, destroyModal);
     app.modalOverlay = patch(app.modalOverlay, patches);
     app.modalDOM = destroyModal;
@@ -456,9 +455,13 @@
   }
 
   function toggleCheatSheet () {
-    var hasCheatSheet = util.regCheatSheet.test(app.domRefs.contentWrap.className);
-    app.domRefs.cheatSheet.className = ( hasCheatSheet ) ? "" : "cheatSheet";
-    app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
+    if ( app.domRefs.cheatSheet.style.display === "none" ) {
+      app.domRefs.cheatSheet.removeAttribute("style");
+    }
+    else {
+      app.domRefs.cheatSheet.style.display = "none";
+    }
+    //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
     return false;
   }
 
@@ -600,17 +603,23 @@
               h("option", { value: page.Category }, [String(page.Title)])
             );
           }
-          else {
-            // Hopefully this is Comm
+          else if ( page.Category.charAt(1) === "C" || page.Category.charAt(1) === "c" ) {
+            // This is Comm
             comm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
           }
+          else if ( page.Category.length === 1 ) {
+            // Homepage
+            app.menuItems.push(
+              h("option", { value: page.Category }, [String(page.Title)])
+            );
+          }
         }
-        app.menuItems = [
+        app.menuItems.concat([
           h("optgroup", { label: "Force Health Management" }, fhm),
           h("optgroup", { label: "Community Health" }, comm)
-        ];
+        ]);
         console.log("Getting list internals complete.");
       },
       error: util.connError
