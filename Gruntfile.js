@@ -4,8 +4,7 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          //'content3b.pre.js': ['content3b.js', 'manager.js', 'store-dist.js', 'domStore-dist.js'],
-          'content3.pre.js': ['content3.js', 'helpers.js', 'store.js', 'domStore.js']
+          'content5.pre.js': ['content5.js', 'helpers.js', 'store.js', 'domStore.js']
         }
       }
     },
@@ -41,10 +40,7 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'content3.min.js': [
-            //'helpers.js',
-            'content3.pre.js'
-          ]
+          'main.min.js': 'content5.pre.js'
         }
       },
       dev: {
@@ -57,17 +53,14 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'content3.min.js': [
-            //'helpers.js',
-            'content3.pre.js'
-          ]
+          'main.min.js': 'content5.pre.js'
         }
       }
     },
     purifycss: {
       options: {},
       target: {
-        src: ['manager2b.aspx', 'content3.min.js'],
+        src: ['manager2b.aspx', 'main.min.js'],
         css: ['pageview.css'],
         dest: 'pageview.pure.css'
       }
@@ -108,7 +101,7 @@ module.exports = function(grunt) {
           spawn: false,
           atBegin: true
         },
-        files: ['content3.js', 'manager.js', 'helpers.js', 'actions.js', 'render.js', 'store*.js', 'domStore*.js'],
+        files: ['content5.js', 'manager.js', 'helpers.js', 'actions.js', 'render.js', 'store*.js', 'domStore*.js'],
         tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin']
       }
     }

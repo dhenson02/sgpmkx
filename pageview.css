@@ -47,7 +47,7 @@ body{
 }
 
 #content {
-  top: 1em;
+  /*top: 1em;*/
   min-width:100%;
   font-size: 100%;
   position:relative;
@@ -71,9 +71,10 @@ body{
   color:#444;
   overflow:visible;
   min-height:540px;
-  height:85%;
+  /*height:85%;*/
   margin:20px;
-  top:50px;
+  margin-bottom: 0;
+  /*top:50px;*/
   bottom:0;
   left:0;
   right:0;
@@ -223,9 +224,10 @@ body{
 
 #wrapper #titleFieldLabel {
   margin:5px 20px;
-  float: left;
-  clear: both;
+  /*float: left;
+  clear: both;*/
   text-align: left;
+  display: block;
 }
 
 .fullPage #saveButton,
