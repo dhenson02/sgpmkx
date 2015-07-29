@@ -1,6 +1,5 @@
 #output a{
   color:#0645ad;
-  text-decoration:none
 }
 
 #output a:visited{
@@ -13,14 +12,6 @@
 
 #output a:active{
   color:#faa700
-}
-
-#output a:focus{
-  outline:dotted thin
-}
-
-#output a:active,#output a:hover{
-  outline:0
 }
 
 #output p{

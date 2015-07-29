@@ -1,8 +1,7 @@
-
 #sideNav {
   z-index: 6;
   color:#F5F5FF;
-  position: relative;
+  position: absolute;
   float:left;
   clear:none;
   left: 0;
@@ -14,7 +13,7 @@
   height: 100%;
   overflow: hidden;
   font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue","Helvetica","Arial","Lucida Console","Lucida Grande",sans-serif;
-  font-size:18px;
+  /*font-size:18px;*/
 }
 
 #navWrap {
@@ -27,18 +26,25 @@
   overflow: auto;
 }
 
-#navWrap .header {
+.nav .header {
   display: table;
-  font-size: .875em;
+  /*font-size: .875em;*/
   padding: 20px 20px 0;
 }
 
-#navWrap .logo,
-#navWrap .text {
+.nav .logo,
+.nav .text {
   display: table-cell;
   vertical-align: middle;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.nav .text {
+  font-size: 15px;
+}
+.nav .text small {
+  font-size: 9px;
 }
 
 #navWrap ul,
@@ -63,7 +69,6 @@
 
 #navWrap a{
   color:#F5F5FF;
-  text-decoration:none
 }
 
 #navWrap a:hover{
@@ -76,10 +81,6 @@
 
 #navWrap a:visited{
   color:#C0C0CC;
-}
-
-#navWrap a:active,#navWrap a:hover,#navWrap a:focus{
-  outline:0
 }
 
 #navWrap hr{

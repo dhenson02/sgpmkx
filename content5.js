@@ -514,7 +514,7 @@
     }
     else {
       // Just for debugging - change to main page later.
-      app.router.init("/fhm/pha");
+      app.router.init("/FHM/PHA");
     }
   }
 
@@ -690,44 +690,17 @@
         }
       },
       '/(\\w+)': {
-
+        //once: getList,
+        on: function ( root ) {
+          loadingSomething(true, app.domRefs.output);
+          init("/" + root);
+        },
         '/(\\w+)': {
-
-          /*'/(content|faq|forms|resources)': {
-            //once: getList,
-            on: function ( root, sub, type ) {
-              loadingSomething(true, app.domRefs.output);
-              init("/" + root + "/" + sub, (type) ? type : "Content");
-            }
-
-          },*/
-
           //once: getList,
           on: function ( root, sub ) {
             loadingSomething(true, app.domRefs.output);
             init("/" + root + "/" + sub);
           }
-        },
-
-        //once: getList,
-        on: function ( root ) {
-          /*var keys = Object.keys(app.pages);
-           var path = keys.indexOf(root);
-           console.log("1: root start = " + root);
-           if ( keys && keys.length > 1 && path > -1 ) {
-           root = keys[path];
-           }
-           else if ( !keys ) {
-           console.log("race condition exists.  site nav list is too slow vs. this route handler");
-           return false;
-           }
-           else {
-           console.log("location unavailable - this is the level 1 route handler");
-           return false;
-           }
-           console.log("1: root transform = " + root);*/
-          loadingSomething(true, app.domRefs.output);
-          init("/" + root);
         }
       }
     }
