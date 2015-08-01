@@ -59,11 +59,30 @@
 #navWrap li a {
   width: 100%;
   display: block;
+  position: relative;
 }
 
 #navWrap li li a {
   font-size: 15px;
   padding: 10px 20px;
+}
+
+#navWrap .active {
+  font-weight: bold;
+  display: inline-block;
+}
+
+#navWrap .active > span {
+  position: absolute;
+  right: 17px;
+  /*top: 0;*/
+  /*bottom: 0;*/
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right:10px solid #FAFAFA;
 }
 
 #navWrap .root-cat {

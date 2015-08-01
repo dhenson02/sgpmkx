@@ -1,4 +1,5 @@
-;(function ( window, document, reqwest, Router, undefined ) {
+;(function ( window, document, reqwest, Router, CodeMirror, undefined ) {
+  CodeMirror = CodeMirror || null;
   if (!Object.keys) {
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
     Object.keys = (function () {
@@ -75,7 +76,7 @@
   function render () {
     return (
       h("#wrapper", [
-        h("div#sideNav", [app.navDOM]),
+        h("#sideNav", [app.navDOM]),
         h("#content.fullPage", [
           h("#contentWrap", [
             h("#output")
@@ -88,7 +89,7 @@
   function renderEditor () {
     return (
       h("#wrapper", [
-        h("div#sideNav", [app.navDOM]),
+        h("#sideNav", [app.navDOM]),
         h("#content.fullPage", [
           h("#buttons", [
             h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
@@ -145,12 +146,13 @@
     event = event || window.event;
     //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    var self = event.currentTarget || event.srcElement || this;
-    try {
-      console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
-      console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
-      console.log("this: " + this.nodeName); } catch (e) {
-    }}}
+    //var self = event.currentTarget || event.srcElement || this;
+    var self = this;
+    //try {
+    //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
+    //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
+    //  console.log("this: " + this.nodeName); } catch (e) {
+    //}}}
     if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
       self = self.parentNode.parentNode;
     }
@@ -168,21 +170,19 @@
       }
       try {
         self.childNodes[0].innerHTML = "No change";
-      } catch (e) {
-        console.log(e); console.log(self); console.log(self.childNodes[0]);
-      }
+      } catch (e) {}
 
       if (app.domRefs.buttons.tempSaveText) {
         clearTimeout(app.domRefs.buttons.tempSaveText);
       }
       app.domRefs.buttons.tempSaveText = setTimeout(function() {
-        try { self.childNodes[0].innerHTML = "Save"; } catch (e) {console.log(e, self, self.childNodes[0]);}
+        try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
         self.className = self.className.replace(util.regNoChange, "");
       }, 2000);
       return false;
     }
     else {
-      loadingSomething(true, app.domRefs.contentWrap);
+      loadingSomething(true, self);
     }
     reqwest({
       url: app.sitePath + "/items(" + app.currentContent.id + ")",
@@ -206,16 +206,17 @@
         "IF-MATCH": "*"
       },
       success: function() {
-        newModal({
+        console.log("Successfully saved changes.");
+        /*newModal({
           title: [h("h2", [String(app.currentContent.title) + " updated!"])],
           text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
           type: "success",
           showCancelButton: false
-        });
+        });*/
       },
       error: util.connError,
       complete: function () {
-        loadingSomething(false, app.domRefs.contentWrap);
+        loadingSomething(false, self);
       }
     });
   }
@@ -348,6 +349,7 @@
     var keyCode = event.keyCode || event.which || event.charCode || null;
     if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
       if ( !callback ) {
+        modalSuicide();
         return false;
       }
       var title = document.getElementById("modalInput").value.trim();
@@ -416,12 +418,12 @@
           h("label", options.text.concat([
             ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
           ])),
-          (options.selectLabel) && h("label", options.selectLabel.concat([
+          ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
             ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
           ])),
-          h("blockquote#newPath", options.path),
+          ( options.type === "new" ) && h("blockquote#newPath", options.path),
           h(".modalButtons", [
-            h(".okButton.btn", { tabIndex: 2, onclick: ok, role: "button" }, [
+            h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
               h("span", [String(options.okText || "OK!")])
             ]),
             ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
@@ -476,13 +478,10 @@
   }
 
   function insertContent ( content ) {
-    console.log("Start inserting content...");
     app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
-    console.log("Supposedly finished inserting content.");
   }
 
   function pageSetup () {
-    console.log("Begin pageSetup...");
     app.dirtyDOM = ( !CodeMirror ) ? render() : renderEditor();
     app.rootNode = createElement(app.dirtyDOM);
 
@@ -505,18 +504,16 @@
       app.modalOverlay = createElement(app.modalDOM);
       document.body.appendChild(app.modalOverlay);
     }
-    console.log("Create new domRefs...");
     app.domRefs = new DOMRef();
-    console.log("Setup new domRefs...");
     app.domRefs.set();
-    console.log("Start routing stuff...");
     if ( window.location.hash ) {
       app.router.init();
     }
     else {
-      // Just for debugging - change to main page later.
       app.router.init("/");
     }
+    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+    catch (e) {console.log(e);}
   }
 
   function setupEditor () {
@@ -537,7 +534,7 @@
       })
     });
     app.domRefs.editor.on("change", update);
-    //app.domRefs.editor.refresh();
+    app.domRefs.editor.refresh();
     app.domRefs.buttons.childNodes[0].removeAttribute("style");
     console.log("Editor loaded");
   }
@@ -568,13 +565,13 @@
     patches = diff(app.dirtyDOM, refreshDOM);
     app.rootNode = patch(app.rootNode, patches);
     app.dirtyDOM = refreshDOM;
-
+    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+    catch (e) {console.log(e);}
     app.domRefs = new DOMRef();
     app.domRefs.set();
   }
 
   function getList () {
-    console.log("Getting list...");
     reqwest({
       url: app.sitePath + "/items/?$select=Title,Category",
       method: "GET",
@@ -587,10 +584,15 @@
         "Content-Type": "application/json;odata=verbose"
       },
       success: function ( data ) {
-        /**
-         * This is incredibly roundabout - I'll make it more refined when other
-         * stuff has been completed.  No sense in wasting time on it just yet.
-         */
+        function handleNav () {
+          var oldActive = app.rootNode.querySelectorAll("a.active"),
+            i = 0,
+            count = oldActive.length;
+          for ( ; i < count; ++i ) {
+            oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
+          }
+          this.className = "active";
+        }
         var results = data.d.results,
           pages = {},
           fhm = [],
@@ -604,25 +606,23 @@
           page = results[i];
           pages[page.Category] = page.Title;
           if ( /^\/fhm\//i.test(page.Category) ) {
-            // This one is Force Health
             fhm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
             fhmLinks.push(
               h("li", [
-                h("a", { href: "#" + page.Category }, [String(page.Title)]),
+                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
                 h("hr")
               ])
             )
           }
           if ( /^\/comm\//i.test(page.Category) ) {
-            // This is Comm
             comm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
             commLinks.push(
               h("li", [
-                h("a", { href: "#" + page.Category }, [String(page.Title)]),
+                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
                 h("hr")
               ])
             )
@@ -635,7 +635,6 @@
           h("optgroup", { label: "--Sub-Cateogries--" }, comm)
         ];
         app.navDOM = renderNav(fhmLinks, commLinks);
-        console.log("Getting list internals complete.");
         pageSetup();
       },
       error: util.connError
@@ -713,7 +712,6 @@
      recurse: "forward",*/
     after: resetPage,
     notfound: function () {
-      //app.router.setRoute("/FHM/travelMedicine");
       window.location.href = baseURL + "/Pages/land.aspx";
     }
   });

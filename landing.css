@@ -141,9 +141,13 @@ body{
 
 #navBlock ul li {
   border: 1px solid;
-  padding: 8px 20px;
   margin-bottom: 10px;
+}
 
+#navBlock li a {
+  display: block;
+  padding: 8px 20px;
+  width: 100%;
 }
 
 #navBlock .left-cat li {
