@@ -1,5 +1,5 @@
-;(function ( window, document, reqwest, Router, CodeMirror, undefined ) {
-  CodeMirror = CodeMirror || null;
+;(function ( window, document, reqwest, Route, undefined ) {
+  var codeMirror = CodeMirror || null;
   if (!Object.keys) {
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
     Object.keys = (function () {
@@ -95,6 +95,7 @@
             h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
               h("span", ["Toggle Editor"])
             ]),
+            h("div.clearfix"),
             h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
               h("span", ["Cheat Sheet"])
             ]),
@@ -482,7 +483,7 @@
   }
 
   function pageSetup () {
-    app.dirtyDOM = ( !CodeMirror ) ? render() : renderEditor();
+    app.dirtyDOM = ( !codeMirror ) ? render() : renderEditor();
     app.rootNode = createElement(app.dirtyDOM);
 
     try {
@@ -499,7 +500,7 @@
         document.body.appendChild(app.rootNode);
       }
     }
-    if ( CodeMirror ) {
+    if ( codeMirror ) {
       app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
       app.modalOverlay = createElement(app.modalDOM);
       document.body.appendChild(app.modalOverlay);
@@ -524,7 +525,7 @@
     app.dirtyDOM = refreshDOM;
     app.domRefs = new DOMRef();
     app.domRefs.set({
-      editor: CodeMirror.fromTextArea(app.domRefs.textarea, {
+      editor: codeMirror.fromTextArea(app.domRefs.textarea, {
         mode: 'gfm',
         lineNumbers: false,
         matchBrackets: true,
@@ -630,9 +631,9 @@
         }
         app.menuItems = [
           h("option", { value: "/FHM" }, ["Force Health Management"]),
-          h("optgroup", { label: "--Sub-Cateogries--" }, fhm),
+          h("optgroup", { label: "Sub-Cateogries" }, fhm),
           h("option", { value: "/Comm" }, ["Community Health"]),
-          h("optgroup", { label: "--Sub-Cateogries--" }, comm)
+          h("optgroup", { label: "Sub-Cateogries" }, comm)
         ];
         app.navDOM = renderNav(fhmLinks, commLinks);
         pageSetup();
@@ -678,7 +679,7 @@
       },
       error: util.connError,
       complete: function () {
-        if ( CodeMirror ) {
+        if ( codeMirror ) {
           setupEditor();
         }
       }

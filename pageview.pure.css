@@ -261,7 +261,17 @@ body{
   /*background-color: #999;*/
   /*background-color:#B23229*/
 }
- #output a{
+ .clearfix {
+  zoom: 1;
+  *zoom: 1;
+}
+.clearfix:after {
+  content: " ";
+  clear: both;
+  display: block;
+  visibility: hidden;
+  height: 0;}
+#output a{
   color:#0645ad;
 }
 #output a:visited{
@@ -639,4 +649,4 @@ body{
  display:block
 }
 }
-  
+ 

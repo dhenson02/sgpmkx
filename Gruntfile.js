@@ -77,7 +77,7 @@ module.exports = function(grunt) {
         roundingPrecision: -1,
         compatibility: 'ie8',
         processImport: false,
-        keepSpecialComments: 0
+        keepSpecialComments: 1
       },
       dist: {
         files: {
