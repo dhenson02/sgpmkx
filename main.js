@@ -576,11 +576,13 @@ function resetPage () {
     modalRefreshDOM,
     patches;
   if ( codeMirror ) {
-    wrap = app.domRefs.editor.getWrapperElement();
-    wrap.parentNode.removeChild(wrap);
-    app.domRefs.set({
-      editor: null
-    });
+    if ( app.domRefs.editor ) {
+      wrap = app.domRefs.editor.getWrapperElement();
+      wrap.parentNode.removeChild(wrap);
+      app.domRefs.set({
+        editor: null
+      });
+    }
     refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
     modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
     patches = diff(app.modalDOM, modalRefreshDOM);
