@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/landing.js" afterPath="$PROJECT_DIR$/landing.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/content5.js" afterPath="$PROJECT_DIR$/content5.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nav.css" afterPath="$PROJECT_DIR$/nav.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -59,11 +60,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="content5.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="content5.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/content5.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="720" column="0" selection-start-line="720" selection-start-column="0" selection-end-line="720" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.29277566">
+                  <caret line="602" column="20" selection-start-line="602" selection-start-column="20" selection-end-line="602" selection-end-column="20" />
                   <folding>
                     <element signature="e#121#1301#0" expanded="false" />
                     <element signature="e#1346#1551#0" expanded="false" />
@@ -92,11 +93,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="landing.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="landing.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/landing.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="1.0038023">
-                  <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="28" selection-end-column="55" />
                   <folding />
                 </state>
               </provider>
@@ -168,7 +169,7 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="generic.css" pinned="false" current-in-tab="true">
+          <file leaf-file-name="generic.css" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/generic.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
@@ -250,11 +251,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="nav.css" pinned="false" current-in-tab="false">
+          <file leaf-file-name="nav.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/nav.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
+                <state vertical-scroll-proportion="0.62357414">
+                  <caret line="76" column="1" selection-start-line="76" selection-start-column="1" selection-end-line="76" selection-end-column="1" />
                   <folding />
                 </state>
               </provider>
@@ -329,15 +330,15 @@
         <option value="$PROJECT_DIR$/pageview.css" />
         <option value="$PROJECT_DIR$/landAction.aspx" />
         <option value="$PROJECT_DIR$/landing.css" />
-        <option value="$PROJECT_DIR$/nav.css" />
         <option value="$PROJECT_DIR$/manager2b.aspx" />
         <option value="$PROJECT_DIR$/nav.js" />
         <option value="$PROJECT_DIR$/buttons.css" />
         <option value="$PROJECT_DIR$/generic.css" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/helpers.js" />
-        <option value="$PROJECT_DIR$/content5.js" />
         <option value="$PROJECT_DIR$/landing.js" />
+        <option value="$PROJECT_DIR$/nav.css" />
+        <option value="$PROJECT_DIR$/content5.js" />
       </list>
     </option>
   </component>
@@ -381,9 +382,9 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1263" />
+    <option name="x" value="958" />
     <option name="y" value="27" />
-    <option name="width" value="1273" />
+    <option name="width" value="1578" />
     <option name="height" value="1023" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -430,7 +431,7 @@
     <property name="options.lastSelected" value="configurable.group.appearance" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.idesettings.emmet" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../jsmpeg-vnc" />
     <property name="FullScreen" value="false" />
@@ -612,7 +613,13 @@
       <option name="project" value="LOCAL" />
       <updated>1439339529760</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="pickier about what links to show - only 2nd level">
+      <created>1439339803398</created>
+      <option name="number" value="00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1439339803398</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView">
@@ -625,7 +632,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1263" y="27" width="1273" height="1023" extended-state="0" />
+    <frame x="958" y="27" width="1578" height="1023" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24759616" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -713,7 +720,8 @@
     <MESSAGE value="removed links on main FHM and Comm nav text" />
     <MESSAGE value="non content managers loading content.aspx wont fail now" />
     <MESSAGE value="slightly cleaned helpers.js and Gruntfile.js.  added/corrected self-exec params in landing and content" />
-    <option name="LAST_COMMIT_MESSAGE" value="slightly cleaned helpers.js and Gruntfile.js.  added/corrected self-exec params in landing and content" />
+    <MESSAGE value="pickier about what links to show - only 2nd level" />
+    <option name="LAST_COMMIT_MESSAGE" value="pickier about what links to show - only 2nd level" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1700,14 +1708,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nav.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pageview.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1846,29 +1846,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/content5.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="720" column="0" selection-start-line="720" selection-start-column="0" selection-end-line="720" selection-end-column="0" />
-          <folding>
-            <element signature="e#121#1301#0" expanded="false" />
-            <element signature="e#1346#1551#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="27" selection-start-line="0" selection-start-column="27" selection-end-line="0" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
           <folding />
         </state>
       </provider>
@@ -1889,11 +1870,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/store.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/landing.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.0038023">
-          <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="28" selection-end-column="55" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.62357414">
+          <caret line="76" column="1" selection-start-line="76" selection-start-column="1" selection-end-line="76" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content5.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.29277566">
+          <caret line="602" column="20" selection-start-line="602" selection-start-column="20" selection-end-line="602" selection-end-column="20" />
+          <folding>
+            <element signature="e#121#1301#0" expanded="false" />
+            <element signature="e#1346#1551#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

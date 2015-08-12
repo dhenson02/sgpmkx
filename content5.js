@@ -586,13 +586,15 @@
       },
       success: function ( data ) {
         function handleNav () {
+          console.log(this.className);
+          console.log(this.nodeName);
           var oldActive = app.rootNode.querySelectorAll("a.active"),
             i = 0,
             count = oldActive.length;
           for ( ; i < count; ++i ) {
             oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
           }
-          this.className = "active";
+          this.className += " active";
         }
         var results = data.d.results,
           pages = {},
@@ -601,32 +603,50 @@
           comm = [],
           commLinks = [],
           i = 0,
+          li,
+          hr,
           count = results.length,
           page;
         for ( ; i < count; ++i ) {
+          li = "li";
+          hr = h("hr");
           page = results[i];
           pages[page.Category] = page.Title;
           if ( /^\/fhm\//i.test(page.Category) ) {
             fhm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
+            if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
+              li = "li.sub-cat";
+              hr = null;
+            }
             fhmLinks.push(
-              h("li", [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
-                h("hr")
+              h(li, [
+                h("a", { href: "#" + page.Category, onclick: handleNav }, [
+                  String(page.Title),
+                  h("span")
+                ]),
+                hr
               ])
-            )
+            );
           }
           if ( /^\/comm\//i.test(page.Category) ) {
             comm.push(
               h("option", { value: page.Category }, [String(page.Title)])
             );
+            if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
+              li = "li.sub-cat";
+              hr = null;
+            }
             commLinks.push(
-              h("li", [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
-                h("hr")
+              h(li, [
+                h("a", { href: "#" + page.Category, onclick: handleNav }, [
+                  String(page.Title),
+                  h("span")
+                ]),
+                hr
               ])
-            )
+            );
           }
         }
         app.menuItems = [
@@ -703,6 +723,13 @@
           on: function ( root, sub ) {
             loadingSomething(true, app.domRefs.output);
             init("/" + root + "/" + sub);
+          },
+          '/(\\w+)': {
+            //once: getList,
+            on: function ( root, sub, inner ) {
+              loadingSomething(true, app.domRefs.output);
+              init("/" + root + "/" + sub + "/" + inner);
+            }
           }
         }
       }

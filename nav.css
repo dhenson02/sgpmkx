@@ -67,6 +67,15 @@
   padding: 10px 20px;
 }
 
+#navWrap .sub-cat {
+  background-color: #133E6F;
+}
+
+#navWrap .sub-cat a {
+  font-size: 13px;
+  padding: 5px 20px 5px 30px;
+}
+
 #navWrap .active {
   font-weight: bold;
   display: inline-block;
