@@ -69,11 +69,16 @@
 
 #navWrap .sub-cat {
   background-color: #133E6F;
+  display: none;
 }
 
 #navWrap .sub-cat a {
   font-size: 13px;
-  padding: 5px 20px 5px 30px;
+  padding: 7px 20px 7px 30px;
+}
+
+#navWrap .sub-cat.sub-cat--open {
+  display: block;
 }
 
 #navWrap .active {

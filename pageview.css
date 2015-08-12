@@ -1,9 +1,8 @@
 @charset "UTF-8";
 
 html{
-  /*overflow-y:scroll;*/
-  -webkit-font-smoothing:subpixel-antialiased;
   -moz-osx-font-smoothing:greyscale;
+  -webkit-font-smoothing:subpixel-antialiased;
   zoom:1;
   *zoom:1;
   font-size: 100%;

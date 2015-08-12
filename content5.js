@@ -1,749 +1,787 @@
-;(function ( window, document, reqwest, Router, undefined ) {
-  var codeMirror = CodeMirror || null;
-  if (!Object.keys) {
-    // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
-    Object.keys = (function () {
-      'use strict';
-      var hasOwnProperty = Object.prototype.hasOwnProperty,
-        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-        dontEnums = [
-          'toString',
-          'toLocaleString',
-          'valueOf',
-          'hasOwnProperty',
-          'isPrototypeOf',
-          'propertyIsEnumerable',
-          'constructor'
-        ],
-        dontEnumsLength = dontEnums.length;
+var codeMirror = CodeMirror || null;
+if (!Object.keys) {
+  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+  Object.keys = (function () {
+    'use strict';
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+      hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+      dontEnums = [
+        'toString',
+        'toLocaleString',
+        'valueOf',
+        'hasOwnProperty',
+        'isPrototypeOf',
+        'propertyIsEnumerable',
+        'constructor'
+      ],
+      dontEnumsLength = dontEnums.length;
 
-      return function (obj) {
-        if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
-          throw new TypeError('Object.keys called on non-object');
+    return function (obj) {
+      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+        throw new TypeError('Object.keys called on non-object');
+      }
+
+      var result = [], prop, i;
+
+      for (prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) {
+          result.push(prop);
         }
+      }
 
-        var result = [], prop, i;
-
-        for (prop in obj) {
-          if (hasOwnProperty.call(obj, prop)) {
-            result.push(prop);
+      if (hasDontEnumBug) {
+        for (i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) {
+            result.push(dontEnums[i]);
           }
         }
-
-        if (hasDontEnumBug) {
-          for (i = 0; i < dontEnumsLength; i++) {
-            if (hasOwnProperty.call(obj, dontEnums[i])) {
-              result.push(dontEnums[i]);
-            }
-          }
-        }
-        return result;
-      };
-    }());
-  }
-  String.prototype.toCamelCase = function() {
-    return this
-      .toLowerCase()
-      .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
-      //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
-      .replace(/\s/g, '');
-  };
-  var h = require("virtual-dom/h"),
-    diff = require("virtual-dom/diff"),
-    patch = require("virtual-dom/patch"),
-    createElement = require("virtual-dom/create-element"),
-    util = require("./helpers"),
-    Content = require("./store"),
-    DOMRef = require("./domStore"),
-    renderNav = require("./nav"),
-    baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
-    app = {
-      sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
-      digest: document.getElementById("__REQUESTDIGEST").value,
-      pages: {},
-      currentContent: new Content(),
-      domRefs: new DOMRef(),
-      dirtyDOM: null,
-      rootNode: null,
-      modalDOM: null,
-      modalOverlay: null,
-      navDOM: null,
-      router: null,
-      menuItems: null,
-      inTransition: {}
+      }
+      return result;
     };
+  }());
+}
+String.prototype.toCamelCase = function() {
+  return this
+    .toLowerCase()
+    .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+    //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
+    .replace(/\s/g, '');
+};
+var h = require("virtual-dom/h"),
+  diff = require("virtual-dom/diff"),
+  patch = require("virtual-dom/patch"),
+  createElement = require("virtual-dom/create-element"),
+  util = require("./helpers"),
+  Content = require("./store"),
+  DOMRef = require("./domStore"),
+  renderNav = require("./nav"),
+  baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
+  app = {
+    sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
+    digest: document.getElementById("__REQUESTDIGEST").value,
+    pages: {},
+    currentContent: new Content(),
+    domRefs: new DOMRef(),
+    dirtyDOM: null,
+    rootNode: null,
+    modalDOM: null,
+    modalOverlay: null,
+    navDOM: null,
+    router: null,
+    menuItems: null,
+    inTransition: {}
+  };
 
-  function render () {
-    return (
-      h("#wrapper", [
-        h("#sideNav", [app.navDOM]),
-        h("#content.fullPage", [
-          h("#contentWrap", [
-            h("#output")
-          ])
+function render () {
+  return (
+    h("#wrapper", [
+      h("#sideNav", [app.navDOM]),
+      h("#content.fullPage", [
+        h("#contentWrap", [
+          h("#output")
         ])
       ])
-    );
-  }
+    ])
+  );
+}
 
-  function renderEditor () {
-    return (
-      h("#wrapper", [
-        h("#sideNav", [app.navDOM]),
-        h("#content.fullPage", [
-          h("#buttons", [
-            h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
-              h("span", ["Toggle Editor"])
-            ]),
-            h("div.clearfix"),
-            h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
-              h("span", ["Cheat Sheet"])
-            ]),
-            h("#saveButton.btn", { onclick: savePage, role: "button" }, [
-              h("span", ["Save"])
-            ]),
-            h("#createButton.btn", { onclick: createPage, role: "button" }, [
-              h("span", ["New"])
-            ]),
-            h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
-              h("span", ["Delete"])
-            ])
+function renderEditor () {
+  return (
+    h("#wrapper", [
+      h("#sideNav", [app.navDOM]),
+      h("#content.fullPage", [
+        h("#buttons", [
+          h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
+            h("span", ["Toggle Editor"])
           ]),
-          h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
-          h("#contentWrap", [
-            h("#input", [
-              h("label#titleFieldLabel", [
-                "Page title: ",
-                h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
-              ]),
-              h("textarea#textarea", [String(app.currentContent.text || "")])
-            ]),
-            h("#output")
+          h("div.clearfix"),
+          h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
+            h("span", ["Cheat Sheet"])
+          ]),
+          h("#saveButton.btn", { onclick: savePage, role: "button" }, [
+            h("span", ["Save"])
+          ]),
+          h("#createButton.btn", { onclick: createPage, role: "button" }, [
+            h("span", ["New"])
+          ]),
+          h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
+            h("span", ["Delete"])
           ])
+        ]),
+        h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
+        h("#contentWrap", [
+          h("#input", [
+            h("label#titleFieldLabel", [
+              "Page title: ",
+              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
+            ]),
+            h("textarea#textarea", [String(app.currentContent.text || "")])
+          ]),
+          h("#output")
         ])
       ])
-    );
-  }
+    ])
+  );
+}
 
-  function loadingSomething ( status, target ) {
-    if ( status === true ) {
-      if ( app.inTransition[target] === true ) {
-        return false;
-      }
-      app.inTransition[target] = true;
-      if ( util.regLoading.test(target.className) === false ) {
-        target.className += " loading";
-      }
-    }
-    else {
-      setTimeout(function() {
-        app.inTransition[target] = false;
-        target.className = target.className.replace(util.regLoading, "");
-      }, 200);
-    }
-  }
-
-  function savePage ( event ) {
-    event = event || window.event;
-    //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    //var self = event.currentTarget || event.srcElement || this;
-    var self = this;
-    //try {
-    //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
-    //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
-    //  console.log("this: " + this.nodeName); } catch (e) {
-    //}}}
-    if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
-      self = self.parentNode.parentNode;
-    }
-    if (self.nodeName === "span") {
-      self = self.parentNode;
-    }
-    app.currentContent.set({
-      title: app.currentContent.title.trim(),
-      text: app.currentContent.text.trim()
-    });
-    if (app.currentContent.text === app.currentContent.originalText &&
-      app.currentContent.title === app.currentContent.originalTitle ) {
-      if( !util.regNoChange.test(self.className) ) {
-        self.className += " nochange";
-      }
-      try {
-        self.childNodes[0].innerHTML = "No change";
-      } catch (e) {}
-
-      if (app.domRefs.buttons.tempSaveText) {
-        clearTimeout(app.domRefs.buttons.tempSaveText);
-      }
-      app.domRefs.buttons.tempSaveText = setTimeout(function() {
-        try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
-        self.className = self.className.replace(util.regNoChange, "");
-      }, 2000);
+function loadingSomething ( status, target ) {
+  if ( status === true ) {
+    if ( app.inTransition[target] === true ) {
       return false;
     }
-    else {
-      loadingSomething(true, self);
+    app.inTransition[target] = true;
+    if ( util.regLoading.test(target.className) === false ) {
+      target.className += " loading";
     }
+  }
+  else {
+    //setTimeout(function() {
+      app.inTransition[target] = false;
+      target.className = target.className.replace(util.regLoading, "");
+    //}, 200);
+  }
+}
+
+function savePage ( event ) {
+  event = event || window.event;
+  //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  //var self = event.currentTarget || event.srcElement || this;
+  var self = this;
+  //try {
+  //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
+  //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
+  //  console.log("this: " + this.nodeName); } catch (e) {
+  //}}}
+  if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
+    self = self.parentNode.parentNode;
+  }
+  if (self.nodeName === "span") {
+    self = self.parentNode;
+  }
+  app.currentContent.set({
+    title: app.currentContent.title.trim(),
+    text: app.currentContent.text.trim()
+  });
+  if (app.currentContent.text === app.currentContent.originalText &&
+    app.currentContent.title === app.currentContent.originalTitle ) {
+    if( !util.regNoChange.test(self.className) ) {
+      self.className += " nochange";
+    }
+    try {
+      self.childNodes[0].innerHTML = "No change";
+    } catch (e) {}
+
+    if (app.domRefs.buttons.tempSaveText) {
+      clearTimeout(app.domRefs.buttons.tempSaveText);
+    }
+    app.domRefs.buttons.tempSaveText = setTimeout(function() {
+      try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
+      self.className = self.className.replace(util.regNoChange, "");
+    }, 2000);
+    return false;
+  }
+  else {
+    loadingSomething(true, self);
+  }
+  reqwest({
+    url: app.sitePath + "/items(" + app.currentContent.id + ")",
+    method: "POST",
+    data: JSON.stringify({
+      '__metadata': {
+        'type': app.currentContent.listItemType
+      },
+      'Title': app.currentContent.title,
+      'Text': app.currentContent.text
+    }),
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "X-HTTP-Method": "MERGE",
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": app.digest,
+      "IF-MATCH": "*"
+    },
+    success: function() {
+      console.log("Successfully saved changes.");
+      /*newModal({
+        title: [h("h2", [String(app.currentContent.title) + " updated!"])],
+        text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
+        type: "success",
+        showCancelButton: false
+      });*/
+    },
+    error: util.connError,
+    complete: function () {
+      loadingSomething(false, self);
+    }
+  });
+}
+
+function createPage () {
+  newModal({
+    title: [h("h2", ["New Page"])],
+    text: [h("text", ["Give it a name:"])],
+    selectLabel: [h("text", ["Select the parent category"])],
+    type: "new"
+  }, function ( inputValue ) {
+    if ( "object" !== typeof inputValue ) {
+      return false;
+    }
+    loadingSomething(true, app.domRefs.contentWrap);
     reqwest({
-      url: app.sitePath + "/items(" + app.currentContent.id + ")",
+      url: app.sitePath + "/items",
       method: "POST",
       data: JSON.stringify({
         '__metadata': {
           'type': app.currentContent.listItemType
         },
-        'Title': app.currentContent.title,
-        'Text': app.currentContent.text
+        'Title': inputValue.title,
+        'Text': '## New Page :)',
+        'Category': inputValue.category
       }),
       type: "json",
       contentType: "application/json",
       withCredentials: true,
       headers: {
-        "X-HTTP-Method": "MERGE",
         "Accept": "application/json;odata=verbose",
         "text-Type": "application/json;odata=verbose",
         "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": app.digest,
-        "IF-MATCH": "*"
+        "X-RequestDigest": app.digest
       },
       success: function() {
-        console.log("Successfully saved changes.");
-        /*newModal({
-          title: [h("h2", [String(app.currentContent.title) + " updated!"])],
-          text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
+        newModal({
+          title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
+          text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
+          type: "success",
+          okText: "Take me",
+          showCancelButton: false
+        }, function() {
+          app.router.setRoute(inputValue.category);
+        });
+      },
+      error: util.connError,
+      complete: function () {
+        loadingSomething(false, app.domRefs.contentWrap);
+      }
+    });
+  });
+}
+
+function deletePage () {
+  app.currentContent.title = app.currentContent.title.trim();
+  var category = app.currentContent.category.join("/");
+  newModal({
+    title: [h("p", ["DELETE"]), h("strong", [String(app.currentContent.title)]), h("text", [", Path: " + category])],
+    text: [h("em", ["You might wanna check with someone first."])],
+    type: "warning"
+  }, function( choice ) {
+    if ( choice === false ) {
+      return false;
+    }
+    loadingSomething(true, app.domRefs.contentWrap);
+    reqwest({
+      url: app.sitePath + "/items(" + app.currentContent.id + ")",
+      method: "POST",
+      type: "json",
+      contentType: "application/json",
+      withCredentials: true,
+      headers: {
+        "IF-MATCH": "*",
+        "X-HTTP-Method": "DELETE",
+        "Accept": "application/json;odata=verbose",
+        "text-Type": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": app.digest
+      },
+      success: function() {
+        newModal({
+          title: [h("h2", [String(app.currentContent.title) + " deleted!"])],
+          text: [h("strong", [String(category)]), h("text", [" is no longer in use."])],
           type: "success",
           showCancelButton: false
-        });*/
+        }, function() {
+          app.currentContent.category.pop();
+          app.router.setRoute(app.currentContent.category.join("/"));
+        });
       },
       error: util.connError,
       complete: function () {
-        loadingSomething(false, self);
+        loadingSomething(false, app.domRefs.contentWrap);
       }
     });
-  }
+  });
+}
 
-  function createPage () {
-    newModal({
-      title: [h("h2", ["New Page"])],
-      text: [h("text", ["Give it a name:"])],
-      selectLabel: [h("text", ["Select the parent category"])],
-      type: "new"
-    }, function ( inputValue ) {
-      if ( "object" !== typeof inputValue ) {
-        return false;
-      }
-      loadingSomething(true, app.domRefs.contentWrap);
-      reqwest({
-        url: app.sitePath + "/items",
-        method: "POST",
-        data: JSON.stringify({
-          '__metadata': {
-            'type': app.currentContent.listItemType
-          },
-          'Title': inputValue.title,
-          'Text': '## New Page :)',
-          'Category': inputValue.category
-        }),
-        type: "json",
-        contentType: "application/json",
-        withCredentials: true,
-        headers: {
-          "Accept": "application/json;odata=verbose",
-          "text-Type": "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": app.digest
-        },
-        success: function() {
-          newModal({
-            title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
-            text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
-            type: "success",
-            okText: "Take me",
-            showCancelButton: false
-          }, function() {
-            app.router.setRoute(inputValue.category);
-          });
-        },
-        error: util.connError,
-        complete: function () {
-          loadingSomething(false, app.domRefs.contentWrap);
-        }
-      });
-    });
-  }
+function updateTitle () {
+  var val = app.domRefs.titleField.value;
+  app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
+  app.currentContent.set({ title: val });
+}
 
-  function deletePage () {
-    app.currentContent.title = app.currentContent.title.trim();
-    var category = app.currentContent.category.join("/");
-    newModal({
-      title: [h("p", ["DELETE"]), h("strong", [String(app.currentContent.title)]), h("text", [", Path: " + category])],
-      text: [h("em", ["You might wanna check with someone first."])],
-      type: "warning"
-    }, function( choice ) {
-      if ( choice === false ) {
-        return false;
-      }
-      loadingSomething(true, app.domRefs.contentWrap);
-      reqwest({
-        url: app.sitePath + "/items(" + app.currentContent.id + ")",
-        method: "POST",
-        type: "json",
-        contentType: "application/json",
-        withCredentials: true,
-        headers: {
-          "IF-MATCH": "*",
-          "X-HTTP-Method": "DELETE",
-          "Accept": "application/json;odata=verbose",
-          "text-Type": "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": app.digest
-        },
-        success: function() {
-          newModal({
-            title: [h("h2", [String(app.currentContent.title) + " deleted!"])],
-            text: [h("strong", [String(category)]), h("text", [" is no longer in use."])],
-            type: "success",
-            showCancelButton: false
-          }, function() {
-            app.currentContent.category.pop();
-            app.router.setRoute(app.currentContent.category.join("/"));
-          });
-        },
-        error: util.connError,
-        complete: function () {
-          loadingSomething(false, app.domRefs.contentWrap);
-        }
-      });
-    });
-  }
+function newModal ( options, callback ) {
+  options = {
+    title: options.title || [h("h2", ["Info"])],
+    text: options.text || [h("text", ["Click OK to continue"])],
+    selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
+    type: options.type || "success",
+    path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
+    okText: options.okText || "OK!",
+    showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
+    closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
+  };
+  callback = ( "function" === typeof callback ) ? callback : null;
 
-  function updateTitle () {
-    var val = app.domRefs.titleField.value;
-    app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
-    app.currentContent.set({ title: val });
-  }
+  var freshDOM = freshModal(options, callback);
+  var patches = diff(app.modalDOM, freshDOM);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = freshDOM;
+  util.addEvent("keyup", document, handleCancel);
+}
 
-  function newModal ( options, callback ) {
-    options = {
-      title: options.title || [h("h2", ["Info"])],
-      text: options.text || [h("text", ["Click OK to continue"])],
-      selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
-      type: options.type || "success",
-      path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
-      okText: options.okText || "OK!",
-      showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
-      closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
-    };
-    callback = ( "function" === typeof callback ) ? callback : null;
-
-    var freshDOM = freshModal(options, callback);
-    var patches = diff(app.modalDOM, freshDOM);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = freshDOM;
-    util.addEvent("keyup", document, handleCancel);
-  }
-
-  function handleOk ( event, callback ) {
-    event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    var keyCode = event.keyCode || event.which || event.charCode || null;
-    if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
-      if ( !callback ) {
-        modalSuicide();
-        return false;
-      }
-      var title = document.getElementById("modalInput").value.trim();
-      var category = document.getElementById("menuItems").value + title.toCamelCase();
-      if ( title && category ) {
-        callback({
-          title: title,
-          category: category
-        });
-      }
-      else {
-        callback(true);
-      }
+function handleOk ( event, callback ) {
+  event = event || window.event;
+  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  var keyCode = event.keyCode || event.which || event.charCode || null;
+  if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
+    if ( !callback ) {
       modalSuicide();
       return false;
     }
-  }
-
-  function handleCancel ( event, callback ) {
-    event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    var self = event.currentTarget || event.srcElement || this;
-    var keyCode = event.keyCode || event.which || event.charCode || null;
-    if (self.nodeName === "span") {
-      self = self.parentNode;
-    }
-    // For self test: regModalBg.test(self.className)
-    if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
-      ( event.type === "keyup" && keyCode === 27 ) ) {
-      if ( callback ) { callback(); }
-      modalSuicide();
-      return false;
-    }
-  }
-
-  function handleChange ( event, options, callback ) {
-    event = event || window.event;
-    event.preventDefault ? event.preventDefault() : event.returnValue = false;
-    //var self = event.currentTarget || event.srcElement || this;
     var title = document.getElementById("modalInput").value.trim();
-    options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
-    var refreshDOM = freshModal( options, callback);
-    var patches = diff(app.modalDOM, refreshDOM);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = refreshDOM;
-    //document.getElementById("newPath").innerHTML = category + "/" + title;
+    var category = document.getElementById("menuItems").value + title.toCamelCase();
+    if ( title && category ) {
+      callback({
+        title: title,
+        category: category
+      });
+    }
+    else {
+      callback(true);
+    }
+    modalSuicide();
     return false;
   }
+}
 
-  function freshModal ( options, callback ) {
-    function ok ( event ) {
-      handleOk(event, callback);
-    }
-    function cancel ( event ) {
-      handleCancel(event, callback);
-    }
-    function change ( event ) {
-      handleChange(event, options, callback);
-    }
-    return (
-      h(".modalOverlay", { style: { zIndex: 7 } }, [
-        h(".modalBg", { onclick: cancel }),
-        h(".modal", [
-          h(".header", options.title),
-          h("label", options.text.concat([
-            ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
-          ])),
-          ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
-            ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
-          ])),
-          ( options.type === "new" ) && h("blockquote#newPath", options.path),
-          h(".modalButtons", [
-            h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
-              h("span", [String(options.okText || "OK!")])
-            ]),
-            ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
-              h("span", ["Nope."])
-            ]) || null
-          ])
+function handleCancel ( event, callback ) {
+  event = event || window.event;
+  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  var self = event.currentTarget || event.srcElement || this;
+  var keyCode = event.keyCode || event.which || event.charCode || null;
+  if (self.nodeName === "span") {
+    self = self.parentNode;
+  }
+  // For self test: regModalBg.test(self.className)
+  if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
+    ( event.type === "keyup" && keyCode === 27 ) ) {
+    if ( callback ) { callback(); }
+    modalSuicide();
+    return false;
+  }
+}
+
+function handleChange ( event, options, callback ) {
+  event = event || window.event;
+  event.preventDefault ? event.preventDefault() : event.returnValue = false;
+  //var self = event.currentTarget || event.srcElement || this;
+  var title = document.getElementById("modalInput").value.trim();
+  options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
+  var refreshDOM = freshModal( options, callback);
+  var patches = diff(app.modalDOM, refreshDOM);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = refreshDOM;
+  //document.getElementById("newPath").innerHTML = category + "/" + title;
+  return false;
+}
+
+function freshModal ( options, callback ) {
+  function ok ( event ) {
+    handleOk(event, callback);
+  }
+  function cancel ( event ) {
+    handleCancel(event, callback);
+  }
+  function change ( event ) {
+    handleChange(event, options, callback);
+  }
+  return (
+    h(".modalOverlay", { style: { zIndex: 7 } }, [
+      h(".modalBg", { onclick: cancel }),
+      h(".modal", [
+        h(".header", options.title),
+        h("label", options.text.concat([
+          ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
+        ])),
+        ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
+          ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
+        ])),
+        ( options.type === "new" ) && h("blockquote#newPath", options.path),
+        h(".modalButtons", [
+          h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
+            h("span", [String(options.okText || "OK!")])
+          ]),
+          ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
+            h("span", ["Nope."])
+          ]) || null
         ])
       ])
-    );
+    ])
+  );
+}
+
+function modalSuicide () {
+  app.modalOverlay.style.display = "none";
+  var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
+  var patches = diff(app.modalDOM, destroyModal);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = destroyModal;
+  util.removeEvent("keyup", document, handleCancel);
+}
+
+function toggleEditor () {
+  var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
+  app.domRefs.contentWrap.className = "";
+  app.domRefs.cheatSheet.className = "";
+  if ( hasFullPage ) {
+    app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
+    //app.domRefs.titleField.removeAttribute("disabled");
+    app.domRefs.editor.refresh();
   }
-
-  function modalSuicide () {
-    app.modalOverlay.style.display = "none";
-    var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
-    var patches = diff(app.modalDOM, destroyModal);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = destroyModal;
-    util.removeEvent("keyup", document, handleCancel);
+  else {
+    app.domRefs.content.className = app.domRefs.content.className + " fullPage";
+    //app.domRefs.titleField.setAttribute("disabled", "disabled");
   }
+  return false;
+}
 
-  function toggleEditor () {
-    var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
-    app.domRefs.contentWrap.className = "";
-    app.domRefs.cheatSheet.className = "";
-    if ( hasFullPage ) {
-      app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
-      //app.domRefs.titleField.removeAttribute("disabled");
-      app.domRefs.editor.refresh();
-    }
-    else {
-      app.domRefs.content.className = app.domRefs.content.className + " fullPage";
-      //app.domRefs.titleField.setAttribute("disabled", "disabled");
-    }
-    return false;
+function toggleCheatSheet () {
+  if ( app.domRefs.cheatSheet.style.display === "none" ) {
+    app.domRefs.cheatSheet.removeAttribute("style");
   }
-
-  function toggleCheatSheet () {
-    if ( app.domRefs.cheatSheet.style.display === "none" ) {
-      app.domRefs.cheatSheet.removeAttribute("style");
-    }
-    else {
-      app.domRefs.cheatSheet.style.display = "none";
-    }
-    //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    return false;
+  else {
+    app.domRefs.cheatSheet.style.display = "none";
   }
+  //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
+  return false;
+}
 
-  function update ( e ) {
-    var val = e.getValue();
-    app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
-    app.currentContent.set({ text: val });
+function update ( e ) {
+  var val = e.getValue();
+  app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
+  app.currentContent.set({ text: val });
+}
+
+function insertContent ( content ) {
+  app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
+}
+
+function pageSetup () {
+  app.dirtyDOM = ( !codeMirror ) ? render() : renderEditor();
+  app.rootNode = createElement(app.dirtyDOM);
+
+  try {
+    var wrapperTmp = document.getElementById("wrapper");
+    wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
   }
-
-  function insertContent ( content ) {
-    app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
-  }
-
-  function pageSetup () {
-    app.dirtyDOM = ( !codeMirror ) ? render() : renderEditor();
-    app.rootNode = createElement(app.dirtyDOM);
-
+  catch ( e ) {
     try {
-      var wrapperTmp = document.getElementById("wrapper");
-      wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
+      wrapperTmp = document.getElementById("content");
+      wrapperTmp.style.display = "none";
+      wrapperTmp.parentNode.appendChild(app.rootNode);
     }
     catch ( e ) {
-      try {
-        wrapperTmp = document.getElementById("content");
-        wrapperTmp.style.display = "none";
-        wrapperTmp.parentNode.appendChild(app.rootNode);
-      }
-      catch ( e ) {
-        document.body.appendChild(app.rootNode);
-      }
+      document.body.appendChild(app.rootNode);
     }
-    if ( codeMirror ) {
-      app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-      app.modalOverlay = createElement(app.modalDOM);
-      document.body.appendChild(app.modalOverlay);
-    }
-    app.domRefs = new DOMRef();
-    app.domRefs.set();
-    if ( window.location.hash ) {
-      app.router.init();
-    }
-    else {
-      app.router.init("/");
-    }
-    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
-    catch (e) {console.log(e);}
   }
+  if ( codeMirror ) {
+    app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+    app.modalOverlay = createElement(app.modalDOM);
+    document.body.appendChild(app.modalOverlay);
+  }
+  app.domRefs = new DOMRef();
+  app.domRefs.set();
+  if ( window.location.hash ) {
+    app.router.init();
+  }
+  else {
+    app.router.init("/");
+  }
+  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+  catch (e) {console.log(e);}
+  try {
+    var hashArray = window.location.hash.slice(2).split(/\//);
+    if ( hashArray.length > 1 ) {
+      var subCats = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+      if ( subCats ) {
+        var i = 0, total = subCats.length;
+        for ( ; i < total; ++i ) {
+          subCats[i].parentNode.className += " sub-cat--open";
+        }
+      }
+    }
+  } catch (e) {console.log("Failed to add sub-cat--open");}
 
-  function setupEditor () {
-    console.log("Loading editor...");
-    var refreshDOM = renderEditor();
-    var patches = diff(app.dirtyDOM, refreshDOM);
-    app.rootNode = patch(app.rootNode, patches);
-    app.dirtyDOM = refreshDOM;
-    app.domRefs = new DOMRef();
+}
+
+function setupEditor () {
+  console.log("Loading editor...");
+  var refreshDOM = renderEditor();
+  var patches = diff(app.dirtyDOM, refreshDOM);
+  app.rootNode = patch(app.rootNode, patches);
+  app.dirtyDOM = refreshDOM;
+  app.domRefs = new DOMRef();
+  app.domRefs.set({
+    editor: codeMirror.fromTextArea(app.domRefs.textarea, {
+      mode: 'gfm',
+      lineNumbers: false,
+      matchBrackets: true,
+      lineWrapping: true,
+      theme: "neo",
+      extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
+    })
+  });
+  app.domRefs.editor.on("change", update);
+  app.domRefs.editor.refresh();
+  app.domRefs.buttons.childNodes[0].removeAttribute("style");
+  console.log("Editor loaded");
+}
+
+function resetPage () {
+  var wrap,
+    refreshDOM,
+    modalRefreshDOM,
+    patches;
+  if ( app.domRefs.editor ) {
+    wrap = app.domRefs.editor.getWrapperElement();
+    wrap.parentNode.removeChild(wrap);
     app.domRefs.set({
-      editor: codeMirror.fromTextArea(app.domRefs.textarea, {
-        mode: 'gfm',
-        lineNumbers: false,
-        matchBrackets: true,
-        lineWrapping: true,
-        theme: "neo",
-        extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
-      })
+      editor: null
     });
-    app.domRefs.editor.on("change", update);
-    app.domRefs.editor.refresh();
-    app.domRefs.buttons.childNodes[0].removeAttribute("style");
-    console.log("Editor loaded");
-  }
-
-  function resetPage () {
-    var wrap,
-      refreshDOM,
-      modalRefreshDOM,
-      patches;
-    if ( app.domRefs.editor ) {
-      wrap = app.domRefs.editor.getWrapperElement();
-      wrap.parentNode.removeChild(wrap);
-      app.domRefs.set({
-        editor: null
-      });
-      refreshDOM = renderEditor();
-      modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-      patches = diff(app.modalDOM, modalRefreshDOM);
-      if (patches.length > 1) {
-        app.modalOverlay = patch(app.modalOverlay, patches);
-        app.modalDOM = modalRefreshDOM;
-        modalSuicide();
-      }
+    refreshDOM = renderEditor();
+    modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+    patches = diff(app.modalDOM, modalRefreshDOM);
+    if (patches.length > 1) {
+      app.modalOverlay = patch(app.modalOverlay, patches);
+      app.modalDOM = modalRefreshDOM;
+      modalSuicide();
     }
-    else {
-      refreshDOM = render();
-    }
-    patches = diff(app.dirtyDOM, refreshDOM);
-    app.rootNode = patch(app.rootNode, patches);
-    app.dirtyDOM = refreshDOM;
-    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
-    catch (e) {console.log(e);}
-    app.domRefs = new DOMRef();
-    app.domRefs.set();
   }
+  else {
+    refreshDOM = render();
+  }
+  patches = diff(app.dirtyDOM, refreshDOM);
+  app.rootNode = patch(app.rootNode, patches);
+  app.dirtyDOM = refreshDOM;
+  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+  catch (e) {console.log(e);}
+  app.domRefs = new DOMRef();
+  app.domRefs.set();
+}
 
-  function getList () {
-    reqwest({
-      url: app.sitePath + "/items/?$select=Title,Category",
-      method: "GET",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      },
-      success: function ( data ) {
-        function handleNav () {
-          console.log(this.className);
-          console.log(this.nodeName);
-          var oldActive = app.rootNode.querySelectorAll("a.active"),
-            i = 0,
-            count = oldActive.length;
-          for ( ; i < count; ++i ) {
-            oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
-          }
-          this.className += " active";
-        }
-        var results = data.d.results,
-          pages = {},
-          fhm = [],
-          fhmLinks = [],
-          comm = [],
-          commLinks = [],
+function getList () {
+  reqwest({
+    url: app.sitePath + "/items/?$select=Title,Category",
+    method: "GET",
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose"
+    },
+    success: function ( data ) {
+      function handleNav () {
+        var oldActive = app.rootNode.querySelectorAll("a.active"),
           i = 0,
-          li,
-          hr,
-          count = results.length,
-          page;
-        for ( ; i < count; ++i ) {
-          li = "li";
-          hr = h("hr");
-          page = results[i];
-          pages[page.Category] = page.Title;
-          if ( /^\/fhm\//i.test(page.Category) ) {
-            fhm.push(
-              h("option", { value: page.Category }, [String(page.Title)])
-            );
-            if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
-              li = "li.sub-cat";
-              hr = null;
-            }
-            fhmLinks.push(
-              h(li, [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [
-                  String(page.Title),
-                  h("span")
-                ]),
-                hr
-              ])
-            );
-          }
-          if ( /^\/comm\//i.test(page.Category) ) {
-            comm.push(
-              h("option", { value: page.Category }, [String(page.Title)])
-            );
-            if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
-              li = "li.sub-cat";
-              hr = null;
-            }
-            commLinks.push(
-              h(li, [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [
-                  String(page.Title),
-                  h("span")
-                ]),
-                hr
-              ])
-            );
-          }
+          total = oldActive.length;
+        for ( ; i < total; ++i ) {
+          oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
         }
-        app.menuItems = [
-          h("option", { value: "/FHM" }, ["Force Health Management"]),
-          h("optgroup", { label: "Sub-Cateogries" }, fhm),
-          h("option", { value: "/Comm" }, ["Community Health"]),
-          h("optgroup", { label: "Sub-Cateogries" }, comm)
-        ];
-        app.navDOM = renderNav(fhmLinks, commLinks);
-        pageSetup();
-      },
-      error: util.connError
-    });
-  }
+        this.className += " active";
 
-  function init ( path ) {
-    console.log("Begin init...");
-    reqwest({
-      url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
-      method: "GET",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      },
-      success: function ( data ) {
-        if ( !data.d.results[0] ) {
-          //loadingSomething(false, app.domRefs.output);
-          // This next line is just for debugging.  Something better will replace it later.
-          window.location.href = baseURL + "/Pages/land.aspx";
-          return false;
-        }
-        var obj = data.d.results[0];
-        app.currentContent = new Content({
-          id: obj.ID,
-          title: obj.Title || "",
-          text: obj.Text || "",
-          references: obj.References.results || [],
-          category: obj.Category.split("/"),
-          contentType: "Content",
-          listItemType: obj.__metadata.type,
-          timestamp: (Date && Date.now() || new Date())
-        });
-        app.currentContent.set();
-        insertContent(app.currentContent);
-        loadingSomething(false, app.domRefs.output);
-      },
-      error: util.connError,
-      complete: function () {
-        if ( codeMirror ) {
-          setupEditor();
+        var hashArray = this.getAttribute("href").slice(2).split(/\//);
+        if ( hashArray.length > 1 ) {
+          var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat--open a");
+          var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+
+          if ( subCat != oldSubCat ) {
+            i = 0;
+            total = oldSubCat.length;
+            for ( ; i < total; ++i ) {
+              oldSubCat[i].parentNode.className = oldSubCat[i].parentNode.className.replace(/ ?sub-cat--open/gi, "");
+            }
+            if ( subCat ) {
+              i = 0;
+              total = subCat.length;
+              for ( ; i < total; ++i ) {
+                subCat[i].parentNode.className += " sub-cat--open";
+              }
+            }
+          }
         }
       }
-    });
-  }
-
-  app.router = Router({
-      '/new': {
-        on: function () {
-
+      var results = data.d.results,
+        pages = {},
+        fhm = [],
+        fhmLinks = [],
+        comm = [],
+        commLinks = [],
+        i = 0,
+        li,
+        hr,
+        idArray,
+        id,
+        parent,
+        count = results.length,
+        page;
+      for ( ; i < count; ++i ) {
+        li = "li";
+        hr = h("hr");
+        page = results[i];
+        pages[page.Category] = page.Title;
+        if ( /^\/fhm\//i.test(page.Category) ) {
+          fhm.push(
+            h("option", { value: page.Category }, [String(page.Title)])
+          );
+          idArray = page.Category.slice(1).split(/\//g);
+          id = idArray.pop();
+          parent = idArray.pop();
+          if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
+            li = "li.sub-cat";
+            hr = null;
+          }
+          fhmLinks.push(
+            h(li, [
+              h("a", { href: "#" + page.Category, onclick: handleNav, "data-id": id, "data-parent": parent }, [
+                String(page.Title),
+                h("span")
+              ]),
+              hr
+            ])
+          );
         }
+        if ( /^\/comm\//i.test(page.Category) ) {
+          comm.push(
+            h("option", { value: page.Category }, [String(page.Title)])
+          );
+          idArray = page.Category.slice(1).split(/\//g);
+          id = idArray.pop();
+          parent = idArray.pop();
+          if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
+            li = "li.sub-cat";
+            hr = null;
+          }
+          commLinks.push(
+            h(li, [
+              h("a", { href: "#" + page.Category, onclick: handleNav, "data-id": id, "data-parent": parent }, [
+                String(page.Title),
+                h("span")
+              ]),
+              hr
+            ])
+          );
+        }
+      }
+      app.menuItems = [
+        h("option", { value: "/FHM" }, ["Force Health Management"]),
+        h("optgroup", { label: "Sub-Cateogries" }, fhm),
+        h("option", { value: "/Comm" }, ["Community Health"]),
+        h("optgroup", { label: "Sub-Cateogries" }, comm)
+      ];
+      app.navDOM = renderNav(fhmLinks, commLinks);
+      pageSetup();
+    },
+    error: util.connError
+  });
+}
+
+function init ( path ) {
+  console.log("Begin init...");
+  reqwest({
+    url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
+    method: "GET",
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose"
+    },
+    success: function ( data ) {
+      if ( !data.d.results[0] ) {
+        //loadingSomething(false, app.domRefs.output);
+        // This next line is just for debugging.  Something better will replace it later.
+        window.location.href = baseURL + "/Pages/land.aspx";
+        return false;
+      }
+      var obj = data.d.results[0];
+      app.currentContent = new Content({
+        id: obj.ID,
+        title: obj.Title || "",
+        text: obj.Text || "",
+        references: obj.References.results || [],
+        category: obj.Category.split("/"),
+        contentType: "Content",
+        listItemType: obj.__metadata.type,
+        timestamp: (Date && Date.now() || new Date())
+      });
+      app.currentContent.set();
+      insertContent(app.currentContent);
+      loadingSomething(false, app.domRefs.output);
+    },
+    error: util.connError,
+    complete: function () {
+      if ( codeMirror ) {
+        setupEditor();
+      }
+    }
+  });
+}
+
+app.router = Router({
+    '/new': {
+      on: function () {
+
+      }
+    },
+    '/(\\w+)': {
+      //once: getList,
+      on: function ( root ) {
+        loadingSomething(true, app.domRefs.output);
+        init("/" + root);
       },
       '/(\\w+)': {
         //once: getList,
-        on: function ( root ) {
+        on: function ( root, sub ) {
           loadingSomething(true, app.domRefs.output);
-          init("/" + root);
+          init("/" + root + "/" + sub);
         },
         '/(\\w+)': {
           //once: getList,
-          on: function ( root, sub ) {
+          on: function ( root, sub, inner ) {
             loadingSomething(true, app.domRefs.output);
-            init("/" + root + "/" + sub);
-          },
-          '/(\\w+)': {
-            //once: getList,
-            on: function ( root, sub, inner ) {
-              loadingSomething(true, app.domRefs.output);
-              init("/" + root + "/" + sub + "/" + inner);
-            }
+            init("/" + root + "/" + sub + "/" + inner);
           }
         }
       }
     }
-  ).configure({
-    strict: false,
-    after: resetPage,
-    notfound: function () {
-      window.location.href = baseURL + "/Pages/land.aspx";
-    }
-  });
+  }
+).configure({
+  strict: false,
+  after: resetPage,
+  notfound: function () {
+    window.location.href = baseURL + "/Pages/land.aspx";
+  }
+});
 
-  getList();
+getList();
 
-  module.exports = app;
-
-})(window, document, reqwest, Router);
+module.exports = app;
