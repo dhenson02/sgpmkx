@@ -4,13 +4,7 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          'content5.pre.js': [
-            'nav.js',
-            'content5.js',
-            'helpers.js',
-            'store.js',
-            'domStore.js'
-          ]
+          'content5.pre.js': 'content5.js'
         }
       }
     },

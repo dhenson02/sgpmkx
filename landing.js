@@ -1,4 +1,4 @@
-;(function() {
+;(function(window, document) {
   var comm = document.getElementById("nav-comm"),
     fhm = document.getElementById("nav-fhm"),
     fhmLinks = '',
@@ -24,11 +24,9 @@
       for ( ; i < count; ++i ) {
         page = results[i];
         if ( /^\/fhm\//i.test(page.Category) ) {
-          // This one is Force Health
           fhmLinks += '<li><a href="content.aspx#' + page.Category + '">' + page.Title + '</a></li>';
         }
         if ( /^\/comm\//i.test(page.Category) ) {
-          // This is Comm
           commLinks += '<li><a href="content.aspx#' + page.Category + '">' + page.Title + '</a></li>';
         }
       }
@@ -45,4 +43,4 @@
       return true;
     }
   });
-})();
+})(window, document);

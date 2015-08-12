@@ -1,4 +1,4 @@
-;(function ( window, document, reqwest, Route, undefined ) {
+;(function ( window, document, reqwest, Router, undefined ) {
   var codeMirror = CodeMirror || null;
   if (!Object.keys) {
     // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
@@ -708,9 +708,7 @@
       }
     }
   ).configure({
-    //convert_handler_in_init: true,
-    strict: false,/*
-     recurse: "forward",*/
+    strict: false,
     after: resetPage,
     notfound: function () {
       window.location.href = baseURL + "/Pages/land.aspx";
