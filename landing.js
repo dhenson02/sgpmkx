@@ -23,10 +23,10 @@
         page;
       for ( ; i < count; ++i ) {
         page = results[i];
-        if ( /^\/fhm\//i.test(page.Category) ) {
+        if ( /^\/fhm\/(\w+)$/i.test(page.Category) ) {
           fhmLinks += '<li><a href="content.aspx#' + page.Category + '">' + page.Title + '</a></li>';
         }
-        if ( /^\/comm\//i.test(page.Category) ) {
+        if ( /^\/comm\/(\w+)$/i.test(page.Category) ) {
           commLinks += '<li><a href="content.aspx#' + page.Category + '">' + page.Title + '</a></li>';
         }
       }
