@@ -1,730 +1,824 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-;(function ( window, document, reqwest, Route, undefined ) {
-  var codeMirror = CodeMirror || null;
-  if (!Object.keys) {
-    // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
-    Object.keys = (function () {
-      'use strict';
-      var hasOwnProperty = Object.prototype.hasOwnProperty,
-        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-        dontEnums = [
-          'toString',
-          'toLocaleString',
-          'valueOf',
-          'hasOwnProperty',
-          'isPrototypeOf',
-          'propertyIsEnumerable',
-          'constructor'
-        ],
-        dontEnumsLength = dontEnums.length;
+//var reQ = require("requirejs");
+var codeMirror = CodeMirror || null;
+if (!Object.keys) {
+  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+  Object.keys = (function () {
+    'use strict';
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+      hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+      dontEnums = [
+        'toString',
+        'toLocaleString',
+        'valueOf',
+        'hasOwnProperty',
+        'isPrototypeOf',
+        'propertyIsEnumerable',
+        'constructor'
+      ],
+      dontEnumsLength = dontEnums.length;
 
-      return function (obj) {
-        if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
-          throw new TypeError('Object.keys called on non-object');
+    return function (obj) {
+      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+        throw new TypeError('Object.keys called on non-object');
+      }
+
+      var result = [], prop, i;
+
+      for (prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) {
+          result.push(prop);
         }
+      }
 
-        var result = [], prop, i;
-
-        for (prop in obj) {
-          if (hasOwnProperty.call(obj, prop)) {
-            result.push(prop);
+      if (hasDontEnumBug) {
+        for (i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) {
+            result.push(dontEnums[i]);
           }
         }
-
-        if (hasDontEnumBug) {
-          for (i = 0; i < dontEnumsLength; i++) {
-            if (hasOwnProperty.call(obj, dontEnums[i])) {
-              result.push(dontEnums[i]);
-            }
-          }
-        }
-        return result;
-      };
-    }());
-  }
-  String.prototype.toCamelCase = function() {
-    return this
-      .toLowerCase()
-      .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
-      //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
-      .replace(/\s/g, '');
-  };
-  var h = require("virtual-dom/h"),
-    diff = require("virtual-dom/diff"),
-    patch = require("virtual-dom/patch"),
-    createElement = require("virtual-dom/create-element"),
-    util = require("./helpers"),
-    Content = require("./store"),
-    DOMRef = require("./domStore"),
-    renderNav = require("./nav"),
-    baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
-    app = {
-      sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
-      digest: document.getElementById("__REQUESTDIGEST").value,
-      pages: {},
-      currentContent: new Content(),
-      domRefs: new DOMRef(),
-      dirtyDOM: null,
-      rootNode: null,
-      modalDOM: null,
-      modalOverlay: null,
-      navDOM: null,
-      router: null,
-      menuItems: null,
-      inTransition: {}
+      }
+      return result;
     };
+  }());
+}
+String.prototype.toCamelCase = function() {
+  return this
+    .toLowerCase()
+    .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+    //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
+    .replace(/\s/g, '');
+};
+var h = require("virtual-dom/h"),
+  diff = require("virtual-dom/diff"),
+  patch = require("virtual-dom/patch"),
+  createElement = require("virtual-dom/create-element"),
+  reqwest = require("reqwest"),
+  Router = require("director/build/director").Router,
+  util = require("./helpers"),
+  Content = require("./store"),
+  DOMRef = require("./domStore"),
+  renderNav = require("./nav"),
+  baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
+  app = {
+    sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
+    digest: document.getElementById("__REQUESTDIGEST").value,
+    pages: {},
+    currentContent: new Content(),
+    domRefs: new DOMRef(),
+    dirtyDOM: null,
+    rootNode: null,
+    modalDOM: null,
+    modalOverlay: null,
+    navDOM: null,
+    router: null,
+    menuItems: null,
+    inTransition: {}
+  };
 
-  function render () {
-    return (
-      h("#wrapper", [
-        h("#sideNav", [app.navDOM]),
-        h("#content.fullPage", [
-          h("#contentWrap", [
-            h("#output")
-          ])
+function render ( navDOM ) {
+  return (
+    h("#wrapper", [
+      h("#sideNav", [navDOM]),
+      h("#content.fullPage", [
+        h("#contentWrap", [
+          h("#output")
         ])
       ])
-    );
-  }
+    ])
+  );
+}
 
-  function renderEditor () {
-    return (
-      h("#wrapper", [
-        h("#sideNav", [app.navDOM]),
-        h("#content.fullPage", [
-          h("#buttons", [
-            h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
-              h("span", ["Toggle Editor"])
-            ]),
-            h("div.clearfix"),
-            h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
-              h("span", ["Cheat Sheet"])
-            ]),
-            h("#saveButton.btn", { onclick: savePage, role: "button" }, [
-              h("span", ["Save"])
-            ]),
-            h("#createButton.btn", { onclick: createPage, role: "button" }, [
-              h("span", ["New"])
-            ]),
-            h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
-              h("span", ["Delete"])
-            ])
+function renderEditor ( navDOM, title, text ) {
+  return (
+    h("#wrapper", [
+      h("#sideNav", [navDOM]),
+      h("#content.fullPage", [
+        h("#buttons", [
+          h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
+            h("span", ["Toggle Editor"])
           ]),
-          h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
-          h("#contentWrap", [
-            h("#input", [
-              h("label#titleFieldLabel", [
-                "Page title: ",
-                h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
-              ]),
-              h("textarea#textarea", [String(app.currentContent.text || "")])
-            ]),
-            h("#output")
+          h("div.clearfix"),
+          h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
+            h("span", ["Cheat Sheet"])
+          ]),
+          h("#saveButton.btn", { onclick: savePage, role: "button" }, [
+            h("span", ["Save"])
+          ]),
+          h("#createButton.btn", { onclick: createPage, role: "button" }, [
+            h("span", ["New"])
+          ]),
+          h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
+            h("span", ["Delete"])
           ])
+        ]),
+        h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
+        h("#contentWrap", [
+          h("#input", [
+            h("label#titleFieldLabel", [
+              "Page title: ",
+              h("input#titleField", { onkeyup: updateTitle, value: String(title || ""), type: "text" })
+            ]),
+            h("textarea#textarea", [String(text || "")])
+          ]),
+          h("#output")
         ])
       ])
-    );
-  }
+    ])
+  );
+}
 
-  function loadingSomething ( status, target ) {
-    if ( status === true ) {
-      if ( app.inTransition[target] === true ) {
-        return false;
-      }
-      app.inTransition[target] = true;
-      if ( util.regLoading.test(target.className) === false ) {
-        target.className += " loading";
-      }
-    }
-    else {
-      setTimeout(function() {
-        app.inTransition[target] = false;
-        target.className = target.className.replace(util.regLoading, "");
-      }, 200);
-    }
-  }
+function renderLink ( category, title, li, attr, hr, id, parent, handleNav ) {
+  return h(li, attr, [
+    h("a", {
+      href: "#" + category,
+      onclick: handleNav,
+      "data-id": id,
+      "data-parent": parent
+    }, [
+      String(title),
+      h("span")
+    ]),
+    hr
+  ]);
+}
 
-  function savePage ( event ) {
-    event = event || window.event;
-    //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    //var self = event.currentTarget || event.srcElement || this;
-    var self = this;
-    //try {
-    //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
-    //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
-    //  console.log("this: " + this.nodeName); } catch (e) {
-    //}}}
-    if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
-      self = self.parentNode.parentNode;
-    }
-    if (self.nodeName === "span") {
-      self = self.parentNode;
-    }
-    app.currentContent.set({
-      title: app.currentContent.title.trim(),
-      text: app.currentContent.text.trim()
-    });
-    if (app.currentContent.text === app.currentContent.originalText &&
-      app.currentContent.title === app.currentContent.originalTitle ) {
-      if( !util.regNoChange.test(self.className) ) {
-        self.className += " nochange";
-      }
-      try {
-        self.childNodes[0].innerHTML = "No change";
-      } catch (e) {}
-
-      if (app.domRefs.buttons.tempSaveText) {
-        clearTimeout(app.domRefs.buttons.tempSaveText);
-      }
-      app.domRefs.buttons.tempSaveText = setTimeout(function() {
-        try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
-        self.className = self.className.replace(util.regNoChange, "");
-      }, 2000);
+function loadingSomething ( status, target ) {
+  if ( status === true ) {
+    if ( app.inTransition[target] === true ) {
       return false;
     }
-    else {
-      loadingSomething(true, self);
+    app.inTransition[target] = true;
+    if ( util.regLoading.test(target.className) === false ) {
+      target.className += " loading";
     }
+  }
+  else {
+    app.inTransition[target] = false;
+    target.className = target.className.replace(util.regLoading, "");
+  }
+}
+
+function savePage ( event ) {
+  event = event || window.event;
+  //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  //var self = event.currentTarget || event.srcElement || this;
+  var self = this;
+  //try {
+  //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
+  //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
+  //  console.log("this: " + this.nodeName); } catch (e) {
+  //}}}
+  if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
+    self = self.parentNode.parentNode;
+  }
+  if (self.nodeName === "span") {
+    self = self.parentNode;
+  }
+  app.currentContent.set({
+    title: app.currentContent.title.trim(),
+    text: app.currentContent.text.trim()
+  });
+  if (app.currentContent.text === app.currentContent.originalText &&
+    app.currentContent.title === app.currentContent.originalTitle ) {
+    if( !util.regNoChange.test(self.className) ) {
+      self.className += " nochange";
+    }
+    try {
+      self.childNodes[0].innerHTML = "No change";
+    } catch (e) {}
+
+    if (app.domRefs.buttons.tempSaveText) {
+      clearTimeout(app.domRefs.buttons.tempSaveText);
+    }
+    app.domRefs.buttons.tempSaveText = setTimeout(function() {
+      try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
+      self.className = self.className.replace(util.regNoChange, "");
+    }, 2000);
+    return false;
+  }
+  else {
+    loadingSomething(true, self);
+  }
+  reqwest({
+    url: app.sitePath + "/items(" + app.currentContent.id + ")",
+    method: "POST",
+    data: JSON.stringify({
+      '__metadata': {
+        'type': app.currentContent.listItemType
+      },
+      'Title': app.currentContent.title,
+      'Text': app.currentContent.text
+    }),
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "X-HTTP-Method": "MERGE",
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": app.digest,
+      "IF-MATCH": "*"
+    },
+    success: function() {
+      console.log("Successfully saved changes.");
+      /*newModal({
+        title: [h("h2", [String(app.currentContent.title) + " updated!"])],
+        text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
+        type: "success",
+        showCancelButton: false
+      });*/
+    },
+    error: util.connError,
+    complete: function () {
+      loadingSomething(false, self);
+    }
+  });
+}
+
+function createPage () {
+  newModal({
+    title: [h("h2", ["New Page"])],
+    text: [h("text", ["Give it a name:"])],
+    selectLabel: [h("text", ["Select the parent category"])],
+    type: "new"
+  }, function ( inputValue ) {
+    if ( "object" !== typeof inputValue ) {
+      return false;
+    }
+    loadingSomething(true, app.domRefs.contentWrap);
     reqwest({
-      url: app.sitePath + "/items(" + app.currentContent.id + ")",
+      url: app.sitePath + "/items",
       method: "POST",
       data: JSON.stringify({
         '__metadata': {
           'type': app.currentContent.listItemType
         },
-        'Title': app.currentContent.title,
-        'Text': app.currentContent.text
+        'Title': inputValue.title,
+        'Text': '## New Page :)',
+        'Category': inputValue.category
       }),
       type: "json",
       contentType: "application/json",
       withCredentials: true,
       headers: {
-        "X-HTTP-Method": "MERGE",
         "Accept": "application/json;odata=verbose",
         "text-Type": "application/json;odata=verbose",
         "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": app.digest,
-        "IF-MATCH": "*"
+        "X-RequestDigest": app.digest
       },
       success: function() {
-        console.log("Successfully saved changes.");
-        /*newModal({
-          title: [h("h2", [String(app.currentContent.title) + " updated!"])],
-          text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
+        newModal({
+          title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
+          text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
+          type: "success",
+          okText: "Take me",
+          showCancelButton: false
+        }, function() {
+          app.router.setRoute(inputValue.category);
+        });
+      },
+      error: util.connError,
+      complete: function () {
+        loadingSomething(false, app.domRefs.contentWrap);
+      }
+    });
+  });
+}
+
+function deletePage () {
+  app.currentContent.title = app.currentContent.title.trim();
+  var category = app.currentContent.category.join("/");
+  newModal({
+    title: [h("p", ["DELETE"]), h("strong", [String(app.currentContent.title)]), h("text", [", Path: " + category])],
+    text: [h("em", ["You might wanna check with someone first."])],
+    type: "warning"
+  }, function( choice ) {
+    if ( choice === false ) {
+      return false;
+    }
+    loadingSomething(true, app.domRefs.contentWrap);
+    reqwest({
+      url: app.sitePath + "/items(" + app.currentContent.id + ")",
+      method: "POST",
+      type: "json",
+      contentType: "application/json",
+      withCredentials: true,
+      headers: {
+        "IF-MATCH": "*",
+        "X-HTTP-Method": "DELETE",
+        "Accept": "application/json;odata=verbose",
+        "text-Type": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": app.digest
+      },
+      success: function() {
+        newModal({
+          title: [h("h2", [String(app.currentContent.title) + " deleted!"])],
+          text: [h("strong", [String(category)]), h("text", [" is no longer in use."])],
           type: "success",
           showCancelButton: false
-        });*/
+        }, function() {
+          app.currentContent.category.pop();
+          app.router.setRoute(app.currentContent.category.join("/"));
+        });
       },
       error: util.connError,
       complete: function () {
-        loadingSomething(false, self);
+        loadingSomething(false, app.domRefs.contentWrap);
       }
     });
-  }
+  });
+}
 
-  function createPage () {
-    newModal({
-      title: [h("h2", ["New Page"])],
-      text: [h("text", ["Give it a name:"])],
-      selectLabel: [h("text", ["Select the parent category"])],
-      type: "new"
-    }, function ( inputValue ) {
-      if ( "object" !== typeof inputValue ) {
-        return false;
-      }
-      loadingSomething(true, app.domRefs.contentWrap);
-      reqwest({
-        url: app.sitePath + "/items",
-        method: "POST",
-        data: JSON.stringify({
-          '__metadata': {
-            'type': app.currentContent.listItemType
-          },
-          'Title': inputValue.title,
-          'Text': '## New Page :)',
-          'Category': inputValue.category
-        }),
-        type: "json",
-        contentType: "application/json",
-        withCredentials: true,
-        headers: {
-          "Accept": "application/json;odata=verbose",
-          "text-Type": "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": app.digest
-        },
-        success: function() {
-          newModal({
-            title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
-            text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
-            type: "success",
-            okText: "Take me",
-            showCancelButton: false
-          }, function() {
-            app.router.setRoute(inputValue.category);
-          });
-        },
-        error: util.connError,
-        complete: function () {
-          loadingSomething(false, app.domRefs.contentWrap);
-        }
-      });
-    });
-  }
+function updateTitle () {
+  var val = app.domRefs.titleField.value;
+  app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
+  app.currentContent.set({ title: val });
+}
 
-  function deletePage () {
-    app.currentContent.title = app.currentContent.title.trim();
-    var category = app.currentContent.category.join("/");
-    newModal({
-      title: [h("p", ["DELETE"]), h("strong", [String(app.currentContent.title)]), h("text", [", Path: " + category])],
-      text: [h("em", ["You might wanna check with someone first."])],
-      type: "warning"
-    }, function( choice ) {
-      if ( choice === false ) {
-        return false;
-      }
-      loadingSomething(true, app.domRefs.contentWrap);
-      reqwest({
-        url: app.sitePath + "/items(" + app.currentContent.id + ")",
-        method: "POST",
-        type: "json",
-        contentType: "application/json",
-        withCredentials: true,
-        headers: {
-          "IF-MATCH": "*",
-          "X-HTTP-Method": "DELETE",
-          "Accept": "application/json;odata=verbose",
-          "text-Type": "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": app.digest
-        },
-        success: function() {
-          newModal({
-            title: [h("h2", [String(app.currentContent.title) + " deleted!"])],
-            text: [h("strong", [String(category)]), h("text", [" is no longer in use."])],
-            type: "success",
-            showCancelButton: false
-          }, function() {
-            app.currentContent.category.pop();
-            app.router.setRoute(app.currentContent.category.join("/"));
-          });
-        },
-        error: util.connError,
-        complete: function () {
-          loadingSomething(false, app.domRefs.contentWrap);
-        }
-      });
-    });
-  }
+function newModal ( options, callback ) {
+  options = {
+    title: options.title || [h("h2", ["Info"])],
+    text: options.text || [h("text", ["Click OK to continue"])],
+    selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
+    type: options.type || "success",
+    path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
+    okText: options.okText || "OK!",
+    showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
+    closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
+  };
+  callback = ( "function" === typeof callback ) ? callback : null;
 
-  function updateTitle () {
-    var val = app.domRefs.titleField.value;
-    app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
-    app.currentContent.set({ title: val });
-  }
+  var freshDOM = freshModal(options, callback);
+  var patches = diff(app.modalDOM, freshDOM);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = freshDOM;
+  util.addEvent("keyup", document, handleCancel);
+}
 
-  function newModal ( options, callback ) {
-    options = {
-      title: options.title || [h("h2", ["Info"])],
-      text: options.text || [h("text", ["Click OK to continue"])],
-      selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
-      type: options.type || "success",
-      path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
-      okText: options.okText || "OK!",
-      showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
-      closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
-    };
-    callback = ( "function" === typeof callback ) ? callback : null;
-
-    var freshDOM = freshModal(options, callback);
-    var patches = diff(app.modalDOM, freshDOM);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = freshDOM;
-    util.addEvent("keyup", document, handleCancel);
-  }
-
-  function handleOk ( event, callback ) {
-    event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    var keyCode = event.keyCode || event.which || event.charCode || null;
-    if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
-      if ( !callback ) {
-        modalSuicide();
-        return false;
-      }
-      var title = document.getElementById("modalInput").value.trim();
-      var category = document.getElementById("menuItems").value + title.toCamelCase();
-      if ( title && category ) {
-        callback({
-          title: title,
-          category: category
-        });
-      }
-      else {
-        callback(true);
-      }
+function handleOk ( event, callback ) {
+  event = event || window.event;
+  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  var keyCode = event.keyCode || event.which || event.charCode || null;
+  if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
+    if ( !callback ) {
       modalSuicide();
       return false;
     }
-  }
-
-  function handleCancel ( event, callback ) {
-    event = event || window.event;
-    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-    var self = event.currentTarget || event.srcElement || this;
-    var keyCode = event.keyCode || event.which || event.charCode || null;
-    if (self.nodeName === "span") {
-      self = self.parentNode;
-    }
-    // For self test: regModalBg.test(self.className)
-    if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
-      ( event.type === "keyup" && keyCode === 27 ) ) {
-      if ( callback ) { callback(); }
-      modalSuicide();
-      return false;
-    }
-  }
-
-  function handleChange ( event, options, callback ) {
-    event = event || window.event;
-    event.preventDefault ? event.preventDefault() : event.returnValue = false;
-    //var self = event.currentTarget || event.srcElement || this;
     var title = document.getElementById("modalInput").value.trim();
-    options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
-    var refreshDOM = freshModal( options, callback);
-    var patches = diff(app.modalDOM, refreshDOM);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = refreshDOM;
-    //document.getElementById("newPath").innerHTML = category + "/" + title;
+    var category = document.getElementById("menuItems").value + title.toCamelCase();
+    if ( title && category ) {
+      callback({
+        title: title,
+        category: category
+      });
+    }
+    else {
+      callback(true);
+    }
+    modalSuicide();
     return false;
   }
+}
 
-  function freshModal ( options, callback ) {
-    function ok ( event ) {
-      handleOk(event, callback);
-    }
-    function cancel ( event ) {
-      handleCancel(event, callback);
-    }
-    function change ( event ) {
-      handleChange(event, options, callback);
-    }
-    return (
-      h(".modalOverlay", { style: { zIndex: 7 } }, [
-        h(".modalBg", { onclick: cancel }),
-        h(".modal", [
-          h(".header", options.title),
-          h("label", options.text.concat([
-            ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
-          ])),
-          ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
-            ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
-          ])),
-          ( options.type === "new" ) && h("blockquote#newPath", options.path),
-          h(".modalButtons", [
-            h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
-              h("span", [String(options.okText || "OK!")])
-            ]),
-            ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
-              h("span", ["Nope."])
-            ]) || null
-          ])
+function handleCancel ( event, callback ) {
+  event = event || window.event;
+  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  var self = event.currentTarget || event.srcElement || this;
+  var keyCode = event.keyCode || event.which || event.charCode || null;
+  if (self.nodeName === "span") {
+    self = self.parentNode;
+  }
+  // For self test: regModalBg.test(self.className)
+  if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
+    ( event.type === "keyup" && keyCode === 27 ) ) {
+    if ( callback ) { callback(); }
+    modalSuicide();
+    return false;
+  }
+}
+
+function handleChange ( event, options, callback ) {
+  event = event || window.event;
+  event.preventDefault ? event.preventDefault() : event.returnValue = false;
+  //var self = event.currentTarget || event.srcElement || this;
+  var title = document.getElementById("modalInput").value.trim();
+  options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
+  var refreshDOM = freshModal( options, callback);
+  var patches = diff(app.modalDOM, refreshDOM);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = refreshDOM;
+  //document.getElementById("newPath").innerHTML = category + "/" + title;
+  return false;
+}
+
+function freshModal ( options, callback ) {
+  function ok ( event ) {
+    handleOk(event, callback);
+  }
+  function cancel ( event ) {
+    handleCancel(event, callback);
+  }
+  function change ( event ) {
+    handleChange(event, options, callback);
+  }
+  return (
+    h(".modalOverlay", { style: { zIndex: 7 } }, [
+      h(".modalBg", { onclick: cancel }),
+      h(".modal", [
+        h(".header", options.title),
+        h("label", options.text.concat([
+          ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
+        ])),
+        ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
+          ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
+        ])),
+        ( options.type === "new" ) && h("blockquote#newPath", options.path),
+        h(".modalButtons", [
+          h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
+            h("span", [String(options.okText || "OK!")])
+          ]),
+          ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
+            h("span", ["Nope."])
+          ]) || null
         ])
       ])
-    );
+    ])
+  );
+}
+
+function modalSuicide () {
+  app.modalOverlay.style.display = "none";
+  var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
+  var patches = diff(app.modalDOM, destroyModal);
+  app.modalOverlay = patch(app.modalOverlay, patches);
+  app.modalDOM = destroyModal;
+  util.removeEvent("keyup", document, handleCancel);
+}
+
+function toggleEditor () {
+  var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
+  app.domRefs.contentWrap.className = "";
+  app.domRefs.cheatSheet.className = "";
+  if ( hasFullPage ) {
+    app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
+    //app.domRefs.titleField.removeAttribute("disabled");
+    app.domRefs.editor.refresh();
   }
-
-  function modalSuicide () {
-    app.modalOverlay.style.display = "none";
-    var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
-    var patches = diff(app.modalDOM, destroyModal);
-    app.modalOverlay = patch(app.modalOverlay, patches);
-    app.modalDOM = destroyModal;
-    util.removeEvent("keyup", document, handleCancel);
+  else {
+    app.domRefs.content.className = app.domRefs.content.className + " fullPage";
+    //app.domRefs.titleField.setAttribute("disabled", "disabled");
   }
+  return false;
+}
 
-  function toggleEditor () {
-    var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
-    app.domRefs.contentWrap.className = "";
-    app.domRefs.cheatSheet.className = "";
-    if ( hasFullPage ) {
-      app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
-      //app.domRefs.titleField.removeAttribute("disabled");
-      app.domRefs.editor.refresh();
-    }
-    else {
-      app.domRefs.content.className = app.domRefs.content.className + " fullPage";
-      //app.domRefs.titleField.setAttribute("disabled", "disabled");
-    }
-    return false;
+function toggleCheatSheet () {
+  if ( app.domRefs.cheatSheet.style.display === "none" ) {
+    app.domRefs.cheatSheet.removeAttribute("style");
   }
-
-  function toggleCheatSheet () {
-    if ( app.domRefs.cheatSheet.style.display === "none" ) {
-      app.domRefs.cheatSheet.removeAttribute("style");
-    }
-    else {
-      app.domRefs.cheatSheet.style.display = "none";
-    }
-    //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
-    return false;
+  else {
+    app.domRefs.cheatSheet.style.display = "none";
   }
+  //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
+  return false;
+}
 
-  function update ( e ) {
-    var val = e.getValue();
-    app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
-    app.currentContent.set({ text: val });
+function update ( e ) {
+  var val = e.getValue();
+  app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
+  app.currentContent.set({ text: val });
+}
+
+function insertContent ( title, text ) {
+  app.domRefs.output.innerHTML = util.md.render("# " + title + "\n" + text);
+}
+
+function pageSetup () {
+  app.dirtyDOM = ( !codeMirror ) ? render(app.navDOM) : renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+  app.rootNode = createElement(app.dirtyDOM);
+
+  try {
+    var wrapperTmp = document.getElementById("wrapper");
+    wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
   }
-
-  function insertContent ( content ) {
-    app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
-  }
-
-  function pageSetup () {
-    app.dirtyDOM = ( !codeMirror ) ? render() : renderEditor();
-    app.rootNode = createElement(app.dirtyDOM);
-
+  catch ( e ) {
     try {
-      var wrapperTmp = document.getElementById("wrapper");
-      wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
+      wrapperTmp = document.getElementById("content");
+      wrapperTmp.style.display = "none";
+      wrapperTmp.parentNode.appendChild(app.rootNode);
     }
     catch ( e ) {
-      try {
-        wrapperTmp = document.getElementById("content");
-        wrapperTmp.style.display = "none";
-        wrapperTmp.parentNode.appendChild(app.rootNode);
-      }
-      catch ( e ) {
-        document.body.appendChild(app.rootNode);
-      }
+      document.body.appendChild(app.rootNode);
     }
-    if ( codeMirror ) {
-      app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-      app.modalOverlay = createElement(app.modalDOM);
-      document.body.appendChild(app.modalOverlay);
-    }
-    app.domRefs = new DOMRef();
-    app.domRefs.set();
-    if ( window.location.hash ) {
-      app.router.init();
-    }
-    else {
-      app.router.init("/");
-    }
-    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
-    catch (e) {console.log(e);}
   }
+  if ( codeMirror ) {
+    app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+    app.modalOverlay = createElement(app.modalDOM);
+    document.body.appendChild(app.modalOverlay);
+  }
+  app.domRefs = new DOMRef();
+  app.domRefs.set();
+  if ( window.location.hash ) {
+    app.router.init();
+  }
+  else {
+    app.router.init("/");
+  }
+  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+  catch (e) {console.log(e);}
+  try {
+    var hashArray = window.location.hash.slice(2).split(/\//);
+    if ( hashArray.length > 1 ) {
+      var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+      if ( subCat ) {
+        var i = 0, total = subCat.length;
+        for ( ; i < total; ++i ) {
+          subCat[i].parentNode.removeAttribute("style");
+          //subCat[i].parentNode.className += " sub-cat--open";
+        }
+      }
+    }
+  } catch (e) {console.log("Failed to add sub-cat--open");}
 
-  function setupEditor () {
-    console.log("Loading editor...");
-    var refreshDOM = renderEditor();
-    var patches = diff(app.dirtyDOM, refreshDOM);
-    app.rootNode = patch(app.rootNode, patches);
-    app.dirtyDOM = refreshDOM;
-    app.domRefs = new DOMRef();
+}
+
+function setupEditor () {
+  console.log("Loading editor...");
+  var refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+  var patches = diff(app.dirtyDOM, refreshDOM);
+  app.rootNode = patch(app.rootNode, patches);
+  app.dirtyDOM = refreshDOM;
+  app.domRefs = new DOMRef();
+  app.domRefs.set({
+    editor: codeMirror.fromTextArea(app.domRefs.textarea, {
+      mode: 'gfm',
+      lineNumbers: false,
+      matchBrackets: true,
+      lineWrapping: true,
+      theme: "neo",
+      extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
+    })
+  });
+  app.domRefs.editor.on("change", update);
+  app.domRefs.editor.refresh();
+  app.domRefs.buttons.childNodes[0].removeAttribute("style");
+  console.log("Editor loaded");
+}
+
+function resetPage () {
+  var wrap,
+    refreshDOM,
+    modalRefreshDOM,
+    patches;
+  if ( app.domRefs.editor ) {
+    wrap = app.domRefs.editor.getWrapperElement();
+    wrap.parentNode.removeChild(wrap);
     app.domRefs.set({
-      editor: codeMirror.fromTextArea(app.domRefs.textarea, {
-        mode: 'gfm',
-        lineNumbers: false,
-        matchBrackets: true,
-        lineWrapping: true,
-        theme: "neo",
-        extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
-      })
+      editor: null
     });
-    app.domRefs.editor.on("change", update);
-    app.domRefs.editor.refresh();
-    app.domRefs.buttons.childNodes[0].removeAttribute("style");
-    console.log("Editor loaded");
+    refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+    modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
+    patches = diff(app.modalDOM, modalRefreshDOM);
+    if (patches.length > 1) {
+      app.modalOverlay = patch(app.modalOverlay, patches);
+      app.modalDOM = modalRefreshDOM;
+      modalSuicide();
+    }
   }
-
-  function resetPage () {
-    var wrap,
-      refreshDOM,
-      modalRefreshDOM,
-      patches;
-    if ( app.domRefs.editor ) {
-      wrap = app.domRefs.editor.getWrapperElement();
-      wrap.parentNode.removeChild(wrap);
-      app.domRefs.set({
-        editor: null
-      });
-      refreshDOM = renderEditor();
-      modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-      patches = diff(app.modalDOM, modalRefreshDOM);
-      if (patches.length > 1) {
-        app.modalOverlay = patch(app.modalOverlay, patches);
-        app.modalDOM = modalRefreshDOM;
-        modalSuicide();
+  else {
+    refreshDOM = render(app.navDOM);
+  }
+  patches = diff(app.dirtyDOM, refreshDOM);
+  app.rootNode = patch(app.rootNode, patches);
+  app.dirtyDOM = refreshDOM;
+  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+  catch (e) {console.log(e);}
+  try {
+    var hashArray = window.location.hash.slice(2).split(/\//);
+    var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+    if ( subCat ) {
+      var i = 0;
+      var total = subCat.length;
+      for ( ; i < total; ++i ) {
+        subCat[i].parentNode.style.display = "";
+        subCat[i].parentNode.removeAttribute("style");
       }
     }
-    else {
-      refreshDOM = render();
-    }
-    patches = diff(app.dirtyDOM, refreshDOM);
-    app.rootNode = patch(app.rootNode, patches);
-    app.dirtyDOM = refreshDOM;
-    try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
-    catch (e) {console.log(e);}
-    app.domRefs = new DOMRef();
-    app.domRefs.set();
-  }
+  } catch (e) {}
+  app.domRefs = new DOMRef();
+  app.domRefs.set();
+}
 
-  function getList () {
-    reqwest({
-      url: app.sitePath + "/items/?$select=Title,Category",
-      method: "GET",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      },
-      success: function ( data ) {
-        function handleNav () {
-          var oldActive = app.rootNode.querySelectorAll("a.active"),
-            i = 0,
-            count = oldActive.length;
-          for ( ; i < count; ++i ) {
-            oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
-          }
-          this.className = "active";
-        }
-        var results = data.d.results,
-          pages = {},
-          fhm = [],
-          fhmLinks = [],
-          comm = [],
-          commLinks = [],
+function getList () {
+  reqwest({
+    url: app.sitePath + "/items/?$select=Title,Category",
+    method: "GET",
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose"
+    },
+    success: function ( data ) {
+      function handleNav () {
+        var oldActive = app.rootNode.querySelectorAll("a.active"),
           i = 0,
-          count = results.length,
-          page;
-        for ( ; i < count; ++i ) {
-          page = results[i];
-          pages[page.Category] = page.Title;
-          if ( /^\/fhm\//i.test(page.Category) ) {
-            fhm.push(
-              h("option", { value: page.Category }, [String(page.Title)])
-            );
-            fhmLinks.push(
-              h("li", [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
-                h("hr")
-              ])
-            )
-          }
-          if ( /^\/comm\//i.test(page.Category) ) {
-            comm.push(
-              h("option", { value: page.Category }, [String(page.Title)])
-            );
-            commLinks.push(
-              h("li", [
-                h("a", { href: "#" + page.Category, onclick: handleNav }, [String(page.Title), h("span")]),
-                h("hr")
-              ])
-            )
-          }
+          total = oldActive.length;
+        for ( ; i < total; ++i ) {
+          oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
         }
-        app.menuItems = [
-          h("option", { value: "/FHM" }, ["Force Health Management"]),
-          h("optgroup", { label: "Sub-Cateogries" }, fhm),
-          h("option", { value: "/Comm" }, ["Community Health"]),
-          h("optgroup", { label: "Sub-Cateogries" }, comm)
-        ];
-        app.navDOM = renderNav(fhmLinks, commLinks);
-        pageSetup();
-      },
-      error: util.connError
-    });
-  }
+        this.className += " active";
 
-  function init ( path ) {
-    console.log("Begin init...");
-    reqwest({
-      url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
-      method: "GET",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      },
-      success: function ( data ) {
-        if ( !data.d.results[0] ) {
-          //loadingSomething(false, app.domRefs.output);
-          // This next line is just for debugging.  Something better will replace it later.
-          window.location.href = baseURL + "/Pages/land.aspx";
-          return false;
-        }
-        var obj = data.d.results[0];
-        app.currentContent = new Content({
-          id: obj.ID,
-          title: obj.Title || "",
-          text: obj.Text || "",
-          references: obj.References.results || [],
-          category: obj.Category.split("/"),
-          contentType: "Content",
-          listItemType: obj.__metadata.type,
-          timestamp: (Date && Date.now() || new Date())
-        });
-        app.currentContent.set();
-        insertContent(app.currentContent);
-        loadingSomething(false, app.domRefs.output);
-      },
-      error: util.connError,
-      complete: function () {
-        if ( codeMirror ) {
-          setupEditor();
+        var hashArray = this.getAttribute("href").slice(2).split(/\//);
+        if ( hashArray.length > 1 ) {
+          //var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat--open a");
+          var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+          var oldSubCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + window.location.hash.slice(2).split(/\//)[1] + "']");
+
+          if ( subCat != oldSubCat ) {
+            i = 0;
+            total = oldSubCat.length;
+            for ( ; i < total; ++i ) {
+              oldSubCat[i].parentNode.style.display = "none";
+              //oldSubCat[i].parentNode.className = oldSubCat[i].parentNode.className.replace(/ ?sub-cat--open/gi, "");
+            }
+            if ( subCat ) {
+              i = 0;
+              total = subCat.length;
+              for ( ; i < total; ++i ) {
+                subCat[i].parentNode.style.display = "";
+                subCat[i].parentNode.removeAttribute("style");
+                //subCat[i].parentNode.className += " sub-cat--open";
+              }
+            }
+          }
         }
       }
-    });
-  }
-
-  app.router = Router({
-      '/new': {
-        on: function () {
-
+      var results = data.d.results,
+        pages = {},
+        fhm = [],
+        fhmLinks = [],
+        comm = [],
+        commLinks = [],
+        i = 0,
+        li,
+        attr,
+        hr,
+        idArray,
+        id,
+        parent,
+        count = results.length,
+        page;
+      for ( ; i < count; ++i ) {
+        li = "li";
+        attr = null;
+        hr = h("hr");
+        page = results[i];
+        pages[page.Category] = page.Title;
+        idArray = page.Category.slice(1).split(/\//g);
+        id = idArray.pop();
+        if ( /^\/fhm\//i.test(page.Category) ) {
+          fhm.push(
+            h("option", { value: page.Category }, [String(page.Title)])
+          );
+          parent = idArray.pop();
+          if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
+            li = "li.sub-cat";
+            hr = null;
+            attr = {
+              style: {
+                display: "none"
+              }
+            };
+          }
+          fhmLinks.push(
+            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
+          );
         }
+        if ( /^\/comm\//i.test(page.Category) ) {
+          comm.push(
+            h("option", { value: page.Category }, [String(page.Title)])
+          );
+          parent = idArray.pop();
+          if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
+            li = "li.sub-cat";
+            hr = null;
+            attr = {
+              style: {
+                display: "none"
+              }
+            };
+          }
+          commLinks.push(
+            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
+          );
+        }
+      }
+      app.menuItems = [
+        h("option", { value: "/FHM" }, ["Force Health Management"]),
+        h("optgroup", { label: "Sub-Cateogries" }, fhm),
+        h("option", { value: "/Comm" }, ["Community Health"]),
+        h("optgroup", { label: "Sub-Cateogries" }, comm)
+      ];
+      app.navDOM = renderNav(fhmLinks, commLinks);
+      pageSetup();
+    },
+    error: util.connError
+  });
+}
+
+function init ( path ) {
+  console.log("Begin init...");
+  reqwest({
+    url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
+    method: "GET",
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose"
+    },
+    success: function ( data ) {
+      if ( !data.d.results[0] ) {
+        //loadingSomething(false, app.domRefs.output);
+        // This next line is just for debugging.  Something better will replace it later.
+        window.location.href = baseURL + "/Pages/land.aspx";
+        return false;
+      }
+      var obj = data.d.results[0];
+      app.currentContent = new Content({
+        id: obj.ID,
+        title: obj.Title || "",
+        text: obj.Text || "",
+        references: obj.References.results || [],
+        category: obj.Category.split("/"),
+        contentType: "Content",
+        listItemType: obj.__metadata.type,
+        timestamp: (Date && Date.now() || new Date())
+      });
+      app.currentContent.set();
+      insertContent(app.currentContent.title, app.currentContent.text);
+      loadingSomething(false, app.domRefs.output);
+    },
+    error: util.connError,
+    complete: function () {
+      if ( codeMirror ) {
+        setupEditor();
+      }
+    }
+  });
+}
+
+app.router = Router({
+    '/new': {
+      on: function () {
+
+      }
+    },
+    '/(\\w+)': {
+      //once: getList,
+      on: function ( root ) {
+        loadingSomething(true, app.domRefs.output);
+        init("/" + root);
       },
       '/(\\w+)': {
         //once: getList,
-        on: function ( root ) {
+        on: function ( root, sub ) {
           loadingSomething(true, app.domRefs.output);
-          init("/" + root);
+          init("/" + root + "/" + sub);
         },
         '/(\\w+)': {
           //once: getList,
-          on: function ( root, sub ) {
+          on: function ( root, sub, inner ) {
             loadingSomething(true, app.domRefs.output);
-            init("/" + root + "/" + sub);
+            init("/" + root + "/" + sub + "/" + inner);
           }
         }
       }
     }
-  ).configure({
-    //convert_handler_in_init: true,
-    strict: false,/*
-     recurse: "forward",*/
-    after: resetPage,
-    notfound: function () {
-      window.location.href = baseURL + "/Pages/land.aspx";
-    }
-  });
+  }
+).configure({
+  strict: false,
+  after: resetPage,
+  notfound: function () {
+    window.location.href = baseURL + "/Pages/land.aspx";
+  }
+});
 
-  getList();
+getList();
 
-  module.exports = app;
+module.exports = app;
 
-})(window, document, reqwest, Router);
-
-},{"./domStore":2,"./helpers":3,"./nav":4,"./store":39,"virtual-dom/create-element":6,"virtual-dom/diff":7,"virtual-dom/h":8,"virtual-dom/patch":16}],2:[function(require,module,exports){
+},{"./domStore":2,"./helpers":3,"./nav":4,"./store":42,"director/build/director":5,"reqwest":7,"virtual-dom/create-element":8,"virtual-dom/diff":9,"virtual-dom/h":10,"virtual-dom/patch":18}],2:[function(require,module,exports){
 function DOMRef ( nodes ) {
   return {
     nodes: nodes,
@@ -762,12 +856,26 @@ function DOMRef ( nodes ) {
 module.exports = DOMRef;
 
 },{}],3:[function(require,module,exports){
-module.exports = {
-  regLoading: / ?loading/g,
-  regFullPage: / ?fullPage/g,
-  regCheatSheet: / ?cheatSheet/g,
-  regNoChange: / ?nochange/g,
-  md: markdownit({
+function addEvent ( evt, element, fnc ) {
+  return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));
+}
+
+function removeEvent ( evt, element, fnc ) {
+  return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
+}
+
+function connError ( error ) {
+  console.log("error connecting:", error);
+}
+
+var regLoading = / ?loading/g,
+  regFullPage = / ?fullPage/g,
+  regCheatSheet = / ?cheatSheet/g,
+  regNoChange = / ?nochange/g,
+  md = markdownit({
+    xhtmlOut: true,
+    typographer: true,
+    quotes: '“”‘’',
     highlight: function ( code, lang ) {
       if ( lang && hljs.getLanguage(lang) ) {
         try {
@@ -778,18 +886,18 @@ module.exports = {
       }
       return '';
     }
-  }),
-  addEvent: function ( evt, element, fnc ) {
-    return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));
-  },
-  removeEvent: function ( evt, element, fnc ) {
-    return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
-  },
-  connError: function ( error ) {
-    console.log("error connecting:", error);
-  }
-};
+  });
 
+module.exports = {
+  addEvent: addEvent,
+  removeEvent: removeEvent,
+  connError: connError,
+  regLoading: regLoading,
+  regFullPage: regFullPage,
+  regCheatSheet: regCheatSheet,
+  regNoChange: regNoChange,
+  md: md
+};
 
 },{}],4:[function(require,module,exports){
 var h = require("virtual-dom/h"),
@@ -837,24 +945,1381 @@ function render ( fhm, comm ) {
 
 module.exports = render;
 
-},{"virtual-dom/create-element":6,"virtual-dom/h":8}],5:[function(require,module,exports){
+},{"virtual-dom/create-element":8,"virtual-dom/h":10}],5:[function(require,module,exports){
 
+
+//
+// Generated on Tue Dec 16 2014 12:13:47 GMT+0100 (CET) by Charlie Robbins, Paolo Fragomeni & the Contributors (Using Codesurgeon).
+// Version 1.2.6
+//
+
+(function (exports) {
+
+/*
+ * browser.js: Browser specific functionality for director.
+ *
+ * (C) 2011, Charlie Robbins, Paolo Fragomeni, & the Contributors.
+ * MIT LICENSE
+ *
+ */
+
+var dloc = document.location;
+
+function dlocHashEmpty() {
+  // Non-IE browsers return '' when the address bar shows '#'; Director's logic
+  // assumes both mean empty.
+  return dloc.hash === '' || dloc.hash === '#';
+}
+
+var listener = {
+  mode: 'modern',
+  hash: dloc.hash,
+  history: false,
+
+  check: function () {
+    var h = dloc.hash;
+    if (h != this.hash) {
+      this.hash = h;
+      this.onHashChanged();
+    }
+  },
+
+  fire: function () {
+    if (this.mode === 'modern') {
+      this.history === true ? window.onpopstate() : window.onhashchange();
+    }
+    else {
+      this.onHashChanged();
+    }
+  },
+
+  init: function (fn, history) {
+    var self = this;
+    this.history = history;
+
+    if (!Router.listeners) {
+      Router.listeners = [];
+    }
+
+    function onchange(onChangeEvent) {
+      for (var i = 0, l = Router.listeners.length; i < l; i++) {
+        Router.listeners[i](onChangeEvent);
+      }
+    }
+
+    //note IE8 is being counted as 'modern' because it has the hashchange event
+    if ('onhashchange' in window && (document.documentMode === undefined
+      || document.documentMode > 7)) {
+      // At least for now HTML5 history is available for 'modern' browsers only
+      if (this.history === true) {
+        // There is an old bug in Chrome that causes onpopstate to fire even
+        // upon initial page load. Since the handler is run manually in init(),
+        // this would cause Chrome to run it twise. Currently the only
+        // workaround seems to be to set the handler after the initial page load
+        // http://code.google.com/p/chromium/issues/detail?id=63040
+        setTimeout(function() {
+          window.onpopstate = onchange;
+        }, 500);
+      }
+      else {
+        window.onhashchange = onchange;
+      }
+      this.mode = 'modern';
+    }
+    else {
+      //
+      // IE support, based on a concept by Erik Arvidson ...
+      //
+      var frame = document.createElement('iframe');
+      frame.id = 'state-frame';
+      frame.style.display = 'none';
+      document.body.appendChild(frame);
+      this.writeFrame('');
+
+      if ('onpropertychange' in document && 'attachEvent' in document) {
+        document.attachEvent('onpropertychange', function () {
+          if (event.propertyName === 'location') {
+            self.check();
+          }
+        });
+      }
+
+      window.setInterval(function () { self.check(); }, 50);
+
+      this.onHashChanged = onchange;
+      this.mode = 'legacy';
+    }
+
+    Router.listeners.push(fn);
+
+    return this.mode;
+  },
+
+  destroy: function (fn) {
+    if (!Router || !Router.listeners) {
+      return;
+    }
+
+    var listeners = Router.listeners;
+
+    for (var i = listeners.length - 1; i >= 0; i--) {
+      if (listeners[i] === fn) {
+        listeners.splice(i, 1);
+      }
+    }
+  },
+
+  setHash: function (s) {
+    // Mozilla always adds an entry to the history
+    if (this.mode === 'legacy') {
+      this.writeFrame(s);
+    }
+
+    if (this.history === true) {
+      window.history.pushState({}, document.title, s);
+      // Fire an onpopstate event manually since pushing does not obviously
+      // trigger the pop event.
+      this.fire();
+    } else {
+      dloc.hash = (s[0] === '/') ? s : '/' + s;
+    }
+    return this;
+  },
+
+  writeFrame: function (s) {
+    // IE support...
+    var f = document.getElementById('state-frame');
+    var d = f.contentDocument || f.contentWindow.document;
+    d.open();
+    d.write("<script>_hash = '" + s + "'; onload = parent.listener.syncHash;<script>");
+    d.close();
+  },
+
+  syncHash: function () {
+    // IE support...
+    var s = this._hash;
+    if (s != dloc.hash) {
+      dloc.hash = s;
+    }
+    return this;
+  },
+
+  onHashChanged: function () {}
+};
+
+var Router = exports.Router = function (routes) {
+  if (!(this instanceof Router)) return new Router(routes);
+
+  this.params   = {};
+  this.routes   = {};
+  this.methods  = ['on', 'once', 'after', 'before'];
+  this.scope    = [];
+  this._methods = {};
+
+  this._insert = this.insert;
+  this.insert = this.insertEx;
+
+  this.historySupport = (window.history != null ? window.history.pushState : null) != null
+
+  this.configure();
+  this.mount(routes || {});
+};
+
+Router.prototype.init = function (r) {
+  var self = this
+    , routeTo;
+  this.handler = function(onChangeEvent) {
+    var newURL = onChangeEvent && onChangeEvent.newURL || window.location.hash;
+    var url = self.history === true ? self.getPath() : newURL.replace(/.*#/, '');
+    self.dispatch('on', url.charAt(0) === '/' ? url : '/' + url);
+  };
+
+  listener.init(this.handler, this.history);
+
+  if (this.history === false) {
+    if (dlocHashEmpty() && r) {
+      dloc.hash = r;
+    } else if (!dlocHashEmpty()) {
+      self.dispatch('on', '/' + dloc.hash.replace(/^(#\/|#|\/)/, ''));
+    }
+  }
+  else {
+    if (this.convert_hash_in_init) {
+      // Use hash as route
+      routeTo = dlocHashEmpty() && r ? r : !dlocHashEmpty() ? dloc.hash.replace(/^#/, '') : null;
+      if (routeTo) {
+        window.history.replaceState({}, document.title, routeTo);
+      }
+    }
+    else {
+      // Use canonical url
+      routeTo = this.getPath();
+    }
+
+    // Router has been initialized, but due to the chrome bug it will not
+    // yet actually route HTML5 history state changes. Thus, decide if should route.
+    if (routeTo || this.run_in_init === true) {
+      this.handler();
+    }
+  }
+
+  return this;
+};
+
+Router.prototype.explode = function () {
+  var v = this.history === true ? this.getPath() : dloc.hash;
+  if (v.charAt(1) === '/') { v=v.slice(1) }
+  return v.slice(1, v.length).split("/");
+};
+
+Router.prototype.setRoute = function (i, v, val) {
+  var url = this.explode();
+
+  if (typeof i === 'number' && typeof v === 'string') {
+    url[i] = v;
+  }
+  else if (typeof val === 'string') {
+    url.splice(i, v, s);
+  }
+  else {
+    url = [i];
+  }
+
+  listener.setHash(url.join('/'));
+  return url;
+};
+
+//
+// ### function insertEx(method, path, route, parent)
+// #### @method {string} Method to insert the specific `route`.
+// #### @path {Array} Parsed path to insert the `route` at.
+// #### @route {Array|function} Route handlers to insert.
+// #### @parent {Object} **Optional** Parent "routes" to insert into.
+// insert a callback that will only occur once per the matched route.
+//
+Router.prototype.insertEx = function(method, path, route, parent) {
+  if (method === "once") {
+    method = "on";
+    route = function(route) {
+      var once = false;
+      return function() {
+        if (once) return;
+        once = true;
+        return route.apply(this, arguments);
+      };
+    }(route);
+  }
+  return this._insert(method, path, route, parent);
+};
+
+Router.prototype.getRoute = function (v) {
+  var ret = v;
+
+  if (typeof v === "number") {
+    ret = this.explode()[v];
+  }
+  else if (typeof v === "string"){
+    var h = this.explode();
+    ret = h.indexOf(v);
+  }
+  else {
+    ret = this.explode();
+  }
+
+  return ret;
+};
+
+Router.prototype.destroy = function () {
+  listener.destroy(this.handler);
+  return this;
+};
+
+Router.prototype.getPath = function () {
+  var path = window.location.pathname;
+  if (path.substr(0, 1) !== '/') {
+    path = '/' + path;
+  }
+  return path;
+};
+function _every(arr, iterator) {
+  for (var i = 0; i < arr.length; i += 1) {
+    if (iterator(arr[i], i, arr) === false) {
+      return;
+    }
+  }
+}
+
+function _flatten(arr) {
+  var flat = [];
+  for (var i = 0, n = arr.length; i < n; i++) {
+    flat = flat.concat(arr[i]);
+  }
+  return flat;
+}
+
+function _asyncEverySeries(arr, iterator, callback) {
+  if (!arr.length) {
+    return callback();
+  }
+  var completed = 0;
+  (function iterate() {
+    iterator(arr[completed], function(err) {
+      if (err || err === false) {
+        callback(err);
+        callback = function() {};
+      } else {
+        completed += 1;
+        if (completed === arr.length) {
+          callback();
+        } else {
+          iterate();
+        }
+      }
+    });
+  })();
+}
+
+function paramifyString(str, params, mod) {
+  mod = str;
+  for (var param in params) {
+    if (params.hasOwnProperty(param)) {
+      mod = params[param](str);
+      if (mod !== str) {
+        break;
+      }
+    }
+  }
+  return mod === str ? "([._a-zA-Z0-9-%()]+)" : mod;
+}
+
+function regifyString(str, params) {
+  var matches, last = 0, out = "";
+  while (matches = str.substr(last).match(/[^\w\d\- %@&]*\*[^\w\d\- %@&]*/)) {
+    last = matches.index + matches[0].length;
+    matches[0] = matches[0].replace(/^\*/, "([_.()!\\ %@&a-zA-Z0-9-]+)");
+    out += str.substr(0, matches.index) + matches[0];
+  }
+  str = out += str.substr(last);
+  var captures = str.match(/:([^\/]+)/ig), capture, length;
+  if (captures) {
+    length = captures.length;
+    for (var i = 0; i < length; i++) {
+      capture = captures[i];
+      if (capture.slice(0, 2) === "::") {
+        str = capture.slice(1);
+      } else {
+        str = str.replace(capture, paramifyString(capture, params));
+      }
+    }
+  }
+  return str;
+}
+
+function terminator(routes, delimiter, start, stop) {
+  var last = 0, left = 0, right = 0, start = (start || "(").toString(), stop = (stop || ")").toString(), i;
+  for (i = 0; i < routes.length; i++) {
+    var chunk = routes[i];
+    if (chunk.indexOf(start, last) > chunk.indexOf(stop, last) || ~chunk.indexOf(start, last) && !~chunk.indexOf(stop, last) || !~chunk.indexOf(start, last) && ~chunk.indexOf(stop, last)) {
+      left = chunk.indexOf(start, last);
+      right = chunk.indexOf(stop, last);
+      if (~left && !~right || !~left && ~right) {
+        var tmp = routes.slice(0, (i || 1) + 1).join(delimiter);
+        routes = [ tmp ].concat(routes.slice((i || 1) + 1));
+      }
+      last = (right > left ? right : left) + 1;
+      i = 0;
+    } else {
+      last = 0;
+    }
+  }
+  return routes;
+}
+
+var QUERY_SEPARATOR = /\?.*/;
+
+Router.prototype.configure = function(options) {
+  options = options || {};
+  for (var i = 0; i < this.methods.length; i++) {
+    this._methods[this.methods[i]] = true;
+  }
+  this.recurse = options.recurse || this.recurse || false;
+  this.async = options.async || false;
+  this.delimiter = options.delimiter || "/";
+  this.strict = typeof options.strict === "undefined" ? true : options.strict;
+  this.notfound = options.notfound;
+  this.resource = options.resource;
+  this.history = options.html5history && this.historySupport || false;
+  this.run_in_init = this.history === true && options.run_handler_in_init !== false;
+  this.convert_hash_in_init = this.history === true && options.convert_hash_in_init !== false;
+  this.every = {
+    after: options.after || null,
+    before: options.before || null,
+    on: options.on || null
+  };
+  return this;
+};
+
+Router.prototype.param = function(token, matcher) {
+  if (token[0] !== ":") {
+    token = ":" + token;
+  }
+  var compiled = new RegExp(token, "g");
+  this.params[token] = function(str) {
+    return str.replace(compiled, matcher.source || matcher);
+  };
+  return this;
+};
+
+Router.prototype.on = Router.prototype.route = function(method, path, route) {
+  var self = this;
+  if (!route && typeof path == "function") {
+    route = path;
+    path = method;
+    method = "on";
+  }
+  if (Array.isArray(path)) {
+    return path.forEach(function(p) {
+      self.on(method, p, route);
+    });
+  }
+  if (path.source) {
+    path = path.source.replace(/\\\//ig, "/");
+  }
+  if (Array.isArray(method)) {
+    return method.forEach(function(m) {
+      self.on(m.toLowerCase(), path, route);
+    });
+  }
+  path = path.split(new RegExp(this.delimiter));
+  path = terminator(path, this.delimiter);
+  this.insert(method, this.scope.concat(path), route);
+};
+
+Router.prototype.path = function(path, routesFn) {
+  var self = this, length = this.scope.length;
+  if (path.source) {
+    path = path.source.replace(/\\\//ig, "/");
+  }
+  path = path.split(new RegExp(this.delimiter));
+  path = terminator(path, this.delimiter);
+  this.scope = this.scope.concat(path);
+  routesFn.call(this, this);
+  this.scope.splice(length, path.length);
+};
+
+Router.prototype.dispatch = function(method, path, callback) {
+  var self = this, fns = this.traverse(method, path.replace(QUERY_SEPARATOR, ""), this.routes, ""), invoked = this._invoked, after;
+  this._invoked = true;
+  if (!fns || fns.length === 0) {
+    this.last = [];
+    if (typeof this.notfound === "function") {
+      this.invoke([ this.notfound ], {
+        method: method,
+        path: path
+      }, callback);
+    }
+    return false;
+  }
+  if (this.recurse === "forward") {
+    fns = fns.reverse();
+  }
+  function updateAndInvoke() {
+    self.last = fns.after;
+    self.invoke(self.runlist(fns), self, callback);
+  }
+  after = this.every && this.every.after ? [ this.every.after ].concat(this.last) : [ this.last ];
+  if (after && after.length > 0 && invoked) {
+    if (this.async) {
+      this.invoke(after, this, updateAndInvoke);
+    } else {
+      this.invoke(after, this);
+      updateAndInvoke();
+    }
+    return true;
+  }
+  updateAndInvoke();
+  return true;
+};
+
+Router.prototype.invoke = function(fns, thisArg, callback) {
+  var self = this;
+  var apply;
+  if (this.async) {
+    apply = function(fn, next) {
+      if (Array.isArray(fn)) {
+        return _asyncEverySeries(fn, apply, next);
+      } else if (typeof fn == "function") {
+        fn.apply(thisArg, (fns.captures || []).concat(next));
+      }
+    };
+    _asyncEverySeries(fns, apply, function() {
+      if (callback) {
+        callback.apply(thisArg, arguments);
+      }
+    });
+  } else {
+    apply = function(fn) {
+      if (Array.isArray(fn)) {
+        return _every(fn, apply);
+      } else if (typeof fn === "function") {
+        return fn.apply(thisArg, fns.captures || []);
+      } else if (typeof fn === "string" && self.resource) {
+        self.resource[fn].apply(thisArg, fns.captures || []);
+      }
+    };
+    _every(fns, apply);
+  }
+};
+
+Router.prototype.traverse = function(method, path, routes, regexp, filter) {
+  var fns = [], current, exact, match, next, that;
+  function filterRoutes(routes) {
+    if (!filter) {
+      return routes;
+    }
+    function deepCopy(source) {
+      var result = [];
+      for (var i = 0; i < source.length; i++) {
+        result[i] = Array.isArray(source[i]) ? deepCopy(source[i]) : source[i];
+      }
+      return result;
+    }
+    function applyFilter(fns) {
+      for (var i = fns.length - 1; i >= 0; i--) {
+        if (Array.isArray(fns[i])) {
+          applyFilter(fns[i]);
+          if (fns[i].length === 0) {
+            fns.splice(i, 1);
+          }
+        } else {
+          if (!filter(fns[i])) {
+            fns.splice(i, 1);
+          }
+        }
+      }
+    }
+    var newRoutes = deepCopy(routes);
+    newRoutes.matched = routes.matched;
+    newRoutes.captures = routes.captures;
+    newRoutes.after = routes.after.filter(filter);
+    applyFilter(newRoutes);
+    return newRoutes;
+  }
+  if (path === this.delimiter && routes[method]) {
+    next = [ [ routes.before, routes[method] ].filter(Boolean) ];
+    next.after = [ routes.after ].filter(Boolean);
+    next.matched = true;
+    next.captures = [];
+    return filterRoutes(next);
+  }
+  for (var r in routes) {
+    if (routes.hasOwnProperty(r) && (!this._methods[r] || this._methods[r] && typeof routes[r] === "object" && !Array.isArray(routes[r]))) {
+      current = exact = regexp + this.delimiter + r;
+      if (!this.strict) {
+        exact += "[" + this.delimiter + "]?";
+      }
+      match = path.match(new RegExp("^" + exact));
+      if (!match) {
+        continue;
+      }
+      if (match[0] && match[0] == path && routes[r][method]) {
+        next = [ [ routes[r].before, routes[r][method] ].filter(Boolean) ];
+        next.after = [ routes[r].after ].filter(Boolean);
+        next.matched = true;
+        next.captures = match.slice(1);
+        if (this.recurse && routes === this.routes) {
+          next.push([ routes.before, routes.on ].filter(Boolean));
+          next.after = next.after.concat([ routes.after ].filter(Boolean));
+        }
+        return filterRoutes(next);
+      }
+      next = this.traverse(method, path, routes[r], current);
+      if (next.matched) {
+        if (next.length > 0) {
+          fns = fns.concat(next);
+        }
+        if (this.recurse) {
+          fns.push([ routes[r].before, routes[r].on ].filter(Boolean));
+          next.after = next.after.concat([ routes[r].after ].filter(Boolean));
+          if (routes === this.routes) {
+            fns.push([ routes["before"], routes["on"] ].filter(Boolean));
+            next.after = next.after.concat([ routes["after"] ].filter(Boolean));
+          }
+        }
+        fns.matched = true;
+        fns.captures = next.captures;
+        fns.after = next.after;
+        return filterRoutes(fns);
+      }
+    }
+  }
+  return false;
+};
+
+Router.prototype.insert = function(method, path, route, parent) {
+  var methodType, parentType, isArray, nested, part;
+  path = path.filter(function(p) {
+    return p && p.length > 0;
+  });
+  parent = parent || this.routes;
+  part = path.shift();
+  if (/\:|\*/.test(part) && !/\\d|\\w/.test(part)) {
+    part = regifyString(part, this.params);
+  }
+  if (path.length > 0) {
+    parent[part] = parent[part] || {};
+    return this.insert(method, path, route, parent[part]);
+  }
+  if (!part && !path.length && parent === this.routes) {
+    methodType = typeof parent[method];
+    switch (methodType) {
+     case "function":
+      parent[method] = [ parent[method], route ];
+      return;
+     case "object":
+      parent[method].push(route);
+      return;
+     case "undefined":
+      parent[method] = route;
+      return;
+    }
+    return;
+  }
+  parentType = typeof parent[part];
+  isArray = Array.isArray(parent[part]);
+  if (parent[part] && !isArray && parentType == "object") {
+    methodType = typeof parent[part][method];
+    switch (methodType) {
+     case "function":
+      parent[part][method] = [ parent[part][method], route ];
+      return;
+     case "object":
+      parent[part][method].push(route);
+      return;
+     case "undefined":
+      parent[part][method] = route;
+      return;
+    }
+  } else if (parentType == "undefined") {
+    nested = {};
+    nested[method] = route;
+    parent[part] = nested;
+    return;
+  }
+  throw new Error("Invalid route context: " + parentType);
+};
+
+
+
+Router.prototype.extend = function(methods) {
+  var self = this, len = methods.length, i;
+  function extend(method) {
+    self._methods[method] = true;
+    self[method] = function() {
+      var extra = arguments.length === 1 ? [ method, "" ] : [ method ];
+      self.on.apply(self, extra.concat(Array.prototype.slice.call(arguments)));
+    };
+  }
+  for (i = 0; i < len; i++) {
+    extend(methods[i]);
+  }
+};
+
+Router.prototype.runlist = function(fns) {
+  var runlist = this.every && this.every.before ? [ this.every.before ].concat(_flatten(fns)) : _flatten(fns);
+  if (this.every && this.every.on) {
+    runlist.push(this.every.on);
+  }
+  runlist.captures = fns.captures;
+  runlist.source = fns.source;
+  return runlist;
+};
+
+Router.prototype.mount = function(routes, path) {
+  if (!routes || typeof routes !== "object" || Array.isArray(routes)) {
+    return;
+  }
+  var self = this;
+  path = path || [];
+  if (!Array.isArray(path)) {
+    path = path.split(self.delimiter);
+  }
+  function insertOrMount(route, local) {
+    var rename = route, parts = route.split(self.delimiter), routeType = typeof routes[route], isRoute = parts[0] === "" || !self._methods[parts[0]], event = isRoute ? "on" : rename;
+    if (isRoute) {
+      rename = rename.slice((rename.match(new RegExp("^" + self.delimiter)) || [ "" ])[0].length);
+      parts.shift();
+    }
+    if (isRoute && routeType === "object" && !Array.isArray(routes[route])) {
+      local = local.concat(parts);
+      self.mount(routes[route], local);
+      return;
+    }
+    if (isRoute) {
+      local = local.concat(rename.split(self.delimiter));
+      local = terminator(local, self.delimiter);
+    }
+    self.insert(event, local, routes[route]);
+  }
+  for (var route in routes) {
+    if (routes.hasOwnProperty(route)) {
+      insertOrMount(route, path.slice(0));
+    }
+  }
+};
+
+
+
+}(typeof exports === "object" ? exports : window));
 },{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
+/*!
+  * Reqwest! A general purpose XHR connection manager
+  * license MIT (c) Dustin Diaz 2015
+  * https://github.com/ded/reqwest
+  */
+
+!function (name, context, definition) {
+  if (typeof module != 'undefined' && module.exports) module.exports = definition()
+  else if (typeof define == 'function' && define.amd) define(definition)
+  else context[name] = definition()
+}('reqwest', this, function () {
+
+  var context = this
+
+  if ('window' in context) {
+    var doc = document
+      , byTag = 'getElementsByTagName'
+      , head = doc[byTag]('head')[0]
+  } else {
+    var XHR2
+    try {
+      XHR2 = require('xhr2')
+    } catch (ex) {
+      throw new Error('Peer dependency `xhr2` required! Please npm install xhr2')
+    }
+  }
+
+
+  var httpsRe = /^http/
+    , protocolRe = /(^\w+):\/\//
+    , twoHundo = /^(20\d|1223)$/ //http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+    , readyState = 'readyState'
+    , contentType = 'Content-Type'
+    , requestedWith = 'X-Requested-With'
+    , uniqid = 0
+    , callbackPrefix = 'reqwest_' + (+new Date())
+    , lastValue // data stored by the most recent JSONP callback
+    , xmlHttpRequest = 'XMLHttpRequest'
+    , xDomainRequest = 'XDomainRequest'
+    , noop = function () {}
+
+    , isArray = typeof Array.isArray == 'function'
+        ? Array.isArray
+        : function (a) {
+            return a instanceof Array
+          }
+
+    , defaultHeaders = {
+          'contentType': 'application/x-www-form-urlencoded'
+        , 'requestedWith': xmlHttpRequest
+        , 'accept': {
+              '*':  'text/javascript, text/html, application/xml, text/xml, */*'
+            , 'xml':  'application/xml, text/xml'
+            , 'html': 'text/html'
+            , 'text': 'text/plain'
+            , 'json': 'application/json, text/javascript'
+            , 'js':   'application/javascript, text/javascript'
+          }
+      }
+
+    , xhr = function(o) {
+        // is it x-domain
+        if (o['crossOrigin'] === true) {
+          var xhr = context[xmlHttpRequest] ? new XMLHttpRequest() : null
+          if (xhr && 'withCredentials' in xhr) {
+            return xhr
+          } else if (context[xDomainRequest]) {
+            return new XDomainRequest()
+          } else {
+            throw new Error('Browser does not support cross-origin requests')
+          }
+        } else if (context[xmlHttpRequest]) {
+          return new XMLHttpRequest()
+        } else if (XHR2) {
+          return new XHR2()
+        } else {
+          return new ActiveXObject('Microsoft.XMLHTTP')
+        }
+      }
+    , globalSetupOptions = {
+        dataFilter: function (data) {
+          return data
+        }
+      }
+
+  function succeed(r) {
+    var protocol = protocolRe.exec(r.url)
+    protocol = (protocol && protocol[1]) || context.location.protocol
+    return httpsRe.test(protocol) ? twoHundo.test(r.request.status) : !!r.request.response
+  }
+
+  function handleReadyState(r, success, error) {
+    return function () {
+      // use _aborted to mitigate against IE err c00c023f
+      // (can't read props on aborted request objects)
+      if (r._aborted) return error(r.request)
+      if (r._timedOut) return error(r.request, 'Request is aborted: timeout')
+      if (r.request && r.request[readyState] == 4) {
+        r.request.onreadystatechange = noop
+        if (succeed(r)) success(r.request)
+        else
+          error(r.request)
+      }
+    }
+  }
+
+  function setHeaders(http, o) {
+    var headers = o['headers'] || {}
+      , h
+
+    headers['Accept'] = headers['Accept']
+      || defaultHeaders['accept'][o['type']]
+      || defaultHeaders['accept']['*']
+
+    var isAFormData = typeof FormData === 'function' && (o['data'] instanceof FormData);
+    // breaks cross-origin requests with legacy browsers
+    if (!o['crossOrigin'] && !headers[requestedWith]) headers[requestedWith] = defaultHeaders['requestedWith']
+    if (!headers[contentType] && !isAFormData) headers[contentType] = o['contentType'] || defaultHeaders['contentType']
+    for (h in headers)
+      headers.hasOwnProperty(h) && 'setRequestHeader' in http && http.setRequestHeader(h, headers[h])
+  }
+
+  function setCredentials(http, o) {
+    if (typeof o['withCredentials'] !== 'undefined' && typeof http.withCredentials !== 'undefined') {
+      http.withCredentials = !!o['withCredentials']
+    }
+  }
+
+  function generalCallback(data) {
+    lastValue = data
+  }
+
+  function urlappend (url, s) {
+    return url + (/\?/.test(url) ? '&' : '?') + s
+  }
+
+  function handleJsonp(o, fn, err, url) {
+    var reqId = uniqid++
+      , cbkey = o['jsonpCallback'] || 'callback' // the 'callback' key
+      , cbval = o['jsonpCallbackName'] || reqwest.getcallbackPrefix(reqId)
+      , cbreg = new RegExp('((^|\\?|&)' + cbkey + ')=([^&]+)')
+      , match = url.match(cbreg)
+      , script = doc.createElement('script')
+      , loaded = 0
+      , isIE10 = navigator.userAgent.indexOf('MSIE 10.0') !== -1
+
+    if (match) {
+      if (match[3] === '?') {
+        url = url.replace(cbreg, '$1=' + cbval) // wildcard callback func name
+      } else {
+        cbval = match[3] // provided callback func name
+      }
+    } else {
+      url = urlappend(url, cbkey + '=' + cbval) // no callback details, add 'em
+    }
+
+    context[cbval] = generalCallback
+
+    script.type = 'text/javascript'
+    script.src = url
+    script.async = true
+    if (typeof script.onreadystatechange !== 'undefined' && !isIE10) {
+      // need this for IE due to out-of-order onreadystatechange(), binding script
+      // execution to an event listener gives us control over when the script
+      // is executed. See http://jaubourg.net/2010/07/loading-script-as-onclick-handler-of.html
+      script.htmlFor = script.id = '_reqwest_' + reqId
+    }
+
+    script.onload = script.onreadystatechange = function () {
+      if ((script[readyState] && script[readyState] !== 'complete' && script[readyState] !== 'loaded') || loaded) {
+        return false
+      }
+      script.onload = script.onreadystatechange = null
+      script.onclick && script.onclick()
+      // Call the user callback with the last value stored and clean up values and scripts.
+      fn(lastValue)
+      lastValue = undefined
+      head.removeChild(script)
+      loaded = 1
+    }
+
+    // Add the script to the DOM head
+    head.appendChild(script)
+
+    // Enable JSONP timeout
+    return {
+      abort: function () {
+        script.onload = script.onreadystatechange = null
+        err({}, 'Request is aborted: timeout', {})
+        lastValue = undefined
+        head.removeChild(script)
+        loaded = 1
+      }
+    }
+  }
+
+  function getRequest(fn, err) {
+    var o = this.o
+      , method = (o['method'] || 'GET').toUpperCase()
+      , url = typeof o === 'string' ? o : o['url']
+      // convert non-string objects to query-string form unless o['processData'] is false
+      , data = (o['processData'] !== false && o['data'] && typeof o['data'] !== 'string')
+        ? reqwest.toQueryString(o['data'])
+        : (o['data'] || null)
+      , http
+      , sendWait = false
+
+    // if we're working on a GET request and we have data then we should append
+    // query string to end of URL and not post data
+    if ((o['type'] == 'jsonp' || method == 'GET') && data) {
+      url = urlappend(url, data)
+      data = null
+    }
+
+    if (o['type'] == 'jsonp') return handleJsonp(o, fn, err, url)
+
+    // get the xhr from the factory if passed
+    // if the factory returns null, fall-back to ours
+    http = (o.xhr && o.xhr(o)) || xhr(o)
+
+    http.open(method, url, o['async'] === false ? false : true)
+    setHeaders(http, o)
+    setCredentials(http, o)
+    if (context[xDomainRequest] && http instanceof context[xDomainRequest]) {
+        http.onload = fn
+        http.onerror = err
+        // NOTE: see
+        // http://social.msdn.microsoft.com/Forums/en-US/iewebdevelopment/thread/30ef3add-767c-4436-b8a9-f1ca19b4812e
+        http.onprogress = function() {}
+        sendWait = true
+    } else {
+      http.onreadystatechange = handleReadyState(this, fn, err)
+    }
+    o['before'] && o['before'](http)
+    if (sendWait) {
+      setTimeout(function () {
+        http.send(data)
+      }, 200)
+    } else {
+      http.send(data)
+    }
+    return http
+  }
+
+  function Reqwest(o, fn) {
+    this.o = o
+    this.fn = fn
+
+    init.apply(this, arguments)
+  }
+
+  function setType(header) {
+    // json, javascript, text/plain, text/html, xml
+    if (header.match('json')) return 'json'
+    if (header.match('javascript')) return 'js'
+    if (header.match('text')) return 'html'
+    if (header.match('xml')) return 'xml'
+  }
+
+  function init(o, fn) {
+
+    this.url = typeof o == 'string' ? o : o['url']
+    this.timeout = null
+
+    // whether request has been fulfilled for purpose
+    // of tracking the Promises
+    this._fulfilled = false
+    // success handlers
+    this._successHandler = function(){}
+    this._fulfillmentHandlers = []
+    // error handlers
+    this._errorHandlers = []
+    // complete (both success and fail) handlers
+    this._completeHandlers = []
+    this._erred = false
+    this._responseArgs = {}
+
+    var self = this
+
+    fn = fn || function () {}
+
+    if (o['timeout']) {
+      this.timeout = setTimeout(function () {
+        timedOut()
+      }, o['timeout'])
+    }
+
+    if (o['success']) {
+      this._successHandler = function () {
+        o['success'].apply(o, arguments)
+      }
+    }
+
+    if (o['error']) {
+      this._errorHandlers.push(function () {
+        o['error'].apply(o, arguments)
+      })
+    }
+
+    if (o['complete']) {
+      this._completeHandlers.push(function () {
+        o['complete'].apply(o, arguments)
+      })
+    }
+
+    function complete (resp) {
+      o['timeout'] && clearTimeout(self.timeout)
+      self.timeout = null
+      while (self._completeHandlers.length > 0) {
+        self._completeHandlers.shift()(resp)
+      }
+    }
+
+    function success (resp) {
+      var type = o['type'] || resp && setType(resp.getResponseHeader('Content-Type')) // resp can be undefined in IE
+      resp = (type !== 'jsonp') ? self.request : resp
+      // use global data filter on response text
+      var filteredResponse = globalSetupOptions.dataFilter(resp.responseText, type)
+        , r = filteredResponse
+      try {
+        resp.responseText = r
+      } catch (e) {
+        // can't assign this in IE<=8, just ignore
+      }
+      if (r) {
+        switch (type) {
+        case 'json':
+          try {
+            resp = context.JSON ? context.JSON.parse(r) : eval('(' + r + ')')
+          } catch (err) {
+            return error(resp, 'Could not parse JSON in response', err)
+          }
+          break
+        case 'js':
+          resp = eval(r)
+          break
+        case 'html':
+          resp = r
+          break
+        case 'xml':
+          resp = resp.responseXML
+              && resp.responseXML.parseError // IE trololo
+              && resp.responseXML.parseError.errorCode
+              && resp.responseXML.parseError.reason
+            ? null
+            : resp.responseXML
+          break
+        }
+      }
+
+      self._responseArgs.resp = resp
+      self._fulfilled = true
+      fn(resp)
+      self._successHandler(resp)
+      while (self._fulfillmentHandlers.length > 0) {
+        resp = self._fulfillmentHandlers.shift()(resp)
+      }
+
+      complete(resp)
+    }
+
+    function timedOut() {
+      self._timedOut = true
+      self.request.abort()
+    }
+
+    function error(resp, msg, t) {
+      resp = self.request
+      self._responseArgs.resp = resp
+      self._responseArgs.msg = msg
+      self._responseArgs.t = t
+      self._erred = true
+      while (self._errorHandlers.length > 0) {
+        self._errorHandlers.shift()(resp, msg, t)
+      }
+      complete(resp)
+    }
+
+    this.request = getRequest.call(this, success, error)
+  }
+
+  Reqwest.prototype = {
+    abort: function () {
+      this._aborted = true
+      this.request.abort()
+    }
+
+  , retry: function () {
+      init.call(this, this.o, this.fn)
+    }
+
+    /**
+     * Small deviation from the Promises A CommonJs specification
+     * http://wiki.commonjs.org/wiki/Promises/A
+     */
+
+    /**
+     * `then` will execute upon successful requests
+     */
+  , then: function (success, fail) {
+      success = success || function () {}
+      fail = fail || function () {}
+      if (this._fulfilled) {
+        this._responseArgs.resp = success(this._responseArgs.resp)
+      } else if (this._erred) {
+        fail(this._responseArgs.resp, this._responseArgs.msg, this._responseArgs.t)
+      } else {
+        this._fulfillmentHandlers.push(success)
+        this._errorHandlers.push(fail)
+      }
+      return this
+    }
+
+    /**
+     * `always` will execute whether the request succeeds or fails
+     */
+  , always: function (fn) {
+      if (this._fulfilled || this._erred) {
+        fn(this._responseArgs.resp)
+      } else {
+        this._completeHandlers.push(fn)
+      }
+      return this
+    }
+
+    /**
+     * `fail` will execute when the request fails
+     */
+  , fail: function (fn) {
+      if (this._erred) {
+        fn(this._responseArgs.resp, this._responseArgs.msg, this._responseArgs.t)
+      } else {
+        this._errorHandlers.push(fn)
+      }
+      return this
+    }
+  , 'catch': function (fn) {
+      return this.fail(fn)
+    }
+  }
+
+  function reqwest(o, fn) {
+    return new Reqwest(o, fn)
+  }
+
+  // normalize newline variants according to spec -> CRLF
+  function normalize(s) {
+    return s ? s.replace(/\r?\n/g, '\r\n') : ''
+  }
+
+  function serial(el, cb) {
+    var n = el.name
+      , t = el.tagName.toLowerCase()
+      , optCb = function (o) {
+          // IE gives value="" even where there is no value attribute
+          // 'specified' ref: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-862529273
+          if (o && !o['disabled'])
+            cb(n, normalize(o['attributes']['value'] && o['attributes']['value']['specified'] ? o['value'] : o['text']))
+        }
+      , ch, ra, val, i
+
+    // don't serialize elements that are disabled or without a name
+    if (el.disabled || !n) return
+
+    switch (t) {
+    case 'input':
+      if (!/reset|button|image|file/i.test(el.type)) {
+        ch = /checkbox/i.test(el.type)
+        ra = /radio/i.test(el.type)
+        val = el.value
+        // WebKit gives us "" instead of "on" if a checkbox has no value, so correct it here
+        ;(!(ch || ra) || el.checked) && cb(n, normalize(ch && val === '' ? 'on' : val))
+      }
+      break
+    case 'textarea':
+      cb(n, normalize(el.value))
+      break
+    case 'select':
+      if (el.type.toLowerCase() === 'select-one') {
+        optCb(el.selectedIndex >= 0 ? el.options[el.selectedIndex] : null)
+      } else {
+        for (i = 0; el.length && i < el.length; i++) {
+          el.options[i].selected && optCb(el.options[i])
+        }
+      }
+      break
+    }
+  }
+
+  // collect up all form elements found from the passed argument elements all
+  // the way down to child elements; pass a '<form>' or form fields.
+  // called with 'this'=callback to use for serial() on each element
+  function eachFormElement() {
+    var cb = this
+      , e, i
+      , serializeSubtags = function (e, tags) {
+          var i, j, fa
+          for (i = 0; i < tags.length; i++) {
+            fa = e[byTag](tags[i])
+            for (j = 0; j < fa.length; j++) serial(fa[j], cb)
+          }
+        }
+
+    for (i = 0; i < arguments.length; i++) {
+      e = arguments[i]
+      if (/input|select|textarea/i.test(e.tagName)) serial(e, cb)
+      serializeSubtags(e, [ 'input', 'select', 'textarea' ])
+    }
+  }
+
+  // standard query string style serialization
+  function serializeQueryString() {
+    return reqwest.toQueryString(reqwest.serializeArray.apply(null, arguments))
+  }
+
+  // { 'name': 'value', ... } style serialization
+  function serializeHash() {
+    var hash = {}
+    eachFormElement.apply(function (name, value) {
+      if (name in hash) {
+        hash[name] && !isArray(hash[name]) && (hash[name] = [hash[name]])
+        hash[name].push(value)
+      } else hash[name] = value
+    }, arguments)
+    return hash
+  }
+
+  // [ { name: 'name', value: 'value' }, ... ] style serialization
+  reqwest.serializeArray = function () {
+    var arr = []
+    eachFormElement.apply(function (name, value) {
+      arr.push({name: name, value: value})
+    }, arguments)
+    return arr
+  }
+
+  reqwest.serialize = function () {
+    if (arguments.length === 0) return ''
+    var opt, fn
+      , args = Array.prototype.slice.call(arguments, 0)
+
+    opt = args.pop()
+    opt && opt.nodeType && args.push(opt) && (opt = null)
+    opt && (opt = opt.type)
+
+    if (opt == 'map') fn = serializeHash
+    else if (opt == 'array') fn = reqwest.serializeArray
+    else fn = serializeQueryString
+
+    return fn.apply(null, args)
+  }
+
+  reqwest.toQueryString = function (o, trad) {
+    var prefix, i
+      , traditional = trad || false
+      , s = []
+      , enc = encodeURIComponent
+      , add = function (key, value) {
+          // If value is a function, invoke it and return its value
+          value = ('function' === typeof value) ? value() : (value == null ? '' : value)
+          s[s.length] = enc(key) + '=' + enc(value)
+        }
+    // If an array was passed in, assume that it is an array of form elements.
+    if (isArray(o)) {
+      for (i = 0; o && i < o.length; i++) add(o[i]['name'], o[i]['value'])
+    } else {
+      // If traditional, encode the "old" way (the way 1.3.2 or older
+      // did it), otherwise encode params recursively.
+      for (prefix in o) {
+        if (o.hasOwnProperty(prefix)) buildParams(prefix, o[prefix], traditional, add)
+      }
+    }
+
+    // spaces should be + according to spec
+    return s.join('&').replace(/%20/g, '+')
+  }
+
+  function buildParams(prefix, obj, traditional, add) {
+    var name, i, v
+      , rbracket = /\[\]$/
+
+    if (isArray(obj)) {
+      // Serialize array item.
+      for (i = 0; obj && i < obj.length; i++) {
+        v = obj[i]
+        if (traditional || rbracket.test(prefix)) {
+          // Treat each array item as a scalar.
+          add(prefix, v)
+        } else {
+          buildParams(prefix + '[' + (typeof v === 'object' ? i : '') + ']', v, traditional, add)
+        }
+      }
+    } else if (obj && obj.toString() === '[object Object]') {
+      // Serialize object item.
+      for (name in obj) {
+        buildParams(prefix + '[' + name + ']', obj[name], traditional, add)
+      }
+
+    } else {
+      // Serialize scalar item.
+      add(prefix, obj)
+    }
+  }
+
+  reqwest.getcallbackPrefix = function () {
+    return callbackPrefix
+  }
+
+  // jQuery and Zepto compatibility, differences can be remapped here so you can call
+  // .ajax.compat(options, callback)
+  reqwest.compat = function (o, fn) {
+    if (o) {
+      o['type'] && (o['method'] = o['type']) && delete o['type']
+      o['dataType'] && (o['type'] = o['dataType'])
+      o['jsonpCallback'] && (o['jsonpCallbackName'] = o['jsonpCallback']) && delete o['jsonpCallback']
+      o['jsonp'] && (o['jsonpCallback'] = o['jsonp'])
+    }
+    return new Reqwest(o, fn)
+  }
+
+  reqwest.ajaxSetup = function (options) {
+    options = options || {}
+    for (var k in options) {
+      globalSetupOptions[k] = options[k]
+    }
+  }
+
+  return reqwest
+});
+
+},{"xhr2":41}],8:[function(require,module,exports){
 var createElement = require("./vdom/create-element.js")
 
 module.exports = createElement
 
-},{"./vdom/create-element.js":18}],7:[function(require,module,exports){
+},{"./vdom/create-element.js":20}],9:[function(require,module,exports){
 var diff = require("./vtree/diff.js")
 
 module.exports = diff
 
-},{"./vtree/diff.js":38}],8:[function(require,module,exports){
+},{"./vtree/diff.js":40}],10:[function(require,module,exports){
 var h = require("./virtual-hyperscript/index.js")
 
 module.exports = h
 
-},{"./virtual-hyperscript/index.js":25}],9:[function(require,module,exports){
+},{"./virtual-hyperscript/index.js":27}],11:[function(require,module,exports){
 /*!
  * Cross-Browser Split 1.1.1
  * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
@@ -962,7 +2427,7 @@ module.exports = (function split(undef) {
   return self;
 })();
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var OneVersionConstraint = require('individual/one-version');
@@ -984,7 +2449,7 @@ function EvStore(elem) {
     return hash;
 }
 
-},{"individual/one-version":12}],11:[function(require,module,exports){
+},{"individual/one-version":14}],13:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1007,7 +2472,7 @@ function Individual(key, value) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var Individual = require('./index.js');
@@ -1031,7 +2496,7 @@ function OneVersion(moduleName, version, defaultValue) {
     return Individual(key, defaultValue);
 }
 
-},{"./index.js":11}],13:[function(require,module,exports){
+},{"./index.js":13}],15:[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -1050,14 +2515,14 @@ if (typeof document !== 'undefined') {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":5}],14:[function(require,module,exports){
+},{"min-document":6}],16:[function(require,module,exports){
 "use strict";
 
 module.exports = function isObject(x) {
 	return typeof x === "object" && x !== null;
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var nativeIsArray = Array.isArray
 var toString = Object.prototype.toString
 
@@ -1067,12 +2532,12 @@ function isArray(obj) {
     return toString.call(obj) === "[object Array]"
 }
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var patch = require("./vdom/patch.js")
 
 module.exports = patch
 
-},{"./vdom/patch.js":21}],17:[function(require,module,exports){
+},{"./vdom/patch.js":23}],19:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook.js")
 
@@ -1171,7 +2636,7 @@ function getPrototype(value) {
     }
 }
 
-},{"../vnode/is-vhook.js":29,"is-object":14}],18:[function(require,module,exports){
+},{"../vnode/is-vhook.js":31,"is-object":16}],20:[function(require,module,exports){
 var document = require("global/document")
 
 var applyProperties = require("./apply-properties")
@@ -1219,7 +2684,7 @@ function createElement(vnode, opts) {
     return node
 }
 
-},{"../vnode/handle-thunk.js":27,"../vnode/is-vnode.js":30,"../vnode/is-vtext.js":31,"../vnode/is-widget.js":32,"./apply-properties":17,"global/document":13}],19:[function(require,module,exports){
+},{"../vnode/handle-thunk.js":29,"../vnode/is-vnode.js":32,"../vnode/is-vtext.js":33,"../vnode/is-widget.js":34,"./apply-properties":19,"global/document":15}],21:[function(require,module,exports){
 // Maps a virtual DOM tree onto a real DOM tree in an efficient manner.
 // We don't want to read all of the DOM nodes in the tree so we use
 // the in-order tree indexing to eliminate recursion down certain branches.
@@ -1306,7 +2771,7 @@ function ascending(a, b) {
     return a > b ? 1 : -1
 }
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var applyProperties = require("./apply-properties")
 
 var isWidget = require("../vnode/is-widget.js")
@@ -1460,7 +2925,7 @@ function replaceRoot(oldRoot, newRoot) {
     return newRoot;
 }
 
-},{"../vnode/is-widget.js":32,"../vnode/vpatch.js":35,"./apply-properties":17,"./create-element":18,"./update-widget":22}],21:[function(require,module,exports){
+},{"../vnode/is-widget.js":34,"../vnode/vpatch.js":37,"./apply-properties":19,"./create-element":20,"./update-widget":24}],23:[function(require,module,exports){
 var document = require("global/document")
 var isArray = require("x-is-array")
 
@@ -1538,7 +3003,7 @@ function patchIndices(patches) {
     return indices
 }
 
-},{"./dom-index":19,"./patch-op":20,"global/document":13,"x-is-array":15}],22:[function(require,module,exports){
+},{"./dom-index":21,"./patch-op":22,"global/document":15,"x-is-array":17}],24:[function(require,module,exports){
 var isWidget = require("../vnode/is-widget.js")
 
 module.exports = updateWidget
@@ -1555,7 +3020,7 @@ function updateWidget(a, b) {
     return false
 }
 
-},{"../vnode/is-widget.js":32}],23:[function(require,module,exports){
+},{"../vnode/is-widget.js":34}],25:[function(require,module,exports){
 'use strict';
 
 var EvStore = require('ev-store');
@@ -1584,7 +3049,7 @@ EvHook.prototype.unhook = function(node, propertyName) {
     es[propName] = undefined;
 };
 
-},{"ev-store":10}],24:[function(require,module,exports){
+},{"ev-store":12}],26:[function(require,module,exports){
 'use strict';
 
 module.exports = SoftSetHook;
@@ -1603,7 +3068,7 @@ SoftSetHook.prototype.hook = function (node, propertyName) {
     }
 };
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 var isArray = require('x-is-array');
@@ -1740,7 +3205,7 @@ function errorString(obj) {
     }
 }
 
-},{"../vnode/is-thunk":28,"../vnode/is-vhook":29,"../vnode/is-vnode":30,"../vnode/is-vtext":31,"../vnode/is-widget":32,"../vnode/vnode.js":34,"../vnode/vtext.js":36,"./hooks/ev-hook.js":23,"./hooks/soft-set-hook.js":24,"./parse-tag.js":26,"x-is-array":15}],26:[function(require,module,exports){
+},{"../vnode/is-thunk":30,"../vnode/is-vhook":31,"../vnode/is-vnode":32,"../vnode/is-vtext":33,"../vnode/is-widget":34,"../vnode/vnode.js":36,"../vnode/vtext.js":38,"./hooks/ev-hook.js":25,"./hooks/soft-set-hook.js":26,"./parse-tag.js":28,"x-is-array":17}],28:[function(require,module,exports){
 'use strict';
 
 var split = require('browser-split');
@@ -1796,7 +3261,7 @@ function parseTag(tag, props) {
     return props.namespace ? tagName : tagName.toUpperCase();
 }
 
-},{"browser-split":9}],27:[function(require,module,exports){
+},{"browser-split":11}],29:[function(require,module,exports){
 var isVNode = require("./is-vnode")
 var isVText = require("./is-vtext")
 var isWidget = require("./is-widget")
@@ -1838,14 +3303,14 @@ function renderThunk(thunk, previous) {
     return renderedThunk
 }
 
-},{"./is-thunk":28,"./is-vnode":30,"./is-vtext":31,"./is-widget":32}],28:[function(require,module,exports){
+},{"./is-thunk":30,"./is-vnode":32,"./is-vtext":33,"./is-widget":34}],30:[function(require,module,exports){
 module.exports = isThunk
 
 function isThunk(t) {
     return t && t.type === "Thunk"
 }
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = isHook
 
 function isHook(hook) {
@@ -1854,7 +3319,7 @@ function isHook(hook) {
        typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"))
 }
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualNode
@@ -1863,7 +3328,7 @@ function isVirtualNode(x) {
     return x && x.type === "VirtualNode" && x.version === version
 }
 
-},{"./version":33}],31:[function(require,module,exports){
+},{"./version":35}],33:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualText
@@ -1872,17 +3337,17 @@ function isVirtualText(x) {
     return x && x.type === "VirtualText" && x.version === version
 }
 
-},{"./version":33}],32:[function(require,module,exports){
+},{"./version":35}],34:[function(require,module,exports){
 module.exports = isWidget
 
 function isWidget(w) {
     return w && w.type === "Widget"
 }
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = "2"
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var version = require("./version")
 var isVNode = require("./is-vnode")
 var isWidget = require("./is-widget")
@@ -1956,7 +3421,7 @@ function VirtualNode(tagName, properties, children, key, namespace) {
 VirtualNode.prototype.version = version
 VirtualNode.prototype.type = "VirtualNode"
 
-},{"./is-thunk":28,"./is-vhook":29,"./is-vnode":30,"./is-widget":32,"./version":33}],35:[function(require,module,exports){
+},{"./is-thunk":30,"./is-vhook":31,"./is-vnode":32,"./is-widget":34,"./version":35}],37:[function(require,module,exports){
 var version = require("./version")
 
 VirtualPatch.NONE = 0
@@ -1980,7 +3445,7 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":33}],36:[function(require,module,exports){
+},{"./version":35}],38:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = VirtualText
@@ -1992,7 +3457,7 @@ function VirtualText(text) {
 VirtualText.prototype.version = version
 VirtualText.prototype.type = "VirtualText"
 
-},{"./version":33}],37:[function(require,module,exports){
+},{"./version":35}],39:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook")
 
@@ -2052,7 +3517,7 @@ function getPrototype(value) {
   }
 }
 
-},{"../vnode/is-vhook":29,"is-object":14}],38:[function(require,module,exports){
+},{"../vnode/is-vhook":31,"is-object":16}],40:[function(require,module,exports){
 var isArray = require("x-is-array")
 
 var VPatch = require("../vnode/vpatch")
@@ -2481,7 +3946,10 @@ function appendPatch(apply, patch) {
     }
 }
 
-},{"../vnode/handle-thunk":27,"../vnode/is-thunk":28,"../vnode/is-vnode":30,"../vnode/is-vtext":31,"../vnode/is-widget":32,"../vnode/vpatch":35,"./diff-props":37,"x-is-array":15}],39:[function(require,module,exports){
+},{"../vnode/handle-thunk":29,"../vnode/is-thunk":30,"../vnode/is-vnode":32,"../vnode/is-vtext":33,"../vnode/is-widget":34,"../vnode/vpatch":37,"./diff-props":39,"x-is-array":17}],41:[function(require,module,exports){
+module.exports = XMLHttpRequest;
+
+},{}],42:[function(require,module,exports){
 function Content ( page ) {
   try {
     var originalTitle = page.title;
@@ -2525,4 +3993,4 @@ function Content ( page ) {
 
 module.exports = Content;
 
-},{}]},{},[4,1,3,39,2]);
+},{}]},{},[1]);

@@ -4,7 +4,8 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          'content5.pre.js': 'content5.js'
+          'content5.pre.js': 'content5.js',
+          'landing.pre.js': 'landing.js'
         }
       }
     },
@@ -37,11 +38,11 @@ module.exports = function(grunt) {
           screwIE8: false,
           wrap: false,
           mangle: true,
-          sourceMap: true
+          sourceMap: false
         },
         files: {
           'main.min.js': 'content5.pre.js',
-          'landing.min.js': 'landing.js'
+          'landing.min.js': 'landing.pre.js'
         }
       },
       dev: {
@@ -51,11 +52,11 @@ module.exports = function(grunt) {
           beautify: true,
           mangle: false,
           wrap: false,
-          sourceMap: true
+          sourceMap: false
         },
         files: {
           'main.min.js': 'content5.pre.js',
-          'landing.min.js': 'landing.js'
+          'landing.min.js': 'landing.pre.js'
         }
       }
     },
@@ -76,10 +77,21 @@ module.exports = function(grunt) {
       options: {
         roundingPrecision: -1,
         compatibility: 'ie8',
-        processImport: false,
         keepSpecialComments: 1
       },
       dist: {
+        options: {
+          processImport: false
+        },
+        files: {
+          'pageview.min.css': 'pageview.pure.css',
+          'landing.min.css': 'landing.pure.css'
+        }
+      },
+      dev: {
+        options: {
+          processImport: false
+        },
         files: {
           'pageview.min.css': 'pageview.pure.css',
           'landing.min.css': 'landing.pure.css'
@@ -101,7 +113,7 @@ module.exports = function(grunt) {
           atBegin: false
         },
         files: ['*.css'],
-        tasks: ['purifycss', 'cssmin']
+        tasks: ['purifycss', 'cssmin:dev']
       },
       scripts: {
         options: {
@@ -109,8 +121,8 @@ module.exports = function(grunt) {
           spawn: false,
           atBegin: true
         },
-        files: ['content5.js', 'nav.js', 'helpers.js', 'store*.js', 'domStore*.js', 'landing.js'],
-        tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin']
+        files: ['content5.js', 'nav.js', 'helpers.js', 'store.js', 'domStore.js', 'landing.js'],
+        tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin:dev']
       }
     }
   });
@@ -121,6 +133,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['browserify:dist', 'uglify:dist', 'purifycss', 'cssmin']);
-  grunt.registerTask('dev', ['browserify:dist', 'uglify:dev', 'purifycss']);
+  grunt.registerTask('default', ['browserify:dist', 'uglify:dist', 'purifycss', 'cssmin:dist']);
+  grunt.registerTask('dev', ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin:dev']);
 };

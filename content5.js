@@ -1,3 +1,4 @@
+//var reQ = require("requirejs");
 var codeMirror = CodeMirror || null;
 if (!Object.keys) {
   // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
@@ -51,6 +52,8 @@ var h = require("virtual-dom/h"),
   diff = require("virtual-dom/diff"),
   patch = require("virtual-dom/patch"),
   createElement = require("virtual-dom/create-element"),
+  reqwest = require("reqwest"),
+  Router = require("director/build/director").Router,
   util = require("./helpers"),
   Content = require("./store"),
   DOMRef = require("./domStore"),
@@ -72,10 +75,10 @@ var h = require("virtual-dom/h"),
     inTransition: {}
   };
 
-function render () {
+function render ( navDOM ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [app.navDOM]),
+      h("#sideNav", [navDOM]),
       h("#content.fullPage", [
         h("#contentWrap", [
           h("#output")
@@ -85,10 +88,10 @@ function render () {
   );
 }
 
-function renderEditor () {
+function renderEditor ( navDOM, title, text ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [app.navDOM]),
+      h("#sideNav", [navDOM]),
       h("#content.fullPage", [
         h("#buttons", [
           h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
@@ -113,15 +116,30 @@ function renderEditor () {
           h("#input", [
             h("label#titleFieldLabel", [
               "Page title: ",
-              h("input#titleField", { onkeyup: updateTitle, value: String(app.currentContent.title || ""), type: "text" })
+              h("input#titleField", { onkeyup: updateTitle, value: String(title || ""), type: "text" })
             ]),
-            h("textarea#textarea", [String(app.currentContent.text || "")])
+            h("textarea#textarea", [String(text || "")])
           ]),
           h("#output")
         ])
       ])
     ])
   );
+}
+
+function renderLink ( category, title, li, attr, hr, id, parent, handleNav ) {
+  return h(li, attr, [
+    h("a", {
+      href: "#" + category,
+      onclick: handleNav,
+      "data-id": id,
+      "data-parent": parent
+    }, [
+      String(title),
+      h("span")
+    ]),
+    hr
+  ]);
 }
 
 function loadingSomething ( status, target ) {
@@ -135,10 +153,8 @@ function loadingSomething ( status, target ) {
     }
   }
   else {
-    //setTimeout(function() {
-      app.inTransition[target] = false;
-      target.className = target.className.replace(util.regLoading, "");
-    //}, 200);
+    app.inTransition[target] = false;
+    target.className = target.className.replace(util.regLoading, "");
   }
 }
 
@@ -477,12 +493,12 @@ function update ( e ) {
   app.currentContent.set({ text: val });
 }
 
-function insertContent ( content ) {
-  app.domRefs.output.innerHTML = util.md.render("# " + content.title + "\n" + content.text);
+function insertContent ( title, text ) {
+  app.domRefs.output.innerHTML = util.md.render("# " + title + "\n" + text);
 }
 
 function pageSetup () {
-  app.dirtyDOM = ( !codeMirror ) ? render() : renderEditor();
+  app.dirtyDOM = ( !codeMirror ) ? render(app.navDOM) : renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
   app.rootNode = createElement(app.dirtyDOM);
 
   try {
@@ -517,11 +533,12 @@ function pageSetup () {
   try {
     var hashArray = window.location.hash.slice(2).split(/\//);
     if ( hashArray.length > 1 ) {
-      var subCats = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-      if ( subCats ) {
-        var i = 0, total = subCats.length;
+      var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+      if ( subCat ) {
+        var i = 0, total = subCat.length;
         for ( ; i < total; ++i ) {
-          subCats[i].parentNode.className += " sub-cat--open";
+          subCat[i].parentNode.removeAttribute("style");
+          //subCat[i].parentNode.className += " sub-cat--open";
         }
       }
     }
@@ -531,7 +548,7 @@ function pageSetup () {
 
 function setupEditor () {
   console.log("Loading editor...");
-  var refreshDOM = renderEditor();
+  var refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
   var patches = diff(app.dirtyDOM, refreshDOM);
   app.rootNode = patch(app.rootNode, patches);
   app.dirtyDOM = refreshDOM;
@@ -563,7 +580,7 @@ function resetPage () {
     app.domRefs.set({
       editor: null
     });
-    refreshDOM = renderEditor();
+    refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
     modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
     patches = diff(app.modalDOM, modalRefreshDOM);
     if (patches.length > 1) {
@@ -573,13 +590,25 @@ function resetPage () {
     }
   }
   else {
-    refreshDOM = render();
+    refreshDOM = render(app.navDOM);
   }
   patches = diff(app.dirtyDOM, refreshDOM);
   app.rootNode = patch(app.rootNode, patches);
   app.dirtyDOM = refreshDOM;
   try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
   catch (e) {console.log(e);}
+  try {
+    var hashArray = window.location.hash.slice(2).split(/\//);
+    var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+    if ( subCat ) {
+      var i = 0;
+      var total = subCat.length;
+      for ( ; i < total; ++i ) {
+        subCat[i].parentNode.style.display = "";
+        subCat[i].parentNode.removeAttribute("style");
+      }
+    }
+  } catch (e) {}
   app.domRefs = new DOMRef();
   app.domRefs.set();
 }
@@ -608,20 +637,24 @@ function getList () {
 
         var hashArray = this.getAttribute("href").slice(2).split(/\//);
         if ( hashArray.length > 1 ) {
-          var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat--open a");
+          //var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat--open a");
           var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+          var oldSubCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + window.location.hash.slice(2).split(/\//)[1] + "']");
 
           if ( subCat != oldSubCat ) {
             i = 0;
             total = oldSubCat.length;
             for ( ; i < total; ++i ) {
-              oldSubCat[i].parentNode.className = oldSubCat[i].parentNode.className.replace(/ ?sub-cat--open/gi, "");
+              oldSubCat[i].parentNode.style.display = "none";
+              //oldSubCat[i].parentNode.className = oldSubCat[i].parentNode.className.replace(/ ?sub-cat--open/gi, "");
             }
             if ( subCat ) {
               i = 0;
               total = subCat.length;
               for ( ; i < total; ++i ) {
-                subCat[i].parentNode.className += " sub-cat--open";
+                subCat[i].parentNode.style.display = "";
+                subCat[i].parentNode.removeAttribute("style");
+                //subCat[i].parentNode.className += " sub-cat--open";
               }
             }
           }
@@ -635,6 +668,7 @@ function getList () {
         commLinks = [],
         i = 0,
         li,
+        attr,
         hr,
         idArray,
         id,
@@ -643,49 +677,46 @@ function getList () {
         page;
       for ( ; i < count; ++i ) {
         li = "li";
+        attr = null;
         hr = h("hr");
         page = results[i];
         pages[page.Category] = page.Title;
+        idArray = page.Category.slice(1).split(/\//g);
+        id = idArray.pop();
         if ( /^\/fhm\//i.test(page.Category) ) {
           fhm.push(
             h("option", { value: page.Category }, [String(page.Title)])
           );
-          idArray = page.Category.slice(1).split(/\//g);
-          id = idArray.pop();
           parent = idArray.pop();
           if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
             li = "li.sub-cat";
             hr = null;
+            attr = {
+              style: {
+                display: "none"
+              }
+            };
           }
           fhmLinks.push(
-            h(li, [
-              h("a", { href: "#" + page.Category, onclick: handleNav, "data-id": id, "data-parent": parent }, [
-                String(page.Title),
-                h("span")
-              ]),
-              hr
-            ])
+            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
           );
         }
         if ( /^\/comm\//i.test(page.Category) ) {
           comm.push(
             h("option", { value: page.Category }, [String(page.Title)])
           );
-          idArray = page.Category.slice(1).split(/\//g);
-          id = idArray.pop();
           parent = idArray.pop();
           if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
             li = "li.sub-cat";
             hr = null;
+            attr = {
+              style: {
+                display: "none"
+              }
+            };
           }
           commLinks.push(
-            h(li, [
-              h("a", { href: "#" + page.Category, onclick: handleNav, "data-id": id, "data-parent": parent }, [
-                String(page.Title),
-                h("span")
-              ]),
-              hr
-            ])
+            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
           );
         }
       }
@@ -696,6 +727,7 @@ function getList () {
         h("optgroup", { label: "Sub-Cateogries" }, comm)
       ];
       app.navDOM = renderNav(fhmLinks, commLinks);
+      console.log(pages);
       pageSetup();
     },
     error: util.connError
@@ -734,7 +766,7 @@ function init ( path ) {
         timestamp: (Date && Date.now() || new Date())
       });
       app.currentContent.set();
-      insertContent(app.currentContent);
+      insertContent(app.currentContent.title, app.currentContent.text);
       loadingSomething(false, app.domRefs.output);
     },
     error: util.connError,

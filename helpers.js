@@ -15,6 +15,9 @@ var regLoading = / ?loading/g,
   regCheatSheet = / ?cheatSheet/g,
   regNoChange = / ?nochange/g,
   md = markdownit({
+    xhtmlOut: true,
+    typographer: true,
+    quotes: '“”‘’',
     highlight: function ( code, lang ) {
       if ( lang && hljs.getLanguage(lang) ) {
         try {

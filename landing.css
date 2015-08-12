@@ -103,7 +103,7 @@ body{
   width: 100%;
   max-width: 960px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 20px 10px;
 }
 
 #navBlock .left-cat,
