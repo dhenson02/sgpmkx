@@ -2,10 +2,271 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/.gitattributes" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/.npmignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/.travis.yml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/activeline.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/anywordhint.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/bidi.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/btree.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/buffers.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/changemode.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/closebrackets.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/closetag.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/complete.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/emacs.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/folding.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/fullscreen.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/hardwrap.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/html5complete.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/indentwrap.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/lint.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/loadmode.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/marker.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/markselection.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/matchhighlighter.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/matchtags.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/merge.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/multiplex.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/mustache.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/panel.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/placeholder.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/preview.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/requirejs.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/resize.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/rulers.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/runmode.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/search.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/simplemode.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/simplescrollbars.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/spanaffectswrapping_shim.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/sublime.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/tern.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/theme.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/trailingspace.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/variableheight.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/vim.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/visibletabs.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/widget.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/demo/xmlcomplete.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/activebookmark.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/compress.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/docs.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/internals.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/logo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/logo.svg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/manual.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/realworld.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/releases.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/reporting.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/upgrade_v2.2.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/upgrade_v3.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/upgrade_v4.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/doc/yinyang.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/apl/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/asciiarmor/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/asn.1/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/asterisk/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/clike/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/clike/scala.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/clike/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/clojure/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/cmake/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/cobol/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/coffeescript/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/commonlisp/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/less.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/less_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/scss.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/scss_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/cypher/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/d/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/dart/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/diff/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/django/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/dockerfile/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/dtd/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/dylan/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ebnf/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ecl/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/eiffel/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/elm/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/erlang/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/factor/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/forth/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/fortran/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/gas/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/gfm/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/gfm/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/gherkin/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/go/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/groovy/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/haml/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/haml/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/handlebars/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/haskell/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/haxe/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/htmlembedded/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/htmlmixed/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/http/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/idl/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/jade/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/javascript/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/javascript/json-ld.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/javascript/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/javascript/typescript.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/jinja2/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/julia/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/kotlin/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/livescript/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/lua/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/markdown/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/markdown/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/mathematica/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/mirc/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/mllike/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/modelica/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/mumps/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/nginx/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ntriples/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/octave/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/pascal/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/pegjs/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/perl/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/php/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/php/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/pig/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/properties/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/puppet/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/python/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/q/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/r/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/rpm/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/rst/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ruby/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ruby/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/rust/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/sass/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/scheme/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/shell/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/shell/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/sieve/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/slim/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/slim/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/smalltalk/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/smarty/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/solr/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/soy/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/sparql/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/spreadsheet/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/sql/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/stex/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/stex/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/stylus/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/swift/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/tcl/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/textile/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/textile/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/tiddlywiki/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/tiki/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/toml/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/tornado/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/troff/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ttcn-cfg/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ttcn/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/turtle/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/twig/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/vb/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/vbscript/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/velocity/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/verilog/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/verilog/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/xml/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/xml/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/xquery/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/xquery/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/yaml/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/z80/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/comment_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/doc_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/driver.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/emacs_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/lint.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/mode_test.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/mode_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/multi_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/phantom_driver.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/run.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/scroll_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/search_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/sql-hint-test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/sublime_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/codemirror/test/vim_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/toys.min.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/3024-day.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/3024-day.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/3024-night.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/3024-night.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/AUTHORS" afterPath="$PROJECT_DIR$/node_modules/codemirror/AUTHORS" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/CONTRIBUTING.md" afterPath="$PROJECT_DIR$/node_modules/codemirror/CONTRIBUTING.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/README.md" afterPath="$PROJECT_DIR$/node_modules/codemirror/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/ambiance.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/ambiance.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/base16-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/base16-dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/base16-light.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/base16-light.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/blackboard.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/blackboard.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buttons.css" afterPath="$PROJECT_DIR$/buttons.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/clike/clike.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/clike/clike.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/cobalt.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/cobalt.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/lib/codemirror.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/lib/codemirror.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/lib/codemirror.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/lib/codemirror.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/content5.js" afterPath="$PROJECT_DIR$/content5.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/css/css.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/css/css.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/keymap/emacs.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/keymap/emacs.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/erlang-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/erlang-dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/erlang/erlang.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/erlang/erlang.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/gfm/gfm.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/gfm/gfm.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/landAction.aspx" afterPath="$PROJECT_DIR$/landAction.aspx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/landing.min.css" afterPath="$PROJECT_DIR$/landing.min.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/landing.pure.css" afterPath="$PROJECT_DIR$/landing.pure.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/lesser-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/lesser-dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/manager2b.aspx" afterPath="$PROJECT_DIR$/manager2b.aspx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/markdown/markdown.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/markdown/markdown.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/mbo.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/mbo.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/mdn-like.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/mdn-like.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/meta.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/meta.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/midnight.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/midnight.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/monokai.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/monokai.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nav.css" afterPath="$PROJECT_DIR$/nav.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/night.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/night.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/package.json" afterPath="$PROJECT_DIR$/node_modules/codemirror/package.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pageview.css" afterPath="$PROJECT_DIR$/pageview.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/paraiso-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/paraiso-dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/paraiso-light.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/paraiso-light.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/pastel-on-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/pastel-on-dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/ruby/ruby.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/ruby/ruby.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/rubyblue.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/rubyblue.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/rust/rust.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/rust/rust.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/addon/search/search.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/addon/search/search.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/addon/hint/show-hint.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/addon/hint/show-hint.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/solarized.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/solarized.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/keymap/sublime.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/keymap/sublime.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/addon/tern/tern.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/addon/tern/tern.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/addon/tern/tern.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/addon/tern/tern.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/the-matrix.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/the-matrix.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/tomorrow-night-eighties.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/tomorrow-night-eighties.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/twilight.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/twilight.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/vibrant-ink.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/vibrant-ink.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/keymap/vim.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/keymap/vim.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/mode/xml/xml.js" afterPath="$PROJECT_DIR$/node_modules/codemirror/mode/xml/xml.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/codemirror/theme/xq-dark.css" afterPath="$PROJECT_DIR$/node_modules/codemirror/theme/xq-dark.css" />
     </list>
     <ignored path="src.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,24 +289,14 @@
     <favorites_list name="src" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5774292">
+    <splitter split-orientation="horizontal" split-proportion="0.65357375">
       <split-first>
         <leaf>
           <file leaf-file-name="manager2b.aspx" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/manager2b.aspx">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-4.6296296">
-                  <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="landAction.aspx" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/landAction.aspx">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-2.4444444">
-                  <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+                <state vertical-scroll-proportion="-4.888889">
+                  <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -55,20 +306,20 @@
             <entry file="file://$PROJECT_DIR$/Gruntfile.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="54" column="10" selection-start-line="54" selection-start-column="10" selection-end-line="54" selection-end-column="10" />
+                  <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="content5.js" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/content5.js">
+          <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/main.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.35555556">
-                  <caret line="171" column="49" selection-start-line="171" selection-start-column="49" selection-end-line="171" selection-end-column="49" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="578" column="50" selection-start-line="578" selection-start-column="50" selection-end-line="578" selection-end-column="50" />
                   <folding>
-                    <element signature="e#55#1163#0" expanded="false" />
-                    <element signature="e#1206#1399#0" expanded="false" />
+                    <element signature="e#71#1201#0" expanded="false" />
+                    <element signature="e#1244#1437#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -78,7 +329,7 @@
             <entry file="file://$PROJECT_DIR$/helpers.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="0" column="20" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
+                  <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -88,27 +339,17 @@
             <entry file="file://$PROJECT_DIR$/nav.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+                  <caret line="12" column="40" selection-start-line="12" selection-start-column="40" selection-end-line="12" selection-end-column="40" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="landing.js" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/landing.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="28" selection-end-column="55" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="store.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="store.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/store.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+                <state vertical-scroll-proportion="0.026378896">
+                  <caret line="1" column="7" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
                   <folding />
                 </state>
               </provider>
@@ -118,7 +359,27 @@
             <entry file="file://$PROJECT_DIR$/domStore.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="0" column="27" selection-start-line="0" selection-start-column="27" selection-end-line="0" selection-end-column="27" />
+                  <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="landAction.aspx" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/landAction.aspx">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="-4.888889">
+                  <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="landing.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/landing.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -128,20 +389,12 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="pageview.css" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/pageview.css">
+          <file leaf-file-name="main.css" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/main.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.41825095">
-                  <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-                  <folding>
-                    <element signature="e#423#543#0" expanded="false" />
-                    <element signature="e#3276#3606#0" expanded="false" />
-                    <element signature="e#3321#3352#0" expanded="false" />
-                    <element signature="e#3362#3437#0" expanded="false" />
-                    <element signature="e#3448#3470#0" expanded="false" />
-                    <element signature="e#3519#3560#0" expanded="false" />
-                    <element signature="e#3581#3604#0" expanded="false" />
-                  </folding>
+                <state vertical-scroll-proportion="0.052757792">
+                  <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -150,19 +403,11 @@
             <entry file="file://$PROJECT_DIR$/buttons.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="50" column="19" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="19" />
+                  <caret line="61" column="17" selection-start-line="61" selection-start-column="17" selection-end-line="61" selection-end-column="17" />
                   <folding>
                     <element signature="e#177#200#0" expanded="false" />
-                    <element signature="e#572#621#0" expanded="false" />
-                    <element signature="e#635#695#0" expanded="false" />
-                    <element signature="e#854#921#0" expanded="false" />
-                    <element signature="e#941#1034#0" expanded="false" />
-                    <element signature="e#1047#1095#0" expanded="false" />
-                    <element signature="e#1115#1145#0" expanded="false" />
-                    <element signature="e#1160#1290#0" expanded="false" />
-                    <element signature="e#1312#1429#0" expanded="false" />
-                    <element signature="e#1444#1555#0" expanded="false" />
-                    <element signature="e#1577#1670#0" expanded="false" />
+                    <element signature="e#520#569#0" expanded="false" />
+                    <element signature="e#583#643#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -172,8 +417,10 @@
             <entry file="file://$PROJECT_DIR$/generic.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+                  <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
                   <folding>
+                    <element signature="e#10#36#0" expanded="false" />
+                    <element signature="e#53#141#0" expanded="false" />
                     <element signature="e#152#172#0" expanded="false" />
                     <element signature="e#191#210#0" expanded="false" />
                     <element signature="e#227#243#0" expanded="false" />
@@ -214,7 +461,7 @@
             <entry file="file://$PROJECT_DIR$/codemirror.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+                  <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
                   <folding>
                     <element signature="e#180#201#0" expanded="false" />
                     <element signature="e#230#248#0" expanded="false" />
@@ -254,7 +501,7 @@
             <entry file="file://$PROJECT_DIR$/nav.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="75" column="18" selection-start-line="75" selection-start-column="18" selection-end-line="75" selection-end-column="18" />
+                  <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
                   <folding />
                 </state>
               </provider>
@@ -264,7 +511,7 @@
             <entry file="file://$PROJECT_DIR$/landing.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+                  <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -314,7 +561,6 @@
         <option value="$PROJECT_DIR$/content3b.js" />
         <option value="$PROJECT_DIR$/manager.js" />
         <option value="$PROJECT_DIR$/store.js" />
-        <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/pageActions.js" />
         <option value="$PROJECT_DIR$/content4.js" />
         <option value="$PROJECT_DIR$/modal.js" />
@@ -323,21 +569,25 @@
         <option value="$PROJECT_DIR$/content3.js" />
         <option value="$PROJECT_DIR$/domStore.js" />
         <option value="$PROJECT_DIR$/modal.css" />
-        <option value="$PROJECT_DIR$/codemirror.css" />
         <option value="$PROJECT_DIR$/nav.html" />
         <option value="$PROJECT_DIR$/nav2.js" />
-        <option value="$PROJECT_DIR$/landAction.aspx" />
-        <option value="$PROJECT_DIR$/landing.css" />
-        <option value="$PROJECT_DIR$/manager2b.aspx" />
         <option value="$PROJECT_DIR$/nav.js" />
-        <option value="$PROJECT_DIR$/buttons.css" />
         <option value="$PROJECT_DIR$/generic.css" />
-        <option value="$PROJECT_DIR$/Gruntfile.js" />
-        <option value="$PROJECT_DIR$/helpers.js" />
+        <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/dependencies.min.js" />
+        <option value="$PROJECT_DIR$/codemirror.css" />
         <option value="$PROJECT_DIR$/landing.js" />
-        <option value="$PROJECT_DIR$/content5.js" />
-        <option value="$PROJECT_DIR$/nav.css" />
+        <option value="$PROJECT_DIR$/landing.css" />
+        <option value="$PROJECT_DIR$/buttons.css" />
         <option value="$PROJECT_DIR$/pageview.css" />
+        <option value="$PROJECT_DIR$/nav.css" />
+        <option value="$PROJECT_DIR$/content5.js" />
+        <option value="$PROJECT_DIR$/helpers.js" />
+        <option value="$PROJECT_DIR$/manager2b.aspx" />
+        <option value="$PROJECT_DIR$/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/main.css" />
+        <option value="$PROJECT_DIR$/main.js" />
+        <option value="$PROJECT_DIR$/landAction.aspx" />
       </list>
     </option>
   </component>
@@ -381,10 +631,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="958" />
+    <option name="x" value="-1" />
     <option name="y" value="27" />
-    <option name="width" value="1578" />
-    <option name="height" value="1023" />
+    <option name="width" value="2562" />
+    <option name="height" value="1024" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -413,7 +663,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -424,7 +674,30 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.lastSelected" value="configurable.group.appearance" />
@@ -624,7 +897,19 @@
       <option name="project" value="LOCAL" />
       <updated>1439348110852</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="hide/reveal sub list is functional - click and onload">
+      <created>1439360000084</created>
+      <option name="number" value="00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1439360000084</updated>
+    </task>
+    <task id="LOCAL-00024" summary="improvements to hide/reveal sub-list/nav.  better editor buttons (still not complete tho).  menu and page sizes adjusted accordingly">
+      <created>1439373194728</created>
+      <option name="number" value="00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1439373194728</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TodoView">
@@ -637,10 +922,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="958" y="27" width="1578" height="1023" extended-state="0" />
+    <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24759616" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15175404" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -649,7 +934,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32790697" sideWeight="0.5013796" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32752612" sideWeight="0.5013796" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39953542" sideWeight="0.49862042" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -677,10 +962,10 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32790697" sideWeight="0.5013796" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32752612" sideWeight="0.5013796" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2479757" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15175404" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -727,31 +1012,17 @@
     <MESSAGE value="slightly cleaned helpers.js and Gruntfile.js.  added/corrected self-exec params in landing and content" />
     <MESSAGE value="pickier about what links to show - only 2nd level" />
     <MESSAGE value="prettier, code and navbar." />
-    <option name="LAST_COMMIT_MESSAGE" value="prettier, code and navbar." />
+    <MESSAGE value="hide/reveal sub list is functional - click and onload" />
+    <MESSAGE value="improvements to hide/reveal sub-list/nav.  better editor buttons (still not complete tho).  menu and page sizes adjusted accordingly" />
+    <option name="LAST_COMMIT_MESSAGE" value="improvements to hide/reveal sub-list/nav.  better editor buttons (still not complete tho).  menu and page sizes adjusted accordingly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="55" />
+      <option name="time" value="57" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/nav.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/landing.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/landing.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -797,8 +1068,20 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="207" column="51" selection-start-line="207" selection-start-column="51" selection-end-line="207" selection-end-column="51" />
           <folding>
-            <element signature="e#55#1163#0" expanded="false" />
-            <element signature="e#1206#1399#0" expanded="false" />
+            <element signature="e#89#1197#0" expanded="false" />
+            <element signature="e#1240#1433#0" expanded="false" />
+            <element signature="n#!!block;n#savePage#0" expanded="false" />
+            <element signature="n#!!block;n#createPage#0" expanded="false" />
+            <element signature="n#!!block;n#deletePage#0" expanded="false" />
+            <element signature="n#!!block;n#updateTitle#0" expanded="false" />
+            <element signature="n#!!block;n#newModal#0" expanded="false" />
+            <element signature="n#!!block;n#handleOk#0" expanded="false" />
+            <element signature="n#!!block;n#handleCancel#0" expanded="false" />
+            <element signature="n#!!block;n#handleChange#0" expanded="false" />
+            <element signature="n#!!block;n#freshModal#0" expanded="false" />
+            <element signature="n#!!block;n#modalSuicide#0" expanded="false" />
+            <element signature="n#!!block;n#toggleEditor#0" expanded="false" />
+            <element signature="n#!!block;n#toggleCheatSheet#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -840,13 +1123,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -857,16 +1139,8 @@
           <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="1" />
           <folding>
             <element signature="e#177#200#0" expanded="false" />
-            <element signature="e#572#621#0" expanded="false" />
-            <element signature="e#635#695#0" expanded="false" />
-            <element signature="e#854#921#0" expanded="false" />
-            <element signature="e#941#1034#0" expanded="false" />
-            <element signature="e#1047#1095#0" expanded="false" />
-            <element signature="e#1115#1145#0" expanded="false" />
-            <element signature="e#1160#1290#0" expanded="false" />
-            <element signature="e#1312#1429#0" expanded="false" />
-            <element signature="e#1444#1555#0" expanded="false" />
-            <element signature="e#1577#1670#0" expanded="false" />
+            <element signature="e#520#569#0" expanded="false" />
+            <element signature="e#583#643#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -876,6 +1150,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding>
+            <element signature="e#10#36#0" expanded="false" />
+            <element signature="e#53#141#0" expanded="false" />
             <element signature="e#152#172#0" expanded="false" />
             <element signature="e#191#210#0" expanded="false" />
             <element signature="e#227#243#0" expanded="false" />
@@ -1000,8 +1276,20 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="207" column="51" selection-start-line="207" selection-start-column="51" selection-end-line="207" selection-end-column="51" />
           <folding>
-            <element signature="e#55#1163#0" expanded="false" />
-            <element signature="e#1206#1399#0" expanded="false" />
+            <element signature="e#89#1197#0" expanded="false" />
+            <element signature="e#1240#1433#0" expanded="false" />
+            <element signature="n#!!block;n#savePage#0" expanded="false" />
+            <element signature="n#!!block;n#createPage#0" expanded="false" />
+            <element signature="n#!!block;n#deletePage#0" expanded="false" />
+            <element signature="n#!!block;n#updateTitle#0" expanded="false" />
+            <element signature="n#!!block;n#newModal#0" expanded="false" />
+            <element signature="n#!!block;n#handleOk#0" expanded="false" />
+            <element signature="n#!!block;n#handleCancel#0" expanded="false" />
+            <element signature="n#!!block;n#handleChange#0" expanded="false" />
+            <element signature="n#!!block;n#freshModal#0" expanded="false" />
+            <element signature="n#!!block;n#modalSuicide#0" expanded="false" />
+            <element signature="n#!!block;n#toggleEditor#0" expanded="false" />
+            <element signature="n#!!block;n#toggleCheatSheet#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1043,13 +1331,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1060,16 +1347,8 @@
           <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="1" />
           <folding>
             <element signature="e#177#200#0" expanded="false" />
-            <element signature="e#572#621#0" expanded="false" />
-            <element signature="e#635#695#0" expanded="false" />
-            <element signature="e#854#921#0" expanded="false" />
-            <element signature="e#941#1034#0" expanded="false" />
-            <element signature="e#1047#1095#0" expanded="false" />
-            <element signature="e#1115#1145#0" expanded="false" />
-            <element signature="e#1160#1290#0" expanded="false" />
-            <element signature="e#1312#1429#0" expanded="false" />
-            <element signature="e#1444#1555#0" expanded="false" />
-            <element signature="e#1577#1670#0" expanded="false" />
+            <element signature="e#520#569#0" expanded="false" />
+            <element signature="e#583#643#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1079,6 +1358,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding>
+            <element signature="e#10#36#0" expanded="false" />
+            <element signature="e#53#141#0" expanded="false" />
             <element signature="e#152#172#0" expanded="false" />
             <element signature="e#191#210#0" expanded="false" />
             <element signature="e#227#243#0" expanded="false" />
@@ -1195,8 +1476,20 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="671" column="11" selection-start-line="671" selection-start-column="11" selection-end-line="671" selection-end-column="11" />
           <folding>
-            <element signature="e#55#1163#0" expanded="false" />
-            <element signature="e#1206#1399#0" expanded="false" />
+            <element signature="e#89#1197#0" expanded="false" />
+            <element signature="e#1240#1433#0" expanded="false" />
+            <element signature="n#!!block;n#savePage#0" expanded="false" />
+            <element signature="n#!!block;n#createPage#0" expanded="false" />
+            <element signature="n#!!block;n#deletePage#0" expanded="false" />
+            <element signature="n#!!block;n#updateTitle#0" expanded="false" />
+            <element signature="n#!!block;n#newModal#0" expanded="false" />
+            <element signature="n#!!block;n#handleOk#0" expanded="false" />
+            <element signature="n#!!block;n#handleCancel#0" expanded="false" />
+            <element signature="n#!!block;n#handleChange#0" expanded="false" />
+            <element signature="n#!!block;n#freshModal#0" expanded="false" />
+            <element signature="n#!!block;n#modalSuicide#0" expanded="false" />
+            <element signature="n#!!block;n#toggleEditor#0" expanded="false" />
+            <element signature="n#!!block;n#toggleCheatSheet#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1230,13 +1523,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="38" column="14" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1247,16 +1539,8 @@
           <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
           <folding>
             <element signature="e#177#200#0" expanded="false" />
-            <element signature="e#572#621#0" expanded="false" />
-            <element signature="e#635#695#0" expanded="false" />
-            <element signature="e#854#921#0" expanded="false" />
-            <element signature="e#941#1034#0" expanded="false" />
-            <element signature="e#1047#1095#0" expanded="false" />
-            <element signature="e#1115#1145#0" expanded="false" />
-            <element signature="e#1160#1290#0" expanded="false" />
-            <element signature="e#1312#1429#0" expanded="false" />
-            <element signature="e#1444#1555#0" expanded="false" />
-            <element signature="e#1577#1670#0" expanded="false" />
+            <element signature="e#520#569#0" expanded="false" />
+            <element signature="e#583#643#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1266,6 +1550,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding>
+            <element signature="e#10#36#0" expanded="false" />
+            <element signature="e#53#141#0" expanded="false" />
             <element signature="e#152#172#0" expanded="false" />
             <element signature="e#191#210#0" expanded="false" />
             <element signature="e#227#243#0" expanded="false" />
@@ -1390,13 +1676,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1446,13 +1731,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1462,13 +1746,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1494,13 +1777,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1526,13 +1808,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1558,13 +1839,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1590,13 +1870,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1620,13 +1899,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.056631893">
           <caret line="2" column="61" selection-start-line="0" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/toys.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13649425">
-          <caret line="5" column="36" selection-start-line="0" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1665,13 +1937,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.648855">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pageActions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1683,32 +1948,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7490494">
           <caret line="320" column="0" selection-start-line="320" selection-start-column="0" selection-end-line="320" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/landing.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/codemirror.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
-          <folding>
-            <element signature="e#180#201#0" expanded="false" />
-            <element signature="e#230#248#0" expanded="false" />
-            <element signature="e#271#290#0" expanded="false" />
-            <element signature="e#313#335#0" expanded="false" />
-            <element signature="e#358#379#0" expanded="false" />
-            <element signature="e#402#423#0" expanded="false" />
-            <element signature="e#446#467#0" expanded="false" />
-            <element signature="e#490#512#0" expanded="false" />
-            <element signature="e#532#635#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1730,22 +1969,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/buttons.css">
+    <entry file="file://$PROJECT_DIR$/dependencies.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.90756303">
+          <caret line="45" column="319" selection-start-line="45" selection-start-column="319" selection-end-line="45" selection-end-column="319" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/landing.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="50" column="19" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="19" />
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codemirror.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
           <folding>
-            <element signature="e#177#200#0" expanded="false" />
-            <element signature="e#572#621#0" expanded="false" />
-            <element signature="e#635#695#0" expanded="false" />
-            <element signature="e#854#921#0" expanded="false" />
-            <element signature="e#941#1034#0" expanded="false" />
-            <element signature="e#1047#1095#0" expanded="false" />
-            <element signature="e#1115#1145#0" expanded="false" />
-            <element signature="e#1160#1290#0" expanded="false" />
-            <element signature="e#1312#1429#0" expanded="false" />
-            <element signature="e#1444#1555#0" expanded="false" />
-            <element signature="e#1577#1670#0" expanded="false" />
+            <element signature="e#180#201#0" expanded="false" />
+            <element signature="e#230#248#0" expanded="false" />
+            <element signature="e#271#290#0" expanded="false" />
+            <element signature="e#313#335#0" expanded="false" />
+            <element signature="e#358#379#0" expanded="false" />
+            <element signature="e#402#423#0" expanded="false" />
+            <element signature="e#446#467#0" expanded="false" />
+            <element signature="e#490#512#0" expanded="false" />
+            <element signature="e#532#635#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1753,8 +2006,10 @@
     <entry file="file://$PROJECT_DIR$/generic.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
           <folding>
+            <element signature="e#10#36#0" expanded="false" />
+            <element signature="e#53#141#0" expanded="false" />
             <element signature="e#152#172#0" expanded="false" />
             <element signature="e#191#210#0" expanded="false" />
             <element signature="e#227#243#0" expanded="false" />
@@ -1790,10 +2045,92 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/landAction.aspx">
+    <entry file="file://$PROJECT_DIR$/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.4444444">
-          <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="61" column="17" selection-start-line="61" selection-start-column="17" selection-end-line="61" selection-end-column="17" />
+          <folding>
+            <element signature="e#177#200#0" expanded="false" />
+            <element signature="e#520#569#0" expanded="false" />
+            <element signature="e#583#643#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.58666664">
+          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pageview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="178" column="21" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
+          <folding>
+            <element signature="e#3320#3650#0" expanded="false" />
+            <element signature="e#3365#3396#0" expanded="false" />
+            <element signature="e#3406#3481#0" expanded="false" />
+            <element signature="e#3492#3514#0" expanded="false" />
+            <element signature="e#3563#3604#0" expanded="false" />
+            <element signature="e#3625#3648#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content5.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.07971015">
+          <caret line="42" column="1" selection-start-line="42" selection-start-column="1" selection-end-line="42" selection-end-column="1" />
+          <folding>
+            <element signature="e#89#1197#0" expanded="false" />
+            <element signature="e#1240#1433#0" expanded="false" />
+            <element signature="n#!!block;n#savePage#0" expanded="false" />
+            <element signature="n#!!block;n#createPage#0" expanded="false" />
+            <element signature="n#!!block;n#deletePage#0" expanded="false" />
+            <element signature="n#!!block;n#updateTitle#0" expanded="false" />
+            <element signature="n#!!block;n#newModal#0" expanded="false" />
+            <element signature="n#!!block;n#handleOk#0" expanded="false" />
+            <element signature="n#!!block;n#handleCancel#0" expanded="false" />
+            <element signature="n#!!block;n#handleChange#0" expanded="false" />
+            <element signature="n#!!block;n#freshModal#0" expanded="false" />
+            <element signature="n#!!block;n#modalSuicide#0" expanded="false" />
+            <element signature="n#!!block;n#toggleEditor#0" expanded="false" />
+            <element signature="n#!!block;n#toggleCheatSheet#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domStore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.052757792">
+          <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.888889">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1801,23 +2138,7 @@
     <entry file="file://$PROJECT_DIR$/Gruntfile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="54" column="10" selection-start-line="54" selection-start-column="10" selection-end-line="54" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/manager2b.aspx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.6296296">
-          <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/domStore.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="27" selection-start-line="0" selection-start-column="27" selection-end-line="0" selection-end-column="27" />
+          <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1825,7 +2146,7 @@
     <entry file="file://$PROJECT_DIR$/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="20" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1833,15 +2154,26 @@
     <entry file="file://$PROJECT_DIR$/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <caret line="12" column="40" selection-start-line="12" selection-start-column="40" selection-end-line="12" selection-end-column="40" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store.js">
+    <entry file="file://$PROJECT_DIR$/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+          <caret line="578" column="50" selection-start-line="578" selection-start-column="50" selection-end-line="578" selection-end-column="50" />
+          <folding>
+            <element signature="e#71#1201#0" expanded="false" />
+            <element signature="e#1244#1437#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/landAction.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.888889">
+          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
           <folding />
         </state>
       </provider>
@@ -1849,43 +2181,16 @@
     <entry file="file://$PROJECT_DIR$/landing.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="28" selection-end-column="55" />
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nav.css">
+    <entry file="file://$PROJECT_DIR$/store.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="75" column="18" selection-start-line="75" selection-start-column="18" selection-end-line="75" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.026378896">
+          <caret line="1" column="7" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pageview.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41825095">
-          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-          <folding>
-            <element signature="e#423#543#0" expanded="false" />
-            <element signature="e#3276#3606#0" expanded="false" />
-            <element signature="e#3321#3352#0" expanded="false" />
-            <element signature="e#3362#3437#0" expanded="false" />
-            <element signature="e#3448#3470#0" expanded="false" />
-            <element signature="e#3519#3560#0" expanded="false" />
-            <element signature="e#3581#3604#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/content5.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35555556">
-          <caret line="171" column="49" selection-start-line="171" selection-start-column="49" selection-end-line="171" selection-end-column="49" />
-          <folding>
-            <element signature="e#55#1163#0" expanded="false" />
-            <element signature="e#1206#1399#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>

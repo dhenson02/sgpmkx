@@ -17,7 +17,7 @@
   /*z-index:1;*/
   display: inline-block;
   position: relative;
-  color:#FAFAFA;
+  color:#FAFCFE;
   cursor:pointer;
   line-height:1.5;
   letter-spacing: 1px;
@@ -42,38 +42,37 @@
 }
 
 #toggleButton {
-  background-color: #444;
-  color:#FAFAFA;
+  background-color: #555;
+  color:#FAFCFE;
 }
 
 #toggleButton:active {
-  background-color:#FAFAFA;
+  background-color:#FAFCFE;
   color:#555;
   border-color: #555;
 }
 
 #cheatSheetButton {
-  color: #222;
-  border-color: #222;
-  /*float: left;*/
-  /*text-decoration: underline;*/
+  background-color: #FAFCFE;
+  color: #555;
+  border-color: #555;
 }
 
 #saveButton{
   /*width:auto;*/
   /*background-color:#4183D7;*/
-  background-color: #FAFAFA;
+  background-color: #FAFCFE;
   color:#4183D7;
   border-color: #4183D7;
 }
 
 #saveButton:active{
   background-color:#446CB3;
-  color: #FAFAFA;
+  color: #FAFCFE;
 }
 
 #createButton{
-  background-color:#FAFAFA;
+  background-color:#FAFCFE;
   color:#1A3557;
   border-color: #1A3557;
   /*background-color:#00BA6A;*/
@@ -83,15 +82,15 @@
 }
 
 #createButton:active{
-  color: #FAFAFA;
+  color: #FAFCFE;
   background-color: #3264A4;
   /*background-color: #0E870E;*/
   /*background-color:#943494;*/
-  /*color:#FAFAFA*/
+  /*color:#FAFCFE*/
 }
 
 #deleteButton{
-  background-color: #FAFAFA;
+  background-color: #FAFCFE;
   color: #354457;
   border-color: #354457;
   /*background-color: #BBB;*/
@@ -100,7 +99,7 @@
 }
 
 #deleteButton:active{
-  color: #FAFAFA;
+  color: #FAFCFE;
   background-color: #86ACDE;
   /*background-color: #999;*/
   /*background-color:#B23229*/

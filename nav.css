@@ -31,7 +31,7 @@
 }
 
 #navWrap a:hover{
-  color:#E5E5EE;
+  color:#FFF;
 }
 
 #navWrap a:active{
@@ -40,7 +40,7 @@
 
 #navWrap hr{
   display:block;
-  color:#FFFFFF;
+  color:#FFF;
   height:1px;
   margin: 0;
   padding:0;
@@ -74,6 +74,7 @@
 #navWrap .sub-cat a {
   font-size: 13px;
   padding: 10px 30px;
+  color: #FAFCFE;
 }
 
 #navWrap .active {
@@ -89,7 +90,7 @@
   height: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-right:10px solid #FAFAFA;
+  border-right:10px solid #FAFCFE;
 }
 
 /*#navWrap .sub-cat .active > span {

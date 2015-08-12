@@ -19,12 +19,12 @@ body{
 
 ::-moz-selection{
   background-color:#4183D7;
-  color: #FAFAFA;
+  color: #FAFCFE;
 }
 
 ::selection{
   background-color:#4183D7;
-  color: #FAFAFA;
+  color: #FAFCFE;
 }
 
 #wrapper *, #wrapper :after, #wrapper :before{
@@ -78,7 +78,6 @@ body{
 #contentWrap{
   opacity:1;
   position:relative;
-  /*color:#444;*/
   overflow:visible;
   min-height:640px;
   /*height:85%;*/
@@ -103,19 +102,18 @@ body{
 #wrapper select,
 .modalOverlay input[type="text"],
 .modalOverlay select {
-  background-color: #FAFAFA;
-  color: #4183D7;
+  background-color: #FAFCFE;
+  color: #333;
   font-size: 2em;
-  border: 1px solid;
+  border: 1px solid #CCC;
   padding: .5em .33em;
   outline: 0;
-  outline: none;
   float: none;
   font-family: inherit;
   display: block;
-  line-height: 1;
-  margin-bottom: 1em;
-  text-align: left;
+  /*line-height: 1;*/
+  /*margin-bottom: 1em;*/
+  /*text-align: left;*/
 }
 
 #wrapper #titleFieldLabel {
@@ -149,6 +147,7 @@ body{
   height:100%;
   overflow:hidden;
   font-size:14px;
+  color: #555;
 }
 
 #output{
@@ -176,7 +175,14 @@ body{
   top:auto;
   right:auto;
   bottom:auto;
-  overflow:visible
+  overflow:visible;
+  padding-left: 20px;
+}
+
+.fullPage #contentWrap,
+.fullPage #output {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 #cheatSheet {

@@ -1,6 +1,6 @@
 //var reQ = require("requirejs");
 var codeMirror = CodeMirror || null;
-if (!Object.keys) {
+/*if (!Object.keys) {
   // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
   Object.keys = (function () {
     'use strict';
@@ -40,7 +40,7 @@ if (!Object.keys) {
       return result;
     };
   }());
-}
+}*/
 String.prototype.toCamelCase = function() {
   return this
     .toLowerCase()
@@ -54,6 +54,7 @@ var h = require("virtual-dom/h"),
   createElement = require("virtual-dom/create-element"),
   reqwest = require("reqwest"),
   Router = require("director/build/director").Router,
+  console = console || require("console"),
   util = require("./helpers"),
   Content = require("./store"),
   DOMRef = require("./domStore"),
@@ -574,7 +575,7 @@ function resetPage () {
     refreshDOM,
     modalRefreshDOM,
     patches;
-  if ( app.domRefs.editor ) {
+  if ( codeMirror ) {
     wrap = app.domRefs.editor.getWrapperElement();
     wrap.parentNode.removeChild(wrap);
     app.domRefs.set({

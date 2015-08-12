@@ -7,7 +7,7 @@
 <style type="text/css">
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/landing.min.css");
 </style>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/testmgr/dependencies.min.js"></script>
+<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
   <div id="landing" class="nav">
     <a href="content.aspx#/" class="header">
       <div class="logo"><img src="/kj/kx7/PublicHealth/SiteAssets/Pages/landing/phLogo96-gs.png" alt="Public Health Home" height="96" width="96"/></div>
@@ -24,4 +24,4 @@
       </div>
     </div>
   </div>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Pages/landing/landing.min.js"></script>
+<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/landing.min.js"></script>

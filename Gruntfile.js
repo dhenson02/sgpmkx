@@ -4,8 +4,8 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          'content5.pre.js': 'content5.js',
-          'landing.pre.js': 'landing.js'
+          '.tmp/main.js': 'main.js',
+          '.tmp/landing.js': 'landing.js'
         }
       }
     },
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
           sourceMap: false
         },
         files: {
-          'main.min.js': 'content5.pre.js',
-          'landing.min.js': 'landing.pre.js'
+          'main.min.js': '.tmp/main.js',
+          'landing.min.js': '.tmp/landing.js'
         }
       },
       dev: {
@@ -55,8 +55,8 @@ module.exports = function(grunt) {
           sourceMap: false
         },
         files: {
-          'main.min.js': 'content5.pre.js',
-          'landing.min.js': 'landing.pre.js'
+          'main.min.js': '.tmp/main.js',
+          'landing.min.js': '.tmp/landing.js'
         }
       }
     },
@@ -64,13 +64,20 @@ module.exports = function(grunt) {
       options: {},
       content: {
         src: ['manager2b.aspx', 'main.min.js'],
-        css: ['pageview.css', 'buttons.css', 'generic.css', 'codemirror.css', 'modal.css', 'nav.css'],
-        dest: 'pageview.pure.css'
+        css: [
+          'main.css',
+          'buttons.css',
+          'generic.css',
+          'codemirror.css',
+          'modal.css',
+          'nav.css'
+        ],
+        dest: '.tmp/main.css'
       },
       landing: {
         src: ['landAction.aspx', 'landing.min.js'],
         css: ['landing.css'],
-        dest: 'landing.pure.css'
+        dest: '.tmp/landing.css'
       }
     },
     cssmin: {
@@ -84,8 +91,8 @@ module.exports = function(grunt) {
           processImport: false
         },
         files: {
-          'pageview.min.css': 'pageview.pure.css',
-          'landing.min.css': 'landing.pure.css'
+          'main.min.css': '.tmp/main.css',
+          'landing.min.css': '.tmp/landing.css'
         }
       },
       dev: {
@@ -93,8 +100,8 @@ module.exports = function(grunt) {
           processImport: false
         },
         files: {
-          'pageview.min.css': 'pageview.pure.css',
-          'landing.min.css': 'landing.pure.css'
+          'main.min.css': '.tmp/main.css',
+          'landing.min.css': '.tmp/landing.css'
         }
       }
     },
@@ -121,7 +128,7 @@ module.exports = function(grunt) {
           spawn: false,
           atBegin: true
         },
-        files: ['content5.js', 'nav.js', 'helpers.js', 'store.js', 'domStore.js', 'landing.js'],
+        files: ['main.js', 'nav.js', 'helpers.js', 'store.js', 'domStore.js', 'landing.js'],
         tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin:dev']
       }
     }
