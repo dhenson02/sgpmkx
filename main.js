@@ -1,5 +1,5 @@
 //var reQ = require("requirejs");
-var codeMirror = CodeMirror || null;
+try {var codeMirror = CodeMirror} catch (e) {var codeMirror = null;}
 /*if (!Object.keys) {
   // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
   Object.keys = (function () {
@@ -41,13 +41,6 @@ var codeMirror = CodeMirror || null;
     };
   }());
 }*/
-String.prototype.toCamelCase = function() {
-  return this
-    .toLowerCase()
-    .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
-    //.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
-    .replace(/\s/g, '');
-};
 var h = require("virtual-dom/h"),
   diff = require("virtual-dom/diff"),
   patch = require("virtual-dom/patch"),
