@@ -89,18 +89,3 @@
   /*color:#FAFCFE*/
 }
 
-#deleteButton{
-  background-color: #FAFCFE;
-  color: #354457;
-  border-color: #354457;
-  /*background-color: #BBB;*/
-  /*background-color:#FF5F54;*/
-  /*width:auto*/
-}
-
-#deleteButton:active{
-  color: #FAFCFE;
-  background-color: #86ACDE;
-  /*background-color: #999;*/
-  /*background-color:#B23229*/
-}

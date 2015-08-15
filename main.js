@@ -100,9 +100,6 @@ function renderEditor ( navDOM, title, text ) {
           ]),
           h("#createButton.btn", { onclick: createPage, role: "button" }, [
             h("span", ["New"])
-          ]),
-          h("#deleteButton.btn", { onclick: deletePage, role: "button" }, [
-            h("span", ["Delete"])
           ])
         ]),
         h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
@@ -271,51 +268,6 @@ function createPage () {
           showCancelButton: false
         }, function() {
           app.router.setRoute(inputValue.category);
-        });
-      },
-      error: util.connError,
-      complete: function () {
-        loadingSomething(false, app.domRefs.contentWrap);
-      }
-    });
-  });
-}
-
-function deletePage () {
-  app.currentContent.title = app.currentContent.title.trim();
-  var category = app.currentContent.category.join("/");
-  newModal({
-    title: [h("p", ["DELETE"]), h("strong", [String(app.currentContent.title)]), h("text", [", Path: " + category])],
-    text: [h("em", ["You might wanna check with someone first."])],
-    type: "warning"
-  }, function( choice ) {
-    if ( choice === false ) {
-      return false;
-    }
-    loadingSomething(true, app.domRefs.contentWrap);
-    reqwest({
-      url: app.sitePath + "/items(" + app.currentContent.id + ")",
-      method: "POST",
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "IF-MATCH": "*",
-        "X-HTTP-Method": "DELETE",
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": app.digest
-      },
-      success: function() {
-        newModal({
-          title: [h("h2", [String(app.currentContent.title) + " deleted!"])],
-          text: [h("strong", [String(category)]), h("text", [" is no longer in use."])],
-          type: "success",
-          showCancelButton: false
-        }, function() {
-          app.currentContent.category.pop();
-          app.router.setRoute(app.currentContent.category.join("/"));
         });
       },
       error: util.connError,
