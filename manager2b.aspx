@@ -18,8 +18,10 @@
 @import url("/kj/kx7/PublicHealth/Pages/Dev/neo.css");
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/main.min.css");
 </style>
-
+<!--[if lt IE 9]>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
+<![endif]-->
+
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/markdown-it.min.js"></script>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/Pages/Dev/editor3.min.js"></script>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/main.min.js"></script>

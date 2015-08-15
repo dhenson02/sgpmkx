@@ -7,7 +7,9 @@
 <style type="text/css">
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/landing.min.css");
 </style>
+<!--[if lt IE 9]>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
+<![endif]-->
   <div id="landing" class="nav">
     <a href="content.aspx#/" class="header">
       <div class="logo"><img src="/kj/kx7/PublicHealth/SiteAssets/Pages/landing/phLogo96-gs.png" alt="Public Health Home" height="96" width="96"/></div>
