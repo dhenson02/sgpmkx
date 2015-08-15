@@ -116,12 +116,13 @@ body{
   /*text-align: left;*/
 }
 
-#wrapper #titleFieldLabel {
+#titleFieldLabel {
   /*margin:5px 20px;*/
   /*float: left;
   clear: both;*/
   text-align: left;
   display: block;
+  margin-bottom: 5px;
 }
 
 #wrapper #titleField {
@@ -130,7 +131,7 @@ body{
 
 .fullPage #saveButton,
 .fullPage #createButton,
-#wrapper .fullPage #titleFieldLabel,
+.fullPage #titleFieldLabel,
 .fullPage #input,
 .fullPage #cheatSheetButton,
 .fullPage #cheatSheet {

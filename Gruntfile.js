@@ -77,7 +77,10 @@ module.exports = function(grunt) {
       },
       landing: {
         src: ['landAction.aspx', 'landing.min.js'],
-        css: ['landing.css'],
+        css: [
+          'landing.css',
+          'loader.css'
+        ],
         dest: '.tmp/landing.css'
       }
     },

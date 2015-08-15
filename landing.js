@@ -39,6 +39,8 @@ reqwest({
     return false;
   },
   complete: function () {
+    var loader = document.getElementById("loader-group");
+    loader.parentNode.removeChild(loader);
     document.title = "USAF Public Health";
     return true;
   }

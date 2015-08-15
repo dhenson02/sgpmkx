@@ -5,8 +5,12 @@ excellent loading animation courtesy of:
 */
 .loader-group {
   position: relative;
-  display: inline-block;
+  display: block;
   line-height: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  width: 40px;
 }
 
 .bigSqr {
@@ -30,7 +34,7 @@ excellent loading animation courtesy of:
 }
 
 .first {
-  left: 0px;
+  left: 0;
   top: 20px;
 }
 
@@ -42,22 +46,21 @@ excellent loading animation courtesy of:
 }
 
 .third {
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
   -webkit-animation: drop3 1s linear infinite;
   animation: drop3 1s linear infinite;
 }
 
 .fourth {
   left: 20px;
-  top: 0px;
+  top: 0;
   -webkit-animation: drop4 1s linear infinite;
   animation: drop4 1s linear infinite;
 }
 
 .loader-group .text {
   line-height: 16px;
-  font-family: "Roboto";
   color: #F90;
   display: block;
   margin: 10px auto;

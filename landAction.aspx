@@ -25,5 +25,13 @@
         <ul id="nav-fhm"></ul>
       </div>
     </div>
+    <div id="loader-group" class="loader-group">
+      <div class="bigSqr">
+        <div class="square first"></div>
+        <div class="square second"></div>
+        <div class="square third"></div>
+        <div class="square fourth"></div>
+      </div>
+    </div>
   </div>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/landing.min.js"></script>
