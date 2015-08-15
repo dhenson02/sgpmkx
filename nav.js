@@ -5,7 +5,7 @@ function render ( fhm, comm ) {
   return (
     h("div#navWrap.nav", [
       h("a.header", {
-        "href": "land.aspx"
+        "href": "main.aspx"
       }, [
         h("div.logo", [
           h("img", {

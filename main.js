@@ -714,7 +714,7 @@ function init ( path ) {
       if ( !data.d.results[0] ) {
         //loadingSomething(false, app.domRefs.output);
         // This next line is just for debugging.  Something better will replace it later.
-        window.location.href = baseURL + "/Pages/land.aspx";
+        window.location.href = baseURL + "/Pages/main.aspx";
         return false;
       }
       var obj = data.d.results[0];
@@ -773,7 +773,7 @@ app.router = Router({
   strict: false,
   after: resetPage,
   notfound: function () {
-    window.location.href = baseURL + "/Pages/land.aspx";
+    window.location.href = baseURL + "/Pages/main.aspx";
   }
 });
 
