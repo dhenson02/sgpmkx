@@ -50,6 +50,10 @@
   opacity: .2;
 }
 
+#navWrap ul {
+  margin: 0;
+}
+
 #navWrap ul,
 #navWrap li {
   list-style: none;
