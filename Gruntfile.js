@@ -70,7 +70,8 @@ module.exports = function(grunt) {
           'generic.css',
           'codemirror.css',
           'modal.css',
-          'nav.css'
+          'nav.css',
+          'loader.css'
         ],
         dest: '.tmp/main.css'
       },

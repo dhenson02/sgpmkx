@@ -297,7 +297,7 @@ function newModal ( options, callback ) {
   };
   callback = ( "function" === typeof callback ) ? callback : null;
 
-  var freshDOM = freshModal(options, callback);
+  var freshDOM = renderModal(options, callback);
   var patches = diff(app.modalDOM, freshDOM);
   app.modalOverlay = patch(app.modalOverlay, patches);
   app.modalDOM = freshDOM;
@@ -354,7 +354,7 @@ function handleChange ( event, options, callback ) {
   //var self = event.currentTarget || event.srcElement || this;
   var title = document.getElementById("modalInput").value.trim();
   options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
-  var refreshDOM = freshModal( options, callback);
+  var refreshDOM = renderModal( options, callback);
   var patches = diff(app.modalDOM, refreshDOM);
   app.modalOverlay = patch(app.modalOverlay, patches);
   app.modalDOM = refreshDOM;
@@ -362,7 +362,22 @@ function handleChange ( event, options, callback ) {
   return false;
 }
 
-function freshModal ( options, callback ) {
+function renderLoader () {
+  "use strict";
+  return (
+    h(".loader-group", [
+      h(".bigSqr", [
+        h(".square.first"),
+        h(".square.second"),
+        h(".square.third"),
+        h(".square.fourth")
+      ]),
+      h(".text", ["loading..."])
+    ])
+  );
+}
+
+function renderModal ( options, callback ) {
   function ok ( event ) {
     handleOk(event, callback);
   }
