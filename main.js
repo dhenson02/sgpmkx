@@ -559,20 +559,6 @@ function resetPage () {
   patches = diff(app.dirtyDOM, refreshDOM);
   app.rootNode = patch(app.rootNode, patches);
   app.dirtyDOM = refreshDOM;
-  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
-  catch (e) {console.log(e);}
-  try {
-    var hashArray = window.location.hash.slice(2).split(/\//);
-    var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-    if ( subCat ) {
-      var i = 0;
-      var total = subCat.length;
-      for ( ; i < total; ++i ) {
-        subCat[i].parentNode.style.display = "";
-        subCat[i].parentNode.removeAttribute("style");
-      }
-    }
-  } catch (e) {}
   app.domRefs = new DOMRef();
   app.domRefs.set();
 }
@@ -597,12 +583,24 @@ function getList () {
         for ( ; i < total; ++i ) {
           oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
         }
-        this.className += " active";
-        var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
-        i = 0;
-        total = oldSubCat.length;
-        for ( ; i < total; ++i ) {
-          oldSubCat[i].style.display = "none";
+        try {
+          var categoryOld = window.location.hash.slice(2).split("/")[1],
+            categoryNew = this.getAttribute("href").slice(2).split("/")[1];
+          if ( / ?sub-cat/gi.test(this.parentNode.className) === false && categoryOld !== categoryNew ) {
+            var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
+            i = 0;
+            total = oldSubCat.length;
+            for ( ; i < total; ++i ) {
+              oldSubCat[i].style.display = "none";
+            }
+          }
+        } catch (e) {
+          oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
+          i = 0;
+          total = oldSubCat.length;
+          for ( ; i < total; ++i ) {
+            oldSubCat[i].style.display = "none";
+          }
         }
       }
       var results = data.d.results,
@@ -713,6 +711,22 @@ function init ( path ) {
       app.currentContent.set();
       insertContent(app.currentContent.title, app.currentContent.text);
       loadingSomething(false, app.domRefs.output);
+
+      try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+      catch (e) {}
+      try {
+        var hashArray = window.location.hash.slice(2).split(/\//);
+        var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+        if ( subCat ) {
+          var i = 0;
+          var total = subCat.length;
+          for ( ; i < total; ++i ) {
+            subCat[i].parentNode.style.display = "";
+            subCat[i].parentNode.removeAttribute("style");
+          }
+        }
+      } catch (e) {}
+
     },
     error: util.connError,
     complete: function () {

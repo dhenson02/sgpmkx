@@ -7,7 +7,12 @@
   right:0;
   bottom:0;
   width:auto;
-  height:auto
+  height:auto;
+}
+
+#wrapper .CodeMirror.CodeMirror,
+#wrapper #input textarea {
+  font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace!important;
 }
 
 #wrapper .CodeMirror pre{
@@ -50,4 +55,3 @@
   border-left:.5em #EEE solid
 }
 
-#wrapper
