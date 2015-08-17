@@ -140,6 +140,8 @@ function loadingSomething ( status, target ) {
     }
     app.inTransition[target] = true;
     if ( util.regLoading.test(target.className) === false ) {
+      app.inTransition["tmp"] = target.innerHTML;
+      target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
       target.className += " loading";
     }
   }
@@ -189,7 +191,7 @@ function savePage ( event ) {
     return false;
   }
   else {
-    loadingSomething(true, self);
+    //loadingSomething(true, self);
   }
   reqwest({
     url: app.sitePath + "/items(" + app.currentContent.id + ")",
@@ -223,7 +225,7 @@ function savePage ( event ) {
     },
     error: util.connError,
     complete: function () {
-      loadingSomething(false, self);
+      //loadingSomething(false, self);
     }
   });
 }
@@ -238,7 +240,7 @@ function createPage () {
     if ( "object" !== typeof inputValue ) {
       return false;
     }
-    loadingSomething(true, app.domRefs.contentWrap);
+    //loadingSomething(true, app.domRefs.contentWrap);
     reqwest({
       url: app.sitePath + "/items",
       method: "POST",
@@ -272,7 +274,7 @@ function createPage () {
       },
       error: util.connError,
       complete: function () {
-        loadingSomething(false, app.domRefs.contentWrap);
+        //loadingSomething(false, app.domRefs.contentWrap);
       }
     });
   });

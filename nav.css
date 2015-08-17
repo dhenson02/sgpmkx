@@ -32,6 +32,7 @@
 
 #navWrap a:hover{
   color:#FAFAFA!important;
+  text-decoration:underline;
 }
 
 #navWrap a:active{

@@ -18,10 +18,10 @@ function connError ( error ) {
   console.log("error connecting:", error);
 }
 
-var regLoading = / ?loading/g,
-  regFullPage = / ?fullPage/g,
-  regCheatSheet = / ?cheatSheet/g,
-  regNoChange = / ?nochange/g,
+var regLoading = / ?loading/gi,
+  regFullPage = / ?fullPage/gi,
+  regCheatSheet = / ?cheatSheet/gi,
+  regNoChange = / ?nochange/gi,
   md = markdownit({
     xhtmlOut: true,
     typographer: true,
