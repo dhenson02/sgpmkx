@@ -531,6 +531,7 @@ function setupEditor () {
 }
 
 function resetPage () {
+  console.log("PAGE RESET");
   var wrap,
     refreshDOM,
     modalRefreshDOM,
@@ -562,7 +563,7 @@ function resetPage () {
   catch (e) {console.log(e);}
   try {
     var hashArray = window.location.hash.slice(2).split(/\//);
-    var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
+    var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
     if ( subCat ) {
       var i = 0;
       var total = subCat.length;
@@ -597,30 +598,11 @@ function getList () {
           oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
         }
         this.className += " active";
-
-        var hashArray = this.getAttribute("href").slice(2).split(/\//);
-        if ( hashArray.length > 1 ) {
-          //var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat--open a");
-          var subCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + hashArray[1] + "']");
-          var oldSubCat = app.rootNode.querySelectorAll("#navWrap [data-parent='" + window.location.hash.slice(2).split(/\//)[1] + "']");
-
-          if ( subCat != oldSubCat ) {
-            i = 0;
-            total = oldSubCat.length;
-            for ( ; i < total; ++i ) {
-              oldSubCat[i].parentNode.style.display = "none";
-              //oldSubCat[i].parentNode.className = oldSubCat[i].parentNode.className.replace(/ ?sub-cat--open/gi, "");
-            }
-            if ( subCat ) {
-              i = 0;
-              total = subCat.length;
-              for ( ; i < total; ++i ) {
-                subCat[i].parentNode.style.display = "";
-                subCat[i].parentNode.removeAttribute("style");
-                //subCat[i].parentNode.className += " sub-cat--open";
-              }
-            }
-          }
+        var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
+        i = 0;
+        total = oldSubCat.length;
+        for ( ; i < total; ++i ) {
+          oldSubCat[i].style.display = "none";
         }
       }
       var results = data.d.results,

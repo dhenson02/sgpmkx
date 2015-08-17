@@ -27,15 +27,15 @@
 }
 
 #navWrap a{
-  color:#F5F5FF;
+  color:#F5F5F5!important;
 }
 
 #navWrap a:hover{
-  color:#FFF;
+  color:#FAFAFA!important;
 }
 
 #navWrap a:active{
-  color:#FAA700
+  color:#FFFFFF!important;
 }
 
 #navWrap hr{
