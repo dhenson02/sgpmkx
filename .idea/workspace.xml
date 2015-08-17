@@ -52,8 +52,8 @@
           <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/main.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.35448578">
-                  <caret line="291" column="64" selection-start-line="291" selection-start-column="64" selection-end-line="291" selection-end-column="64" />
+                <state vertical-scroll-proportion="0.21006565">
+                  <caret line="288" column="41" selection-start-line="288" selection-start-column="41" selection-end-line="288" selection-end-column="41" />
                   <folding>
                     <element signature="e#103#1233#0" expanded="false" />
                     <element signature="e#12815#13795#0" expanded="false" />
@@ -254,8 +254,8 @@
           <file leaf-file-name="nav.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/nav.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.6064815">
-                  <caret line="128" column="1" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+                <state vertical-scroll-proportion="0.49305555">
+                  <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
                   <folding />
                 </state>
               </provider>
@@ -713,7 +713,13 @@
       <option name="project" value="LOCAL" />
       <updated>1439854054951</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="fixed stupid line height issue cuz of sharepoint overrides.">
+      <created>1439854212299</created>
+      <option name="number" value="00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1439854212299</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TodoView">
@@ -794,7 +800,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="removed jQuery/velocity uses" />
     <MESSAGE value="tons of style fixes/re-arrangements of elements inside #content" />
     <MESSAGE value="styling and new item checkpoint" />
     <MESSAGE value="checkpoint, new css file structure, navigation menu added, still requires tweaking." />
@@ -819,7 +824,8 @@
     <MESSAGE value="fixed sub-cat active show/hide stuff." />
     <MESSAGE value="corrected logical ordering of actions for show/hide and active class.  added external font ubuntu mono for editor" />
     <MESSAGE value="added sweet loader to the output area.  text underline when hover on nav links too" />
-    <option name="LAST_COMMIT_MESSAGE" value="added sweet loader to the output area.  text underline when hover on nav links too" />
+    <MESSAGE value="fixed stupid line height issue cuz of sharepoint overrides." />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed stupid line height issue cuz of sharepoint overrides." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1880,17 +1886,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35448578">
-          <caret line="291" column="64" selection-start-line="291" selection-start-column="64" selection-end-line="291" selection-end-column="64" />
-          <folding>
-            <element signature="e#103#1233#0" expanded="false" />
-            <element signature="e#12815#13795#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/landing.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1899,10 +1894,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.21006565">
+          <caret line="288" column="41" selection-start-line="288" selection-start-column="41" selection-end-line="288" selection-end-column="41" />
+          <folding>
+            <element signature="e#103#1233#0" expanded="false" />
+            <element signature="e#12815#13795#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/nav.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6064815">
-          <caret line="128" column="1" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.49305555">
+          <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
           <folding />
         </state>
       </provider>

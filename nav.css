@@ -34,6 +34,9 @@
   color:#FAFAFA!important;
   text-decoration:underline;
 }
+#navWrap a.active:hover{
+  text-decoration:none;
+}
 
 #navWrap a:active{
   color:#FFFFFF!important;
