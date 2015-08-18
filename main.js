@@ -533,6 +533,12 @@ function setupEditor () {
 }
 
 function resetPage () {
+  var oldActive = app.rootNode.querySelectorAll("a.active"),
+    i = 0,
+    total = oldActive.length;
+  for ( ; i < total; ++i ) {
+    oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
+  }
   console.log("PAGE RESET");
   var wrap,
     refreshDOM,
@@ -579,12 +585,6 @@ function getList () {
     },
     success: function ( data ) {
       function handleNav () {
-        var oldActive = app.rootNode.querySelectorAll("a.active"),
-          i = 0,
-          total = oldActive.length;
-        for ( ; i < total; ++i ) {
-          oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
-        }
         try {
           var categoryOld = window.location.hash.slice(2).split("/")[1],
             categoryNew = this.getAttribute("href").slice(2).split("/")[1];
@@ -740,34 +740,33 @@ function init ( path ) {
 }
 
 app.router = Router({
-    '/new': {
-      on: function () {
+  '/new': {
+    on: function () {
 
-      }
+    }
+  },
+  '/(\\w+)': {
+    //once: getList,
+    on: function ( root ) {
+      loadingSomething(true, app.domRefs.output);
+      init("/" + root);
     },
     '/(\\w+)': {
       //once: getList,
-      on: function ( root ) {
+      on: function ( root, sub ) {
         loadingSomething(true, app.domRefs.output);
-        init("/" + root);
+        init("/" + root + "/" + sub);
       },
       '/(\\w+)': {
         //once: getList,
-        on: function ( root, sub ) {
+        on: function ( root, sub, inner ) {
           loadingSomething(true, app.domRefs.output);
-          init("/" + root + "/" + sub);
-        },
-        '/(\\w+)': {
-          //once: getList,
-          on: function ( root, sub, inner ) {
-            loadingSomething(true, app.domRefs.output);
-            init("/" + root + "/" + sub + "/" + inner);
-          }
+          init("/" + root + "/" + sub + "/" + inner);
         }
       }
     }
   }
-).configure({
+}).configure({
   strict: false,
   after: resetPage,
   notfound: function () {
