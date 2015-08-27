@@ -537,7 +537,7 @@ function resetPage () {
     i = 0,
     total = oldActive.length;
   for ( ; i < total; ++i ) {
-    oldActive[i].className = oldActive[i].className.replace(/ ?active/g, "");
+    oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
   }
   console.log("PAGE RESET");
   var wrap,

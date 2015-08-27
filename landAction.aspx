@@ -7,6 +7,15 @@
 <style type="text/css">
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/landing.min.css");
 </style>
+<script type="text/javascript">
+//<![CDATA[
+
+    /* Get rid of the ugly nav on the left if it's there */
+    try { var leftNav = document.getElementById("leftnav");
+      leftNav.parentNode.removeChild(leftNav);} catch (e) {}
+
+//]]>
+</script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
 <![endif]-->
