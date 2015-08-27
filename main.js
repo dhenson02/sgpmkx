@@ -187,11 +187,12 @@ function savePage ( event ) {
     app.domRefs.buttons.tempSaveText = setTimeout(function() {
       try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
       self.className = self.className.replace(util.regNoChange, "");
-    }, 2000);
+    }, 1500);
     return false;
   }
   else {
     //loadingSomething(true, self);
+    self.innerHTML = "<span>...saving...</span>";
   }
   reqwest({
     url: app.sitePath + "/items(" + app.currentContent.id + ")",
@@ -215,6 +216,10 @@ function savePage ( event ) {
       "IF-MATCH": "*"
     },
     success: function() {
+      self.innerHTML = "<span style=\'font-weight:bold;\'>Saved!</span>";
+      setTimeout(function() {
+        self.innerHTML = "<span>Save</span>";
+      }, 1500);
       console.log("Successfully saved changes.");
       /*newModal({
         title: [h("h2", [String(app.currentContent.title) + " updated!"])],
