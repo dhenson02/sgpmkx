@@ -48,6 +48,7 @@ var h = require("virtual-dom/h"),
   reqwest = require("reqwest"),
   Router = require("director/build/director").Router,
   console = console || require("console"),
+  sweetAlert = require("sweetalert"),
   util = require("./helpers"),
   Content = require("./store"),
   DOMRef = require("./domStore"),
@@ -61,8 +62,6 @@ var h = require("virtual-dom/h"),
     domRefs: new DOMRef(),
     dirtyDOM: null,
     rootNode: null,
-    modalDOM: null,
-    modalOverlay: null,
     navDOM: null,
     router: null,
     menuItems: null,
@@ -155,13 +154,7 @@ function savePage ( event ) {
   event = event || window.event;
   //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
   event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-  //var self = event.currentTarget || event.srcElement || this;
   var self = this;
-  //try {
-  //  console.log("currentTarget: " + event.currentTarget.nodeName);} catch(e) { try {
-  //  console.log("srcElement: " + event.srcElement.nodeName);} catch(e) { try {
-  //  console.log("this: " + this.nodeName); } catch (e) {
-  //}}}
   if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
     self = self.parentNode.parentNode;
   }
@@ -220,67 +213,84 @@ function savePage ( event ) {
       setTimeout(function() {
         self.innerHTML = "<span>Save</span>";
       }, 1500);
-      console.log("Successfully saved changes.");
-      /*newModal({
-        title: [h("h2", [String(app.currentContent.title) + " updated!"])],
-        text: [h("strong", [String(app.currentContent.category.join('/'))]), h("text", [" has been updated with the changes you just made."])],
-        type: "success",
-        showCancelButton: false
-      });*/
     },
-    error: util.connError,
+    error: function() {
+      self.innerHTML = "<span style=\'font-weight:bold; color: #F22;\'>Could not save</span>";
+    },
     complete: function () {
-      //loadingSomething(false, self);
+      setTimeout(function() {
+        self.innerHTML = "<span>Save</span>";
+      }, 1500);
     }
   });
 }
 
 function createPage () {
-  newModal({
-    title: [h("h2", ["New Page"])],
-    text: [h("text", ["Give it a name:"])],
-    selectLabel: [h("text", ["Select the parent category"])],
-    type: "new"
+  var location = window.location.hash.slice(1);
+  sweetAlert({
+    title: "New page",
+    text: "Give it a name:",
+    type: "input",
+    closeOnConfirm: false
   }, function ( inputValue ) {
-    if ( "object" !== typeof inputValue ) {
+    if ( typeof inputValue === false ) {
       return false;
     }
-    //loadingSomething(true, app.domRefs.contentWrap);
-    reqwest({
-      url: app.sitePath + "/items",
-      method: "POST",
-      data: JSON.stringify({
-        '__metadata': {
-          'type': app.currentContent.listItemType
+    if ( inputValue === "" ) {
+      sweetAlert.showInputError("Please enter a page title!");
+      return false;
+    }
+    var title = inputValue.toCamelCase();
+
+    if ( location === "/" ) {
+      var category = location + title;
+    }
+    else {
+      category = location + "/" + title;
+    }
+    sweetAlert({
+      title: "Confirm",
+      text: "Your page will have the title: <p style=\'font-weight:bold;\'>" + inputValue + "</p>Page location: <p style=\'font-weight:bold;\'>" + category + "</p>",
+      closeOnConfirm: false,
+      showCancelButton: true,
+      showLoaderOnConfirm: true,
+      html: true,
+      type: "warning"
+    }, function () {
+      reqwest({
+        url: app.sitePath + "/items",
+        method: "POST",
+        data: JSON.stringify({
+          '__metadata': {
+            'type': app.currentContent.listItemType
+          },
+          'Title': inputValue,
+          'Text': 'New Page :)\n### Joy',
+          'Category': category
+        }),
+        type: "json",
+        contentType: "application/json",
+        withCredentials: true,
+        headers: {
+          "Accept": "application/json;odata=verbose",
+          "text-Type": "application/json;odata=verbose",
+          "Content-Type": "application/json;odata=verbose",
+          "X-RequestDigest": app.digest
         },
-        'Title': inputValue.title,
-        'Text': '## New Page :)',
-        'Category': inputValue.category
-      }),
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": app.digest
-      },
-      success: function() {
-        newModal({
-          title: [h("h2", [String(inputValue.title)]), h("text", [" was created"])],
-          text: [h("text", ["Your page is located at "]), h("strong", [String(inputValue.category)]), h("text", ["**.\nGo fill it in!"])],
-          type: "success",
-          okText: "Take me",
-          showCancelButton: false
-        }, function() {
-          app.router.setRoute(inputValue.category);
-        });
-      },
-      error: util.connError,
-      complete: function () {
-        //loadingSomething(false, app.domRefs.contentWrap);
-      }
+        success: function() {
+          sweetAlert({
+            title: "Success!",
+            text: inputValue + " was created at " + category,
+            type: "success",
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 2000
+          }, function () {
+            app.router.setRoute(category);
+          });
+        },
+        error: util.connError
+      });
     });
   });
 }
@@ -291,70 +301,7 @@ function updateTitle () {
   app.currentContent.set({ title: val });
 }
 
-function newModal ( options, callback ) {
-  options = {
-    title: options.title || [h("h2", ["Info"])],
-    text: options.text || [h("text", ["Click OK to continue"])],
-    selectLabel: options.selectLabel || [h("text", ["Select the parent category"])],
-    type: options.type || "success",
-    path: options.path || [h("text", [String(app.currentContent.category.join("/"))])],
-    okText: options.okText || "OK!",
-    showCancelButton: (typeof options.showCancelButton === "boolean") ? options.showCancelButton : true,
-    closeOnConfirm: (typeof options.closeOnConfirm === "boolean") ? options.closeOnConfirm : true
-  };
-  callback = ( "function" === typeof callback ) ? callback : null;
-
-  var freshDOM = renderModal(options, callback);
-  var patches = diff(app.modalDOM, freshDOM);
-  app.modalOverlay = patch(app.modalOverlay, patches);
-  app.modalDOM = freshDOM;
-  util.addEvent("keyup", document, handleCancel);
-}
-
-function handleOk ( event, callback ) {
-  event = event || window.event;
-  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-  var keyCode = event.keyCode || event.which || event.charCode || null;
-  if ( event.type === "keyup" && keyCode === 13 || event.type === "click" ) {
-    if ( !callback ) {
-      modalSuicide();
-      return false;
-    }
-    var title = document.getElementById("modalInput").value.trim();
-    var category = document.getElementById("menuItems").value + title.toCamelCase();
-    if ( title && category ) {
-      callback({
-        title: title,
-        category: category
-      });
-    }
-    else {
-      callback(true);
-    }
-    modalSuicide();
-    return false;
-  }
-}
-
-function handleCancel ( event ) {
-  event = event || window.event;
-  event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-  var self = event.currentTarget || event.srcElement || this;
-  var keyCode = event.keyCode || event.which || event.charCode || null;
-  if (self.nodeName === "span") {
-    self = self.parentNode;
-  }
-  // For self test: regModalBg.test(self.className)
-  if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
-    ( event.type === "keyup" && keyCode === 27 ) ) {
-    //if ( callback ) { callback(); }
-    modalSuicide();
-    return false;
-  }
-}
-
+/*
 function handleChange ( event, options, callback ) {
   event = event || window.event;
   event.preventDefault ? event.preventDefault() : event.returnValue = false;
@@ -368,6 +315,7 @@ function handleChange ( event, options, callback ) {
   //document.getElementById("newPath").innerHTML = category + "/" + title;
   return false;
 }
+*/
 
 function renderLoader () {
   "use strict";
@@ -382,47 +330,6 @@ function renderLoader () {
       h(".text", ["loading..."])
     ])
   );
-}
-
-function renderModal ( options, callback ) {
-  function ok ( event ) {
-    handleOk(event, callback);
-  }
-  function change ( event ) {
-    handleChange(event, options, callback);
-  }
-  return (
-    h(".modalOverlay", { style: { zIndex: 7 } }, [
-      h(".modalBg", { onclick: handleCancel }),
-      h(".modal", [
-        h(".header", options.title),
-        h("label", options.text.concat([
-          ( options.type === "new" ) && (h("input#modalInput", { type: "text", tabIndex: 0, autofocus: "", onchange: change, onkeyup: ok })) || null
-        ])),
-        ( options.type === "new" ) && (options.selectLabel) && h("label", options.selectLabel.concat([
-          ( options.type === "new" ) && (h("select#menuItems", { tabIndex: 1, onkeyup: ok, onchange: change }, app.menuItems || null)) || null
-        ])),
-        ( options.type === "new" ) && h("blockquote#newPath", options.path),
-        h(".modalButtons", [
-          h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? handleCancel : ok, role: "button" }, [
-            h("span", [String(options.okText || "OK!")])
-          ]),
-          ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: handleCancel, role: "button" }, [
-            h("span", ["Nope."])
-          ]) || null
-        ])
-      ])
-    ])
-  );
-}
-
-function modalSuicide () {
-  app.modalOverlay.style.display = "none";
-  var destroyModal = h(".modalOverlay", { style: { display: "none", zIndex: -1 }});
-  var patches = diff(app.modalDOM, destroyModal);
-  app.modalOverlay = patch(app.modalOverlay, patches);
-  app.modalDOM = destroyModal;
-  util.removeEvent("keyup", document, handleCancel);
 }
 
 function toggleEditor () {
@@ -479,11 +386,6 @@ function pageSetup () {
     catch ( e ) {
       document.body.appendChild(app.rootNode);
     }
-  }
-  if ( codeMirror ) {
-    app.modalDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-    app.modalOverlay = createElement(app.modalDOM);
-    document.body.appendChild(app.modalOverlay);
   }
   app.domRefs = new DOMRef();
   app.domRefs.set();
@@ -544,7 +446,6 @@ function resetPage () {
   console.log("PAGE RESET");
   var wrap,
     refreshDOM,
-    modalRefreshDOM,
     patches;
   if ( codeMirror ) {
     if ( app.domRefs.editor ) {
@@ -555,13 +456,6 @@ function resetPage () {
       });
     }
     refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
-    modalRefreshDOM = h(".modalOverlay", { style: {display: "none", opacity: 0 }});
-    patches = diff(app.modalDOM, modalRefreshDOM);
-    if (patches.length > 1) {
-      app.modalOverlay = patch(app.modalOverlay, patches);
-      app.modalDOM = modalRefreshDOM;
-      modalSuicide();
-    }
   }
   else {
     refreshDOM = render(app.navDOM);
@@ -745,11 +639,11 @@ function init ( path ) {
 }
 
 app.router = Router({
-  '/new': {
+  /*'/new': {
     on: function () {
 
     }
-  },
+  },*/
   '/': {
     on: function () {
       loadingSomething(true, app.domRefs.output);
@@ -781,7 +675,14 @@ app.router = Router({
   strict: false,
   after: resetPage,
   notfound: function () {
-    window.location.href = baseURL + "/Pages/main.aspx";
+    sweetAlert({
+      title: "Oops",
+      text: "Page doesn't exist.  Sorry :(",
+      timer: 3000,
+      showConfirmButton: false
+    }, function() {
+      app.router.setRoute("/");
+    });
   }
 });
 

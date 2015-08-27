@@ -10,6 +10,7 @@
     "markdown-it": "^4.4.0",
     "requirejs": "^2.1.20",
     "reqwest": "^2.0.1",
+    "sweetalert": "^1.1.0",
     "virtual-dom": ">=2.0.1"
   },
   "devDependencies": {

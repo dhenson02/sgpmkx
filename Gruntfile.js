@@ -69,9 +69,9 @@ module.exports = function(grunt) {
           'buttons.css',
           'generic.css',
           'codemirror.css',
-          'modal.css',
           'nav.css',
-          'loader.css'
+          'loader.css',
+          'node_modules/sweetalert/dist/sweetalert.css'
         ],
         dest: '.tmp/main.css'
       },
