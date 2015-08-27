@@ -5,7 +5,7 @@ function render ( fhm, comm ) {
   return (
     h("div#navWrap.nav", [
       h("a.header", {
-        "href": "main.aspx"
+        "href": "#/"
       }, [
         h("div.logo", [
           h("img", {
@@ -20,18 +20,18 @@ function render ( fhm, comm ) {
       h("ul", [
         h("li", [
           h("p.root-cat", [
-            h("span", /*{
+            h("a", {
               "href": "#/Comm"
-            },*/ [ "Community Health" ])
+            }, [ "Community Health" ])
           ]),
           h("hr"),
           h("ul", comm)
         ]),
         h("li", [
           h("p.root-cat", [
-            h("span", /*{
+            h("a", {
               "href": "#/FHM"
-            },*/ [ "Force Health Management" ])
+            }, [ "Force Health Management" ])
           ]),
           h("hr"),
           h("ul", fhm)

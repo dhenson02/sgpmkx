@@ -748,6 +748,12 @@ app.router = Router({
 
     }
   },
+  '/': {
+    on: function () {
+      loadingSomething(true, app.domRefs.output);
+      init("/");
+    }
+  },
   '/(\\w+)': {
     //once: getList,
     on: function ( root ) {

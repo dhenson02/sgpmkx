@@ -26,11 +26,11 @@
     </a>
     <div id="navBlock">
       <div class="left-cat">
-        <p class="category">Community Health</p>
+        <a href="#/Comm" class="category">Community Health</a>
         <ul id="nav-comm"></ul>
       </div>
       <div class="right-cat">
-        <p class="category">Force Health Management</p>
+        <a href="#/FHM" class="category">Force Health Management</a>
         <ul id="nav-fhm"></ul>
       </div>
     </div>
