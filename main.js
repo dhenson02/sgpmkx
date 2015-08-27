@@ -337,7 +337,7 @@ function handleOk ( event, callback ) {
   }
 }
 
-function handleCancel ( event, callback ) {
+function handleCancel ( event ) {
   event = event || window.event;
   event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
   event.preventDefault ? event.preventDefault() : (event.returnValue = false);
@@ -388,15 +388,12 @@ function renderModal ( options, callback ) {
   function ok ( event ) {
     handleOk(event, callback);
   }
-  function cancel ( event ) {
-    handleCancel(event, callback);
-  }
   function change ( event ) {
     handleChange(event, options, callback);
   }
   return (
     h(".modalOverlay", { style: { zIndex: 7 } }, [
-      h(".modalBg", { onclick: cancel }),
+      h(".modalBg", { onclick: handleCancel }),
       h(".modal", [
         h(".header", options.title),
         h("label", options.text.concat([
@@ -407,10 +404,10 @@ function renderModal ( options, callback ) {
         ])),
         ( options.type === "new" ) && h("blockquote#newPath", options.path),
         h(".modalButtons", [
-          h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? cancel : ok, role: "button" }, [
+          h(".okButton.btn", { tabIndex: 2, onclick: (options.type !== "new") ? handleCancel : ok, role: "button" }, [
             h("span", [String(options.okText || "OK!")])
           ]),
-          ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: cancel, role: "button" }, [
+          ( options.showCancelButton ) && h(".cancelButton.btn", { tabIndex: 3, onclick: handleCancel, role: "button" }, [
             h("span", ["Nope."])
           ]) || null
         ])
