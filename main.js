@@ -231,7 +231,8 @@ function createPage () {
     title: "New page",
     text: "Give it a name:",
     type: "input",
-    closeOnConfirm: false
+    closeOnConfirm: false,
+    showCancelButton: true
   }, function ( inputValue ) {
     if ( typeof inputValue === false ) {
       return false;
