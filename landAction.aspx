@@ -4,9 +4,6 @@
 @charset "UTF-8";
 </style>
 <title>Tippy</title>
-<style type="text/css">
-@import url("/kj/kx7/PublicHealth/SiteAssets/Styles/landing.min.css");
-</style>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -16,6 +13,9 @@
 
 //]]>
 </script>
+<style type="text/css">
+@import url("/kj/kx7/PublicHealth/SiteAssets/Styles/landing.min.css");
+</style>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
 <![endif]-->
