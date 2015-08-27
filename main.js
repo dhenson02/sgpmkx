@@ -522,7 +522,7 @@ function setupEditor () {
       lineNumbers: false,
       matchBrackets: true,
       lineWrapping: true,
-      theme: "neo",
+      theme: "mdn-like",
       extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
     })
   });
