@@ -664,6 +664,9 @@ function getList () {
             renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
           );
         }
+        if ( /^https?:\/\//i.test(page.Category) ) {
+          // Placeholder for when there are URLs instead of paths.
+        }
       }
       app.menuItems = [
         h("option", { value: "/FHM" }, ["Force Health Management"]),
