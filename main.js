@@ -349,7 +349,7 @@ function handleCancel ( event, callback ) {
   // For self test: regModalBg.test(self.className)
   if (  ( event.type === "click" && ( self === event.target || self === event.srcElement ) ) ||
     ( event.type === "keyup" && keyCode === 27 ) ) {
-    if ( callback ) { callback(); }
+    //if ( callback ) { callback(); }
     modalSuicide();
     return false;
   }
