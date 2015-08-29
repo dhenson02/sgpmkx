@@ -234,7 +234,7 @@ function createPage () {
     closeOnConfirm: false,
     showCancelButton: true
   }, function ( inputValue ) {
-    if ( typeof inputValue === false ) {
+    if ( inputValue === false ) {
       return false;
     }
     if ( inputValue === "" ) {
