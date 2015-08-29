@@ -4,8 +4,8 @@ module.exports = function(grunt) {
       options: {},
       dist: {
         files: {
-          '.tmp/main.js': 'main.js',
-          '.tmp/landing.js': 'landing.js'
+          '.tmp/main.js': 'main.js'/*,
+          '.tmp/landing.js': 'landing.js'*/
         }
       }
     },
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
           sourceMap: false
         },
         files: {
-          'main.min.js': '.tmp/main.js',
-          'landing.min.js': '.tmp/landing.js'
+          'main.min.js': '.tmp/main.js'/*,
+          'landing.min.js': '.tmp/landing.js'*/
         }
       },
       dev: {
@@ -55,8 +55,8 @@ module.exports = function(grunt) {
           sourceMap: false
         },
         files: {
-          'main.min.js': '.tmp/main.js',
-          'landing.min.js': '.tmp/landing.js'
+          'main.min.js': '.tmp/main.js'/*,
+          'landing.min.js': '.tmp/landing.js'*/
         }
       }
     },
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
           'node_modules/sweetalert/dist/sweetalert.css'
         ],
         dest: '.tmp/main.css'
-      },
+      }/*,
       landing: {
         src: ['landAction.aspx', 'landing.min.js'],
         css: [
@@ -83,7 +83,7 @@ module.exports = function(grunt) {
           'loader.css'
         ],
         dest: '.tmp/landing.css'
-      }
+      }*/
     },
     cssmin: {
       options: {
@@ -96,8 +96,8 @@ module.exports = function(grunt) {
           processImport: false
         },
         files: {
-          'main.min.css': '.tmp/main.css',
-          'landing.min.css': '.tmp/landing.css'
+          'main.min.css': '.tmp/main.css'/*,
+          'landing.min.css': '.tmp/landing.css'*/
         }
       },
       dev: {
@@ -105,8 +105,8 @@ module.exports = function(grunt) {
           processImport: false
         },
         files: {
-          'main.min.css': '.tmp/main.css',
-          'landing.min.css': '.tmp/landing.css'
+          'main.min.css': '.tmp/main.css'/*,
+          'landing.min.css': '.tmp/landing.css'*/
         }
       }
     },

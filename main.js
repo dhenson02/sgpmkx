@@ -109,88 +109,79 @@ function stopLoader ( target ) {
 }
 
 function savePage ( event ) {
+  var self = this;
   event = event || window.event;
   //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
   if ( event.preventDefault ) event.preventDefault();
   else event.returnValue = false;
-
-  var self = this;
-  if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
-    self = self.parentNode.parentNode;
-  }
-  if (self.nodeName === "span") {
-    self = self.parentNode;
-  }
   currentContent.set({
     title: currentContent.title.trim(),
     text: currentContent.text.trim()
   });
-  if (currentContent.text === currentContent._text &&
-    currentContent.title === currentContent._title ) {
-    if( !util.regNoChange.test(self.className) ) {
-      self.className += " nochange";
-    }
-    try {
-      self.childNodes[0].innerHTML = "No change";
-    } catch (e) {}
 
-    if (domRefs.buttons.tempSaveText) {
-      clearTimeout(domRefs.buttons.tempSaveText);
-    }
-    domRefs.buttons.tempSaveText = setTimeout(function() {
-      try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
-      self.className = self.className.replace(util.regNoChange, "");
-    }, 1500);
-    return false;
+  var textDiff = (currentContent.text !== currentContent._text);
+  var titleDiff = (currentContent.title !== currentContent._title);
+
+  if ( textDiff || titleDiff ) {
+    self.innerHTML = "...saving...";
+    reqwest({
+      url: sitePath + "/items(" + currentContent.id + ")",
+      method: "POST",
+      data: JSON.stringify({
+        '__metadata': {
+          'type': currentContent.listItemType
+        },
+        'Title': currentContent.title,
+        'Text': currentContent.text,
+        'Resources': currentContent.resources,
+        'Tools': currentContent.tools,
+        'Policy': currentContent.policy
+      }),
+      type: "json",
+      contentType: "application/json",
+      withCredentials: true,
+      headers: {
+        "X-HTTP-Method": "MERGE",
+        "Accept": "application/json;odata=verbose",
+        "text-Type": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": digest,
+        "IF-MATCH": "*"
+      },
+      success: function () {
+        self.style.fontWeight = "bold";
+        self.innerHTML = "Saved!";
+        if ( titleDiff ) getList();
+      },
+      error: function () {
+        self.style.color = "#F22";
+        self.style.fontWeight = "bold";
+        self.innerHTML = "Failed!";
+      },
+      complete: function () {
+        if ( !inTransition.tempSaveText ) {
+          inTransition.tempSaveText = setTimeout(function () {
+            self.removeAttribute("style");
+            self.innerHTML = "Save";
+          }, 1500);
+        }
+      }
+    });
   }
   else {
-    //startLoader(self);
-    self.innerHTML = "...saving...";
-  }
-  reqwest({
-    url: sitePath + "/items(" + currentContent.id + ")",
-    method: "POST",
-    data: JSON.stringify({
-      '__metadata': {
-        'type': currentContent.listItemType
-      },
-      'Title': currentContent.title,
-      'Text': currentContent.text,
-      'Resources': currentContent.resources,
-      'Tools': currentContent.tools,
-      'Policy': currentContent.policy
-      //'T': currentContent.title
-    }),
-    type: "json",
-    contentType: "application/json",
-    withCredentials: true,
-    headers: {
-      "X-HTTP-Method": "MERGE",
-      "Accept": "application/json;odata=verbose",
-      "text-Type": "application/json;odata=verbose",
-      "Content-Type": "application/json;odata=verbose",
-      "X-RequestDigest": digest,
-      "IF-MATCH": "*"
-    },
-    success: function() {
-      self.style.fontWeight = "bold";
-      self.innerHTML = "Saved!";
-      getList();
-    },
-    error: function() {
-      self.style.color = "#F22";
-      self.style.fontWeight = "bold";
-      self.innerHTML = "Failed!";
-    },
-    complete: function () {
-      if ( !inTransition.saveReset ) {
-        inTransition.saveReset = setTimeout(function() {
-          self.removeAttribute("style");
-          self.innerHTML = "Save";
-        }, 1500);
-      }
+    if ( !util.regNoChange.test(self.className) ) {
+      self.className += " nochange";
     }
-  });
+    self.innerHTML = "No change";
+    if ( inTransition.tempSaveText ) {
+      clearTimeout(inTransition.tempSaveText);
+    }
+    inTransition.tempSaveText = setTimeout(function () {
+      self.className = self.className.replace(util.regNoChange, "");
+      self.innerHTML = "Save";
+    }, 1500);
+  }
+  return false;
 }
 
 function createPage ( event ) {
