@@ -210,17 +210,16 @@ function savePage ( event ) {
     },
     success: function() {
       self.innerHTML = "<span style=\'font-weight:bold;\'>Saved!</span>";
-      setTimeout(function() {
-        self.innerHTML = "<span>Save</span>";
-      }, 1500);
     },
     error: function() {
       self.innerHTML = "<span style=\'font-weight:bold; color: #F22;\'>Could not save</span>";
     },
     complete: function () {
-      setTimeout(function() {
-        self.innerHTML = "<span>Save</span>";
-      }, 1500);
+      if ( !app.domRefs.buttons.saveReset ) {
+        app.domRefs.buttons.saveReset = setTimeout(function() {
+          self.innerHTML = "<span>Save</span>";
+        }, 1500);
+      }
     }
   });
 }
