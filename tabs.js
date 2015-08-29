@@ -3,15 +3,17 @@ var h = require("virtual-dom/h");
 function render( style, launch ) {
   return (
     h("ul#contentTabs", style, [
-    /**
-     * If using sweetAlert (or other modal/popup), leave commented.
-     * No need for a link to its own page (specially since it won't do anything)
-     */
-      /*h("li.tab", [
+      h("li.tab", [
         h("a", {
-          href: window.location.hash
+          href: "#",
+          onclick: function(e) {
+            e = e || window.event;
+            if (e.preventDefault) e.preventDefault();
+            else e.returnValue = false;
+            return launch("Overview");
+          }
         }, [ "Overview" ])
-      ]),*/
+      ]),
       h("li.tab", [
         h("a", {
           href: "#",

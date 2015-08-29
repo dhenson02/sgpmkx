@@ -5,7 +5,7 @@ function Content () {
   this.id = -1;
   this.title = "";
   this.text = "";
-  this.content = "";
+  this.overview = "";
   this.policy = "";
   this.resources = "";
   this.tools = "";
@@ -13,7 +13,7 @@ function Content () {
   this.program = "";
   this.page = "";
   this.path = "";
-  this.type = "Content";
+  this.type = "Overview";
   this.listItemType = "";
   this.timestamp = null;
   this.set = function ( data ) {
@@ -27,14 +27,6 @@ function Content () {
     }
     return this;
   };
-  /*reset: function() {
-    var name;
-    for ( name in this ) {
-      if ( this.hasOwnProperty(name) && name !== "reset" && name !== "set" ) {
-        this[name] = null;
-      }
-    }
-  }*/
 }
 
 module.exports = Content;

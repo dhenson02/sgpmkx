@@ -21,7 +21,7 @@ var h = require("virtual-dom/h"),
   dirtyDOM = null,
   rootNode = null,
   navDOM = null,
-  tabsDOM = null,
+  tabsDOM = renderTabs({ style: { display: "none" } }, handleTab),
   router = null,
   inTransition = {};
 
@@ -32,12 +32,21 @@ sweetAlert.setDefaults({
   confirmButtonText: "Yes!"
 });
 
+function handleTab ( page ) {
+  sweetAlert({
+    title: page,
+    text: util.md.render(currentContent[page.toLowerCase()]),
+    html: true,
+    type: "info",
+    showConfirmButton: false,
+    showCancelButton: false
+  });
+}
+
 function render ( navDOM, tabsDOM ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [
-        navDOM
-      ]),
+      h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
         h("#contentWrap", [
           h("#output"),
@@ -51,9 +60,7 @@ function render ( navDOM, tabsDOM ) {
 function renderEditor ( navDOM, tabsDOM, title, text ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [
-        navDOM
-      ]),
+      h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
         h("#buttons", [
           h("button#toggleButton.btn", { onclick: toggleEditor, style: { display: "none" } }, ["Toggle Editor"]),
@@ -79,18 +86,6 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
   );
 }
 
-function renderLink ( path, title, li, attr, hr ) {
-  return h(li, attr, [
-    h("a", {
-      href: path
-    }, [
-      String(title),
-      h("span")
-    ]),
-    hr
-  ]);
-}
-
 function startLoader ( target ) {
   if ( inTransition[target] === true ) {
     return false;
@@ -111,9 +106,9 @@ function stopLoader ( target ) {
 function savePage ( event ) {
   var self = this;
   event = event || window.event;
-  //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
   if ( event.preventDefault ) event.preventDefault();
   else event.returnValue = false;
+
   currentContent.set({
     title: currentContent.title.trim(),
     text: currentContent.text.trim()
@@ -124,19 +119,21 @@ function savePage ( event ) {
 
   if ( textDiff || titleDiff ) {
     self.innerHTML = "...saving...";
+    var data = {
+      '__metadata': {
+        'type': currentContent.listItemType
+      },
+      'Title': currentContent.title,
+      'Text': currentContent.text, //overview
+      //'Overview': currentContent.overview,
+      'Resources': currentContent.resources,
+      'Tools': currentContent.tools,
+      'Policy': currentContent.policy
+    };
     reqwest({
       url: sitePath + "/items(" + currentContent.id + ")",
       method: "POST",
-      data: JSON.stringify({
-        '__metadata': {
-          'type': currentContent.listItemType
-        },
-        'Title': currentContent.title,
-        'Text': currentContent.text,
-        'Resources': currentContent.resources,
-        'Tools': currentContent.tools,
-        'Policy': currentContent.policy
-      }),
+      data: JSON.stringify(data),
       type: "json",
       contentType: "application/json",
       withCredentials: true,
@@ -185,6 +182,7 @@ function savePage ( event ) {
 }
 
 function createPage ( event ) {
+  event = event || window.event;
   if ( event.preventDefault ) event.preventDefault();
   else event.returnValue = false;
   var location = window.location.hash.slice(1);
@@ -203,16 +201,11 @@ function createPage ( event ) {
       return false;
     }
     var title = inputValue.toCamelCase();
-
-    if ( location === "/" ) {
-      var path = location + title;
-    }
-    else {
-      path = location + "/" + title;
-    }
+    // This should never happen, but you never know.
+    var path = ( location === "/" ) ? location + title : location + "/" + title;
     sweetAlert({
       title: "Confirm",
-      text: "Your page will have the title: <p style=\'font-weight:bold;\'>" + inputValue + "</p>Page location: <p style=\'font-weight:bold;\'>" + path + "</p>",
+      text: util.md.render("Your page will have the title:\n\n**`" + inputValue + "`**\n\nPage location: **`" + path + "`**\n"),
       closeOnConfirm: false,
       showCancelButton: true,
       showLoaderOnConfirm: true,
@@ -306,12 +299,10 @@ function toggleEditor () {
   domRefs.cheatSheet.className = "";
   if ( hasFullPage ) {
     domRefs.content.className = domRefs.content.className.replace(util.regFullPage, "");
-    //domRefs.titleField.removeAttribute("disabled");
     domRefs.editor.refresh();
   }
   else {
     domRefs.content.className = domRefs.content.className + " fullPage";
-    //domRefs.titleField.setAttribute("disabled", "disabled");
   }
   return false;
 }
@@ -355,7 +346,6 @@ function pageSetup () {
     }
   }
   domRefs = new DOMRef();
-  domRefs.set();
   if ( window.location.hash ) {
     router.init();
   }
@@ -410,27 +400,23 @@ function resetPage () {
     oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
   }
   console.log("PAGE RESET");
-  var wrap,
-    refreshDOM,
-    patches;
   if ( codeMirror ) {
     if ( domRefs.editor ) {
-      wrap = domRefs.editor.getWrapperElement();
+      var wrap = domRefs.editor.getWrapperElement();
       wrap.parentNode.removeChild(wrap);
       domRefs.set({
         editor: null
       });
     }
-    refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+    var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
   }
   else {
     refreshDOM = render(navDOM, tabsDOM);
   }
-  patches = diff(dirtyDOM, refreshDOM);
+  var patches = diff(dirtyDOM, refreshDOM);
   rootNode = patch(rootNode, patches);
   dirtyDOM = refreshDOM;
   domRefs = new DOMRef();
-  domRefs.set();
 }
 
 function getList () {
@@ -448,14 +434,20 @@ function getList () {
     success: function ( data ) {
       var results = data.d.results,
         urls = [],
-        fhmLinks = [],
-        commLinks = [],
+        sections = {},
         i = 0,
         count = results.length,
         page;
       for ( ; i < count; ++i ) {
         pages[results[i].Path] = results[i];
         urls[i] = results[i].Path;
+        if ( results[i].Section !== "Home" && results[i].Program === "Home" ) {
+          sections[results[i].Section] = {
+            path: "#/" + results[i].Section,
+            title: results[i].Title,
+            links: []
+          };
+        }
       }
       var sortedUrls = urls.sort();
       for (i = 0; i < count; ++i) {
@@ -464,37 +456,19 @@ function getList () {
          * aren't dependencies hard-coded (unlike the rest of the code).
          */
         page = pages[sortedUrls[i]];
-        var path = "#" + page.Path;
-        if ( /^#\/fhm\//i.test(path) ) {
-          if ( !(/^#\/fhm\/(\w+)$/i.test(path)) ) {
-            fhmLinks.push(
-              renderLink(path, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
-            );
-          }
-          else {
-            fhmLinks.push(
-              renderLink(path, page.Title, "li", null, h("hr"))
-            );
-          }
-        }
-        if ( /^#\/comm\//i.test(path) ) {
-          if ( !(/^#\/comm\/(\w+)$/i.test(path)) ) {
-            commLinks.push(
-              renderLink(path, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
-            );
-          }
-          else {
-            commLinks.push(
-              renderLink(path, page.Title, "li", null, h("hr"))
-            );
-          }
-        }
-        if ( /^https?:\/\//i.test(page.Path) ) {
-          // Placeholder for when there are URLs instead of paths.
-          renderLink(path, page.Title, "li", null, h("hr"))
+        var isPage = ( page.Page !== "Home" );
+
+        if ( page.Section !== "Home" && page.Program !== "Home" ) {
+          sections[page.Section].links.push({
+            path: ( /^https?:\/\//i.test(page.Path) === false ) ? "#" + page.Path : page.Path,
+            title: page.Title,
+            li: isPage ? "li.sub-cat" : "li",
+            attr: isPage ? { style: { display: "none" } } : null,
+            hr: isPage ? null : h("hr")
+          });
         }
       }
-      navDOM = renderNav(commLinks, fhmLinks);
+      navDOM = renderNav(sections);
       pageSetup();
     },
     error: util.connError
@@ -527,35 +501,25 @@ function init ( path ) {
       for ( ; i < total; ++i ) {
         subLinks[i].style.display = "none";
       }
-      console.log("obj: ", obj);
       currentContent.set({
         id: obj.ID,
         title: obj.Title || "",
-        text: obj.Text || "",
+        text: obj.Overview || "",
         policy: obj.Policy || "",
         resources: obj.Resources || "",
         tools: obj.Tools || "",
+        overview: obj.Overview || "",
         //contributions: obj.Contributions || "",
         section: obj.Section || "Home",
         program: obj.Program || "Home",
         page: obj.Page || "Home",
         path: obj.Path.split("/"),
-        type: "Content",
+        type: "Overview",
         listItemType: obj.__metadata.type,
         timestamp: (Date && Date.now() || new Date())
       });
-      var tabsStyle = ( currentContent.program !== "" && currentContent.program !== "Home" ) ? {} : {style:{display:"none"}};
-      tabsDOM = renderTabs(tabsStyle, function( page ) {
-        console.log("cctnt.pol: ", currentContent.policy);
-        sweetAlert({
-          title: page,
-          text: util.md.render(currentContent[page.toLowerCase()]),
-          html: true,
-          type: "info",
-          showConfirmButton: false,
-          showCancelButton: false
-        });
-      });
+      var tabsStyle = ( currentContent.program !== "Home" ) ? null : { style:{ display:"none" } };
+      tabsDOM = renderTabs(tabsStyle, handleTab);
       insertContent(currentContent.title, currentContent.text);
       stopLoader(domRefs.output);
 

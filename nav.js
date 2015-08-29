@@ -1,13 +1,50 @@
 var h = require("virtual-dom/h");
 
-function render ( comm, fhm ) {
+function renderLink ( link ) {
   return (
-    h("div#navWrap.nav", [
-      h("div.header", [
+    h(link.li, link.attr, [
+      h("a", { href: link.path }, [
+        String(link.title),
+        h("span")
+      ]),
+      link.hr
+    ])
+  );
+}
+
+function renderSection ( section ) {
+  var links = [],
+    i = 0,
+    count = section.links.length;
+  for (; i < count; ++i) {
+    links[i] = renderLink(section.links[i]);
+  }
+  return (
+    h("li", [
+      h("p.root-cat", [
+        h("a", { "href": String(section.path) }, [ String(section.title) ])
+      ]),
+      h("hr"),
+      h("ul", links)
+    ])
+  );
+}
+
+function renderNav ( sections ) {
+  var links = [],
+    name;
+  for (name in sections) {
+    if ( sections.hasOwnProperty(name) ){
+      links.push(renderSection(sections[name]));
+    }
+  }
+  return (
+    h("#navWrap.nav", [
+      h(".header", [
         h("a", {
           "href": "#/"
         }, [
-          h("div.logo", [
+          h(".logo", [
             h("img", {
               "src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo64-gs.png",
               "alt": "Public Health Home",
@@ -15,31 +52,16 @@ function render ( comm, fhm ) {
               "width": "64"
             })
           ]),
-          h("p.text", [ "Public Health", h("br"), h("small", [ "US Air Force" ]) ])
+          h("p.text", [
+            "Public Health",
+            h("br"),
+            h("small", [ "US Air Force" ])
+          ])
         ])
       ]),
-      h("ul", [
-        h("li", [
-          h("p.root-cat", [
-            h("a", {
-              "href": "#/Comm"
-            }, [ "Community Health" ])
-          ]),
-          h("hr"),
-          h("ul", comm)
-        ]),
-        h("li", [
-          h("p.root-cat", [
-            h("a", {
-              "href": "#/FHM"
-            }, [ "Force Health Management" ])
-          ]),
-          h("hr"),
-          h("ul", fhm)
-        ])
-      ])
+      h("ul", links)
     ])
   );
 }
 
-module.exports = render;
+module.exports = renderNav;

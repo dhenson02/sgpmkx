@@ -1,35 +1,34 @@
-function DOMRef ( nodes ) {
-  return {
-    nodes: nodes,
-    content: document.getElementById("content"),
-    buttons: document.getElementById("buttons"),
-    titleField: document.getElementById("titleField"),
-    contentWrap: document.getElementById("contentWrap"),
-    cheatSheet: document.getElementById("cheatSheet"),
-    input: document.getElementById("input"),
-    textarea: document.getElementById("textarea"),
-    editor: null,
-    output: document.getElementById("output"),
-    set: function ( data ) {
-      var name;
-      data = data || nodes || this.nodes;
-      for ( name in data ) {
-        if ( this.hasOwnProperty(name) ) {
-          this[name] = data[name];
-        }
+function DOMRef () {
+  if ( !(this instanceof DOMRef) ) {
+    return new DOMRef();
+  }
+  this.content = document.getElementById("content");
+  this.buttons = document.getElementById("buttons");
+  this.titleField = document.getElementById("titleField");
+  this.contentWrap = document.getElementById("contentWrap");
+  this.cheatSheet = document.getElementById("cheatSheet");
+  this.input = document.getElementById("input");
+  this.textarea = document.getElementById("textarea");
+  this.editor = null;
+  this.output = document.getElementById("output");
+  this.set = function ( data ) {
+    var name;
+    for ( name in data ) {
+      if ( this.hasOwnProperty(name) ) {
+        this[name] = data[name];
       }
-      return this;
-    },
-    reset: function() {
-      var name;
-      for ( name in this ) {
-        if ( this.hasOwnProperty(name) && name !== "reset" && name !== "set" ) {
-          this[name] = null;
-        }
-      }
-      nodes = null;
     }
+    return this;
   };
+  /*reset: function () {
+    var name;
+    for ( name in this ) {
+      if ( this.hasOwnProperty(name) && name !== "reset" && name !== "set" ) {
+        this[name] = null;
+      }
+    }
+    nodes = null;
+  }*/
 }
 
 module.exports = DOMRef;
