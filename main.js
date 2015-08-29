@@ -1,46 +1,4 @@
-//var reQ = require("requirejs");
 try {var codeMirror = CodeMirror} catch (e) {var codeMirror = null;}
-/*if (!Object.keys) {
-  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
-  Object.keys = (function () {
-    'use strict';
-    var hasOwnProperty = Object.prototype.hasOwnProperty,
-      hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-      dontEnums = [
-        'toString',
-        'toLocaleString',
-        'valueOf',
-        'hasOwnProperty',
-        'isPrototypeOf',
-        'propertyIsEnumerable',
-        'constructor'
-      ],
-      dontEnumsLength = dontEnums.length;
-
-    return function (obj) {
-      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
-        throw new TypeError('Object.keys called on non-object');
-      }
-
-      var result = [], prop, i;
-
-      for (prop in obj) {
-        if (hasOwnProperty.call(obj, prop)) {
-          result.push(prop);
-        }
-      }
-
-      if (hasDontEnumBug) {
-        for (i = 0; i < dontEnumsLength; i++) {
-          if (hasOwnProperty.call(obj, dontEnums[i])) {
-            result.push(dontEnums[i]);
-          }
-        }
-      }
-      return result;
-    };
-  }());
-}*/
 var h = require("virtual-dom/h"),
   diff = require("virtual-dom/diff"),
   patch = require("virtual-dom/patch"),
@@ -55,26 +13,31 @@ var h = require("virtual-dom/h"),
   renderNav = require("./nav"),
   renderTabs = require("./tabs"),
   baseURL = _spPageContextInfo.webAbsoluteUrl,
-  app = {
-    //sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
-    sitePath: baseURL + "/_api/lists/getByTitle('Content')",
-    digest: document.getElementById("__REQUESTDIGEST").value,
-    pages: {},
-    currentContent: new Content(),
-    domRefs: new DOMRef(),
-    dirtyDOM: null,
-    rootNode: null,
-    navDOM: null,
-    tabsDOM: null,
-    router: null,
-    menuItems: null,
-    inTransition: {}
-  };
+  sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+  digest = document.getElementById("__REQUESTDIGEST").value,
+  pages = {},
+  currentContent = new Content(),
+  domRefs = new DOMRef(),
+  dirtyDOM = null,
+  rootNode = null,
+  navDOM = null,
+  tabsDOM = null,
+  router = null,
+  inTransition = {};
+
+sweetAlert.setDefaults({
+  allowOutsideClick: true,
+  showCancelButton: true,
+  cancelButtonText: "Nope.",
+  confirmButtonText: "Yes!"
+});
 
 function render ( navDOM, tabsDOM ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [navDOM]),
+      h("#sideNav", [
+        navDOM
+      ]),
       h("#content.fullPage", [
         h("#contentWrap", [
           h("#output"),
@@ -88,22 +51,16 @@ function render ( navDOM, tabsDOM ) {
 function renderEditor ( navDOM, tabsDOM, title, text ) {
   return (
     h("#wrapper", [
-      h("#sideNav", [navDOM]),
+      h("#sideNav", [
+        navDOM
+      ]),
       h("#content.fullPage", [
         h("#buttons", [
-          h("#toggleButton.btn", { onclick: toggleEditor, role: "button", style: { display: "none" } }, [
-            h("span", ["Toggle Editor"])
-          ]),
+          h("button#toggleButton.btn", { onclick: toggleEditor, style: { display: "none" } }, ["Toggle Editor"]),
           h("div.clearfix"),
-          h("#cheatSheetButton.btn", { onclick: toggleCheatSheet, role: "button" }, [
-            h("span", ["Cheat Sheet"])
-          ]),
-          h("#saveButton.btn", { onclick: savePage, role: "button" }, [
-            h("span", ["Save"])
-          ]),
-          h("#createButton.btn", { onclick: createPage, role: "button" }, [
-            h("span", ["New"])
-          ])
+          h("button#cheatSheetButton.btn", { onclick: toggleCheatSheet, type: "button" }, ["Cheat Sheet"]),
+          h("button#saveButton.btn", { onclick: savePage, type: "button" }, ["Save"]),
+          h("button#createButton.btn", { onclick: createPage, type: "button" }, ["New"])
         ]),
         h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
         h("#contentWrap", [
@@ -122,10 +79,10 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
   );
 }
 
-function renderLink ( category, title, li, attr, hr ) {
+function renderLink ( path, title, li, attr, hr ) {
   return h(li, attr, [
     h("a", {
-      href: "#" + category
+      href: path
     }, [
       String(title),
       h("span")
@@ -134,28 +91,29 @@ function renderLink ( category, title, li, attr, hr ) {
   ]);
 }
 
-function loadingSomething ( status, target ) {
-  if ( status === true ) {
-    if ( app.inTransition[target] === true ) {
-      return false;
-    }
-    app.inTransition[target] = true;
-    if ( util.regLoading.test(target.className) === false ) {
-      app.inTransition["tmp"] = target.innerHTML;
-      target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-      target.className += " loading";
-    }
+function startLoader ( target ) {
+  if ( inTransition[target] === true ) {
+    return false;
   }
-  else {
-    app.inTransition[target] = false;
-    target.className = target.className.replace(util.regLoading, "");
+  inTransition[target] = true;
+  if ( util.regLoading.test(target.className) === false ) {
+    inTransition["tmp"] = target.innerHTML;
+    target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
+    target.className += " loading";
   }
+}
+
+function stopLoader ( target ) {
+  inTransition[target] = false;
+  target.className = target.className.replace(util.regLoading, "");
 }
 
 function savePage ( event ) {
   event = event || window.event;
   //event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-  event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+  if ( event.preventDefault ) event.preventDefault();
+  else event.returnValue = false;
+
   var self = this;
   if (self.nodeName === "#text" || self.nodeType === 3 || self.childNodes.length < 1) {
     self = self.parentNode.parentNode;
@@ -163,12 +121,12 @@ function savePage ( event ) {
   if (self.nodeName === "span") {
     self = self.parentNode;
   }
-  app.currentContent.set({
-    title: app.currentContent.title.trim(),
-    text: app.currentContent.text.trim()
+  currentContent.set({
+    title: currentContent.title.trim(),
+    text: currentContent.text.trim()
   });
-  if (app.currentContent.text === app.currentContent._text &&
-    app.currentContent.title === app.currentContent._title ) {
+  if (currentContent.text === currentContent._text &&
+    currentContent.title === currentContent._title ) {
     if( !util.regNoChange.test(self.className) ) {
       self.className += " nochange";
     }
@@ -176,28 +134,32 @@ function savePage ( event ) {
       self.childNodes[0].innerHTML = "No change";
     } catch (e) {}
 
-    if (app.domRefs.buttons.tempSaveText) {
-      clearTimeout(app.domRefs.buttons.tempSaveText);
+    if (domRefs.buttons.tempSaveText) {
+      clearTimeout(domRefs.buttons.tempSaveText);
     }
-    app.domRefs.buttons.tempSaveText = setTimeout(function() {
+    domRefs.buttons.tempSaveText = setTimeout(function() {
       try { self.childNodes[0].innerHTML = "Save"; } catch (e) {}
       self.className = self.className.replace(util.regNoChange, "");
     }, 1500);
     return false;
   }
   else {
-    //loadingSomething(true, self);
-    self.innerHTML = "<span>...saving...</span>";
+    //startLoader(self);
+    self.innerHTML = "...saving...";
   }
   reqwest({
-    url: app.sitePath + "/items(" + app.currentContent.id + ")",
+    url: sitePath + "/items(" + currentContent.id + ")",
     method: "POST",
     data: JSON.stringify({
       '__metadata': {
-        'type': app.currentContent.listItemType
+        'type': currentContent.listItemType
       },
-      'Title': app.currentContent.title,
-      'Text': app.currentContent.text
+      'Title': currentContent.title,
+      'Text': currentContent.text,
+      'Resources': currentContent.resources,
+      'Tools': currentContent.tools,
+      'Policy': currentContent.policy
+      //'T': currentContent.title
     }),
     type: "json",
     contentType: "application/json",
@@ -207,27 +169,33 @@ function savePage ( event ) {
       "Accept": "application/json;odata=verbose",
       "text-Type": "application/json;odata=verbose",
       "Content-Type": "application/json;odata=verbose",
-      "X-RequestDigest": app.digest,
+      "X-RequestDigest": digest,
       "IF-MATCH": "*"
     },
     success: function() {
-      self.innerHTML = "<span style=\'font-weight:bold;\'>Saved!</span>";
+      self.style.fontWeight = "bold";
+      self.innerHTML = "Saved!";
       getList();
     },
     error: function() {
-      self.innerHTML = "<span style=\'font-weight:bold; color: #F22;\'>Could not save</span>";
+      self.style.color = "#F22";
+      self.style.fontWeight = "bold";
+      self.innerHTML = "Failed!";
     },
     complete: function () {
-      if ( !app.domRefs.buttons.saveReset ) {
-        app.domRefs.buttons.saveReset = setTimeout(function() {
-          self.innerHTML = "<span>Save</span>";
+      if ( !inTransition.saveReset ) {
+        inTransition.saveReset = setTimeout(function() {
+          self.removeAttribute("style");
+          self.innerHTML = "Save";
         }, 1500);
       }
     }
   });
 }
 
-function createPage () {
+function createPage ( event ) {
+  if ( event.preventDefault ) event.preventDefault();
+  else event.returnValue = false;
   var location = window.location.hash.slice(1);
   sweetAlert({
     title: "New page",
@@ -246,30 +214,36 @@ function createPage () {
     var title = inputValue.toCamelCase();
 
     if ( location === "/" ) {
-      var category = location + title;
+      var path = location + title;
     }
     else {
-      category = location + "/" + title;
+      path = location + "/" + title;
     }
     sweetAlert({
       title: "Confirm",
-      text: "Your page will have the title: <p style=\'font-weight:bold;\'>" + inputValue + "</p>Page location: <p style=\'font-weight:bold;\'>" + category + "</p>",
+      text: "Your page will have the title: <p style=\'font-weight:bold;\'>" + inputValue + "</p>Page location: <p style=\'font-weight:bold;\'>" + path + "</p>",
       closeOnConfirm: false,
       showCancelButton: true,
       showLoaderOnConfirm: true,
       html: true,
       type: "warning"
     }, function () {
+      var section = currentContent.section || title;
+      var program = currentContent.program || ((currentContent.section) ? title : "Home");
+      var page = (currentContent.program) ? title : "Home";
       reqwest({
-        url: app.sitePath + "/items",
+        url: sitePath + "/items",
         method: "POST",
         data: JSON.stringify({
           '__metadata': {
-            'type': app.currentContent.listItemType
+            'type': currentContent.listItemType
           },
           'Title': inputValue,
-          'Text': 'New Page :)\n### Joy',
-          'Category': category
+          'Text': '### New Page :)\n#### Joy',
+          'Section': section,
+          'Program': program,
+          'Page': page,
+          'Path': path
         }),
         type: "json",
         contentType: "application/json",
@@ -278,18 +252,18 @@ function createPage () {
           "Accept": "application/json;odata=verbose",
           "text-Type": "application/json;odata=verbose",
           "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": app.digest
+          "X-RequestDigest": digest
         },
         success: function() {
           sweetAlert({
             title: "Success!",
-            text: inputValue + " was created at " + category,
+            text: inputValue + " was created at " + path,
             type: "success",
             showCancelButton: false,
             showConfirmButton: false,
             timer: 2000
           }, function () {
-            app.router.setRoute(category);
+            router.setRoute(path);
           });
         },
         error: util.connError
@@ -299,9 +273,9 @@ function createPage () {
 }
 
 function updateTitle ( reset ) {
-  var val = ( typeof reset === "string" ) ? reset : app.domRefs.titleField.value;
-  app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
-  app.currentContent.set({ title: val });
+  var val = ( typeof reset === "string" ) ? reset : domRefs.titleField.value;
+  domRefs.output.innerHTML = util.md.render("# " + val + "\n" + currentContent.text);
+  currentContent.set({ title: val });
 }
 
 /*
@@ -312,9 +286,9 @@ function handleChange ( event, options, callback ) {
   var title = document.getElementById("modalInput").value.trim();
   options.path = document.getElementById("menuItems").value + "/" + title.toCamelCase();
   var refreshDOM = renderModal( options, callback);
-  var patches = diff(app.modalDOM, refreshDOM);
-  app.modalOverlay = patch(app.modalOverlay, patches);
-  app.modalDOM = refreshDOM;
+  var patches = diff(modalDOM, refreshDOM);
+  modalOverlay = patch(modalOverlay, patches);
+  modalDOM = refreshDOM;
   //document.getElementById("newPath").innerHTML = category + "/" + title;
   return false;
 }
@@ -336,74 +310,73 @@ function renderLoader () {
 }
 
 function toggleEditor () {
-  var hasFullPage = util.regFullPage.test(app.domRefs.content.className);
-  app.domRefs.contentWrap.className = "";
-  app.domRefs.cheatSheet.className = "";
+  var hasFullPage = util.regFullPage.test(domRefs.content.className);
+  domRefs.contentWrap.className = "";
+  domRefs.cheatSheet.className = "";
   if ( hasFullPage ) {
-    app.domRefs.content.className = app.domRefs.content.className.replace(util.regFullPage, "");
-    //app.domRefs.titleField.removeAttribute("disabled");
-    app.domRefs.editor.refresh();
+    domRefs.content.className = domRefs.content.className.replace(util.regFullPage, "");
+    //domRefs.titleField.removeAttribute("disabled");
+    domRefs.editor.refresh();
   }
   else {
-    app.domRefs.content.className = app.domRefs.content.className + " fullPage";
-    //app.domRefs.titleField.setAttribute("disabled", "disabled");
+    domRefs.content.className = domRefs.content.className + " fullPage";
+    //domRefs.titleField.setAttribute("disabled", "disabled");
   }
   return false;
 }
 
 function toggleCheatSheet () {
-  if ( app.domRefs.cheatSheet.style.display === "none" ) {
-    app.domRefs.cheatSheet.removeAttribute("style");
+  if ( domRefs.cheatSheet.style.display === "none" ) {
+    domRefs.cheatSheet.removeAttribute("style");
   }
   else {
-    app.domRefs.cheatSheet.style.display = "none";
+    domRefs.cheatSheet.style.display = "none";
   }
-  //app.domRefs.contentWrap.className = ( hasCheatSheet ) ? app.domRefs.contentWrap.className.replace(util.regCheatSheet, "") : app.domRefs.contentWrap.className + " cheatSheet";
   return false;
 }
 
 function update ( e ) {
   var val = e.getValue();
-  app.domRefs.output.innerHTML = util.md.render("# " + app.currentContent.title + "\n" + val);
-  app.currentContent.set({ text: val });
+  domRefs.output.innerHTML = util.md.render("# " + currentContent.title + "\n" + val);
+  currentContent.set({ text: val });
 }
 
 function insertContent ( title, text ) {
-  app.domRefs.output.innerHTML = util.md.render("# " + title + "\n" + text);
+  domRefs.output.innerHTML = util.md.render("# " + title + "\n" + text);
 }
 
 function pageSetup () {
-  app.dirtyDOM = ( !codeMirror ) ? render(app.navDOM, app.tabsDOM) : renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
-  app.rootNode = createElement(app.dirtyDOM);
+  dirtyDOM = ( !codeMirror ) ? render(navDOM, tabsDOM) : renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+  rootNode = createElement(dirtyDOM);
 
   try {
     var wrapperTmp = document.getElementById("wrapper");
-    wrapperTmp.parentNode.replaceChild(app.rootNode, wrapperTmp);
+    wrapperTmp.parentNode.replaceChild(rootNode, wrapperTmp);
   }
   catch ( e ) {
     try {
       wrapperTmp = document.getElementById("content");
       wrapperTmp.style.display = "none";
-      wrapperTmp.parentNode.appendChild(app.rootNode);
+      wrapperTmp.parentNode.appendChild(rootNode);
     }
     catch ( e ) {
-      document.body.appendChild(app.rootNode);
+      document.body.appendChild(rootNode);
     }
   }
-  app.domRefs = new DOMRef();
-  app.domRefs.set();
+  domRefs = new DOMRef();
+  domRefs.set();
   if ( window.location.hash ) {
-    app.router.init();
+    router.init();
   }
   else {
-    app.router.init("/");
+    router.init("/");
   }
-  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className += " active";}
+  try {rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className += " active";}
   catch (e) {console.log(e);}
   try {
     var hashArray = window.location.hash.slice(2).split(/\//);
     if ( hashArray.length > 1 ) {
-      var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+      var subCat = rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
       if ( subCat ) {
         var i = 0, total = subCat.length;
         for ( ; i < total; ++i ) {
@@ -417,13 +390,13 @@ function pageSetup () {
 
 function setupEditor () {
   console.log("Loading editor...");
-  var refreshDOM = renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
-  var patches = diff(app.dirtyDOM, refreshDOM);
-  app.rootNode = patch(app.rootNode, patches);
-  app.dirtyDOM = refreshDOM;
-  app.domRefs = new DOMRef();
-  app.domRefs.set({
-    editor: codeMirror.fromTextArea(app.domRefs.textarea, {
+  var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+  var patches = diff(dirtyDOM, refreshDOM);
+  rootNode = patch(rootNode, patches);
+  dirtyDOM = refreshDOM;
+  domRefs = new DOMRef();
+  domRefs.set({
+    editor: codeMirror.fromTextArea(domRefs.textarea, {
       mode: 'gfm',
       lineNumbers: false,
       matchBrackets: true,
@@ -432,14 +405,14 @@ function setupEditor () {
       extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
     })
   });
-  app.domRefs.editor.on("change", update);
-  app.domRefs.editor.refresh();
-  app.domRefs.buttons.childNodes[0].removeAttribute("style");
+  domRefs.editor.on("change", update);
+  domRefs.editor.refresh();
+  domRefs.buttons.childNodes[0].removeAttribute("style");
   console.log("Editor loaded");
 }
 
 function resetPage () {
-  var oldActive = app.rootNode.querySelectorAll("a.active"),
+  var oldActive = rootNode.querySelectorAll("a.active"),
     i = 0,
     total = oldActive.length;
   for ( ; i < total; ++i ) {
@@ -450,28 +423,28 @@ function resetPage () {
     refreshDOM,
     patches;
   if ( codeMirror ) {
-    if ( app.domRefs.editor ) {
-      wrap = app.domRefs.editor.getWrapperElement();
+    if ( domRefs.editor ) {
+      wrap = domRefs.editor.getWrapperElement();
       wrap.parentNode.removeChild(wrap);
-      app.domRefs.set({
+      domRefs.set({
         editor: null
       });
     }
-    refreshDOM = renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
+    refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
   }
   else {
-    refreshDOM = render(app.navDOM, app.tabsDOM);
+    refreshDOM = render(navDOM, tabsDOM);
   }
-  patches = diff(app.dirtyDOM, refreshDOM);
-  app.rootNode = patch(app.rootNode, patches);
-  app.dirtyDOM = refreshDOM;
-  app.domRefs = new DOMRef();
-  app.domRefs.set();
+  patches = diff(dirtyDOM, refreshDOM);
+  rootNode = patch(rootNode, patches);
+  dirtyDOM = refreshDOM;
+  domRefs = new DOMRef();
+  domRefs.set();
 }
 
 function getList () {
   reqwest({
-    url: app.sitePath + "/items/?$select=ID,Title,Category,Section,Program,Page,Path",
+    url: sitePath + "/items/?$select=ID,Title,Section,Program,Page,Path",
     method: "GET",
     type: "json",
     contentType: "application/json",
@@ -490,8 +463,8 @@ function getList () {
         count = results.length,
         page;
       for ( ; i < count; ++i ) {
-        app.pages[results[i].Category] = results[i];
-        urls[i] = results[i].Category;
+        pages[results[i].Path] = results[i];
+        urls[i] = results[i].Path;
       }
       var sortedUrls = urls.sort();
       for (i = 0; i < count; ++i) {
@@ -499,36 +472,38 @@ function getList () {
          * Should be able to turn this into an autonomous loop so "FHM" / "Comm"
          * aren't dependencies hard-coded (unlike the rest of the code).
          */
-        page = app.pages[sortedUrls[i]];
-        if ( /^\/fhm\//i.test(page.Category) ) {
-          if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
+        page = pages[sortedUrls[i]];
+        var path = "#" + page.Path;
+        if ( /^#\/fhm\//i.test(path) ) {
+          if ( !(/^#\/fhm\/(\w+)$/i.test(path)) ) {
             fhmLinks.push(
-              renderLink(page.Category, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
+              renderLink(path, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
             );
           }
           else {
             fhmLinks.push(
-              renderLink(page.Category, page.Title, "li", null, h("hr"))
+              renderLink(path, page.Title, "li", null, h("hr"))
             );
           }
         }
-        if ( /^\/comm\//i.test(page.Category) ) {
-          if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
+        if ( /^#\/comm\//i.test(path) ) {
+          if ( !(/^#\/comm\/(\w+)$/i.test(path)) ) {
             commLinks.push(
-              renderLink(page.Category, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
+              renderLink(path, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
             );
           }
           else {
             commLinks.push(
-              renderLink(page.Category, page.Title, "li", null, h("hr"))
+              renderLink(path, page.Title, "li", null, h("hr"))
             );
           }
         }
         if ( /^https?:\/\//i.test(page.Path) ) {
           // Placeholder for when there are URLs instead of paths.
+          renderLink(path, page.Title, "li", null, h("hr"))
         }
       }
-      app.navDOM = renderNav(commLinks, fhmLinks);
+      navDOM = renderNav(commLinks, fhmLinks);
       pageSetup();
     },
     error: util.connError
@@ -538,8 +513,8 @@ function getList () {
 function init ( path ) {
   console.log("Begin init...");
   reqwest({
-    //url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Resources,Tools,Category,Section,Program,Page,Path",
-    url: app.sitePath + "/items(" + app.pages[path].ID + ")?$select=ID,Title,Text,References,Resources,Tools,Category,Section,Program,Page,Path",
+    //url: sitePath + "/items/?$filter=Path eq '" + path + "'&$select=ID,Title,Text,Resources,Tools,Section,Program,Page,Path,Policy",
+    url: sitePath + "/items(" + pages[path].ID + ")?$select=ID,Title,Text,Resources,Tools,Section,Program,Page,Path,Policy",
     method: "GET",
     type: "json",
     contentType: "application/json",
@@ -552,58 +527,52 @@ function init ( path ) {
     success: function ( data ) {
       var obj = data.d;
       if ( !obj ) {
-      //if ( !data.d.results[0] ) {
-        app.router.setRoute("/");
+        router.setRoute("/");
         return false;
       }
-      //var obj = data.d.results[0];
-      var subLinks = app.rootNode.querySelectorAll("#navWrap .sub-cat");
+      var subLinks = rootNode.querySelectorAll("#navWrap .sub-cat");
       i = 0;
       total = subLinks.length;
       for ( ; i < total; ++i ) {
         subLinks[i].style.display = "none";
       }
       console.log("obj: ", obj);
-      app.currentContent.set({
+      currentContent.set({
         id: obj.ID,
         title: obj.Title || "",
         text: obj.Text || "",
-        //references: obj.References.results || [],
         policy: obj.Policy || "",
         resources: obj.Resources || "",
         tools: obj.Tools || "",
         //contributions: obj.Contributions || "",
-        category: obj.Category.split("/"),
-        section: obj.Section || "",
-        program: obj.Program || "",
-        page: obj.Page || "",
-        path: (obj.Path) ? obj.Path.split("/") : obj.Category.split("/"),
+        section: obj.Section || "Home",
+        program: obj.Program || "Home",
+        page: obj.Page || "Home",
+        path: obj.Path.split("/"),
         type: "Content",
         listItemType: obj.__metadata.type,
         timestamp: (Date && Date.now() || new Date())
       });
-      var tabsStyle = ( app.currentContent.program !== "" && app.currentContent.program !== "Home" ) ? {} : {style:{display:"none"}};
-      app.tabsDOM = renderTabs(tabsStyle, app.currentContent.path, function( page ) {
-        console.log("app.cctnt.pol: ", app.currentContent.policy);
+      var tabsStyle = ( currentContent.program !== "" && currentContent.program !== "Home" ) ? {} : {style:{display:"none"}};
+      tabsDOM = renderTabs(tabsStyle, function( page ) {
+        console.log("cctnt.pol: ", currentContent.policy);
         sweetAlert({
           title: page,
-          text: util.md.render(app.currentContent[page.toLowerCase()]),
+          text: util.md.render(currentContent[page.toLowerCase()]),
           html: true,
           type: "info",
           showConfirmButton: false,
-          showCloseButton: false,
-          allowOutsideClick: true,
-          closeOnConfirm: true
+          showCancelButton: false
         });
       });
-      insertContent(app.currentContent.title, app.currentContent.text);
-      loadingSomething(false, app.domRefs.output);
+      insertContent(currentContent.title, currentContent.text);
+      stopLoader(domRefs.output);
 
-      try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+      try {rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
       catch (e) {}
       try {
         var hashArray = window.location.hash.slice(2).split(/\//);
-        var subCat = app.rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+        var subCat = rootNode.querySelectorAll("#navWrap a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
         if ( subCat ) {
           var i = 0;
           var total = subCat.length;
@@ -624,7 +593,7 @@ function init ( path ) {
   });
 }
 
-app.router = Router({
+router = Router({
   /*'/new': {
     on: function () {
 
@@ -632,26 +601,26 @@ app.router = Router({
   },*/
   '/': {
     on: function () {
-      loadingSomething(true, app.domRefs.output);
+      startLoader(domRefs.output);
       init("/");
     }
   },
   '/(\\w+)': {
     //once: getList,
     on: function ( root ) {
-      loadingSomething(true, app.domRefs.output);
+      startLoader(domRefs.output);
       init("/" + root);
     },
     '/(\\w+)': {
       //once: getList,
       on: function ( root, sub ) {
-        loadingSomething(true, app.domRefs.output);
+        startLoader(domRefs.output);
         init("/" + root + "/" + sub);
       },
       '/(\\w+)': {
         //once: getList,
         on: function ( root, sub, inner ) {
-          loadingSomething(true, app.domRefs.output);
+          startLoader(domRefs.output);
           init("/" + root + "/" + sub + "/" + inner);
         }
       }
@@ -663,15 +632,14 @@ app.router = Router({
   notfound: function () {
     sweetAlert({
       title: "Oops",
-      text: "Page doesn't exist.  Sorry :(",
-      timer: 3000,
-      showConfirmButton: false
+      text: "Page doesn't exist.  Sorry :(\n\nLet\'s go back!",
+      timer: 2000,
+      showConfirmButton: false,
+      allowOutsideClick: true
     }, function() {
-      app.router.setRoute("/");
+      router.setRoute("/");
     });
   }
 });
 
 getList();
-
-//module.exports = app;

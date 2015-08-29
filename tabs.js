@@ -1,9 +1,6 @@
 var h = require("virtual-dom/h");
 
-function render( style, path, launch ) {
-  console.log("path before: ", path);
-  path = "#/" + path.join("/");
-  console.log("path after: ", path);
+function render( style, launch ) {
   return (
     h("ul#contentTabs", style, [
     /**

@@ -13,9 +13,8 @@
   max-width: 960px;
 }
 
-.btn{
-  /*z-index:1;*/
-  display: inline-block;
+.btn {
+  /*display: inline-block;*/
   position: relative;
   color:#FAFCFE;
   cursor:pointer;
@@ -23,23 +22,18 @@
   letter-spacing: 1px;
   float: none;
   border-radius:3px;
-  /*margin:5px 20px;*/
   border: 1px dashed transparent;
   border-bottom:1px solid #222;
   width:auto;
   margin: 10px;
 }
 
-.btn.loading {
-  border-color: #BBB;
-  border-style: dashed;
-}
-
-.btn > span {
+/* use if .btn is <a> with a <span> inside */
+/*.btn > span {
   display:block;
   text-align:center;
   padding:5px 13px
-}
+}*/
 
 #toggleButton {
   background-color: #555;

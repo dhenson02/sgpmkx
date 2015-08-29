@@ -22,8 +22,8 @@ function DOMRef ( nodes ) {
     },
     reset: function() {
       var name;
-      for ( name in nodes ) {
-        if ( this.hasOwnProperty(name) ) {
+      for ( name in this ) {
+        if ( this.hasOwnProperty(name) && name !== "reset" && name !== "set" ) {
           this[name] = null;
         }
       }

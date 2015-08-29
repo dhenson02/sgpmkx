@@ -5,11 +5,10 @@ function Content () {
   this.id = -1;
   this.title = "";
   this.text = "";
-  //this.references = [];
+  this.content = "";
   this.policy = "";
   this.resources = "";
   this.tools = "";
-  this.category = [];
   this.section = "";
   this.program = "";
   this.page = "";
