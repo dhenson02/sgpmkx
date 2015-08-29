@@ -53,6 +53,7 @@ var h = require("virtual-dom/h"),
   Content = require("./store"),
   DOMRef = require("./domStore"),
   renderNav = require("./nav"),
+  renderTabs = require("./tabs"),
   baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
   app = {
     sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
@@ -74,7 +75,8 @@ function render ( navDOM ) {
       h("#sideNav", [navDOM]),
       h("#content.fullPage", [
         h("#contentWrap", [
-          h("#output")
+          h("#output"),
+          renderTabs()
         ])
       ])
     ])
@@ -110,20 +112,18 @@ function renderEditor ( navDOM, title, text ) {
             ]),
             h("textarea#textarea", [String(text || "")])
           ]),
-          h("#output")
+          h("#output"),
+          renderTabs()
         ])
       ])
     ])
   );
 }
 
-function renderLink ( category, title, li, attr, hr, id, parent, handleNav ) {
+function renderLink ( category, title, li, attr, hr ) {
   return h(li, attr, [
     h("a", {
-      href: "#" + category,
-      onclick: handleNav,
-      "data-id": id,
-      "data-parent": parent
+      href: "#" + category
     }, [
       String(title),
       h("span")
@@ -480,98 +480,49 @@ function getList () {
       "Content-Type": "application/json;odata=verbose"
     },
     success: function ( data ) {
-      function handleNav () {
-        try {
-          var categoryOld = window.location.hash.slice(2).split("/")[1],
-            categoryNew = this.getAttribute("href").slice(2).split("/")[1];
-          if ( / ?sub-cat/gi.test(this.parentNode.className) === false && categoryOld !== categoryNew ) {
-            var oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
-            i = 0;
-            total = oldSubCat.length;
-            for ( ; i < total; ++i ) {
-              oldSubCat[i].style.display = "none";
-            }
-          }
-        } catch (e) {
-          oldSubCat = app.rootNode.querySelectorAll("#navWrap .sub-cat");
-          i = 0;
-          total = oldSubCat.length;
-          for ( ; i < total; ++i ) {
-            oldSubCat[i].style.display = "none";
-          }
-        }
-      }
       var results = data.d.results,
-        pages = {},
-        fhm = [],
+        urls = [],
         fhmLinks = [],
-        comm = [],
         commLinks = [],
         i = 0,
-        li,
-        attr,
-        hr,
-        idArray,
-        id,
-        parent,
         count = results.length,
         page;
       for ( ; i < count; ++i ) {
-        li = "li";
-        attr = null;
-        hr = h("hr");
-        page = results[i];
-        pages[page.Category] = page.Title;
-        idArray = page.Category.slice(1).split(/\//g);
-        id = idArray.pop();
+        app.pages[results[i].Category] = results[i];
+        urls[i] = results[i].Category;
+      }
+      var sortedUrls = urls.sort();
+      for (i = 0; i < count; ++i) {
+        page = app.pages[sortedUrls[i]];
         if ( /^\/fhm\//i.test(page.Category) ) {
-          fhm.push(
-            h("option", { value: page.Category }, [String(page.Title)])
-          );
-          parent = idArray.pop();
           if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
-            li = "li.sub-cat";
-            hr = null;
-            attr = {
-              style: {
-                display: "none"
-              }
-            };
+            fhmLinks.push(
+              renderLink(page.Category, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
+            );
           }
-          fhmLinks.push(
-            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
-          );
+          else {
+            fhmLinks.push(
+              renderLink(page.Category, page.Title, "li", null, h("hr"))
+            );
+          }
         }
         if ( /^\/comm\//i.test(page.Category) ) {
-          comm.push(
-            h("option", { value: page.Category }, [String(page.Title)])
-          );
-          parent = idArray.pop();
           if ( !(/^\/comm\/(\w+)$/i.test(page.Category)) ) {
-            li = "li.sub-cat";
-            hr = null;
-            attr = {
-              style: {
-                display: "none"
-              }
-            };
+            commLinks.push(
+              renderLink(page.Category, page.Title, "li.sub-cat", {style: { display: "none" }}, null)
+            );
           }
-          commLinks.push(
-            renderLink(page.Category, page.Title, li, attr, hr, id, parent, handleNav)
-          );
+          else {
+            commLinks.push(
+              renderLink(page.Category, page.Title, "li", null, h("hr"))
+            );
+          }
         }
         if ( /^https?:\/\//i.test(page.Category) ) {
           // Placeholder for when there are URLs instead of paths.
         }
       }
-      app.menuItems = [
-        h("option", { value: "/FHM" }, ["Force Health Management"]),
-        h("optgroup", { label: "Sub-Cateogries" }, fhm),
-        h("option", { value: "/Comm" }, ["Community Health"]),
-        h("optgroup", { label: "Sub-Cateogries" }, comm)
-      ];
       app.navDOM = renderNav(fhmLinks, commLinks);
-      console.log(pages);
       pageSetup();
     },
     error: util.connError
@@ -595,8 +546,14 @@ function init ( path ) {
       if ( !data.d.results[0] ) {
         //loadingSomething(false, app.domRefs.output);
         // This next line is just for debugging.  Something better will replace it later.
-        window.location.href = baseURL + "/Pages/main.aspx";
+        app.router.setRoute("/");
         return false;
+      }
+      var subLinks = app.rootNode.querySelectorAll("#navWrap .sub-cat");
+      i = 0;
+      total = subLinks.length;
+      for ( ; i < total; ++i ) {
+        subLinks[i].style.display = "none";
       }
       var obj = data.d.results[0];
       app.currentContent = new Content({

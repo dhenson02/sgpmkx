@@ -1,5 +1,4 @@
-var h = require("virtual-dom/h"),
-  createElement = require("virtual-dom/create-element");
+var h = require("virtual-dom/h");
 
 function render ( fhm, comm ) {
   return (
