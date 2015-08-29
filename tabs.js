@@ -1,68 +1,30 @@
 var h = require("virtual-dom/h");
 
-function render( style, launch ) {
+function renderTab ( title, launch ) {
   return (
-    h("ul#contentTabs", style, [
-      h("li.tab", [
-        h("a", {
-          href: "#",
-          onclick: function(e) {
-            e = e || window.event;
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValue = false;
-            return launch("Overview");
-          }
-        }, [ "Overview" ])
-      ]),
-      h("li.tab", [
-        h("a", {
-          href: "#",
-          onclick: function(e) {
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValue = false;
-            return launch("Policy");
-          }
-        }, [ "Policy" ])
-      ]),
-    /**
-     * Calculators
-     * Checklists
-     * Forms
-     * Templates
-     * Trackers
-     */
-      h("li.tab", [
-        h("a", {
-          href: "#",
-          onclick: function(e) {
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValue = false;
-            return launch("Tools");
-          }
-        }, [ "Tools" ])
-      ]),
-      /*h("li.tab", [
-        h("a", {
-          href: "#",
-          onclick: function(e) {
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValue = false;
-            return launch("Contributions");
-          }
-        }, [ "Contributions" ])
-      ]),*/
-      h("li.tab", [
-        h("a", {
-          href: "#",
-          onclick: function(e) {
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValue = false;
-            return launch("Resources");
-          }
-        }, [ "Resources" ])
-      ])
+    h("li.tab", [
+      h("a", {
+        href: "#",
+        onclick: function(e) {
+          e = e || window.event;
+          if (e.preventDefault) e.preventDefault();
+          else e.returnValue = false;
+          return launch(title);
+        }
+      }, [ title ])
     ])
   );
+}
+
+function render ( tabs, style, launch ) {
+  var group = [],
+    name;
+  for ( name in tabs ) {
+    if ( tabs.hasOwnProperty(name) && tabs[name] > 1 ) {
+      group.push(renderTab(name, launch));
+    }
+  }
+  return h("ul#contentTabs", style, group);
 }
 
 module.exports = render;

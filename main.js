@@ -21,7 +21,7 @@ var h = require("virtual-dom/h"),
   dirtyDOM = null,
   rootNode = null,
   navDOM = null,
-  tabsDOM = renderTabs({ style: { display: "none" } }, handleTab),
+  tabsDOM = renderTabs({ Overview: 2 }, { style: { display: "none" } }, handleTab),
   router = null,
   inTransition = {};
 
@@ -323,8 +323,8 @@ function update ( e ) {
   currentContent.set({ text: val });
 }
 
-function insertContent ( title, text ) {
-  domRefs.output.innerHTML = util.md.render("# " + title + "\n" + text);
+function insertContent ( output, title, text ) {
+  output.innerHTML = util.md.render("# " + title + "\n" + text);
 }
 
 function pageSetup () {
@@ -478,8 +478,8 @@ function getList () {
 function init ( path ) {
   console.log("Begin init...");
   reqwest({
-    //url: sitePath + "/items/?$filter=Path eq '" + path + "'&$select=ID,Title,Text,Resources,Tools,Section,Program,Page,Path,Policy",
-    url: sitePath + "/items(" + pages[path].ID + ")?$select=ID,Title,Text,Resources,Tools,Section,Program,Page,Path,Policy",
+    //url: sitePath + "/items/?$filter=Path eq '" + path + "'&$select=ID,Title,Text,Resources,Tools,Overview,Contributions,Training,Section,Program,Page,Path,Policy",
+    url: sitePath + "/items(" + pages[path].ID + ")?$select=ID,Title,Resources,Tools,Overview,Contributions,Training,Section,Program,Page,Path,Policy",
     method: "GET",
     type: "json",
     contentType: "application/json",
@@ -509,7 +509,8 @@ function init ( path ) {
         resources: obj.Resources || "",
         tools: obj.Tools || "",
         overview: obj.Overview || "",
-        //contributions: obj.Contributions || "",
+        contributions: obj.Contributions || "",
+        training: obj.Training || "",
         section: obj.Section || "Home",
         program: obj.Program || "Home",
         page: obj.Page || "Home",
@@ -519,8 +520,16 @@ function init ( path ) {
         timestamp: (Date && Date.now() || new Date())
       });
       var tabsStyle = ( currentContent.program !== "Home" ) ? null : { style:{ display:"none" } };
-      tabsDOM = renderTabs(tabsStyle, handleTab);
-      insertContent(currentContent.title, currentContent.text);
+      tabsDOM = renderTabs({
+        Contributions: currentContent.contributions.length,
+        Overview: currentContent.overview.length,
+        Policy: currentContent.policy.length,
+        Resources: currentContent.resources.length,
+        Tools: currentContent.tools.length,
+        Training: currentContent.training.length
+      }, tabsStyle, handleTab);
+
+      insertContent(domRefs.output, currentContent.title, currentContent.text);
       stopLoader(domRefs.output);
 
       try {rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}

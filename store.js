@@ -5,10 +5,12 @@ function Content () {
   this.id = -1;
   this.title = "";
   this.text = "";
-  this.overview = "";
   this.policy = "";
   this.resources = "";
   this.tools = "";
+  this.overview = "";
+  this.contributions = "";
+  this.training = "";
   this.section = "";
   this.program = "";
   this.page = "";
@@ -30,3 +32,12 @@ function Content () {
 }
 
 module.exports = Content;
+
+/**
+ * For Tools:
+ *  Calculators
+ *  Checklists
+ *  Forms
+ *  Templates
+ *  Trackers
+ */
