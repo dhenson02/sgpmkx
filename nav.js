@@ -9,10 +9,10 @@ function render ( comm, fhm ) {
         }, [
           h("div.logo", [
             h("img", {
-              "src": "/kj/kx7/PublicHealth/SiteAssets/Pages/landing/phLogo48-gs.png",
+              "src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo64-gs.png",
               "alt": "Public Health Home",
-              "height": "48",
-              "width": "48"
+              "height": "64",
+              "width": "64"
             })
           ]),
           h("p.text", [ "Public Health", h("br"), h("small", [ "US Air Force" ]) ])
