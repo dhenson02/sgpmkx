@@ -1,6 +1,6 @@
 var h = require("virtual-dom/h");
 
-function render ( fhm, comm ) {
+function render ( comm, fhm ) {
   return (
     h("div#navWrap.nav", [
       h("div.header", [

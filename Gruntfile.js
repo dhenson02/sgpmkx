@@ -70,6 +70,7 @@ module.exports = function(grunt) {
           'generic.css',
           'codemirror.css',
           'nav.css',
+          'tabs.css',
           'loader.css',
           'node_modules/sweetalert/dist/sweetalert.css'
         ],
@@ -132,7 +133,7 @@ module.exports = function(grunt) {
           spawn: false,
           atBegin: true
         },
-        files: ['main.js', 'nav.js', 'helpers.js', 'store.js', 'domStore.js', 'landing.js'],
+        files: ['main.js', 'nav.js', 'tabs.js', 'helpers.js', 'store.js', 'domStore.js', 'landing.js'],
         tasks: ['browserify:dist', 'uglify:dev', 'purifycss', 'cssmin:dev']
       }
     }

@@ -54,9 +54,10 @@ var h = require("virtual-dom/h"),
   DOMRef = require("./domStore"),
   renderNav = require("./nav"),
   renderTabs = require("./tabs"),
-  baseURL = window.location.protocol + "//" + window.location.hostname + "/kj/kx7/PublicHealth",
+  baseURL = _spPageContextInfo.webAbsoluteUrl,
   app = {
-    sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
+    //sitePath: baseURL + "/_api/lists(guid'4522F7F9-1B5C-4990-9704-991725DEF693')",
+    sitePath: baseURL + "/_api/lists/getByTitle('Content')",
     digest: document.getElementById("__REQUESTDIGEST").value,
     pages: {},
     currentContent: new Content(),
@@ -166,8 +167,8 @@ function savePage ( event ) {
     title: app.currentContent.title.trim(),
     text: app.currentContent.text.trim()
   });
-  if (app.currentContent.text === app.currentContent.originalText &&
-    app.currentContent.title === app.currentContent.originalTitle ) {
+  if (app.currentContent.text === app.currentContent._text &&
+    app.currentContent.title === app.currentContent._title ) {
     if( !util.regNoChange.test(self.className) ) {
       self.className += " nochange";
     }
@@ -211,6 +212,7 @@ function savePage ( event ) {
     },
     success: function() {
       self.innerHTML = "<span style=\'font-weight:bold;\'>Saved!</span>";
+      getList();
     },
     error: function() {
       self.innerHTML = "<span style=\'font-weight:bold; color: #F22;\'>Could not save</span>";
@@ -296,8 +298,8 @@ function createPage () {
   });
 }
 
-function updateTitle () {
-  var val = app.domRefs.titleField.value;
+function updateTitle ( reset ) {
+  var val = ( typeof reset === "string" ) ? reset : app.domRefs.titleField.value;
   app.domRefs.output.innerHTML = util.md.render("# " + val + "\n" + app.currentContent.text);
   app.currentContent.set({ title: val });
 }
@@ -396,7 +398,7 @@ function pageSetup () {
   else {
     app.router.init("/");
   }
-  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className = "active";}
+  try {app.rootNode.querySelector("#navWrap a[href='" + window.location.hash + "']").className += " active";}
   catch (e) {console.log(e);}
   try {
     var hashArray = window.location.hash.slice(2).split(/\//);
@@ -406,11 +408,10 @@ function pageSetup () {
         var i = 0, total = subCat.length;
         for ( ; i < total; ++i ) {
           subCat[i].parentNode.removeAttribute("style");
-          //subCat[i].parentNode.className += " sub-cat--open";
         }
       }
     }
-  } catch (e) {console.log("Failed to add sub-cat--open");}
+  } catch (e) {console.log(e);}
 
 }
 
@@ -470,7 +471,7 @@ function resetPage () {
 
 function getList () {
   reqwest({
-    url: app.sitePath + "/items/?$select=Title,Category",
+    url: app.sitePath + "/items/?$select=ID,Title,Category,Section,Program,Page,Path",
     method: "GET",
     type: "json",
     contentType: "application/json",
@@ -494,6 +495,10 @@ function getList () {
       }
       var sortedUrls = urls.sort();
       for (i = 0; i < count; ++i) {
+        /**
+         * Should be able to turn this into an autonomous loop so "FHM" / "Comm"
+         * aren't dependencies hard-coded (unlike the rest of the code).
+         */
         page = app.pages[sortedUrls[i]];
         if ( /^\/fhm\//i.test(page.Category) ) {
           if ( !(/^\/fhm\/(\w+)$/i.test(page.Category)) ) {
@@ -519,11 +524,11 @@ function getList () {
             );
           }
         }
-        if ( /^https?:\/\//i.test(page.Category) ) {
+        if ( /^https?:\/\//i.test(page.Path) ) {
           // Placeholder for when there are URLs instead of paths.
         }
       }
-      app.navDOM = renderNav(fhmLinks, commLinks);
+      app.navDOM = renderNav(commLinks, fhmLinks);
       pageSetup();
     },
     error: util.connError
@@ -533,7 +538,8 @@ function getList () {
 function init ( path ) {
   console.log("Begin init...");
   reqwest({
-    url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Category",
+    //url: app.sitePath + "/items/?$filter=Category eq '" + path + "'&$select=ID,Title,Text,References,Resources,Tools,Category,Section,Program,Page,Path",
+    url: app.sitePath + "/items(" + app.pages[path].ID + ")?$select=ID,Title,Text,References,Resources,Tools,Category,Section,Program,Page,Path",
     method: "GET",
     type: "json",
     contentType: "application/json",
@@ -544,33 +550,52 @@ function init ( path ) {
       "Content-Type": "application/json;odata=verbose"
     },
     success: function ( data ) {
-      if ( !data.d.results[0] ) {
-        //loadingSomething(false, app.domRefs.output);
-        // This next line is just for debugging.  Something better will replace it later.
+      var obj = data.d;
+      if ( !obj ) {
+      //if ( !data.d.results[0] ) {
         app.router.setRoute("/");
         return false;
       }
-      var obj = data.d.results[0];
+      //var obj = data.d.results[0];
       var subLinks = app.rootNode.querySelectorAll("#navWrap .sub-cat");
       i = 0;
       total = subLinks.length;
       for ( ; i < total; ++i ) {
         subLinks[i].style.display = "none";
       }
-      app.currentContent = new Content({
+      console.log("obj: ", obj);
+      app.currentContent.set({
         id: obj.ID,
         title: obj.Title || "",
         text: obj.Text || "",
-        references: obj.References.results || [],
+        //references: obj.References.results || [],
+        policy: obj.Policy || "",
         resources: obj.Resources || "",
+        tools: obj.Tools || "",
+        //contributions: obj.Contributions || "",
         category: obj.Category.split("/"),
-        contentType: "Content",
+        section: obj.Section || "",
+        program: obj.Program || "",
+        page: obj.Page || "",
+        path: (obj.Path) ? obj.Path.split("/") : obj.Category.split("/"),
+        type: "Content",
         listItemType: obj.__metadata.type,
         timestamp: (Date && Date.now() || new Date())
       });
-      app.currentContent.set();
-      var tabsStyle = ( app.currentContent.references.length > 0 || app.currentContent.resources ) ? {} : {style:{display:"none"}};
-      app.tabsDOM = renderTabs(tabsStyle);
+      var tabsStyle = ( app.currentContent.program !== "" && app.currentContent.program !== "Home" ) ? {} : {style:{display:"none"}};
+      app.tabsDOM = renderTabs(tabsStyle, app.currentContent.path, function( page ) {
+        console.log("app.cctnt.pol: ", app.currentContent.policy);
+        sweetAlert({
+          title: page,
+          text: util.md.render(app.currentContent[page.toLowerCase()]),
+          html: true,
+          type: "info",
+          showConfirmButton: false,
+          showCloseButton: false,
+          allowOutsideClick: true,
+          closeOnConfirm: true
+        });
+      });
       insertContent(app.currentContent.title, app.currentContent.text);
       loadingSomething(false, app.domRefs.output);
 
@@ -649,4 +674,4 @@ app.router = Router({
 
 getList();
 
-module.exports = app;
+//module.exports = app;
