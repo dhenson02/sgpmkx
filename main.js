@@ -64,26 +64,27 @@ var h = require("virtual-dom/h"),
     dirtyDOM: null,
     rootNode: null,
     navDOM: null,
+    tabsDOM: null,
     router: null,
     menuItems: null,
     inTransition: {}
   };
 
-function render ( navDOM ) {
+function render ( navDOM, tabsDOM ) {
   return (
     h("#wrapper", [
       h("#sideNav", [navDOM]),
       h("#content.fullPage", [
         h("#contentWrap", [
           h("#output"),
-          renderTabs()
+          tabsDOM
         ])
       ])
     ])
   );
 }
 
-function renderEditor ( navDOM, title, text ) {
+function renderEditor ( navDOM, tabsDOM, title, text ) {
   return (
     h("#wrapper", [
       h("#sideNav", [navDOM]),
@@ -113,7 +114,7 @@ function renderEditor ( navDOM, title, text ) {
             h("textarea#textarea", [String(text || "")])
           ]),
           h("#output"),
-          renderTabs()
+          tabsDOM
         ])
       ])
     ])
@@ -370,7 +371,7 @@ function insertContent ( title, text ) {
 }
 
 function pageSetup () {
-  app.dirtyDOM = ( !codeMirror ) ? render(app.navDOM) : renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+  app.dirtyDOM = ( !codeMirror ) ? render(app.navDOM, app.tabsDOM) : renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
   app.rootNode = createElement(app.dirtyDOM);
 
   try {
@@ -415,7 +416,7 @@ function pageSetup () {
 
 function setupEditor () {
   console.log("Loading editor...");
-  var refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+  var refreshDOM = renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
   var patches = diff(app.dirtyDOM, refreshDOM);
   app.rootNode = patch(app.rootNode, patches);
   app.dirtyDOM = refreshDOM;
@@ -455,10 +456,10 @@ function resetPage () {
         editor: null
       });
     }
-    refreshDOM = renderEditor(app.navDOM, app.currentContent.title, app.currentContent.text);
+    refreshDOM = renderEditor(app.navDOM, app.tabsDOM, app.currentContent.title, app.currentContent.text);
   }
   else {
-    refreshDOM = render(app.navDOM);
+    refreshDOM = render(app.navDOM, app.tabsDOM);
   }
   patches = diff(app.dirtyDOM, refreshDOM);
   app.rootNode = patch(app.rootNode, patches);
@@ -549,24 +550,27 @@ function init ( path ) {
         app.router.setRoute("/");
         return false;
       }
+      var obj = data.d.results[0];
       var subLinks = app.rootNode.querySelectorAll("#navWrap .sub-cat");
       i = 0;
       total = subLinks.length;
       for ( ; i < total; ++i ) {
         subLinks[i].style.display = "none";
       }
-      var obj = data.d.results[0];
       app.currentContent = new Content({
         id: obj.ID,
         title: obj.Title || "",
         text: obj.Text || "",
         references: obj.References.results || [],
+        resources: obj.Resources || "",
         category: obj.Category.split("/"),
         contentType: "Content",
         listItemType: obj.__metadata.type,
         timestamp: (Date && Date.now() || new Date())
       });
       app.currentContent.set();
+      var tabsStyle = ( app.currentContent.references.length > 0 || app.currentContent.resources ) ? {} : {style:{display:"none"}};
+      app.tabsDOM = renderTabs(tabsStyle);
       insertContent(app.currentContent.title, app.currentContent.text);
       loadingSomething(false, app.domRefs.output);
 
