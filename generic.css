@@ -17,8 +17,8 @@
 
 #wrapper h1,#wrapper h2,#wrapper h3,#wrapper h4,#wrapper h5,#wrapper h6{
   font-weight:200;
-  line-height:1;
-  margin-bottom: .5em;
+  /*line-height:1;*/
+  /*margin-bottom: .5em;*/
 }
 
 #wrapper h4,#wrapper h5,#wrapper h6{

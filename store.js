@@ -22,8 +22,7 @@ function Content () {
     var name;
     for ( name in data ) {
       if ( this.hasOwnProperty(name) ) {
-        // Keep previous version for comparison/diff.
-        this["_"+name] = this[name];
+        //this["_" + name] = this[name];
         this[name] = data[name];
       }
     }

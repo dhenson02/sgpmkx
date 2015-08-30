@@ -33,13 +33,12 @@ sweetAlert.setDefaults({
 });
 
 function handleTab ( page ) {
-  resetPage();
   var content = {};
   content[currentContent.type.toLowerCase()] = currentContent.text;
   content.text = currentContent[page.toLowerCase()];
   content.type = page;
   currentContent.set(content);
-  insertContent(currentContent.title, currentContent.text, currentContent.type);
+  insertContent(currentContent.text, currentContent.type);
   if ( codeMirror ) {
     setupEditor();
   }
@@ -59,11 +58,12 @@ function handleTab ( page ) {
   );
 }*/
 
-function render ( navDOM, tabsDOM ) {
+function render ( navDOM, tabsDOM, title ) {
   return (
     h("#wrapper", [
       h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
+        h("h1#ph-title", [ String(title || "") ]),
         tabsDOM,
         h("#contentWrap", [
           h("#output")
@@ -78,6 +78,7 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
     h("#wrapper", [
       h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
+        h("h1#ph-title", [ String(title || "") ]),
         tabsDOM,
         h("#buttons", [
           h("button#toggleButton.btn", { onclick: toggleEditor, style: { display: "none" } }, ["Toggle Editor"]),
@@ -130,10 +131,12 @@ function savePage ( event ) {
     text: currentContent.text.trim()
   });
 
-  var textDiff = (currentContent.text !== currentContent[currentContent.type.toLowerCase()]);
-  var titleDiff = (currentContent.title !== currentContent._title);
+  currentContent[currentContent.type.toLowerCase()] = currentContent.text;
 
-  if ( textDiff || titleDiff ) {
+  //var titleDiff = (currentContent.title !== currentContent._title);
+  //var textDiff = (currentContent.text !== currentContent[currentContent.type.toLowerCase()]);
+
+  //if ( textDiff || titleDiff ) {
     self.innerHTML = "...saving...";
     var data = {
       '__metadata': {
@@ -167,7 +170,7 @@ function savePage ( event ) {
       success: function () {
         self.style.fontWeight = "bold";
         self.innerHTML = "Saved!";
-        if ( titleDiff ) getList();
+        getList();
       },
       error: function () {
         self.style.color = "#F22";
@@ -183,7 +186,7 @@ function savePage ( event ) {
         }
       }
     });
-  }
+  /*}
   else {
     if ( !util.regNoChange.test(self.className) ) {
       self.className += " nochange";
@@ -196,7 +199,7 @@ function savePage ( event ) {
       self.className = self.className.replace(util.regNoChange, "");
       self.innerHTML = "Save";
     }, 1500);
-  }
+  }*/
   return false;
 }
 
@@ -205,6 +208,7 @@ function createPage ( event ) {
   if ( event.preventDefault ) event.preventDefault();
   else event.returnValue = false;
   var location = window.location.hash.slice(1);
+
   sweetAlert({
     title: "New page",
     text: "Give it a name:",
@@ -242,7 +246,7 @@ function createPage ( event ) {
             'type': currentContent.listItemType
           },
           'Title': inputValue,
-          'Text': '### New Page :)\n#### Joy',
+          'Overview': '### New Page :)\n#### Joy',
           'Section': section,
           'Program': program,
           'Page': page,
@@ -275,18 +279,12 @@ function createPage ( event ) {
   });
 }
 
-function updateTitle ( reset ) {
-
-  /**
-   * If problems arise while typing the title in the input,
-   * remove the last line here.
-   */
-
-  var val = ( typeof reset === "string" ) ? reset : domRefs.titleField.value;
-  //var regEx = /.*(?=<span>)/gi;
-  insertContent(val, currentContent.text, currentContent.type);
-  currentContent.set({ title: val });
-  //domRefs.activeLink.innerHTML = domRefs.activeLink.innerHTML.replace(regEx, val);
+function updateTitle () {
+  var val = this.value.trim();
+  domRefs.title.innerHTML = val;
+  currentContent.set({
+    title: val
+  });
 }
 
 function toggleEditor () {
@@ -312,21 +310,19 @@ function toggleCheatSheet () {
 
 function update ( e ) {
   var val = e.getValue();
-  //domRefs.output.innerHTML = util.md.render("# " + currentContent.title + "\n## " + currentContent.type + "\n" + val);
-  insertContent(currentContent.title, val, currentContent.type);
+  insertContent(val, currentContent.type);
   currentContent.set({
     text: val
   });
 }
 
-function insertContent ( title, text, type ) {
-  var output = "# " + title + "\n## " + type + "\n" + text;
-  domRefs.output.innerHTML = util.md.render(output);
+function insertContent ( text, type ) {
+  domRefs.output.innerHTML = util.md.render("## " + type + "\n" + text);
 }
 
 function pageSetup () {
   dirtyDOM = ( !codeMirror ) ?
-    render(navDOM, tabsDOM) :
+    render(navDOM, tabsDOM, currentContent.title) :
     renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
   rootNode = createElement(dirtyDOM);
 
@@ -401,7 +397,7 @@ function setupEditor () {
 }
 
 function resetPage () {
-  var oldActive = rootNode.querySelectorAll("#ph-nav .active"),
+  var oldActive = rootNode.querySelectorAll("a.active"),
     i = 0,
     total = oldActive.length;
   for ( ; i < total; ++i ) {
@@ -419,7 +415,7 @@ function resetPage () {
     var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
   }
   else {
-    refreshDOM = render(navDOM, tabsDOM);
+    refreshDOM = render(navDOM, tabsDOM, currentContent.title);
   }
   var patches = diff(dirtyDOM, refreshDOM);
   rootNode = patch(rootNode, patches);
@@ -520,6 +516,7 @@ function init ( path ) {
       currentContent.set({
         id: obj.ID,
         title: obj.Title || "",
+        _title: obj.Title || "",
         text: obj.Overview || "",
         policy: obj.Policy || "",
         resources: obj.Resources || "",
@@ -535,6 +532,7 @@ function init ( path ) {
         listItemType: obj.__metadata.type,
         timestamp: (Date && Date.now() || new Date())
       });
+
       var tabsStyle = ( currentContent.program !== "Home" ) ? null : { style:{ display:"none" } };
       tabsDOM = renderTabs({
         Contributions: currentContent.contributions.length,
@@ -545,16 +543,12 @@ function init ( path ) {
         Training: currentContent.training.length
       }, tabsStyle, handleTab);
 
-      insertContent(currentContent.title, currentContent.text, currentContent.type);
+      insertContent(currentContent.text, currentContent.type);
       stopLoading(domRefs.output);
 
-      var activeLink = rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-      domRefs.set({
-        activeLink: activeLink
-      });
-      if ( activeLink && activeLink.className ) {
-        activeLink.className += " active";
-      }
+      try {rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']").className += " active";}
+      catch (e) { console.log(e); }
+
       var hashArray = window.location.hash.slice(2).split(/\//);
       var programPages = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
       if ( programPages ) {
@@ -564,7 +558,6 @@ function init ( path ) {
           programPages[i].parentNode.removeAttribute("style");
         }
       }
-
     },
     error: util.connError,
     complete: function () {

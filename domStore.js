@@ -3,6 +3,7 @@ function DOMRef () {
     return new DOMRef();
   }
   this.content = document.getElementById("content");
+  this.title = document.getElementById("ph-title");
   this.buttons = document.getElementById("buttons");
   this.titleField = document.getElementById("titleField");
   this.contentWrap = document.getElementById("contentWrap");
@@ -11,7 +12,6 @@ function DOMRef () {
   this.textarea = document.getElementById("textarea");
   this.editor = null;
   this.output = document.getElementById("output");
-  this.activeLink = document.querySelector("#ph-nav > ul a[href='" + window.location.hash + "']");
   this.set = function ( data ) {
     var name;
     for ( name in data ) {

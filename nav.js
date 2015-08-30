@@ -4,7 +4,7 @@ function renderLink ( link ) {
   return (
     h(link.li, link.attr, [
       h("a", { href: link.path }, [
-        link.title,
+        String(link.title),
         h("span")
       ]),
       link.hr
