@@ -16,7 +16,7 @@
   /*font-size:18px;*/
 }
 
-#navWrap {
+#ph-nav {
   position: absolute;
   background-color: #1c5ba2;
   top: 0;
@@ -26,23 +26,23 @@
   overflow: auto;
 }
 
-#navWrap a{
+#ph-nav a{
   color:#F5F5F5!important;
 }
 
-#navWrap a:hover{
+#ph-nav a:hover{
   color:#FAFAFA!important;
   text-decoration:underline;
 }
-#navWrap a.active:hover{
+#ph-nav a.active:hover{
   text-decoration:none;
 }
 
-#navWrap a:active{
+#ph-nav a:active{
   color:#FFFFFF!important;
 }
 
-#navWrap hr{
+#ph-nav hr{
   display:block;
   color:#FFF;
   height:1px;
@@ -54,43 +54,69 @@
   opacity: .2;
 }
 
-#navWrap ul {
+#ph-nav .header {
+  display: table;
+  /*font-size: .875em;*/
+  padding: 20px 20px 0;
+}
+
+#ph-nav .logo,
+#ph-nav .text {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ph-nav .text {
+  /*font-size: 15px;*/
+  font-size: 20px;
+  line-height: normal;
+}
+
+#ph-nav .text small {
+  /*font-size: 9px;*/
+  font-size: 12px;
+  line-height: normal;
+}
+
+#ph-nav ul {
   margin: 0;
 }
 
-#navWrap ul,
-#navWrap li {
+#ph-nav ul,
+#ph-nav li {
   list-style: none;
   padding-left: 0;
 }
 
-#navWrap li a {
+#ph-nav li a {
   width: 100%;
   display: block;
   position: relative;
 }
 
-#navWrap li li a {
+#ph-nav li li a {
   font-size: 15px;
   padding: 10px 20px;
 }
 
-#navWrap .sub-cat {
+#ph-nav .sub-cat {
   background-color: #133E6F;
 }
 
-#navWrap .sub-cat a {
+#ph-nav .sub-cat a {
   font-size: 13px;
   padding: 10px 30px;
   color: #FAFCFE;
 }
 
-#navWrap .active {
+#ph-nav .active {
   font-weight: bold;
   display: inline-block;
 }
 
-#navWrap .active > span {
+#ph-nav .active > span {
   position: absolute;
   right: 17px;
   display: inline-block;
@@ -101,38 +127,13 @@
   border-right:10px solid #FAFCFE;
 }
 
-/*#navWrap .sub-cat .active > span {
+/*#ph-nav .sub-cat .active > span {
   right: 0;
 }*/
 
-#navWrap .root-cat {
+#ph-nav .root-cat {
   font-size: 24px;
   margin: 0;
   padding: 20px;
   line-height: 1.3;
-}
-
-.nav .header {
-  display: table;
-  /*font-size: .875em;*/
-  padding: 20px 20px 0;
-}
-
-.nav .logo,
-.nav .text {
-  display: table-cell;
-  vertical-align: middle;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.nav .text {
-  /*font-size: 15px;*/
-  font-size: 20px;
-  line-height: normal;
-}
-.nav .text small {
-  /*font-size: 9px;*/
-  font-size: 12px;
-  line-height: normal;
 }

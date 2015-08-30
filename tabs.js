@@ -1,22 +1,24 @@
 var h = require("virtual-dom/h");
 
-function renderTab ( title, launch ) {
+function renderTab ( title, handleClick ) {
   return (
-    h("li.tab", [
-      h("a", {
+    h("li", [
+      h("a.icon.icon-" + title.toLowerCase(), {
         href: "#",
-        onclick: function(e) {
+        onclick: function ( e ) {
           e = e || window.event;
-          if (e.preventDefault) e.preventDefault();
+          if ( e.preventDefault ) e.preventDefault();
           else e.returnValue = false;
-          return launch(title);
+          handleClick(title);
+          return false;
         }
-      }, [ title ])
+      }, [ h("span", [String(title)]) ])
     ])
   );
 }
 
 function render ( tabs, style, launch ) {
+
   var group = [],
     name;
   for ( name in tabs ) {
@@ -24,7 +26,13 @@ function render ( tabs, style, launch ) {
       group.push(renderTab(name, launch));
     }
   }
-  return h("ul#contentTabs", style, group);
+  return (
+    h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
+      h("nav", [
+        h("ul", style, group)
+      ])
+    ])
+  );
 }
 
 module.exports = render;

@@ -1,5 +1,17 @@
 @charset "UTF-8";
-@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic);
+
+@import url("//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic");
+
+@font-face {
+  font-weight: normal;
+  font-style: normal;
+  font-family: 'stroke7pixeden';
+  src:url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.eot?u58ytb');
+  src:url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.eot?#iefixu58ytb') format('embedded-opentype'),
+  url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.woff?u58ytb') format('woff'),
+  url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.ttf?u58ytb') format('truetype'),
+  url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.svg?u58ytb#stroke7pixeden') format('svg');
+}
 
 html{
   -moz-osx-font-smoothing:greyscale;

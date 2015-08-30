@@ -11,6 +11,7 @@ function DOMRef () {
   this.textarea = document.getElementById("textarea");
   this.editor = null;
   this.output = document.getElementById("output");
+  this.activeLink = document.querySelector("#ph-nav > ul a[href='" + window.location.hash + "']");
   this.set = function ( data ) {
     var name;
     for ( name in data ) {

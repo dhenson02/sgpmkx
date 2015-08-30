@@ -4,7 +4,7 @@ function renderLink ( link ) {
   return (
     h(link.li, link.attr, [
       h("a", { href: link.path }, [
-        String(link.title),
+        link.title,
         h("span")
       ]),
       link.hr
@@ -22,7 +22,7 @@ function renderSection ( section ) {
   return (
     h("li", [
       h("p.root-cat", [
-        h("a", { "href": String(section.path) }, [ String(section.title) ])
+        h("a", { "href": section.path }, [ String(section.title) ])
       ]),
       h("hr"),
       h("ul", links)
@@ -33,13 +33,13 @@ function renderSection ( section ) {
 function renderNav ( sections ) {
   var links = [],
     name;
-  for (name in sections) {
+  for ( name in sections ) {
     if ( sections.hasOwnProperty(name) ){
       links.push(renderSection(sections[name]));
     }
   }
   return (
-    h("#navWrap.nav", [
+    h("#ph-nav", [
       h(".header", [
         h("a", {
           "href": "#/"
@@ -59,7 +59,7 @@ function renderNav ( sections ) {
           ])
         ])
       ]),
-      h("ul", links)
+      h("ul.nav", links)
     ])
   );
 }
