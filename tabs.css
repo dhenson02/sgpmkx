@@ -23,7 +23,7 @@
   display: -moz-flex;
   display: -ms-flex;
   display: flex;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   max-width: 640px;
   width: 100%;

@@ -6,6 +6,7 @@
     "console-polyfill": "git://github.com/paulmillr/console-polyfill",
     "director": "^1.2.8",
     "es5-shim": "^4.1.10",
+    "horsey": "^2.6.1",
     "html5shiv": "^3.7.3",
     "markdown-it": "^4.4.0",
     "requirejs": "^2.1.20",
