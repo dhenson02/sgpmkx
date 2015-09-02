@@ -63,8 +63,8 @@ function render ( navDOM, tabsDOM, title ) {
     h("#wrapper", [
       h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
-        h("h1#ph-title", [ String(title || "") ]),
         tabsDOM,
+        h("h1#ph-title", [ String(title || "") ]),
         h("#contentWrap", [
           h("#output")
         ])
@@ -78,8 +78,12 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
     h("#wrapper", [
       h("#sideNav", [ navDOM ]),
       h("#content.fullPage", [
-        h("h1#ph-title", [ String(title || "") ]),
         tabsDOM,
+        h("h1#ph-title", [ String(title || "") ]),
+        h("label#titleFieldLabel", [
+          "Page title: ",
+          h("input#titleField", { onkeyup: updateTitle, value: String(title || ""), type: "text" })
+        ]),
         h("#buttons", [
           h("button#toggleButton.btn", { onclick: toggleEditor, style: { display: "none" } }, ["Toggle Editor"]),
           h("div.clearfix"),
@@ -90,10 +94,6 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
         h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
         h("#contentWrap", [
           h("#input", [
-            h("label#titleFieldLabel", [
-              "Page title: ",
-              h("input#titleField", { onkeyup: updateTitle, value: String(title || ""), type: "text" })
-            ]),
             h("textarea#textarea", [String(text || "")])
           ]),
           h("#output")

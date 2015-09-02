@@ -22,7 +22,7 @@ function render ( tabs, style, launch ) {
   var group = [],
     name;
   for ( name in tabs ) {
-    if ( tabs.hasOwnProperty(name) && tabs[name] > 1 ) {
+    if ( tabs.hasOwnProperty(name) /*&& tabs[name] > 1*/ ) {
       group.push(renderTab(name, launch));
     }
   }
