@@ -45,18 +45,18 @@ function handleTab ( page ) {
 }
 
 /*function renderLoader () {
-  return (
-    h(".loader-group", [
-      h(".bigSqr", [
-        h(".square.first"),
-        h(".square.second"),
-        h(".square.third"),
-        h(".square.fourth")
-      ]),
-      h(".text", ["loading..."])
-    ])
-  );
-}*/
+ return (
+ h(".loader-group", [
+ h(".bigSqr", [
+ h(".square.first"),
+ h(".square.second"),
+ h(".square.third"),
+ h(".square.fourth")
+ ]),
+ h(".text", ["loading..."])
+ ])
+ );
+ }*/
 
 function render ( navDOM, tabsDOM, title ) {
   return (
@@ -137,69 +137,69 @@ function savePage ( event ) {
   //var textDiff = (currentContent.text !== currentContent[currentContent.type.toLowerCase()]);
 
   //if ( textDiff || titleDiff ) {
-    self.innerHTML = "...saving...";
-    var data = {
-      '__metadata': {
-        'type': currentContent.listItemType
-      },
-      'Title': currentContent.title,
-      'Overview': currentContent.overview,
-      'Resources': currentContent.resources,
-      'Tools': currentContent.tools,
-      'Policy': currentContent.policy,
-      'Training': currentContent.training,
-      'Contributions': currentContent.contributions
-    };
-    //if ( titleDiff ) data["Title"] = currentContent.title;
-    //if ( textDiff ) data[currentContent.type] = currentContent.text;
-    reqwest({
-      url: sitePath + "/items(" + currentContent.id + ")",
-      method: "POST",
-      data: JSON.stringify(data),
-      type: "json",
-      contentType: "application/json",
-      withCredentials: true,
-      headers: {
-        "X-HTTP-Method": "MERGE",
-        "Accept": "application/json;odata=verbose",
-        "text-Type": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": digest,
-        "IF-MATCH": "*"
-      },
-      success: function () {
-        self.style.fontWeight = "bold";
-        self.innerHTML = "Saved!";
-        getList();
-      },
-      error: function () {
-        self.style.color = "#F22";
-        self.style.fontWeight = "bold";
-        self.innerHTML = "Failed!";
-      },
-      complete: function () {
-        if ( !inTransition.tempSaveText ) {
-          inTransition.tempSaveText = setTimeout(function () {
-            self.removeAttribute("style");
-            self.innerHTML = "Save";
-          }, 1500);
-        }
+  self.innerHTML = "...saving...";
+  var data = {
+    '__metadata': {
+      'type': currentContent.listItemType
+    },
+    'Title': currentContent.title,
+    'Overview': currentContent.overview,
+    'Resources': currentContent.resources,
+    'Tools': currentContent.tools,
+    'Policy': currentContent.policy,
+    'Training': currentContent.training,
+    'Contributions': currentContent.contributions
+  };
+  //if ( titleDiff ) data["Title"] = currentContent.title;
+  //if ( textDiff ) data[currentContent.type] = currentContent.text;
+  reqwest({
+    url: sitePath + "/items(" + currentContent.id + ")",
+    method: "POST",
+    data: JSON.stringify(data),
+    type: "json",
+    contentType: "application/json",
+    withCredentials: true,
+    headers: {
+      "X-HTTP-Method": "MERGE",
+      "Accept": "application/json;odata=verbose",
+      "text-Type": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": digest,
+      "IF-MATCH": "*"
+    },
+    success: function () {
+      self.style.fontWeight = "bold";
+      self.innerHTML = "Saved!";
+      getList();
+    },
+    error: function () {
+      self.style.color = "#F22";
+      self.style.fontWeight = "bold";
+      self.innerHTML = "Failed!";
+    },
+    complete: function () {
+      if ( !inTransition.tempSaveText ) {
+        inTransition.tempSaveText = setTimeout(function () {
+          self.removeAttribute("style");
+          self.innerHTML = "Save";
+        }, 1500);
       }
-    });
+    }
+  });
   /*}
-  else {
-    if ( !util.regNoChange.test(self.className) ) {
-      self.className += " nochange";
-    }
-    self.innerHTML = "No change";
-    if ( inTransition.tempSaveText ) {
-      clearTimeout(inTransition.tempSaveText);
-    }
-    inTransition.tempSaveText = setTimeout(function () {
-      self.className = self.className.replace(util.regNoChange, "");
-      self.innerHTML = "Save";
-    }, 1500);
-  }*/
+   else {
+   if ( !util.regNoChange.test(self.className) ) {
+   self.className += " nochange";
+   }
+   self.innerHTML = "No change";
+   if ( inTransition.tempSaveText ) {
+   clearTimeout(inTransition.tempSaveText);
+   }
+   inTransition.tempSaveText = setTimeout(function () {
+   self.className = self.className.replace(util.regNoChange, "");
+   self.innerHTML = "Save";
+   }, 1500);
+   }*/
   return false;
 }
 
@@ -570,10 +570,10 @@ function init ( path ) {
 
 router = Router({
   /*'/new': {
-    on: function () {
+   on: function () {
 
-    }
-  },*/
+   }
+   },*/
   '/': {
     on: function () {
       startLoading(domRefs.output);

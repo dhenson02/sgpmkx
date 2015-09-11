@@ -5,7 +5,7 @@ module.exports = function(grunt) {
       dist: {
         files: {
           '.tmp/main.js': 'main.js'/*,
-          '.tmp/landing.js': 'landing.js'*/
+           '.tmp/landing.js': 'landing.js'*/
         }
       }
     },
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
         },
         files: {
           'main.min.js': '.tmp/main.js'/*,
-          'landing.min.js': '.tmp/landing.js'*/
+           'landing.min.js': '.tmp/landing.js'*/
         }
       },
       dev: {
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
         },
         files: {
           'main.min.js': '.tmp/main.js'/*,
-          'landing.min.js': '.tmp/landing.js'*/
+           'landing.min.js': '.tmp/landing.js'*/
         }
       }
     },
@@ -76,14 +76,14 @@ module.exports = function(grunt) {
         ],
         dest: '.tmp/main.css'
       }/*,
-      landing: {
-        src: ['landAction.aspx', 'landing.min.js'],
-        css: [
-          'landing.css',
-          'loader.css'
-        ],
-        dest: '.tmp/landing.css'
-      }*/
+       landing: {
+       src: ['landAction.aspx', 'landing.min.js'],
+       css: [
+       'landing.css',
+       'loader.css'
+       ],
+       dest: '.tmp/landing.css'
+       }*/
     },
     cssmin: {
       options: {
@@ -97,7 +97,7 @@ module.exports = function(grunt) {
         },
         files: {
           'main.min.css': '.tmp/main.css'/*,
-          'landing.min.css': '.tmp/landing.css'*/
+           'landing.min.css': '.tmp/landing.css'*/
         }
       },
       dev: {
@@ -106,7 +106,7 @@ module.exports = function(grunt) {
         },
         files: {
           'main.min.css': '.tmp/main.css'/*,
-          'landing.min.css': '.tmp/landing.css'*/
+           'landing.min.css': '.tmp/landing.css'*/
         }
       }
     },
