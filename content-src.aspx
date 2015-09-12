@@ -8,8 +8,25 @@
 //<![CDATA[
 
     /* Get rid of the ugly nav on the left if it's there */
-    try { var leftNav = document.getElementById("leftnav");
-      leftNav.parentNode.removeChild(leftNav);} catch (e) {}
+    try {
+        var leftNav = document.getElementById("leftnav");
+        leftNav.parentNode.removeChild(leftNav);
+    } catch (e) {}
+
+    var phWrapper = document.createElement("div");
+    phWrapper.id = "wrapper";
+	try {
+		var phWrapperTemp = document.getElementById("wrapper");
+		phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+	}
+	catch ( e ) {
+		try {
+			phWrapperTemp = document.querySelector(".tabs-wrapper + div");
+			phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+		} catch ( e ) {
+			document.body.appendChild(phWrapper);
+		}
+	}
 
 //]]>
 </script>

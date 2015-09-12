@@ -3,12 +3,15 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/bower_components" />
+      <excludeFolder url="file://$MODULE_DIR$/css_old" />
       <excludeFolder url="file://$MODULE_DIR$/diff_match_patch_20121119" />
-      <excludeFolder url="file://$MODULE_DIR$/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/fonts" />
+      <excludeFolder url="file://$MODULE_DIR$/img" />
+      <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/bower" />
-      <excludeFolder url="file://$MODULE_DIR$/node_modules/codemirror" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/consolidate" />
-      <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-browserify" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-contrib-cssmin" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-contrib-uglify" />
@@ -16,10 +19,12 @@
       <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-purifycss" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules/grunt-requirejs" />
       <excludeFolder url="file://$MODULE_DIR$/old" />
+      <excludeFolder url="file://$MODULE_DIR$/potentials" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="velocity-animate-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="gruntjs-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="browserify-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="Node.js v0.11.13 Core Modules" level="application" />
   </component>
 </module>

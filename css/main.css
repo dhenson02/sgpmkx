@@ -1,0 +1,243 @@
+@charset "UTF-8";
+
+@import url("//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic");
+
+@font-face {
+	font-weight: normal;
+	font-style: normal;
+	font-family: 'stroke7pixeden';
+	src: url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.eot?u58ytb');
+	src: url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.eot?#iefixu58ytb') format('embedded-opentype'),
+	url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.woff?u58ytb') format('woff'),
+	url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.ttf?u58ytb') format('truetype'),
+	url('/kj/kx7/PublicHealth/SiteAssets/Fonts/stroke7pixeden.svg?u58ytb#stroke7pixeden') format('svg');
+}
+
+html {
+	-moz-osx-font-smoothing: greyscale;
+	-webkit-font-smoothing: subpixel-antialiased;
+	zoom: 1;
+	*zoom: 1;
+	font-size: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+::-moz-selection {
+	background-color: #4183D7;
+	color: #FAFCFE;
+}
+
+::selection {
+	background-color: #4183D7;
+	color: #FAFCFE;
+}
+
+#wrapper *, #wrapper :after, #wrapper :before {
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+	box-sizing: border-box !important;
+}
+
+.loading, .nochange {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+	opacity: .35;
+	pointer-events: none;
+}
+
+#wrapper a {
+	text-decoration: none;
+}
+
+#wrapper a:active, #wrapper a:hover, #wrapper a:focus {
+	outline: 0;
+}
+
+#wrapper {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Console", "Lucida Grande", sans-serif;
+	font-size: 18px;
+	overflow: hidden;
+	min-width: 100%;
+	position: relative;
+}
+
+#content {
+	position: relative;
+	left: 320px;
+	top: 0;
+	bottom: 0;
+	/*right: 20px;*/
+	font-size: 100%;
+	height: 100%;
+	min-height: 820px;
+	max-height: 100%;
+	width: 100%;
+	max-width: 800px;
+	max-width: calc(100% - 320px);
+	float: left;
+	clear: none;
+	overflow: hidden;
+}
+
+#content.fullPage {
+	right: auto;
+	bottom: auto;
+	overflow: visible;
+	/*max-width: 640px;*/
+}
+
+#ph-title {
+	font-size: 3.5em;
+	margin: 20px;
+}
+
+#contentWrap {
+	opacity: 1;
+	position: relative;
+	overflow: visible;
+	min-height: 640px;
+	margin: 10px 20px 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.fullPage #contentWrap {
+	top: auto;
+	bottom: auto;
+	right: auto;
+	left: auto;
+	margin: 20px auto;
+	height: 100%;
+	max-width: 800px;
+}
+
+#wrapper input[type="text"],
+#wrapper select {
+	background-color: #FAFCFE;
+	color: #333333;
+	font-size: 1.5em;
+	border: none;
+	border-bottom: 1px solid #AAAAAA;
+	padding: .5em .33em;
+	outline: 0;
+	float: none;
+	font-family: inherit;
+	display: block;
+}
+
+#titleFieldLabel {
+	text-align: left;
+	display: block;
+	margin-bottom: 5px;
+}
+
+#wrapper #titleField {
+	width: 100%;
+}
+
+.fullPage #saveButton,
+.fullPage #createButton,
+.fullPage #titleFieldLabel,
+.fullPage #input,
+.fullPage #cheatSheetButton,
+.fullPage #cheatSheet {
+	display: none;
+}
+
+#input {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 45%;
+	height: 100%;
+	overflow: hidden;
+	font-size: 14px;
+	color: #555555;
+}
+
+#output {
+	text-rendering: optimizeLegibility;
+	position: absolute;
+	color: #555555;
+	/* This will hide the scrollbar on most **normal** browsers */
+	right: -17px;
+	left: 48%;
+	top: 0;
+	bottom: 0;
+	overflow: auto;
+	padding: 10px;
+	line-height: 1.5;
+	max-width: 640px;
+	/*width: 100%;*/
+	border: 4px dashed transparent;
+	white-space: normal;
+}
+
+.fullPage #output {
+	position: relative;
+	background-color: transparent;
+	border-color: transparent;
+	left: auto;
+	top: auto;
+	right: auto;
+	bottom: auto;
+	overflow: visible;
+	padding-left: 20px;
+	max-width: 900px;
+	width: 100%;
+}
+
+.fullPage #contentWrap {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+#cheatSheet {
+	height: 300px;
+	padding: 20px;
+}
+
+#wrapper.loading,
+#content.loading,
+#contentWrap.loading,
+#input.loading,
+#output.loading {
+	border-color: #BBBBBB;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+	opacity: .35;
+}
+
+@media all and (max-width: 1024px) {
+	#content {
+		min-width: fit-content;
+	}
+
+	#input {
+		display: block;
+		width: auto;
+		right: 0;
+	}
+
+	#output {
+		display: none;
+	}
+
+	.fullPage #contentWrap,
+	.fullPage #buttons {
+		max-width: 640px;
+		width: 100%;
+	}
+
+	.fullPage #output {
+		display: block;
+	}
+}

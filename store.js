@@ -1,42 +1,42 @@
-function Content ( page ) {
-  try {
-    var originalTitle = page.title;
-    var originalText = page.text;
-    var originalReferences = page.references;
-  } catch (e) {}
-  return {
-    page: page || this,
-    id: -1,
-    title: "",
-    text: "",
-    references: [],
-    category: [],
-    contentType: "Content",
-    listItemType: "",
-    timestamp: null,
-    originalTitle: originalTitle || "",
-    originalText: originalText || "",
-    originalReferences: originalReferences || [],
-    set: function ( data ) {
-      var name;
-      data = data || page || this.page;
-      for ( name in data ) {
-        if ( this.hasOwnProperty(name) ) {
-          this[name] = data[name];
-        }
-      }
-      return this;
-    },
-    reset: function() {
-      var name;
-      for ( name in page ) {
-        if ( this.hasOwnProperty(name) ) {
-          this[name] = null;
-        }
-      }
-      page = null;
-    }
-  };
+function Content () {
+	if ( !(this instanceof Content) ) {
+		return new Content();
+	}
+	this.id = -1;
+	this.title = "";
+	this.text = "";
+	this.policy = "";
+	this.resources = "";
+	this.tools = "";
+	this.overview = "";
+	this.contributions = "";
+	this.training = "";
+	this.section = "";
+	this.program = "";
+	this.page = "";
+	this.rabbitHole = "";
+	this.type = "Overview";
+	this.listItemType = "";
+	this.timestamp = null;
+	this.set = function ( data ) {
+		var name;
+		for ( name in data ) {
+			if ( this.hasOwnProperty(name) ) {
+				//this["_" + name] = this[name];
+				this[name] = data[name];
+			}
+		}
+		return this;
+	};
 }
 
 module.exports = Content;
+
+/**
+ * For Tools:
+ *  Calculators
+ *  Checklists
+ *  Forms
+ *  Templates
+ *  Trackers
+ */
