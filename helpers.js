@@ -1,10 +1,10 @@
-String.prototype.toCamelCase = function () {
+/*String.prototype.toCamelCase = function () {
 	return this
 		.toLowerCase()
-		.replace(/\s(.)/g, function ( $1 ) { return $1.toUpperCase(); })
+		.replace(/(?:\s|[a-z])(.)/g, function ( $1 ) { return $1.toUpperCase(); })
 		//.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
 		.replace(/\s/g, '');
-};
+};*/
 
 function addEvent ( evt, element, fnc ) {
 	return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));

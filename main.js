@@ -150,14 +150,15 @@ function savePage ( event ) {
 	else event.returnValue = false;
 
 	currentContent.set({
-		title: currentContent.title.trim(),
-		text: currentContent.text.trim()
+		title: currentContent.title.replace(/\s/g, ""),
+		text: currentContent.text.replace(/\s/g, "")
 	});
 
 	currentContent[currentContent.type.toLowerCase()] = currentContent.text;
 
 	//var titleDiff = (currentContent.title !== currentContent._title);
-	//var textDiff = (currentContent.text !== currentContent[currentContent.type.toLowerCase()]);
+	//var textDiff = (currentContent.text !==
+	// currentContent[currentContent.type.toLowerCase()]);
 
 	//if ( textDiff || titleDiff ) {
 	self.innerHTML = "...saving...";
@@ -246,7 +247,7 @@ function createPage ( event ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-		var name = title.toCamelCase();
+		var name = title.replace(/\s/g, "");
 		var section = currentContent.section || name;
 		var program = currentContent.program || ((currentContent.section) ? name : "Home");
 		var page = (currentContent.program) ? name : "Home";
@@ -303,7 +304,7 @@ function createPage ( event ) {
 }
 
 function updateTitle () {
-	var val = this.value.trim();
+	var val = this.value.replace(/\s/g, "");
 	domRefs.title.innerHTML = val;
 	currentContent.set({
 		title: val
@@ -471,43 +472,50 @@ function getList () {
 				sections = {},
 				i = 0,
 				count = results.length,
-				page;
+				page,
+				result;
+			console.log("results:", results);
 			for ( ; i < count; ++i ) {
-				results[i].Section = (results[i].Section && results[i].Section.toCamelCase())||"";
-				results[i].Program = (results[i].Program && results[i].Program.toCamelCase())||"";
-				results[i].Page = (results[i].Page && results[i].Page.toCamelCase())||"";
-				results[i].rabbitHole = (results[i].rabbitHole && results[i].rabbitHole.toCamelCase())||"";
+				result = results[i];
+				result.Section = ( result.Section ) ? result.Section.replace(/\s/g, "") : "";
+				result.Program = ( result.Program ) ? result.Program.replace(/\s/g, "") : "";
+				result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
+				result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
-				results[i].Path = "/" + ( results[i].Section !== "" ) ?
-					(results[i].Section + "/" + ( results[i].Program !== "" ) ?
-						(results[i].Program + "/" + ( results[i].Page !== "" ) ?
-							(results[i].Page + "/" + ( results[i].rabbitHole !== "" ) ?
-								results[i].rabbitHole : "") : "") : "") : "";
-				pages[results[i].Path] = results[i];
-				urls[i] = results[i].Path;
-				if ( results[i].Section && !results[i].Program ) {
-					sections[results[i].Section] = {
-						path: ( !results[i].Link ) ? "#/" + results[i].Section : results[i].Link.Url,
-						title: results[i].Title,
+				result.Path = "/" + ( result.Section !== "" ) ?
+					result.Section + (( result.Program !== "" ) ?
+						"/" + result.Program + (( result.Page !== "" ) ?
+							"/" + result.Page + (( result.rabbitHole !== "" ) ?
+							"/" + result.rabbitHole :
+								"" ) :
+							"" ) :
+						"" ) :
+					"";
+				console.log("result.Path: " + result.Path);
+				pages[result.Path] = result;
+				urls[i] = result.Path;
+				if ( result.Section !== "" && result.Program === "" ) {
+					sections[result.Section] = {
+						path: ( !result.Link ) ? "#/" + result.Section : result.Link.Url,
+						title: result.Title,
 						links: []
 					};
 				}
 			}
 			var sortedUrls = urls.sort();
-			i = 0;
-			for ( ; i < count; ++i ) {
+			for ( i = 0 ; i < count; ++i ) {
 				page = pages[sortedUrls[i]];
-				var isPage = ( page.Page === "" );
-				var isRabbitHole = ( page.rabbitHole === "" );
-				var li = "li" + ( isPage ? "" : ".sub-cat" ) + ( isRabbitHole ? "" : ".rabbit-hole");
+				var isPage = ( page.Page !== "" );
+				var isRabbitHole = ( page.rabbitHole !== "" );
+				var li = "li" + ( isPage ? ".sub-cat" : "" ) + ( isRabbitHole ? ".rabbit-hole" : "");
 
 				if ( page.Program !== "" ) {
 					sections[page.Section].links.push({
 						path: ( !page.Link ) ? "#" + page.Path : page.Link.Url,
 						title: page.Title,
 						li: li,
-						attr: isPage ? null : { style: { display: "none" } },
-						hr: isPage ? h("hr") : null
+						attr: isPage ? { style: { display: "none" } } : null,
+						hr: isPage ? null : h("hr")
 					});
 				}
 			}
@@ -521,7 +529,7 @@ function getList () {
 function init ( path ) {
 	console.log("Begin init...");
 	reqwest({
-		url: sitePath + "/items(" + pages[path].ID + ")",
+		url: sitePath + "/items(" + pages[path.slice(1)].ID + ")",
 		method: "GET",
 		type: "json",
 		contentType: "application/json",
@@ -575,7 +583,7 @@ function init ( path ) {
 				"Training",
 				"Resources",
 				"Tools",
-				"Contribution"
+				"Contributions"
 			], tabsStyle, handleTab);
 			/*{
 			 Overview: currentContent.overview.length,
@@ -627,17 +635,17 @@ router = Router({
 	'/(\\w+)': {
 		on: function ( section ) {
 			startLoading(domRefs.output);
-			init("/" + section);
+			init("/" + section.replace(/\s/g, ""));
 		},
 		'/(\\w+)': {
 			on: function ( section, program ) {
 				startLoading(domRefs.output);
-				init("/" + section + "/" + program);
+				init("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
 			},
 			'/(\\w+)': {
 				on: function ( section, program, page ) {
 					startLoading(domRefs.output);
-					init("/" + section + "/" + program + "/" + page);
+					init("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
 				}
 			}
 		}

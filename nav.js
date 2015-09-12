@@ -33,6 +33,9 @@ function renderSection ( section ) {
 function renderNav ( sections ) {
 	var links = [],
 		name;
+
+	//console.log("sections (in nav.js):", sections);
+
 	for ( name in sections ) {
 		if ( sections.hasOwnProperty(name) ) {
 			links.push(renderSection(sections[name]));

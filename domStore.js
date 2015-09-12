@@ -21,15 +21,6 @@ function DOMRef () {
 		}
 		return this;
 	};
-	/*reset: function () {
-	 var name;
-	 for ( name in this ) {
-	 if ( this.hasOwnProperty(name) && name !== "reset" && name !== "set" ) {
-	 this[name] = null;
-	 }
-	 }
-	 nodes = null;
-	 }*/
 }
 
 module.exports = DOMRef;
