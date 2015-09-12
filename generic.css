@@ -1,172 +1,173 @@
 .clearfix {
-  zoom: 1;
-  *zoom: 1;
+	zoom: 1;
+	*zoom: 1;
 }
+
 .clearfix:after {
-  content: " ";
-  clear: both;
-  display: block;
-  visibility: hidden;
-  height: 0;
+	content: " ";
+	clear: both;
+	display: block;
+	visibility: hidden;
+	height: 0;
 
 }
 
-#wrapper img{
-  max-width:100%
+#wrapper img {
+	max-width: 100%
 }
 
-#wrapper h1,#wrapper h2,#wrapper h3,#wrapper h4,#wrapper h5,#wrapper h6{
-  font-weight:200;
-  /*line-height:1;*/
-  /*margin-bottom: .5em;*/
+#wrapper h1, #wrapper h2, #wrapper h3, #wrapper h4, #wrapper h5, #wrapper h6 {
+	font-weight: 200;
+	/*line-height:1;*/
+	/*margin-bottom: .5em;*/
 }
 
-#wrapper h4,#wrapper h5,#wrapper h6{
-  font-weight:700
+#wrapper h4, #wrapper h5, #wrapper h6 {
+	font-weight: 700
 }
 
-#wrapper h1{
-  font-size:2.5em
+#wrapper h1 {
+	font-size: 2.5em
 }
 
-#wrapper h2{
-  /*font-size:2em;*/
-  padding-bottom:10px;
-  border:none;
-  border-bottom:1px solid;
-  border-bottom-color:#DDD;
-  border-bottom-color:rgba(0,0,0,.1)
+#wrapper h2 {
+	/*font-size:2em;*/
+	padding-bottom: 10px;
+	border: none;
+	border-bottom: 1px solid;
+	border-bottom-color: #DDDDDD;
+	border-bottom-color: rgba(0, 0, 0, .1)
 }
 
-#wrapper h3{
-  font-size:1.5em
+#wrapper h3 {
+	font-size: 1.5em
 }
 
-#wrapper h4{
-  font-size:1.2em
+#wrapper h4 {
+	font-size: 1.2em
 }
 
-#wrapper h5{
-  font-size:1em
+#wrapper h5 {
+	font-size: 1em
 }
 
-#wrapper h6{
-  font-size:.9em
+#wrapper h6 {
+	font-size: .9em
 }
 
-#wrapper hr{
-  display:block;
-  color:#DFDFDF;
-  height:8px;
-  margin:2em 0;
-  padding:0;
-  border:none;
-  border-top:8px dotted;
+#wrapper hr {
+	display: block;
+	color: #DFDFDF;
+	height: 8px;
+	margin: 2em 0;
+	padding: 0;
+	border: none;
+	border-top: 8px dotted;
 }
 
-#wrapper img{
-  border:0;
-  -ms-interpolation-mode:bicubic;
-  vertical-align:middle
+#wrapper img {
+	border: 0;
+	-ms-interpolation-mode: bicubic;
+	vertical-align: middle
 }
 
-#wrapper table{
-  border-collapse:collapse;
-  border-spacing:0
+#wrapper table {
+	border-collapse: collapse;
+	border-spacing: 0
 }
 
-#output a{
-  color:#0645ad;
+#output a {
+	color: #0645AD;
 }
 
-#output a:visited{
-  color:#0b0080
+#output a:visited {
+	color: #0B0080
 }
 
-#output a:hover{
-  color:#06e
+#output a:hover {
+	color: #0066EE
 }
 
-#output a:active{
-  color:#faa700
+#output a:active {
+	color: #FAA700
 }
 
-#output p{
-  margin: 1em 0
+#output p {
+	margin: 1em 0
 }
 
 #output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
-  color:#111;
+	color: #111111;
 }
 
-#output blockquote{
-  font-size:.925em;
-  color:#999;
-  margin:0;
-  padding-left:3em;
-  border-left:.5em #EEE solid
+#output blockquote {
+	font-size: .925em;
+	color: #999999;
+	margin: 0;
+	padding-left: 3em;
+	border-left: .5em #EEEEEE solid
 }
 
-#output code,#output pre{
-  color:#000;
-  font-family:"Ubuntu Mono","Lucida Console",Consolas,"Lucida Grande","Liberation Mono",Menlo,Courier,monospace;
-  font-size:.94em;
-  border-radius:3px;
-  background-color:#FAFAFA;
-  border:1px solid #DDD
+#output code, #output pre {
+	color: #000000;
+	font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace;
+	font-size: .94em;
+	border-radius: 3px;
+	background-color: #FAFAFA;
+	border: 1px solid #DDDDDD
 }
 
-#output pre{
-  white-space:pre;
-  white-space:pre-wrap;
-  word-wrap:break-word;
-  padding:10px
+#output pre {
+	white-space: pre;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	padding: 10px
 }
 
-#output pre code{
-  border:0!important;
-  background:0 0!important;
-  line-height:1.3em
+#output pre code {
+	border: 0 !important;
+	background: 0 0 !important;
+	line-height: 1.3em
 }
 
-#output code{
-  padding:2px 3px
+#output code {
+	padding: 2px 3px
 }
 
-#output sub,#output sup{
-  font-size:75%;
-  line-height:0;
-  position:relative;
-  vertical-align:baseline
+#output sub, #output sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline
 }
 
-#output sup{
-  top:-.5em
+#output sup {
+	top: -.5em
 }
 
-#output sub{
-  bottom:-.25em
+#output sub {
+	bottom: -.25em
 }
 
-#output ol,#output ul{
-  margin:1em 0;
-  padding:0 0 0 2em
+#output ol, #output ul {
+	margin: 1em 0;
+	padding: 0 0 0 2em
 }
 
-#output li p:last-child{
-  margin:0
+#output li p:last-child {
+	margin: 0
 }
 
-#output dd{
-  margin:0 0 0 2em
+#output dd {
+	margin: 0 0 0 2em
 }
 
-#output td,#output th{
-  vertical-align:top;
-  padding:4px 10px;
-  border:1px solid #bbb
+#output td, #output th {
+	vertical-align: top;
+	padding: 4px 10px;
+	border: 1px solid #BBBBBB
 }
 
-#output tr:nth-child(even) td,tr:nth-child(even) th{
-  background:#eee
+#output tr:nth-child(even) td, tr:nth-child(even) th {
+	background: #EEEEEE
 }
