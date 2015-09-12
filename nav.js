@@ -6,28 +6,7 @@ function renderLink ( link ) {
 		h(link.li, link.attr, [
 			h("a", {
 				href: link.path,
-				onclick: function( event ) {
-					if ( link.path.charAt(0) !== "#" ) {
-						event = event || window.event;
-						if ( event.preventDefault ) event.preventDefault();
-						else event.returnValue = false;
-						sweetAlert({
-							title: "See ya!",
-							text: "You are now leaving the Public Health Kx.  Bye!",
-							type: "warning",
-							cancelButtonText: "Nah I'll stay",
-							confirmButtonText: "Go!",
-							//confirmButtonColor: "#ec6c62",
-							closeOnConfirm: false,
-							showCancelButton: true,
-							showLoaderOnConfirm: true
-						}, function () {
-							window.location.href = link.path;
-							return false;
-						});
-						return false;
-					}
-				}
+				target: ( link.path.charAt(0) !== "#" ) ? "_blank" : ""
 			}, [
 				String(link.title),
 				h("span")
@@ -59,8 +38,6 @@ function renderNav ( sections ) {
 	var links = [],
 		name;
 
-	//console.log("sections (in nav.js):", sections);
-
 	for ( name in sections ) {
 		if ( sections.hasOwnProperty(name) ) {
 			links.push(renderSection(sections[name]));
@@ -74,10 +51,10 @@ function renderNav ( sections ) {
 				}, [
 					h(".logo", [
 						h("img", {
-							"src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo64-gs.png",
+							"src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo96-gs.png",
 							"alt": "Public Health Home",
-							"height": "64",
-							"width": "64"
+							"height": "96",
+							"width": "96"
 						})
 					]),
 					h("p.text", [

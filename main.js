@@ -152,6 +152,18 @@ function getList () {
 
 function loadPage ( path ) {
 	console.log("Begin loadPage...");
+	if ( !pages[path] ) {
+		sweetAlert({
+			title: "Uh oh",
+			text: "The address you entered doesn't seem to match any of our pages.  Try the search!  For now I'll just load the homepage for you.",
+			confirmButtonText: "OK!",
+			allowOutsideClick: false,
+			allowEscapeKey: false
+		}, function () {
+			router.setRoute("/");
+		});
+		return false;
+	}
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
 		method: "GET",
@@ -181,7 +193,7 @@ function loadPage ( path ) {
 					showCancelButton: true,
 					showLoaderOnConfirm: true
 				}, function () {
-					window.location.href = obj.Link.Url;
+					window.open(obj.Link.Url, "_blank");
 					return false;
 				});
 			}
@@ -351,10 +363,9 @@ function handleTab ( page ) {
 	}
 }
 
-/*
 function renderLoader () {
 	return (
-		h(".loader-group", [
+		h("div#ph-loader.loader-group", [
 			h(".bigSqr", [
 				h(".square.first"),
 				h(".square.second"),
@@ -365,7 +376,6 @@ function renderLoader () {
 		])
 	);
 }
-*/
 
 function render ( navDOM, tabsDOM, title ) {
 	return (
@@ -485,10 +495,10 @@ function savePage ( event ) {
 		},
 		'Title': currentContent.title,
 		'Overview': currentContent.overview,
-		'Resources': currentContent.resources,
-		'Tools': currentContent.tools,
 		'Policy': currentContent.policy,
 		'Training': currentContent.training,
+		'Resources': currentContent.resources,
+		'Tools': currentContent.tools,
 		'Contributions': currentContent.contributions
 	};
 	//if ( titleDiff ) data["Title"] = currentContent.title;
@@ -564,7 +574,7 @@ function createPage ( event ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-		var name = title.trim();
+		var name = title.replace(/\s/g, "");
 		var section = currentContent.section || name;
 		var program = currentContent.program || ((currentContent.section) ? name : "Home");
 		var page = (currentContent.program) ? name : "Home";

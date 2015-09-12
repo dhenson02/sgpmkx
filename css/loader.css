@@ -3,6 +3,9 @@ Another excellent loading animation courtesy of:
  http://codepen.io/lesbaa/
  Thanks!
 */
+
+#ph-loader {}
+
 .loader-group {
 	position: relative;
 	display: block;
