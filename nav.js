@@ -1,9 +1,34 @@
 var h = require("virtual-dom/h");
+var sweetAlert = require("sweetalert");
 
 function renderLink ( link ) {
 	return (
 		h(link.li, link.attr, [
-			h("a", { href: link.path }, [
+			h("a", {
+				href: link.path,
+				onclick: function( event ) {
+					if ( link.path.charAt(0) !== "#" ) {
+						event = event || window.event;
+						if ( event.preventDefault ) event.preventDefault();
+						else event.returnValue = false;
+						sweetAlert({
+							title: "See ya!",
+							text: "You are now leaving the Public Health Kx.  Bye!",
+							type: "warning",
+							cancelButtonText: "Nah I'll stay",
+							confirmButtonText: "Go!",
+							//confirmButtonColor: "#ec6c62",
+							closeOnConfirm: false,
+							showCancelButton: true,
+							showLoaderOnConfirm: true
+						}, function () {
+							window.location.href = link.path;
+							return false;
+						});
+						return false;
+					}
+				}
+			}, [
 				String(link.title),
 				h("span")
 			]),
@@ -21,7 +46,7 @@ function renderSection ( section ) {
 	}
 	return (
 		h("li", [
-			h("p.root-cat", [
+			h("p.ph-section-link", [
 				h("a", { "href": section.path }, [String(section.title)])
 			]),
 			h("hr"),

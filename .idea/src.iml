@@ -23,7 +23,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="velocity-animate-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="gruntjs-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="browserify-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="Node.js v0.11.13 Core Modules" level="application" />
   </component>
 </module>

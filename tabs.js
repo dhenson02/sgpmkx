@@ -1,8 +1,8 @@
 var h = require("virtual-dom/h");
 
-function renderTab ( title, handleClick ) {
+function renderTab ( title, handleClick, initialTab ) {
 	return (
-		h("li", [
+		h("li" + initialTab, [
 			h("a.icon.icon-" + title.toLowerCase(), {
 				href: "#",
 				onclick: function ( e ) {
@@ -24,13 +24,15 @@ function renderTab ( title, handleClick ) {
 	);
 }
 
-function render ( tabs, style, launch ) {
+function renderTabs ( tabs, style, launch ) {
 
 	var group = [];
 	var i = 0;
 	var count = tabs.length;
+	var initial = ".tab-current";
 	for ( ; i < count; ++i ) {
-		group.push(renderTab(tabs[i], launch));
+		group.push(renderTab(tabs[i], launch, initial));
+		initial = "";
 	}
 	/**
 	 * Use this instead of traditional for-loop if trying to hide empty tabs.
@@ -50,4 +52,4 @@ function render ( tabs, style, launch ) {
 	);
 }
 
-module.exports = render;
+module.exports = renderTabs;
