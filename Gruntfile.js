@@ -47,11 +47,11 @@ module.exports = function ( grunt ) {
 			dev: {
 				options: {
 					compress: false,
-					screwIE8: false,
+					screwIE8: true,
 					beautify: true,
 					mangle: false,
 					wrap: false,
-					sourceMap: false
+					sourceMap: true
 				},
 				files: {
 					'main.min.js': '.tmp/main.js'
@@ -70,6 +70,7 @@ module.exports = function ( grunt ) {
 					'css/nav.css',
 					'css/tabs.css',
 					'css/loader.css',
+					'css/loader2.css',
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/animate.css/animate.min.css'
 				],
@@ -79,7 +80,7 @@ module.exports = function ( grunt ) {
 		cssmin: {
 			options: {
 				roundingPrecision: -1,
-				//compatibility: 'ie8',
+				compatibility: 'ie8',
 				processImport: false
 			},
 			dist: {
@@ -116,7 +117,7 @@ module.exports = function ( grunt ) {
 				files: [
 					'css/*.css',
 					'node_modules/sweetalert/dist/sweetalert.css',
-					'node_modules/animate.css/*.css'
+					'node_modules/animate.css/*.min.css'
 				],
 				tasks: ['purifycss', 'cssmin:dev']
 			},

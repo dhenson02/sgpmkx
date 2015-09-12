@@ -56,7 +56,6 @@
 
 #ph-nav .header {
 	display: table;
-	/*font-size: .875em;*/
 	padding: 20px 20px 0;
 }
 
@@ -69,13 +68,11 @@
 }
 
 #ph-nav .text {
-	/*font-size: 15px;*/
 	font-size: 20px;
 	line-height: normal;
 }
 
 #ph-nav .text small {
-	/*font-size: 9px;*/
 	font-size: 12px;
 	line-height: normal;
 }
@@ -114,6 +111,7 @@
 
 #ph-nav .ph-rabbit-hole a {
 	color: #FAFCFE!important;
+	font-family: "Ubuntu Mono", "UbuntuMono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;
 	font-size: 10px;
 	padding: 10px 30px;
 }
@@ -142,10 +140,6 @@
 	border-bottom: 10px solid transparent;
 	border-right: 10px solid #FAFCFE;
 }
-
-/*#ph-nav .ph-page-link .active > span {
-  right: 0;
-}*/
 
 #ph-nav .ph-section-link {
 	font-size: 24px;

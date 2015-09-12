@@ -95,7 +95,7 @@
 	line-height: 1;
 	speak: none;
 	-webkit-backface-visibility: hidden;
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: subpixel-antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 

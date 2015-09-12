@@ -1,20 +1,18 @@
 
 #buttons {
-	/*z-index:1;*/
 	width: 100%;
 	margin: 10px auto 10px;
 	text-align: center;
 	position: relative;
-	/*overflow:hidden;*/
-	/*bottom: 100%;*/
 }
 
 .fullPage #buttons {
-	max-width: 960px;
+	/*max-width: 960px;*/
+	max-width: 800px;
+	max-width: calc(100% - 320px);
 }
 
 .btn {
-	/*display: inline-block;*/
 	position: relative;
 	color: #FAFCFE;
 	cursor: pointer;

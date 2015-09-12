@@ -43,13 +43,13 @@ body {
 #wrapper *, #wrapper :after, #wrapper :before {
 	-webkit-box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
-	box-sizing: border-box !important
+	box-sizing: border-box !important;
 }
 
 .loading, .nochange {
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
 	opacity: .35;
-	pointer-events: none
+	pointer-events: none;
 }
 
 #wrapper a {
@@ -57,7 +57,7 @@ body {
 }
 
 #wrapper a:active, #wrapper a:hover, #wrapper a:focus {
-	outline: 0
+	outline: 0;
 }
 
 #wrapper {
@@ -88,11 +88,9 @@ body {
 
 #content.fullPage {
 	right: auto;
-	/*left:auto;*/
 	bottom: auto;
 	overflow: visible;
-	max-width: 640px;
-	/*max-width: calc(100% - 320px);*/
+	/*max-width: 640px;*/
 }
 
 #ph-title {
@@ -105,7 +103,6 @@ body {
 	position: relative;
 	overflow: visible;
 	min-height: 640px;
-	/*height:85%;*/
 	margin: 10px 20px 0;
 	bottom: 0;
 	left: 0;
@@ -118,7 +115,6 @@ body {
 	right: auto;
 	left: auto;
 	margin: 20px auto;
-	/*min-height:min-content;*/
 	height: 100%;
 	max-width: 800px;
 }
@@ -135,15 +131,9 @@ body {
 	float: none;
 	font-family: inherit;
 	display: block;
-	/*line-height: 1;*/
-	/*margin-bottom: 1em;*/
-	/*text-align: left;*/
 }
 
 #titleFieldLabel {
-	/*margin:5px 20px;*/
-	/*float: left;
-	  clear: both;*/
 	text-align: left;
 	display: block;
 	margin-bottom: 5px;
@@ -206,7 +196,6 @@ body {
 	width: 100%;
 }
 
-/*.fullPage #output,*/
 .fullPage #contentWrap {
 	margin-left: 0;
 	margin-right: 0;
@@ -229,26 +218,26 @@ body {
 
 @media all and (max-width: 1024px) {
 	#content {
-		min-width: fit-content
+		min-width: fit-content;
 	}
 
 	#input {
 		display: block;
 		width: auto;
-		right: 0
+		right: 0;
 	}
 
 	#output {
-		display: none
+		display: none;
 	}
 
 	.fullPage #contentWrap,
 	.fullPage #buttons {
 		max-width: 640px;
-		width: 100%
+		width: 100%;
 	}
 
 	.fullPage #output {
-		display: block
+		display: block;
 	}
 }
