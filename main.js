@@ -26,7 +26,7 @@ var h = require("virtual-dom/h"),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
-	tabsDOM = renderTabs({ Overview: 2 }, { style: { display: "none" } }, handleTab),
+	tabsDOM = renderTabs([ "Overview" ], { style: { display: "none" } }, handleTab), /*{ Overview: 2 }*/
 	router = null,
 	inTransition = {};
 
@@ -49,19 +49,21 @@ function handleTab ( page ) {
 	}
 }
 
-/*function renderLoader () {
- return (
- h(".loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", ["loading..."])
- ])
- );
- }*/
+/*
+function renderLoader () {
+	return (
+		h(".loader-group", [
+			h(".bigSqr", [
+				h(".square.first"),
+				h(".square.second"),
+				h(".square.third"),
+				h(".square.fourth")
+			]),
+			h(".text", ["loading..."])
+		])
+	);
+}
+*/
 
 function render ( navDOM, tabsDOM, title ) {
 	return (
@@ -194,7 +196,7 @@ function savePage ( event ) {
 			getList();
 		},
 		error: function () {
-			self.style.color = "#F22";
+			self.style.color = "#FF2222";
 			self.style.fontWeight = "bold";
 			self.innerHTML = "Failed!";
 		},
@@ -236,29 +238,29 @@ function createPage ( event ) {
 		type: "input",
 		closeOnConfirm: false,
 		showCancelButton: true
-	}, function ( inputValue ) {
-		if ( inputValue === false ) {
+	}, function ( title ) {
+		if ( title === false ) {
 			return false;
 		}
-		if ( inputValue === "" ) {
+		if ( title === "" ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-		var title = inputValue.toCamelCase();
-		// This should never happen, but you never know.
-		var path = ( location === "/" ) ? location + title : location + "/" + title;
+		var name = title.toCamelCase();
+		var section = currentContent.section || name;
+		var program = currentContent.program || ((currentContent.section) ? name : "Home");
+		var page = (currentContent.program) ? name : "Home";
+
+		var path = ( location === "/" ) ? "/" + name : location + "/" + name;
 		sweetAlert({
 			title: "Confirm",
-			text: misc.md.render("Your page will have the title:\n\n**`" + inputValue + "`**\n\nPage location: **`" + path + "`**\n"),
+			text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
 			closeOnConfirm: false,
 			showCancelButton: true,
 			showLoaderOnConfirm: true,
 			html: true,
 			type: "warning"
 		}, function () {
-			var section = currentContent.section || title;
-			var program = currentContent.program || ((currentContent.section) ? title : "Home");
-			var page = (currentContent.program) ? title : "Home";
 			reqwest({
 				url: sitePath + "/items",
 				method: "POST",
@@ -266,7 +268,7 @@ function createPage ( event ) {
 					'__metadata': {
 						'type': currentContent.listItemType
 					},
-					'Title': inputValue,
+					'Title': title,
 					'Overview': '### New Page :)\n#### Joy',
 					'Section': section,
 					'Program': program,
@@ -285,7 +287,7 @@ function createPage ( event ) {
 				success: function () {
 					sweetAlert({
 						title: "Success!",
-						text: inputValue + " was created at " + path,
+						text: title + " was created at " + path,
 						type: "success",
 						showCancelButton: false,
 						showConfirmButton: false,
@@ -341,10 +343,10 @@ function insertContent ( text, type ) {
 	domRefs.output.innerHTML = misc.md.render("## " + type + "\n" + text);
 }
 
-function pageSetup () {
+function pageSetup ( title ) {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, currentContent.title) :
-	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+	           render(navDOM, tabsDOM, currentContent.title || title) :
+	           renderEditor(navDOM, tabsDOM, currentContent.title || title, currentContent.text);
 	rootNode = createElement(dirtyDOM);
 
 	try {
@@ -453,7 +455,6 @@ function resetPage () {
 
 function getList () {
 	reqwest({
-		//url: sitePath + "/items/?$select=ID,Title,Section,Program,Page,Path",
 		url: sitePath + "/items",
 		method: "GET",
 		type: "json",
@@ -472,38 +473,41 @@ function getList () {
 				count = results.length,
 				page;
 			for ( ; i < count; ++i ) {
-				if ( !results[i].Path ) {
-					results[i].Path = "/" +
-					                  ( results[i].Section !== "Home" ) ? (results[i].Section + "/" +
-					                                                       ( results[i].Program !== "Home" ) ? (results[i].Program + "/" +
-					                                                                                            ( results[i].Page !== "Home" ) ? results[i].Page : "") : "") : "";
-				}
+				results[i].Section = (results[i].Section && results[i].Section.toCamelCase())||"";
+				results[i].Program = (results[i].Program && results[i].Program.toCamelCase())||"";
+				results[i].Page = (results[i].Page && results[i].Page.toCamelCase())||"";
+				results[i].rabbitHole = (results[i].rabbitHole && results[i].rabbitHole.toCamelCase())||"";
+
+				results[i].Path = "/" + ( results[i].Section !== "" ) ?
+					(results[i].Section + "/" + ( results[i].Program !== "" ) ?
+						(results[i].Program + "/" + ( results[i].Page !== "" ) ?
+							(results[i].Page + "/" + ( results[i].rabbitHole !== "" ) ?
+								results[i].rabbitHole : "") : "") : "") : "";
 				pages[results[i].Path] = results[i];
 				urls[i] = results[i].Path;
-				if ( results[i].Section !== "Home" && results[i].Program === "Home" ) {
+				if ( results[i].Section && !results[i].Program ) {
 					sections[results[i].Section] = {
-						path: "#/" + results[i].Section,
+						path: ( !results[i].Link ) ? "#/" + results[i].Section : results[i].Link.Url,
 						title: results[i].Title,
 						links: []
 					};
 				}
 			}
 			var sortedUrls = urls.sort();
-			for ( i = 0; i < count; ++i ) {
-				/**
-				 * Should be able to turn this into an autonomous loop so "FHM" / "Comm"
-				 * aren't dependencies hard-coded (unlike the rest of the code).
-				 */
+			i = 0;
+			for ( ; i < count; ++i ) {
 				page = pages[sortedUrls[i]];
-				var isPage = ( page.Page !== "Home" );
+				var isPage = ( page.Page === "" );
+				var isRabbitHole = ( page.rabbitHole === "" );
+				var li = "li" + ( isPage ? "" : ".sub-cat" ) + ( isRabbitHole ? "" : ".rabbit-hole");
 
-				if ( page.Section !== "Home" && page.Program !== "Home" ) {
+				if ( page.Program !== "" ) {
 					sections[page.Section].links.push({
-						path: ( /^https?:\/\//i.test(page.Path) === false ) ? "#" + page.Path : page.Path,
+						path: ( !page.Link ) ? "#" + page.Path : page.Link.Url,
 						title: page.Title,
-						li: isPage ? "li.sub-cat" : "li",
-						attr: isPage ? { style: { display: "none" } } : null,
-						hr: isPage ? null : h("hr")
+						li: li,
+						attr: isPage ? null : { style: { display: "none" } },
+						hr: isPage ? h("hr") : null
 					});
 				}
 			}
@@ -517,8 +521,6 @@ function getList () {
 function init ( path ) {
 	console.log("Begin init...");
 	reqwest({
-		//url: sitePath + "/items/?$filter=Path eq '" + path + "'&$select=ID,Title,Text,Resources,Tools,Overview,Contributions,Training,Section,Program,Page,Path,Policy",
-		//url: sitePath + "/items(" + pages[path].ID + ")?$select=ID,Title,Resources,Tools,Overview,Contributions,Training,Section,Program,Page,Path,Policy",
 		url: sitePath + "/items(" + pages[path].ID + ")",
 		method: "GET",
 		type: "json",
@@ -535,6 +537,9 @@ function init ( path ) {
 				router.setRoute("/");
 				return false;
 			}
+			if ( obj.Link ) {
+				window.location.href = obj.Link.Url;
+			}
 			var subLinks = rootNode.querySelectorAll("#ph-nav .sub-cat");
 			i = 0;
 			total = subLinks.length;
@@ -546,31 +551,42 @@ function init ( path ) {
 				title: obj.Title || "",
 				_title: obj.Title || "",
 				text: obj.Overview || "",
+				overview: obj.Overview || "",
 				policy: obj.Policy || "",
+				training: obj.Training || "",
 				resources: obj.Resources || "",
 				tools: obj.Tools || "",
-				overview: obj.Overview || "",
 				contributions: obj.Contributions || "",
-				training: obj.Training || "",
-				section: obj.Section || "Home",
-				program: obj.Program || "Home",
-				page: obj.Page || "Home",
-				path: obj.Path.split("/"),
+				section: obj.Section || "",
+				program: obj.Program || "",
+				page: obj.Page || "",
+				rabbitHole: obj.rabbitHole || "",
+				//path: obj.Path.split("/"),
+				//link: (obj.Link && obj.Link.Url) || "",
 				type: "Overview",
 				listItemType: obj.__metadata.type,
 				timestamp: (Date && Date.now() || new Date())
 			});
 
-			var tabsStyle = ( currentContent.program !== "Home" ) ? null : { style: { display: "none" } };
-			tabsDOM = renderTabs({
-				Contributions: currentContent.contributions.length,
-				Overview: currentContent.overview.length,
-				Policy: currentContent.policy.length,
-				Resources: currentContent.resources.length,
-				Tools: currentContent.tools.length,
-				Training: currentContent.training.length
-			}, tabsStyle, handleTab);
+			var tabsStyle = ( currentContent.program !== "" ) ? null : { style: { display: "none" } };
+			tabsDOM = renderTabs([
+				"Overview",
+				"Policy",
+				"Training",
+				"Resources",
+				"Tools",
+				"Contribution"
+			], tabsStyle, handleTab);
+			/*{
+			 Overview: currentContent.overview.length,
+			 Policy: currentContent.policy.length,
+			 Training: currentContent.training.length,
+			 Resources: currentContent.resources.length,
+			 Tools: currentContent.tools.length,
+			 Contributions: currentContent.contributions.length
+			 }*/
 
+			resetPage();
 			insertContent(currentContent.text, currentContent.type);
 			stopLoading(domRefs.output);
 
@@ -590,6 +606,7 @@ function init ( path ) {
 					programPages[i].parentNode.removeAttribute("style");
 				}
 			}
+			document.title = currentContent.title;
 		},
 		error: misc.connError,
 		complete: function () {
@@ -601,11 +618,6 @@ function init ( path ) {
 }
 
 router = Router({
-	/*'/new': {
-	 on: function () {
-
-	 }
-	 },*/
 	'/': {
 		on: function () {
 			startLoading(domRefs.output);

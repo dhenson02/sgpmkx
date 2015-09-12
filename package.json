@@ -2,6 +2,7 @@
   "name": "USAFPublicHealth",
   "version": "0.8.0",
   "dependencies": {
+    "animate.css": "^3.4.0",
     "codemirror": "^5.5.0",
     "console-polyfill": "git://github.com/paulmillr/console-polyfill",
     "director": "^1.2.8",

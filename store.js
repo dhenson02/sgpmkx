@@ -14,7 +14,9 @@ function Content () {
 	this.section = "";
 	this.program = "";
 	this.page = "";
+	this.rabbitHole = "";
 	this.path = "";
+	this.link = "";
 	this.type = "Overview";
 	this.listItemType = "";
 	this.timestamp = null;

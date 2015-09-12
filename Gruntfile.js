@@ -4,8 +4,7 @@ module.exports = function ( grunt ) {
 			options: {},
 			dist: {
 				files: {
-					'.tmp/main.js': 'main.js'/*,
-					 '.tmp/landing.js': 'landing.js'*/
+					'.tmp/main.js': 'main.js'
 				}
 			}
 		},
@@ -38,11 +37,11 @@ module.exports = function ( grunt ) {
 					screwIE8: false,
 					wrap: false,
 					mangle: true,
-					sourceMap: false
+					sourceMap: false,
+					preserveComments: "some"
 				},
 				files: {
-					'main.min.js': '.tmp/main.js'/*,
-					 'landing.min.js': '.tmp/landing.js'*/
+					'main.min.js': '.tmp/main.js'
 				}
 			},
 			dev: {
@@ -55,58 +54,48 @@ module.exports = function ( grunt ) {
 					sourceMap: false
 				},
 				files: {
-					'main.min.js': '.tmp/main.js'/*,
-					 'landing.min.js': '.tmp/landing.js'*/
+					'main.min.js': '.tmp/main.js'
 				}
 			}
 		},
 		purifycss: {
 			options: {},
 			content: {
-				src: ['manager2b.aspx', 'main.min.js'],
+				src: ['content-src.aspx', 'main.min.js'],
 				css: [
-					'main.css',
-					'buttons.css',
-					'generic.css',
-					'codemirror.css',
-					'nav.css',
-					'tabs.css',
-					'loader.css',
-					'node_modules/sweetalert/dist/sweetalert.css'
+					'css/main.css',
+					'css/buttons.css',
+					'css/generic.css',
+					'css/codemirror.css',
+					'css/nav.css',
+					'css/tabs.css',
+					'css/loader.css',
+					'node_modules/sweetalert/dist/sweetalert.css',
+					'node_modules/animate.css/animate.min.css'
 				],
 				dest: '.tmp/main.css'
-			}/*,
-			 landing: {
-			 src: ['landAction.aspx', 'landing.min.js'],
-			 css: [
-			 'landing.css',
-			 'loader.css'
-			 ],
-			 dest: '.tmp/landing.css'
-			 }*/
+			}
 		},
 		cssmin: {
 			options: {
 				roundingPrecision: -1,
 				compatibility: 'ie8',
-				keepSpecialComments: 1
+				processImport: false
 			},
 			dist: {
 				options: {
-					processImport: false
+					keepSpecialComments: 1
 				},
 				files: {
-					'main.min.css': '.tmp/main.css'/*,
-					 'landing.min.css': '.tmp/landing.css'*/
+					'main.min.css': '.tmp/main.css'
 				}
 			},
 			dev: {
 				options: {
-					processImport: false
+					keepSpecialComments: 0
 				},
 				files: {
-					'main.min.css': '.tmp/main.css'/*,
-					 'landing.min.css': '.tmp/landing.css'*/
+					'main.min.css': '.tmp/main.css'
 				}
 			}
 		},
@@ -124,7 +113,11 @@ module.exports = function ( grunt ) {
 					spawn: false,
 					atBegin: false
 				},
-				files: ['*.css'],
+				files: [
+					'css/*.css',
+					'node_modules/sweetalert/dist/sweetalert.css',
+					'node_modules/animate.css/*.css'
+				],
 				tasks: ['purifycss', 'cssmin:dev']
 			},
 			scripts: {
