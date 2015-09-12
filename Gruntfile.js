@@ -133,8 +133,7 @@ module.exports = function ( grunt ) {
 					'tabs.js',
 					'helpers.js',
 					'store.js',
-					'domStore.js',
-					'landing.js'
+					'domStore.js'
 				],
 				tasks: [
 					'browserify:dist',

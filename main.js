@@ -8,7 +8,6 @@ var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
 	createElement = require("virtual-dom/create-element"),
-	uniq = require("lodash.uniq"),
 	reqwest = require("reqwest"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
@@ -248,7 +247,6 @@ function loadPage ( path ) {
 			}
 
 			var hashArray = window.location.hash.slice(2).split(/\//);
-			var i;
 			var total;
 			if ( hashArray.length > 1 ) {
 				var phPages = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
