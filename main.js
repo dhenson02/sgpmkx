@@ -63,11 +63,25 @@ function getList () {
 				result;
 			for ( ; i < count; ++i ) {
 				result = results[i];
+
+				/**
+				 * These come down as null if they're empty so let's standardize
+				 * em all as empty strings instead.  Then we can concat to other
+				 * stuff later without doing more checks.
+				 */
 				result.Section = ( result.Section ) ? result.Section.replace(/\s/g, "") : "";
 				result.Program = ( result.Program ) ? result.Program.replace(/\s/g, "") : "";
 				result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
 				result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
+				/**
+				 * This creates a new property `Path` and cascades down the
+				 * logical chain of categories.
+				 *
+				 *     PS - `rabbitHole` can be seen on the List as `SubPage` ;)
+				 *
+				 * @type {string}
+				 */
 				result.Path = "/" + (( result.Section !== "" ) ?
 					result.Section + (( result.Program !== "" ) ?
 					"/" + result.Program + (( result.Page !== "" ) ?
@@ -77,8 +91,12 @@ function getList () {
 						"" ) :
 						"" ) :
 						"");
+
+				// This allows direct access without having to manipulate
+				// anything (aside from whitespace removal) or search/test for a match.
 				pages[result.Path] = result;
 				urls[i] = result.Path;
+
 				if ( result.Section !== "" && result.Program === "" ) {
 					sections[result.Section] = {
 						path: ( !result.Link ) ? "#/" + result.Section : result.Link.Url,
@@ -125,7 +143,6 @@ function getList () {
 				}
 			}
 			navDOM = renderNav(sections);
-			//pageSetup();
 		},
 		error: misc.connError,
 		complete: function () {
@@ -155,22 +172,31 @@ function loadPage ( path ) {
 			}
 			if ( obj.Link ) {
 				sweetAlert({
+					title: "See ya!",
 					text: "You are now leaving the Public Health Kx.  Bye!",
-					type: "warning"
+					type: "warning",
+					cancelButtonText: "Nah I'll stay",
+					confirmButtonText: "Go!",
+					//confirmButtonColor: "#ec6c62",
+					closeOnConfirm: false,
+					showCancelButton: true,
+					showLoaderOnConfirm: true
 				}, function () {
 					window.location.href = obj.Link.Url;
+					return false;
 				});
 			}
 			var subLinks = rootNode.querySelectorAll(".ph-page-link, .ph-rabbit-hole");
-			i = 0;
+			var tabCurrent = rootNode.querySelector(".tab-current");
+			var i = 0;
 			total = subLinks.length;
 			for ( ; i < total; ++i ) {
 				subLinks[i].style.display = "none";
 			}
-			var tabCurrent = rootNode.querySelector(".tab-current");
 			if ( tabCurrent ) {
 				tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
 			}
+
 			currentContent.set({
 				id: obj.ID,
 				title: obj.Title || "",
@@ -252,7 +278,7 @@ function loadPage ( path ) {
 			if ( codeMirror ) {
 				setupEditor();
 			}
-			if ( !initialized ) {
+			/*if ( !initialized ) {
 				setTimeout(function() {
 					"use strict";
 					var initLoader = document.getElementById("init-page-loader");
@@ -262,7 +288,7 @@ function loadPage ( path ) {
 						initialized = true;
 					}, 300);
 				}, 1500);
-			}
+			}*/
 		}
 	});
 }
@@ -346,13 +372,13 @@ function renderLoader () {
 function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#wrapper", [
-			h("div#init-page-loader.animated.fadeIn", [
+			/*h("div#init-page-loader.animated.fadeIn", [
 				h("div.loading-spinner", [
 					h("div.dot.dotOne"),
 					h("div.dot.dotTwo"),
 					h("div.dot.dotThree")
 				])
-			]),
+			]),*/
 			h("#sideNav", [navDOM]),
 			h("#content.fullPage", [
 				tabsDOM,
@@ -368,13 +394,13 @@ function render ( navDOM, tabsDOM, title ) {
 function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#wrapper", [
-			h("div#init-page-loader", [
+			/*h("div#init-page-loader", [
 				h("div.loading-spinner", [
 					h("div.dot.dotOne"),
 					h("div.dot.dotTwo"),
 					h("div.dot.dotThree")
 				])
-			]),
+			]),*/
 			h("#sideNav", [navDOM]),
 			h("#content.fullPage", [
 				h("#buttons", [
@@ -731,7 +757,7 @@ function setupEditor () {
 }
 
 function resetPage () {
-	console.log("PAGE RESET");
+	console.log("Page reset");
 	var oldActive = rootNode.querySelectorAll("a.active"),
 		i = 0,
 		total = oldActive.length;

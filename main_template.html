@@ -1,41 +1,57 @@
-<style type="text/css">
-  @import url("/kj/kx7/PublicHealth/Pages/Dev/editor.min.css");
-  @import url("/kj/kx7/PublicHealth/Pages/Dev/neo.css");
-  @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/main.min.css");
-</style>
-<div id="wrapper">
-  <div id="sideNav">
-    <div id="navWrap" class="nav">
-      <a href="main.aspx" class="header">
-        <span class="logo"><img src="/kj/kx7/PublicHealth/SiteAssets/Pages/landing/phLogo48-gs.png" alt="Public Health Home" height="48" width="48"></span>
-        <p class="text">Public Health</p>
-        <br>
-        <small>US Air Force</small></a>
-      <ul>
-        <li>
-          <p class="root-cat"><span>Community Health</span></p>
-          <hr>
-          <ul id="comm-links"></ul>
-        </li>
-        <li>
-          <p class="root-cat"><span>Force Health Management</span></p>
-          <hr>
-          <ul id="fhm-links"></ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div id="content" class="fullPage">
-    <div id="contentWrap">
-      <div id="output"></div>
-    </div>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<style type="text/css">
+		@charset "UTF-8";
+	</style>
+	<title>Content</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+</head>
+<body>
+	<div id="wrapper"></div>
+	<script type="text/javascript">
+		//<![CDATA[
 
-<!--[if lt IE 9]>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
-<![endif]-->
+		/* Get rid of the ugly nav on the left if it's there */
+		try {
+			var leftNav = document.getElementById("leftnav");
+			leftNav.parentNode.removeChild(leftNav);
+		}
+		catch ( e ) {
+		}
 
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/markdown-it.min.js"></script>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/Pages/Dev/editor3.min.js"></script>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/main.min.js"></script>
+		var phWrapper = document.createElement("div");
+		phWrapper.id = "wrapper";
+		try {
+			var phWrapperTemp = document.getElementById("wrapper");
+			phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+		}
+		catch ( e ) {
+			try {
+				phWrapperTemp = document.querySelector(".tabs-wrapper + div");
+				phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+			}
+			catch ( e ) {
+				document.body.appendChild(phWrapper);
+			}
+		}
+
+		//]]>
+	</script>
+	<style type="text/css">
+		@import url("css/editor/editor.min.css");
+		@import url("css/editor/mdn-like.css");
+		@import url("main.min.css");
+	</style>
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="dependencies.min.js"></script>
+	<![endif]-->
+
+	<script type="text/javascript" src="markdown-it.min.js"></script>
+	<script type="text/javascript" src="editor3.min.js"></script>
+	<script type="text/javascript" src="main.min.js"></script>
+</body>
+</html>
