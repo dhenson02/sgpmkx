@@ -9,7 +9,7 @@
 	bottom: 0;
 	top: 0;
 	width: 320px;
-	min-height: 820px;
+	min-height: 900px;
 	max-height: 100%;
 	height: 100%;
 	overflow: hidden;
@@ -84,7 +84,7 @@
 }
 
 #ph-nav .nav {
-	padding-right: 17px;
+	/*padding-right: 17px;*/
 }
 
 #ph-nav ul,
@@ -110,13 +110,14 @@
 
 #ph-nav .ph-page-link a {
 	color: #FAFCFE;
-	font-size: 13px;
+	font-size: 14px;
 	padding: 10px 30px;
 }
 
 #ph-nav .ph-rabbit-hole {
 	padding-bottom: 15px;
 	list-style-type: none;
+	text-align: right;
 }
 
 #ph-nav .ph-rabbit-hole + .ph-sub-parent {
@@ -124,18 +125,30 @@
 }
 
 #ph-nav .ph-rabbit-hole a {
-	color: #133E6F !important;
-	background-color: #FAFAFA;
+	/*color: #133E6F !important;
+	background-color: #FAFAFA;*/
+	background-color: #133E6F;
+	color: #FAFAFA !important;
 	font-family: "Ubuntu Mono", "UbuntuMono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;
 	font-size: 15px;
+	border: 1px solid transparent;
+	border-right-color: #999;
+	border-right-color: rgba(255,255,255,.5);
 	margin: 0 auto;
-	padding: 10px 20px;
+	/*padding: 10px 20px;*/
 	max-width: 80%;
 }
 
 #ph-nav .active {
 	font-weight: bold;
+	text-shadow: 0 1px 0 #133E6F;
 	/*display: inline-block;*/
+}
+
+#ph-nav .ph-rabbit-hole .active {
+	border-color: #F5F5F5;
+	border-color: rgba(255, 255, 255, .9);
+	font-weight: normal;
 }
 
 #ph-nav .active > span {
@@ -149,7 +162,6 @@
 	border-right: 10px solid #FAFCFE;
 }
 
-#ph-nav .ph-rabbit-hole > span,
 #ph-nav .ph-rabbit-hole .active > span {
 	display: none;
 }
@@ -161,3 +173,22 @@
 	line-height: 1.3;
 }
 
+#ph-nav :hover > span:after {
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#ph-nav .ph-parent a span:after,
+#ph-nav .ph-sub-parent a span:after {
+	content: "\002B";
+	position: absolute;
+	right: 1em;
+	margin-right: 1em;
+	line-height: 1.5;
+	text-shadow: 0 1px 0 #133E6F;
+}
+
+#ph-nav .active > span:after {
+	visibility: hidden;
+	opacity: 0;
+}
