@@ -101,24 +101,30 @@
 	padding: 10px 20px;
 }
 
-#ph-nav .ph-page-link {
+#ph-nav .ph-page-link,
+#ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
 }
 
 #ph-nav .ph-page-link a {
+	color: #FAFCFE;
 	font-size: 13px;
 	padding: 10px 30px;
-	color: #FAFCFE;
-}
-
-#ph-nav .ph-rabbit-hole {
-	background-color: #FAFCFE;
 }
 
 #ph-nav .ph-rabbit-hole a {
-	font-size: 13px;
-	padding: 12px 36px;
-	color: #133E6F!important;
+	color: #FAFCFE!important;
+	font-size: 10px;
+	padding: 10px 30px;
+}
+
+#ph-nav .ph-rabbit-hole a > span {
+	display: inline-block;
+	border-color: #EAECEE;
+	border-color: rgba(250, 252, 254, .75);
+	border: 1px solid;
+	border-radius: 3px;
+	padding: 5px;
 }
 
 #ph-nav .active {

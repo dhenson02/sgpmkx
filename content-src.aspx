@@ -8,8 +8,10 @@
 //<![CDATA[
 
     /* Get rid of the ugly nav on the left if it's there */
-    try { var leftNav = document.getElementById("leftnav");
-      leftNav.parentNode.removeChild(leftNav);} catch (e) {}
+    try {
+        var leftNav = document.getElementById("leftnav");
+        leftNav.parentNode.removeChild(leftNav);
+    } catch (e) {}
 
     var phWrapper = document.createElement("div");
     phWrapper.id = "wrapper";
@@ -18,14 +20,10 @@
 		phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
 	}
 	catch ( e ) {
-		console.log("rendering page error: " + e);
-		console.error("rendering page error: " + e);
 		try {
 			phWrapperTemp = document.querySelector(".tabs-wrapper + div");
 			phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
 		} catch ( e ) {
-			console.log("rendering page error, AGAIN: " + e);
-			console.error("rendering page error, AGAIN: " + e);
 			document.body.appendChild(phWrapper);
 		}
 	}

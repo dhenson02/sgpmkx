@@ -31,7 +31,8 @@ var h = require("virtual-dom/h"),
 	navDOM = null,
 	tabsDOM = renderTabs([ "Overview" ], { style: { display: "none" } }, handleTab), /*{ Overview: 2 }*/
 	router = null,
-	inTransition = {};
+	inTransition = {},
+	initialized = false;
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -41,6 +42,7 @@ sweetAlert.setDefaults({
 });
 
 function getList () {
+
 	reqwest({
 		url: sitePath + "/items",
 		method: "GET",
@@ -250,6 +252,17 @@ function loadPage ( path ) {
 			if ( codeMirror ) {
 				setupEditor();
 			}
+			if ( !initialized ) {
+				setTimeout(function() {
+					"use strict";
+					var initLoader = document.getElementById("init-page-loader");
+					initLoader.className = "animated fadeOut";
+					setTimeout(function() {
+						initLoader.parentNode.removeChild(initLoader);
+						initialized = true;
+					}, 300);
+				}, 1500);
+			}
 		}
 	});
 }
@@ -291,9 +304,10 @@ router = Router({
 	notfound: function () {
 		sweetAlert({
 			title: "Oops",
-			text: "Page doesn't exist.  Sorry :(\n\nLet\'s go back!",
+			text: "Page doesn\'t exist.  Sorry :(\n\nI\'ll redirect you to the homepage instead.",
 			timer: 2000,
 			showConfirmButton: false,
+			showCancelButton: false,
 			allowOutsideClick: true
 		}, function () {
 			router.setRoute("/");
@@ -332,6 +346,13 @@ function renderLoader () {
 function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#wrapper", [
+			h("div#init-page-loader.animated.fadeIn", [
+				h("div.loading-spinner", [
+					h("div.dot.dotOne"),
+					h("div.dot.dotTwo"),
+					h("div.dot.dotThree")
+				])
+			]),
 			h("#sideNav", [navDOM]),
 			h("#content.fullPage", [
 				tabsDOM,
@@ -347,6 +368,13 @@ function render ( navDOM, tabsDOM, title ) {
 function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#wrapper", [
+			h("div#init-page-loader", [
+				h("div.loading-spinner", [
+					h("div.dot.dotOne"),
+					h("div.dot.dotTwo"),
+					h("div.dot.dotThree")
+				])
+			]),
 			h("#sideNav", [navDOM]),
 			h("#content.fullPage", [
 				h("#buttons", [
@@ -610,10 +638,10 @@ function insertContent ( text, type ) {
 	domRefs.output.innerHTML = misc.md.render("## " + type + "\n" + text);
 }
 
-function pageSetup ( title ) {
+function pageSetup () {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, currentContent.title || title) :
-	           renderEditor(navDOM, tabsDOM, currentContent.title || title, currentContent.text);
+	           render(navDOM, tabsDOM, currentContent.title) :
+	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();

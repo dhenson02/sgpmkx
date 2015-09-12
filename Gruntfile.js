@@ -79,7 +79,7 @@ module.exports = function ( grunt ) {
 		cssmin: {
 			options: {
 				roundingPrecision: -1,
-				compatibility: 'ie8',
+				//compatibility: 'ie8',
 				processImport: false
 			},
 			dist: {
