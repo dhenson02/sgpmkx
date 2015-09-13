@@ -194,7 +194,8 @@
 	border-right: 10px solid #FAFCFE;
 }
 
-#ph-nav .ph-rabbit-hole .active > span {
+#ph-nav .ph-rabbit-hole .active span,
+#ph-nav .ph-sub-parent .active span {
 	display: none;
 }
 
@@ -244,4 +245,12 @@ the "I have more stuff here" indicator.
 #ph-nav .ph-sub-parent,
 #ph-nav .ph-rabbit-hole {
 	margin-left: -20px;
+}
+
+#ph-nav .ph-sub-parent a {
+	border: 1px solid transparent;
+}
+
+#ph-nav .ph-sub-parent .active {
+	border-color: inherit;
 }
