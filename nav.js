@@ -50,10 +50,10 @@ function renderNav ( sections ) {
 				}, [
 					h(".logo", [
 						h("img", {
-							"src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo96-gs.png",
+							"src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo64-gs.png",
 							"alt": "Public Health Home",
-							"height": "96",
-							"width": "96"
+							"height": "64",
+							"width": "64"
 						})
 					]),
 					h("p.text", [
@@ -63,7 +63,13 @@ function renderNav ( sections ) {
 					])
 				])
 			]),
-			h("section#ph-site-pages", ["Links go here"]),
+			h("#ph-site-pages", [
+				h("div", [
+					h("a.site-page", { href: "#/$leaders" } ["Leaders"]),
+					h("a.site-page", { href: "#/$news" } ["News"]),
+					h("a.site-page", { href: "#/$contact" } ["Address Book"])
+				])
+			]),
 			h("ul.nav", links)
 		])
 	);

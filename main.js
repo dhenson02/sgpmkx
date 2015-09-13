@@ -104,7 +104,7 @@ function getList () {
 				}
 
 				if ( result.rabbitHole !== "" ) {
-					subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = "li.sub-parent.ph-page-link";
+					subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = "li.ph-sub-parent.ph-page-link";
 				}
 				else if ( result.Page !== "" ) {
 					parents["/" + result.Section + "/" + result.Program] = "li.ph-parent";
@@ -130,12 +130,17 @@ function getList () {
 					li = parents[page.Path] || "li";
 				}
 
+				var attr = { style: { display: "none" } };
+				if ( page.Link && page.Link.Url ) {
+					attr["data-href"] = "#" + page.Path;
+				}
+
 				if ( page.Program !== "" ) {
 					sections[page.Section].links.push({
 						path: ( !page.Link ) ? "#" + page.Path : page.Link.Url,
 						title: page.Title,
 						li: li,
-						attr: isPage ? { style: { display: "none" } } : null,
+						attr: isPage ? attr : null,
 						hr: isPage ? null : h("hr")
 					});
 				}
@@ -260,20 +265,22 @@ function loadPage ( path ) {
 			var hashArray = window.location.hash.slice(2).split(/\//);
 			var total;
 			if ( hashArray.length > 1 ) {
-				var phPages = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+				var phPages = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
 				if ( phPages ) {
 					i = 0;
 					total = phPages.length;
 					for ( ; i < total; ++i ) {
+						phPages[i].removeAttribute("style");
 						phPages[i].parentNode.removeAttribute("style");
 					}
 				}
 				if ( hashArray.length > 2 ) {
-					var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+					var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
 					if ( phRabbitHoles ) {
 						i = 0;
 						total = phRabbitHoles.length;
 						for ( ; i < total; ++i ) {
+							phRabbitHoles[i].removeAttribute("style");
 							phRabbitHoles[i].parentNode.removeAttribute("style");
 						}
 					}
@@ -357,7 +364,7 @@ function handleTab ( page ) {
 	}
 }
 
-function render ( navDOM, tabsDOM, title ) {
+function render ( navDOM, tabsDOM, title, loader ) {
 	return (
 		h("#wrapper", [
 			/*h("div#init-page-loader.animated.fadeIn", [
@@ -373,15 +380,7 @@ function render ( navDOM, tabsDOM, title ) {
 				h("h1#ph-title", [String(title || "")]),
 				h("#contentWrap", [
 					h("#output", [
-						h("#ph-loader.loader-group", [
-							h(".bigSqr", [
-								h(".square.first"),
-								h(".square.second"),
-								h(".square.third"),
-								h(".square.fourth")
-							]),
-							h(".text", ["loading..."])
-						])
+						loader||null
 					])
 				])
 			])
@@ -389,7 +388,7 @@ function render ( navDOM, tabsDOM, title ) {
 	);
 }
 
-function renderEditor ( navDOM, tabsDOM, title, text ) {
+function renderEditor ( navDOM, tabsDOM, title, text, loader ) {
 	return (
 		h("#wrapper", [
 			/*h("div#init-page-loader", [
@@ -437,18 +436,24 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 						h("textarea#textarea", [String(text || "")])
 					]),
 					h("#output", [
-						h("#ph-loader.loader-group", [
-							h(".bigSqr", [
-								h(".square.first"),
-								h(".square.second"),
-								h(".square.third"),
-								h(".square.fourth")
-							]),
-							h(".text", ["loading..."])
-						])
+						loader||null
 					])
 				])
 			])
+		])
+	);
+}
+
+function renderLoader() {
+	return (
+		h("#ph-loader.loader-group", [
+			h(".bigSqr", [
+				h(".square.first"),
+				h(".square.second"),
+				h(".square.third"),
+				h(".square.fourth")
+			]),
+			h(".text", ["loading..."])
 		])
 	);
 }
@@ -582,11 +587,22 @@ function createPage ( event ) {
 		var page = currentContent.page ? currentContent.page : (( name !== currentContent.program ) ? name : "");
 		var rabbitHole = currentContent.page ? (( name !== currentContent.page ) ? name : "") : "";
 
-		var path = "/" +
-			(( section !== name ) ? section :
-				(( program !== name ) ? "/" + program :
-					(( page !== name ) ? "/" + page :
-						(( rabbitHole === name ) ? "/" + rabbitHole : ""))));
+		var path = "/" + currentContent.section +
+			(( currentContent.section !== name ) ?
+			("/" + currentContent.program) +
+			(( currentContent.program !== name ) ?
+			("/" + currentContent.page) +
+			(( page !== name ) ?
+				("/" + rabbitHole) : "") : "") : "");
+
+		/**
+		 * lol...
+		 */
+		/*var path = (( section !== name ) ? "/" + section :
+			(( program !== name ) ? "/" + program :
+				(( page !== name ) ? "/" + page :
+					(( rabbitHole === name ) ? "/" + rabbitHole : name))));*/
+		console.log("sec: " + section, "prog: " + program, "page: " + page, "rabaroo: " + rabbitHole);
 		sweetAlert({
 			title: "Confirm",
 			text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
@@ -700,20 +716,22 @@ function pageSetup () {
 			total;
 
 		if ( hashArray.length > 1 ) {
-			var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+			var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
 			if ( phPage ) {
 				i = 0;
 				total = phPage.length;
 				for ( ; i < total; ++i ) {
+					phPage[i].removeAttribute("style");
 					phPage[i].parentNode.removeAttribute("style");
 				}
 			}
 			if ( hashArray.length > 2 ) {
-				var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+				var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
 				if ( phRabbitHoles ) {
 					i = 0;
 					total = phRabbitHoles.length;
 					for ( ; i < total; ++i ) {
+						phRabbitHoles[i].removeAttribute("style");
 						phRabbitHoles[i].parentNode.removeAttribute("style");
 					}
 				}

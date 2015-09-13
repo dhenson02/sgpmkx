@@ -2,7 +2,6 @@
 	z-index: 6;
 	color: #FAFCFE;
 	background-color: #0072C6;
-	border-right: 2px solid #002946;
 	position: relative;
 	float: left;
 	clear: none;
@@ -12,7 +11,14 @@
 	width: 320px;
 	height: 100%;
 	overflow: hidden;
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Console", "Lucida Grande", sans-serif;
+	/*font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Console", "Lucida Grande", sans-serif;*/
+	font-family: Roboto, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", sans-serif;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	border-radius: 8px 8px 0 0;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
 }
 
 #ph-side-nav .header,
@@ -26,9 +32,9 @@
 }
 
 #ph-side-nav .header {
-	padding-top: 40px;
+	padding-top: 10px;
 	padding-right: 17px;
-	padding-bottom: 20px;
+	padding-bottom: 30px;
 }
 
 #ph-side-nav .text {
@@ -62,7 +68,18 @@
 }
 
 #ph-nav a:active {
-	color: #FFA319;
+	/*color: #FFA319;*/
+	color: #DB84E1;
+}
+
+/***Special site links***/
+#ph-site-pages {
+	width: 100%;
+	border: 1px solid #DB84E1;
+	margin: 5px auto 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
 }
 
 #ph-nav hr {
@@ -81,9 +98,9 @@
 	margin: 0;
 }
 
-#ph-nav .nav {
-	/*padding-right: 17px;*/
-}
+/*#ph-nav .nav {
+	padding-right: 17px;
+}*/
 
 #ph-nav ul,
 #ph-nav li {
@@ -97,14 +114,15 @@
 }
 
 #ph-nav .ph-section-link {
-	font-size: 24px;
+	color: #FFFFFF;
+	font-size: 25px;
 	margin: 0;
 	padding: 20px;
 	line-height: 1.3;
 }
 
 #ph-nav li li > a {
-	font-size: 17px;
+	font-size: 15px;
 	padding: 10px 20px;
 }
 
@@ -115,14 +133,14 @@
 
 #ph-nav .ph-page-link a {
 	color: #FAFCFE;
-	font-size: 14px;
+	font-size: 15px;
 	padding: 10px 30px;
 }
 
 #ph-nav .ph-rabbit-hole {
-	padding-bottom: 15px;
+	padding-bottom: 10px;
 	list-style-type: none;
-	text-align: right;
+	/*text-align: right;*/
 }
 
 #ph-nav .ph-rabbit-hole + .ph-sub-parent {
@@ -137,36 +155,35 @@
 	transition: background .15s ease-out;
 	background-color: #133E6F;
 	/*color: #FFF;*/
-	color: #EDC2F0;
+	color: #FACCFD;
 	/* for Ubuntu Mono, use 14px at least.  for sans-serif you can
 	probably go 1-2 px lower */
 	/*font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;*/
-	font-size: 14px;
+	font-size: 13px;
 	border: 1px solid transparent;
-	border-right-color: #777;
-	border-right-color: rgba(255,255,255,.35);
+	border-right-color: #FACCFD;
 	margin: 0 auto;
-	/*padding: 10px 20px;*/
+	padding: 8px 10px;
 	max-width: 80%;
 }
 
 #ph-nav .active {
 	font-weight: bold;
 	text-shadow: 0 1px 0 #0C2949;
-	/*display: inline-block;*/
 }
 
 #ph-nav .ph-rabbit-hole .active {
 	/*color: #2B8CFB;*/
 	/*color: #FF9900;*/
-	color: #DB84E1;
-	border-color: #777777;
-	border-color: rgba(255, 255, 255, .35);
+	/*color: #DB84E1;*/
+	color: #FAFAFA;
+	border-color: #FAFAFA;
 	font-weight: 300;
 	background-color: #0C2949;
+	text-shadow: 0 1px 0 #0C2949;
 }
 
-#ph-nav a > span {
+#ph-nav .active > span {
 	position: absolute;
 	right: 17px;
 	display: inline-block;
@@ -175,16 +192,14 @@
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-right: 10px solid #FAFCFE;
-	opacity: 0;
 }
 
 #ph-nav .ph-rabbit-hole .active > span {
-	/*display: none;*/
+	display: none;
 }
 
 #ph-nav :hover > span:after {
 	text-decoration: none;
-	font-weight: bold;
 }
 
 #ph-nav .active > span:after {
@@ -193,14 +208,40 @@
 	opacity: 0;
 }
 
-#ph-nav .ph-parent a span:after,
-#ph-nav .ph-sub-parent a span:after {
-	content: "\002B";
+/*
+right now makes no sense because
+a sub parent isn't hiding anything once
+you can see it.  so only parent needs
+the "I have more stuff here" indicator.
+*/
+/*#ph-nav .ph-sub-parent a span:after,*/
+#ph-nav .ph-parent a span:after {
 	position: absolute;
+	transform: translateY(-50%);
+	content: "\002B";
+	top: 50%;
 	right: 1em;
 	margin-right: 1em;
-	line-height: 1.5;
 	text-shadow: 0 1px 0 #133E6F;
-	visibility: visible;
-	opacity: 1;
+	/*visibility: visible;
+	opacity: 1;*/
+}
+
+#ph-nav .ph-sub-parent {
+	padding: 20px 30px 20px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+#ph-nav .ph-parent + .ph-sub-parent {
+	padding-top: 15px;
+}
+
+#ph-nav .ph-rabbit-hole:last-of-type {
+	margin-bottom: 15px;
+}
+
+#ph-nav .ph-sub-parent,
+#ph-nav .ph-rabbit-hole {
+	margin-left: -20px;
 }
