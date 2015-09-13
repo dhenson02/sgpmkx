@@ -1,7 +1,8 @@
-#sideNav {
+#ph-side-nav {
 	z-index: 6;
 	color: #FAFCFE;
 	background-color: #0072C6;
+	border-right: 2px solid #002946;
 	position: relative;
 	float: left;
 	clear: none;
@@ -9,40 +10,37 @@
 	bottom: 0;
 	top: 0;
 	width: 320px;
-	/*min-height: 900px;*/
 	height: 100%;
 	overflow: hidden;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Console", "Lucida Grande", sans-serif;
 }
 
-#sideNav .header,
-#sideNav .logo,
-#sideNav .text {
+#ph-side-nav .header,
+#ph-side-nav .logo,
+#ph-side-nav .text {
 	display: block;
 	text-align: center;
-	margin: auto;
+	margin-left: auto;
+	margin-right: auto;
+	line-height: normal;
 }
 
-#sideNav .header {
+#ph-side-nav .header {
 	padding-top: 40px;
 	padding-right: 17px;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 }
 
-#sideNav .text {
-	font-size: 20px;
-	line-height: normal;
+#ph-side-nav .text {
+	font-size: 21px;
 }
 
-#sideNav .text small {
-	font-size: 13px;
-	line-height: normal;
+#ph-side-nav .text small {
+	font-size: .65em;
 }
 
 #ph-nav {
 	position: relative;
-	/*background-color: #1C5BA2;*/
-	/*background-color: transparent;*/
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -64,7 +62,7 @@
 }
 
 #ph-nav a:active {
-	color: #FFFFFF;
+	color: #FFA319;
 }
 
 #ph-nav hr {
@@ -98,6 +96,13 @@
 	position: relative;
 }
 
+#ph-nav .ph-section-link {
+	font-size: 24px;
+	margin: 0;
+	padding: 20px;
+	line-height: 1.3;
+}
+
 #ph-nav li li > a {
 	font-size: 17px;
 	padding: 10px 20px;
@@ -125,21 +130,24 @@
 }
 
 #ph-nav .ph-rabbit-hole a {
+	-webkit-transition: background .15s ease-out;
+	-moz-transition: background .15s ease-out;
+	-ms-transition: background .15s ease-out;
+	-o-transition: background .15s ease-out;
+	transition: background .15s ease-out;
 	background-color: #133E6F;
-	color: #FFF;
-	/*font-family: "Ubuntu Mono", "UbuntuMono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;*/
-	font-size: 12px;
+	/*color: #FFF;*/
+	color: #EDC2F0;
+	/* for Ubuntu Mono, use 14px at least.  for sans-serif you can
+	probably go 1-2 px lower */
+	/*font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;*/
+	font-size: 14px;
 	border: 1px solid transparent;
 	border-right-color: #777;
 	border-right-color: rgba(255,255,255,.35);
 	margin: 0 auto;
 	/*padding: 10px 20px;*/
 	max-width: 80%;
-	-webkit-transition: background .15s ease-out;
-	-moz-transition: background .15s ease-out;
-	-ms-transition: background .15s ease-out;
-	-o-transition: background .15s ease-out;
-	transition: background .15s ease-out;
 }
 
 #ph-nav .active {
@@ -150,14 +158,15 @@
 
 #ph-nav .ph-rabbit-hole .active {
 	/*color: #2B8CFB;*/
-	color: #FF9900;
+	/*color: #FF9900;*/
+	color: #DB84E1;
 	border-color: #777777;
 	border-color: rgba(255, 255, 255, .35);
 	font-weight: 300;
 	background-color: #0C2949;
 }
 
-#ph-nav .active > span {
+#ph-nav a > span {
 	position: absolute;
 	right: 17px;
 	display: inline-block;
@@ -166,22 +175,22 @@
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-right: 10px solid #FAFCFE;
+	opacity: 0;
 }
 
 #ph-nav .ph-rabbit-hole .active > span {
-	display: none;
-}
-
-#ph-nav .ph-section-link {
-	font-size: 24px;
-	margin: 0;
-	padding: 20px;
-	line-height: 1.3;
+	/*display: none;*/
 }
 
 #ph-nav :hover > span:after {
 	text-decoration: none;
 	font-weight: bold;
+}
+
+#ph-nav .active > span:after {
+	visibility: hidden;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+	opacity: 0;
 }
 
 #ph-nav .ph-parent a span:after,
@@ -192,9 +201,6 @@
 	margin-right: 1em;
 	line-height: 1.5;
 	text-shadow: 0 1px 0 #133E6F;
-}
-
-#ph-nav .active > span:after {
-	visibility: hidden;
-	opacity: 0;
+	visibility: visible;
+	opacity: 1;
 }

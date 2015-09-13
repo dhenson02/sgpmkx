@@ -1,6 +1,7 @@
-#ph-tabs {
-
-}
+/**
+ * Thanks to codrops/tympanus.net for this one.
+ * http://tympanus.net/codrops/2014/09/02/tab-styles-inspiration/
+ */
 
 .ph-tabs {
 	position: relative;
@@ -77,8 +78,10 @@
 	color: #74777B;
 }
 
-.ph-tabs nav a:focus {
+.ph-tabs nav a:focus,
+.ph-tabs nav a:active {
 	outline: none;
+	color: #7014CC;
 }
 
 /* Icons */

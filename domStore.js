@@ -4,7 +4,7 @@ function DOMRef () {
 	}
 	this.content = document.getElementById("content");
 	this.title = document.getElementById("ph-title");
-	this.buttons = document.getElementById("buttons");
+	this.buttons = document.getElementById("ph-buttons");
 	this.titleField = document.getElementById("titleField");
 	this.contentWrap = document.getElementById("contentWrap");
 	this.cheatSheet = document.getElementById("cheatSheet");

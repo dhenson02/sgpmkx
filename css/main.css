@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
-@import url("//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic");
+/*@import url("//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic");*/
+@import url("//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic|Roboto:400,700,300|Raleway:400,700");
 
 @font-face {
 	font-weight: normal;
@@ -31,13 +32,13 @@ body {
 }
 
 ::-moz-selection {
-	background-color: #4183D7;
-	color: #FAFCFE;
+	background-color: #EDC2F0;
+	color: #444;
 }
 
 ::selection {
-	background-color: #4183D7;
-	color: #FAFCFE;
+	background-color: #EDC2F0;
+	color: #444;
 }
 
 #wrapper *, #wrapper :after, #wrapper :before {
@@ -60,6 +61,14 @@ body {
 	outline: 0;
 }
 
+#wrapper a:active {
+	-webkit-transition: color .15s ease-out;
+	-moz-transition: color .15s ease-out;
+	-ms-transition: color .15s ease-out;
+	-o-transition: color .15s ease-out;
+	transition: color .15s ease-out;
+}
+
 #wrapper {
 	/*font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Console", "Lucida Grande", sans-serif;*/
 	font-size: 20px;
@@ -70,13 +79,10 @@ body {
 
 #content {
 	position: relative;
-	/*left: 350px;*/
 	top: 0;
 	bottom: 0;
-	/*right: 20px;*/
 	font-size: 100%;
 	height: 100%;
-	/*min-height: 900px;*/
 	width: 100%;
 	max-width: 770px;
 	max-width: calc(100% - 350px);
@@ -233,7 +239,7 @@ body {
 	}
 
 	.fullPage #contentWrap,
-	.fullPage #buttons {
+	.fullPage #ph-buttons {
 		max-width: 640px;
 		width: 100%;
 	}

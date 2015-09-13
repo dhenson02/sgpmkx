@@ -30,8 +30,7 @@ var h = require("virtual-dom/h"),
 	navDOM = null,
 	tabsDOM = renderTabs([ "Overview" ], { style: { display: "none" } }, handleTab), /*{ Overview: 2 }*/
 	router = null,
-	inTransition = {},
-	initialized = false;
+	inTransition = {};
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -306,28 +305,23 @@ function loadPage ( path ) {
 router = Router({
 	'/': {
 		on: function () {
-			//startLoading(domRefs.output);
 			loadPage("/");
 		}
 	},
 	'/(\\w+)': {
 		on: function ( section ) {
-			//startLoading(domRefs.output);
 			loadPage("/" + section.replace(/\s/g, ""));
 		},
 		'/(\\w+)': {
 			on: function ( section, program ) {
-				//startLoading(domRefs.output);
 				loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
 			},
 			'/(\\w+)': {
 				on: function ( section, program, page ) {
-					//startLoading(domRefs.output);
 					loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page, rabbitHole ) {
-						//startLoading(domRefs.output);
 						loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
 					}
 				}
@@ -363,20 +357,6 @@ function handleTab ( page ) {
 	}
 }
 
-function renderLoader () {
-	return (
-		h("div#ph-loader.loader-group", [
-			h(".bigSqr", [
-				h(".square.first"),
-				h(".square.second"),
-				h(".square.third"),
-				h(".square.fourth")
-			]),
-			h(".text", ["loading..."])
-		])
-	);
-}
-
 function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#wrapper", [
@@ -387,12 +367,22 @@ function render ( navDOM, tabsDOM, title ) {
 					h("div.dot.dotThree")
 				])
 			]),*/
-			h("#sideNav", [navDOM]),
+			h("#ph-side-nav", [navDOM]),
 			h("#content.fullPage", [
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
 				h("#contentWrap", [
-					h("#output")
+					h("#output", [
+						h("#ph-loader.loader-group", [
+							h(".bigSqr", [
+								h(".square.first"),
+								h(".square.second"),
+								h(".square.third"),
+								h(".square.fourth")
+							]),
+							h(".text", ["loading..."])
+						])
+					])
 				])
 			])
 		])
@@ -409,23 +399,23 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 					h("div.dot.dotThree")
 				])
 			]),*/
-			h("#sideNav", [navDOM]),
+			h("#ph-side-nav", [navDOM]),
 			h("#content.fullPage", [
-				h("#buttons", [
-					h("button#toggleButton.btn", {
-						onclick: toggleEditor,
+				h("#ph-buttons", [
+					h("button#toggleButton.ph-btn", {
+						onclick: editPage,
 						style: { display: "none" }
-					}, ["Toggle Editor"]),
+					}, ["Edit page"]),
 					h("div.clearfix"),
-					h("button#cheatSheetButton.btn", {
+					h("button#cheatSheetButton.ph-btn", {
 						onclick: toggleCheatSheet,
 						type: "button"
-					}, ["Cheat Sheet"]),
-					h("button#saveButton.btn", {
+					}, ["Markdown help"]),
+					h("button#saveButton.ph-btn", {
 						onclick: savePage,
 						type: "button"
 					}, ["Save"]),
-					h("button#createButton.btn", {
+					h("button#createButton.ph-btn", {
 						onclick: createPage,
 						type: "button"
 					}, ["New"])
@@ -446,14 +436,24 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 					h("#input", [
 						h("textarea#textarea", [String(text || "")])
 					]),
-					h("#output")
+					h("#output", [
+						h("#ph-loader.loader-group", [
+							h(".bigSqr", [
+								h(".square.first"),
+								h(".square.second"),
+								h(".square.third"),
+								h(".square.fourth")
+							]),
+							h(".text", ["loading..."])
+						])
+					])
 				])
 			])
 		])
 	);
 }
 
-function startLoading ( target ) {
+/*function startLoading ( target ) {
 	if ( inTransition[target.id] === true ) {
 		return false;
 	}
@@ -463,7 +463,7 @@ function startLoading ( target ) {
 		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
 		target.className += " loading";
 	}
-}
+}*/
 
 function stopLoading ( target ) {
 	inTransition[target.id] = false;
@@ -574,12 +574,19 @@ function createPage ( event ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-		var name = title.replace(/\s/g, "");
-		var section = currentContent.section || name;
-		var program = currentContent.program || ((currentContent.section) ? name : "Home");
-		var page = (currentContent.program) ? name : "Home";
 
-		var path = ( location === "/" ) ? "/" + name : location + "/" + name;
+		var name = title.replace(/\s/g, "");
+
+		var section = currentContent.section || name;
+		var program = currentContent.program ? currentContent.program : (( name !== currentContent.section ) ? name : "");
+		var page = currentContent.page ? currentContent.page : (( name !== currentContent.program ) ? name : "");
+		var rabbitHole = currentContent.page ? (( name !== currentContent.page ) ? name : "") : "";
+
+		var path = "/" +
+			(( section !== name ) ? section :
+				(( program !== name ) ? "/" + program :
+					(( page !== name ) ? "/" + page :
+						(( rabbitHole === name ) ? "/" + rabbitHole : ""))));
 		sweetAlert({
 			title: "Confirm",
 			text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
@@ -601,7 +608,7 @@ function createPage ( event ) {
 					'Section': section,
 					'Program': program,
 					'Page': page,
-					'Path': path
+					'rabbitHole': rabbitHole
 				}),
 				type: "json",
 				contentType: "application/json",
@@ -617,9 +624,9 @@ function createPage ( event ) {
 						title: "Success!",
 						text: title + " was created at " + path,
 						type: "success",
-						showCancelButton: false,
-						showConfirmButton: false,
-						timer: 2000
+						showCancelButton: true,
+						cancelButtonText: "Stay here",
+						confirmButtonText: "Visit new page"
 					}, function () {
 						router.setRoute(path);
 					});
@@ -638,7 +645,7 @@ function updateTitle () {
 	});
 }
 
-function toggleEditor () {
+function editPage () {
 	if ( misc.regFullPage.test(domRefs.content.className) ) {
 		domRefs.content.className = domRefs.content.className.replace(misc.regFullPage, "");
 		//domRefs.editor.refresh();
@@ -717,7 +724,7 @@ function pageSetup () {
 		console.log(e);
 	}
 
-	startLoading(domRefs.output);
+	//startLoading(domRefs.output);
 
 	if ( window.location.hash ) {
 		/**
@@ -789,7 +796,7 @@ function resetPage () {
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
 	domRefs = new DOMRef();
-	startLoading(domRefs.output);
+	//startLoading(domRefs.output);
 }
 
 getList();

@@ -1,5 +1,4 @@
 var h = require("virtual-dom/h");
-var sweetAlert = require("sweetalert");
 
 function renderLink ( link ) {
 	return (
@@ -64,6 +63,7 @@ function renderNav ( sections ) {
 					])
 				])
 			]),
+			h("section#ph-site-pages", ["Links go here"]),
 			h("ul.nav", links)
 		])
 	);

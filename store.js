@@ -5,12 +5,12 @@ function Content () {
 	this.id = -1;
 	this.title = "";
 	this.text = "";
+	this.overview = "";
 	this.policy = "";
+	this.training = "";
 	this.resources = "";
 	this.tools = "";
-	this.overview = "";
 	this.contributions = "";
-	this.training = "";
 	this.section = "";
 	this.program = "";
 	this.page = "";
