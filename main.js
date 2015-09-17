@@ -579,75 +579,108 @@ function createPage ( event ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-
-		var name = title.replace(/\s/g, "");
-
-		var section = currentContent.section || name;
-		var program = currentContent.program ? currentContent.program : (( name !== currentContent.section ) ? name : "");
-		var page = currentContent.page ? currentContent.page : (( name !== currentContent.program ) ? name : "");
-		var rabbitHole = currentContent.page ? (( name !== currentContent.page ) ? name : "") : "";
-
-		var path = "/" + currentContent.section +
-			(( currentContent.section !== name ) ?
-			("/" + currentContent.program) +
-			(( currentContent.program !== name ) ?
-			("/" + currentContent.page) +
-			(( page !== name ) ?
-				("/" + rabbitHole) : "") : "") : "");
-
-		/**
-		 * lol...
-		 */
-		/*var path = (( section !== name ) ? "/" + section :
-			(( program !== name ) ? "/" + program :
-				(( page !== name ) ? "/" + page :
-					(( rabbitHole === name ) ? "/" + rabbitHole : name))));*/
-		console.log("sec: " + section, "prog: " + program, "page: " + page, "rabaroo: " + rabbitHole);
+		var firstTry = title.replace(/[^a-zA-Z0-9_-]/g, "");
 		sweetAlert({
-			title: "Confirm",
-			text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
+			title: "Perfect!",
+			text: "What a great name.  Can you shorten it at all to make the URL easier to manage?  If not, just hit continue!",
+			type: "input",
 			closeOnConfirm: false,
 			showCancelButton: true,
-			showLoaderOnConfirm: true,
-			html: true,
-			type: "warning"
-		}, function () {
-			reqwest({
-				url: sitePath + "/items",
-				method: "POST",
-				data: JSON.stringify({
-					'__metadata': {
-						'type': currentContent.listItemType
+			inputValue: firstTry,
+			confirmButtonText: "Continue",
+			cancelButtonText: "I want off this ride"
+		}, function ( newName ) {
+			if ( newName === false ) {
+				return false;
+			}
+			if ( newName === "" ) {
+				sweetAlert.showInputError("Are you trying to cancel or do you just want me to use what we already have so far?");
+				return false;
+			}
+
+			var name = newName.replace(/[^a-zA-Z0-9_-]/g, ""),
+				path = "",
+				section = "",
+				program = "",
+				page = "",
+				rabbitHole = "";
+
+			if ( currentContent.section !== "" ) {
+				// Has to be a new Program or lower
+				section = currentContent.section
+				path += "/" + currentContent.section;
+				if ( currentContent.program !== "" ) {
+					// Has to be a new Page or lower
+					program = currentContent.program;
+					path += "/" + currentContent.program;
+					if ( currentContent.page !== "" ) {
+						// Has to be a new rabbitHole/SubPage
+						page = currentContent.page;
+						rabbitHole = name;
+						path += "/" + currentContent.page + "/" + name;
+					}
+					else {
+						page = name;
+						path += "/" + name;
+					}
+				}
+				else {
+					program = name;
+					path += "/" + name;
+				}
+			}
+			else {
+				// Has to be a new Section
+				section = name;
+				path += "/" + name;
+			}
+
+			sweetAlert({
+				title: "Confirm",
+				text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
+				closeOnConfirm: false,
+				showCancelButton: true,
+				showLoaderOnConfirm: true,
+				html: true,
+				type: "warning"
+			}, function () {
+				reqwest({
+					url: sitePath + "/items",
+					method: "POST",
+					data: JSON.stringify({
+						'__metadata': {
+							'type': currentContent.listItemType
+						},
+						'Title': title,
+						'Overview': '### New Page :)\n#### Joy',
+						'Section': section,
+						'Program': program,
+						'Page': page,
+						'rabbitHole': rabbitHole
+					}),
+					type: "json",
+					contentType: "application/json",
+					withCredentials: true,
+					headers: {
+						"Accept": "application/json;odata=verbose",
+						"text-Type": "application/json;odata=verbose",
+						"Content-Type": "application/json;odata=verbose",
+						"X-RequestDigest": digest
 					},
-					'Title': title,
-					'Overview': '### New Page :)\n#### Joy',
-					'Section': section,
-					'Program': program,
-					'Page': page,
-					'rabbitHole': rabbitHole
-				}),
-				type: "json",
-				contentType: "application/json",
-				withCredentials: true,
-				headers: {
-					"Accept": "application/json;odata=verbose",
-					"text-Type": "application/json;odata=verbose",
-					"Content-Type": "application/json;odata=verbose",
-					"X-RequestDigest": digest
-				},
-				success: function () {
-					sweetAlert({
-						title: "Success!",
-						text: title + " was created at " + path,
-						type: "success",
-						showCancelButton: true,
-						cancelButtonText: "Stay here",
-						confirmButtonText: "Visit new page"
-					}, function () {
-						router.setRoute(path);
-					});
-				},
-				error: misc.connError
+					success: function () {
+						sweetAlert({
+							title: "Success!",
+							text: title + " was created at " + path,
+							type: "success",
+							showCancelButton: true,
+							cancelButtonText: "Stay here",
+							confirmButtonText: "Visit new page"
+						}, function () {
+							router.setRoute(path);
+						});
+					},
+					error: misc.connError
+				});
 			});
 		});
 	});
@@ -697,8 +730,8 @@ function insertContent ( text, type ) {
 
 function pageSetup () {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, currentContent.title) :
-	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+	           render(navDOM, tabsDOM, currentContent.title, renderLoader()) :
+	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();
@@ -768,7 +801,7 @@ function setupEditor () {
 			editor: null
 		});
 	}
-	var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+	var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
@@ -805,10 +838,10 @@ function resetPage () {
 				editor: null
 			});
 		}
-		var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+		var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
 	}
 	else {
-		refreshDOM = render(navDOM, tabsDOM, currentContent.title);
+		refreshDOM = render(navDOM, tabsDOM, currentContent.title, renderLoader());
 	}
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);

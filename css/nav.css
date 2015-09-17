@@ -15,7 +15,8 @@
 	font-family: Roboto, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", sans-serif;
 	padding-top: 40px;
 	padding-bottom: 40px;
-	border-radius: 8px 8px 0 0;
+	/*border-radius: 8px 8px 0 0;*/
+	border-radius: 8px;
 	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
@@ -80,6 +81,7 @@
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: center;
+	display: none;
 }
 
 #ph-nav hr {
@@ -155,13 +157,13 @@
 	transition: background .15s ease-out;
 	background-color: #133E6F;
 	/*color: #FFF;*/
-	color: #FACCFD;
+	color: #FDE8FF;
 	/* for Ubuntu Mono, use 14px at least.  for sans-serif you can
 	probably go 1-2 px lower */
 	/*font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;*/
 	font-size: 13px;
 	border: 1px solid transparent;
-	border-right-color: #FACCFD;
+	border-right-color: #FDE8FF;
 	margin: 0 auto;
 	padding: 8px 10px;
 	max-width: 80%;
@@ -219,7 +221,8 @@ the "I have more stuff here" indicator.
 #ph-nav .ph-parent a span:after {
 	position: absolute;
 	transform: translateY(-50%);
-	content: "\002B";
+	content: "\2235";
+	/*content: "\002B";*/
 	top: 50%;
 	right: 1em;
 	margin-right: 1em;

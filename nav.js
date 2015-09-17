@@ -65,9 +65,9 @@ function renderNav ( sections ) {
 			]),
 			h("#ph-site-pages", [
 				h("div", [
-					h("a.site-page", { href: "#/$leaders" } ["Leaders"]),
-					h("a.site-page", { href: "#/$news" } ["News"]),
-					h("a.site-page", { href: "#/$contact" } ["Address Book"])
+					h("a.site-page", { href: "#/leaders" }, ["Leaders"]),
+					h("a.site-page", { href: "#/news" }, ["News"]),
+					h("a.site-page", { href: "#/contact" }, ["Address Book"])
 				])
 			]),
 			h("ul.nav", links)
