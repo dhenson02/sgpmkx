@@ -104,10 +104,10 @@ function getList () {
 				}
 
 				if ( result.rabbitHole !== "" ) {
-					subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = "li.ph-sub-parent.ph-page-link";
+					subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = "li[data-id='" + result.ID + "'].ph-sub-parent.ph-page-link";
 				}
 				else if ( result.Page !== "" ) {
-					parents["/" + result.Section + "/" + result.Program] = "li.ph-parent";
+					parents["/" + result.Section + "/" + result.Program] = "li[data-id='" + result.ID + "'].ph-parent";
 				}
 
 			}
@@ -115,22 +115,23 @@ function getList () {
 			var sortedUrls = urls.sort();
 			i = 0;
 			for ( ; i < count; ++i ) {
-				var li = "li";
 				var page = pages[sortedUrls[i]];
 				var isPage = false;
+				var li = "li[data-id='" + page.ID + "']";
+				var attr = { "data-IDD": page.ID, style: { display: "none" } };
+
 				if ( page.rabbitHole !== "" ) {
 					isPage = true;
-					li = "li.ph-rabbit-hole";
+					li = "li[data-id='" + page.ID + "'].ph-rabbit-hole";
 				}
 				else if ( page.Page !== "" ) {
 					isPage = true;
-					li = subParents[page.Path] || "li.ph-page-link";
+					li = subParents[page.Path] || "li[data-id='" + page.ID + "'].ph-page-link";
 				}
 				else if ( page.Program !== "" ) {
-					li = parents[page.Path] || "li";
+					li = parents[page.Path] || "li[data-id='" + page.ID + "']";
 				}
 
-				var attr = { style: { display: "none" } };
 				if ( page.Link && page.Link.Url ) {
 					attr["data-href"] = "#" + page.Path;
 				}
@@ -140,7 +141,7 @@ function getList () {
 						path: ( !page.Link ) ? "#" + page.Path : page.Link.Url,
 						title: page.Title,
 						li: li,
-						attr: isPage ? attr : null,
+						attr: isPage ? attr : { "data-IDD": page.ID },
 						hr: isPage ? null : h("hr")
 					});
 				}
@@ -162,7 +163,8 @@ function loadPage ( path ) {
 			text: "The address you entered doesn't seem to match any of our pages.  Try the search!  For now I'll just load the homepage for you.",
 			confirmButtonText: "OK!",
 			allowOutsideClick: false,
-			allowEscapeKey: false
+			allowEscapeKey: false,
+			showCancelButton: false
 		}, function () {
 			router.setRoute("/");
 		});
@@ -312,23 +314,28 @@ function loadPage ( path ) {
 router = Router({
 	'/': {
 		on: function () {
+			startLoading(domRefs.output);
 			loadPage("/");
 		}
 	},
 	'/(\\w+)': {
 		on: function ( section ) {
+			startLoading(domRefs.output);
 			loadPage("/" + section.replace(/\s/g, ""));
 		},
 		'/(\\w+)': {
 			on: function ( section, program ) {
+				startLoading(domRefs.output);
 				loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
 			},
 			'/(\\w+)': {
 				on: function ( section, program, page ) {
+					startLoading(domRefs.output);
 					loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page, rabbitHole ) {
+						startLoading(domRefs.output);
 						loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
 					}
 				}
@@ -364,7 +371,7 @@ function handleTab ( page ) {
 	}
 }
 
-function render ( navDOM, tabsDOM, title, loader ) {
+function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#wrapper", [
 			/*h("div#init-page-loader.animated.fadeIn", [
@@ -379,16 +386,14 @@ function render ( navDOM, tabsDOM, title, loader ) {
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
 				h("#contentWrap", [
-					h("#output", [
-						loader||null
-					])
+					h("#output")
 				])
 			])
 		])
 	);
 }
 
-function renderEditor ( navDOM, tabsDOM, title, text, loader ) {
+function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#wrapper", [
 			/*h("div#init-page-loader", [
@@ -435,16 +440,14 @@ function renderEditor ( navDOM, tabsDOM, title, text, loader ) {
 					h("#input", [
 						h("textarea#textarea", [String(text || "")])
 					]),
-					h("#output", [
-						loader||null
-					])
+					h("#output")
 				])
 			])
 		])
 	);
 }
 
-function renderLoader() {
+/*function renderLoader() {
 	return (
 		h("#ph-loader.loader-group", [
 			h(".bigSqr", [
@@ -456,9 +459,9 @@ function renderLoader() {
 			h(".text", ["loading..."])
 		])
 	);
-}
+}*/
 
-/*function startLoading ( target ) {
+function startLoading ( target ) {
 	if ( inTransition[target.id] === true ) {
 		return false;
 	}
@@ -468,7 +471,7 @@ function renderLoader() {
 		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
 		target.className += " loading";
 	}
-}*/
+}
 
 function stopLoading ( target ) {
 	inTransition[target.id] = false;
@@ -677,6 +680,7 @@ function createPage ( event ) {
 							confirmButtonText: "Visit new page"
 						}, function () {
 							router.setRoute(path);
+							return false;
 						});
 					},
 					error: misc.connError
@@ -730,8 +734,8 @@ function insertContent ( text, type ) {
 
 function pageSetup () {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, currentContent.title, renderLoader()) :
-	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
+	           render(navDOM, tabsDOM, currentContent.title) :
+	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();
@@ -801,7 +805,7 @@ function setupEditor () {
 			editor: null
 		});
 	}
-	var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
+	var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
@@ -838,10 +842,10 @@ function resetPage () {
 				editor: null
 			});
 		}
-		var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text, renderLoader());
+		var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
 	}
 	else {
-		refreshDOM = render(navDOM, tabsDOM, currentContent.title, renderLoader());
+		refreshDOM = render(navDOM, tabsDOM, currentContent.title);
 	}
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);

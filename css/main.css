@@ -107,6 +107,8 @@ body {
 
 #ph-title {
 	font-size: 3.5em;
+	border: 4px dashed transparent;
+	padding: 10px;
 	/*margin: 20px;*/
 }
 
