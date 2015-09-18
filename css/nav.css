@@ -156,7 +156,7 @@
 	-o-transition: background .15s ease-out, border .15s ease-out;
 	transition: background .15s ease-out, border .15s ease-out;
 	background-color: #133E6F;
-	color: #FFF;
+	color: #FFFFFF;
 	/*color: #FDE8FF;*/
 	/* for Ubuntu Mono, use 14px at least.  for sans-serif you can
 	probably go 1-2 px lower */
@@ -176,7 +176,7 @@
 	-o-transition: font-weight .15s ease-out;
 	transition: font-weight .15s ease-out;
 	font-weight: bold;
-	text-shadow: 0 1px 1px #222;
+	text-shadow: 0 1px 1px #222222;
 }
 
 #ph-nav .ph-rabbit-hole .active {
@@ -185,8 +185,8 @@
 	-ms-transition: background .15s ease-out, border .15s ease-out;
 	-o-transition: background .15s ease-out, border .15s ease-out;
 	transition: background .15s ease-out, border .15s ease-out;
-	color: #FFF;
-	border-color: #FFF;
+	color: #FFFFFF;
+	border-color: #FFFFFF;
 	font-weight: 300;
 	background-color: #0C2949;
 	/*text-shadow: 0 1px 1px #0C2949;*/
@@ -264,8 +264,8 @@ the "I have more stuff here" indicator.
 	-o-transition: background .15s ease-out, border .15s ease-out;
 	transition: background .15s ease-out, border .15s ease-out;
 	border: 1px solid transparent;
-	background-color: #255B8E;
-	background-color: rgba(85, 164, 221, 0.28);
+	background-color: #315C91;
+	background-color: rgba(125, 168, 232, 0.28);
 }
 
 #ph-nav .ph-sub-parent .active {
@@ -277,4 +277,3 @@ the "I have more stuff here" indicator.
 	border-color: inherit;
 	font-weight: normal;
 }
-

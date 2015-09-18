@@ -22,6 +22,7 @@ var regLoading = / ?loading/gi,
 	regFullPage = / ?fullPage/gi,
 	regCheatSheet = / ?cheatSheet/gi,
 	regNoChange = / ?nochange/gi,
+	regNormalize = /[^a-zA-Z0-9_-]/g,
 	md = markdownit({
 		xhtmlOut: true,
 		typographer: true,
@@ -46,5 +47,6 @@ module.exports = {
 	regFullPage: regFullPage,
 	regCheatSheet: regCheatSheet,
 	regNoChange: regNoChange,
+	regNormalize: regNormalize,
 	md: md
 };

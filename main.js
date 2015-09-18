@@ -582,7 +582,7 @@ function createPage ( event ) {
 			sweetAlert.showInputError("Please enter a page title!");
 			return false;
 		}
-		var firstTry = title.replace(/[^a-zA-Z0-9_-]/g, "");
+		var firstTry = title.replace(misc.regNormalize, "");
 		sweetAlert({
 			title: "Perfect!",
 			text: "What a great name.  Can you shorten it at all to make the URL easier to manage?  If not, just hit continue!",
@@ -601,7 +601,7 @@ function createPage ( event ) {
 				return false;
 			}
 
-			var name = newName.replace(/[^a-zA-Z0-9_-]/g, ""),
+			var name = newName.replace(misc.regNormalize, ""),
 				path = "",
 				section = "",
 				program = "",
@@ -610,7 +610,7 @@ function createPage ( event ) {
 
 			if ( currentContent.section !== "" ) {
 				// Has to be a new Program or lower
-				section = currentContent.section
+				section = currentContent.section;
 				path += "/" + currentContent.section;
 				if ( currentContent.program !== "" ) {
 					// Has to be a new Page or lower
