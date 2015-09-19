@@ -100,10 +100,6 @@
 	margin: 0;
 }
 
-/*#ph-nav .nav {
-	padding-right: 17px;
-}*/
-
 #ph-nav ul,
 #ph-nav li {
 	padding-left: 0;
@@ -115,7 +111,7 @@
 	position: relative;
 }
 
-#ph-nav .ph-section-link {
+#ph-nav .ph-section p {
 	color: #FFFFFF;
 	font-size: 25px;
 	margin: 0;
@@ -128,12 +124,12 @@
 	padding: 10px 20px;
 }
 
-#ph-nav .ph-page-link,
+#ph-nav .ph-page,
 #ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
 }
 
-#ph-nav .ph-page-link a {
+#ph-nav .ph-page a {
 	color: #FAFCFE;
 	font-size: 15px;
 	padding: 10px 30px;
@@ -157,13 +153,8 @@
 	transition: background .15s ease-out, border .15s ease-out;
 	background-color: #133E6F;
 	color: #FFFFFF;
-	/*color: #FDE8FF;*/
-	/* for Ubuntu Mono, use 14px at least.  for sans-serif you can
-	probably go 1-2 px lower */
-	/*font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace !important;*/
 	font-size: 13px;
 	border: 1px solid transparent;
-	/*border-right-color: #FDE8FF;*/
 	margin: 0 auto;
 	padding: 8px 10px;
 	max-width: 80%;
@@ -192,7 +183,7 @@
 	/*text-shadow: 0 1px 1px #0C2949;*/
 }
 
-#ph-nav .active > span {
+#ph-nav .active > .place {
 	position: absolute;
 	right: 17px;
 	display: inline-block;
@@ -203,29 +194,22 @@
 	border-right: 10px solid #FAFCFE;
 }
 
-#ph-nav .ph-rabbit-hole .active span,
-#ph-nav .ph-sub-parent .active span {
+#ph-nav .ph-rabbit-hole .active .place,
+#ph-nav .ph-sub-parent .active .place {
 	display: none;
 }
 
-#ph-nav :hover > span:after {
+#ph-nav :hover > .place:after {
 	text-decoration: none;
 }
 
-#ph-nav .active > span:after {
+#ph-nav .active > .place:after {
 	visibility: hidden;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
 	opacity: 0;
 }
 
-/*
-right now makes no sense because
-a sub parent isn't hiding anything once
-you can see it.  so only parent needs
-the "I have more stuff here" indicator.
-*/
-/*#ph-nav .ph-sub-parent a span:after,*/
-#ph-nav .ph-parent a span:after {
+#ph-nav .ph-parent a .place:after {
 	position: absolute;
 	transform: translateY(-50%);
 	content: "\2235";

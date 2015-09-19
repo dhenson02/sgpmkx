@@ -63,14 +63,16 @@ module.exports = function ( grunt ) {
 			content: {
 				src: ['content-src.aspx', 'main.min.js'],
 				css: [
+					'css/init.css',
 					'css/main.css',
+					'css/icons.css',
 					'css/buttons.css',
 					'css/generic.css',
 					'css/codemirror.css',
 					'css/nav.css',
 					'css/tabs.css',
 					'css/loader.css',
-					'css/loader2.css',
+					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/animate.css/animate.min.css'
 				],

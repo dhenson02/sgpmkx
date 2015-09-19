@@ -11,23 +11,23 @@
 	height: 0;
 }
 
-#wrapper img {
+#ph-wrapper img {
 	max-width: 100%;
 }
 
-#wrapper h1, #wrapper h2, #wrapper h3, #wrapper h4, #wrapper h5, #wrapper h6 {
+#ph-wrapper h1, #ph-wrapper h2, #ph-wrapper h3, #ph-wrapper h4, #ph-wrapper h5, #ph-wrapper h6 {
 	font-weight: 200;
 }
 
-#wrapper h4, #wrapper h5, #wrapper h6 {
+#ph-wrapper h4, #ph-wrapper h5, #ph-wrapper h6 {
 	font-weight: 700;
 }
 
-#wrapper h1 {
+#ph-wrapper h1 {
 	font-size: 2.5em;
 }
 
-#wrapper h2 {
+#ph-wrapper h2 {
 	padding-bottom: 10px;
 	border: none;
 	border-bottom: 1px solid;
@@ -35,23 +35,23 @@
 	border-bottom-color: rgba(0, 0, 0, .1);
 }
 
-#wrapper h3 {
+#ph-wrapper h3 {
 	font-size: 1.5em;
 }
 
-#wrapper h4 {
+#ph-wrapper h4 {
 	font-size: 1.2em;
 }
 
-#wrapper h5 {
+#ph-wrapper h5 {
 	font-size: 1em;
 }
 
-#wrapper h6 {
+#ph-wrapper h6 {
 	font-size: .9em;
 }
 
-#wrapper hr {
+#ph-wrapper hr {
 	display: block;
 	color: #DFDFDF;
 	height: 8px;
@@ -61,42 +61,42 @@
 	border-top: 8px dotted;
 }
 
-#wrapper img {
+#ph-wrapper img {
 	border: 0;
 	-ms-interpolation-mode: bicubic;
 	vertical-align: middle;
 }
 
-#wrapper table {
+#ph-wrapper table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
 
-#output a {
+#ph-output a {
 	color: #0645AD;
 }
 
-#output a:visited {
+#ph-output a:visited {
 	color: #0B0080;
 }
 
-#output a:hover {
+#ph-output a:hover {
 	color: #0066EE;
 }
 
-#output a:active {
+#ph-output a:active {
 	color: #FAA700;
 }
 
-#output p {
+#ph-output p {
 	margin: 1em 0;
 }
 
-#output h1, #output h2, #output h3, #output h4, #output h5, #output h6 {
+#ph-output h1, #ph-output h2, #ph-output h3, #ph-output h4, #ph-output h5, #ph-output h6 {
 	color: #111111;
 }
 
-#output blockquote {
+#ph-output blockquote {
 	font-size: .925em;
 	color: #999999;
 	margin: 0;
@@ -104,7 +104,7 @@
 	border-left: .5em #EEEEEE solid;
 }
 
-#output code, #output pre {
+#ph-output code, #ph-output pre {
 	color: #000000;
 	font-family: "Ubuntu Mono", "Lucida Console", Consolas, "Lucida Grande", "Liberation Mono", Menlo, Courier, monospace;
 	font-size: .94em;
@@ -113,57 +113,57 @@
 	border: 1px solid #DDDDDD;
 }
 
-#output pre {
+#ph-output pre {
 	white-space: pre;
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	padding: 10px;
 }
 
-#output pre code {
+#ph-output pre code {
 	border: 0 !important;
 	background: 0 0 !important;
 	line-height: 1.3em;
 }
 
-#output code {
+#ph-output code {
 	padding: 2px 3px;
 }
 
-#output sub, #output sup {
+#ph-output sub, #ph-output sup {
 	font-size: 75%;
 	line-height: 0;
 	position: relative;
 	vertical-align: baseline;
 }
 
-#output sup {
+#ph-output sup {
 	top: -.5em;
 }
 
-#output sub {
+#ph-output sub {
 	bottom: -.25em;
 }
 
-#output ol, #output ul {
+#ph-output ol, #ph-output ul {
 	margin: 1em 0;
 	padding: 0 0 0 2em;
 }
 
-#output li p:last-child {
+#ph-output li p:last-child {
 	margin: 0;
 }
 
-#output dd {
+#ph-output dd {
 	margin: 0 0 0 2em;
 }
 
-#output td, #output th {
+#ph-output td, #ph-output th {
 	vertical-align: top;
 	padding: 4px 10px;
 	border: 1px solid #BBBBBB;
 }
 
-#output tr:nth-child(even) td, tr:nth-child(even) th {
+#ph-output tr:nth-child(even) td, #ph-output tr:nth-child(even) th {
 	background: #EEEEEE;
 }

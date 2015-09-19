@@ -2,13 +2,14 @@ var h = require("virtual-dom/h");
 
 function renderLink ( link ) {
 	return (
-		h(link.li, link.attr, [
+		h("li#ph-link-" + link.id + link.level, link.attr, [
 			h("a", {
-				href: link.path,
-				target: ( link.path.charAt(0) !== "#" ) ? "_blank" : ""
+				href: link.href,
+				target: ( link.href.charAt(0) !== "#" ) ? "_blank" : ""
 			}, [
+				( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
 				String(link.title),
-				h("span")
+				h("span.place")
 			]),
 			link.hr
 		])
@@ -23,8 +24,8 @@ function renderSection ( section ) {
 		links[i] = renderLink(section.links[i]);
 	}
 	return (
-		h("li", [
-			h("p.ph-section-link", [
+		h("li.ph-section-link", [
+			h("p", [
 				h("a", { "href": section.path }, [String(section.title)])
 			]),
 			h("hr"),

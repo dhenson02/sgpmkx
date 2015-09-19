@@ -1,11 +1,3 @@
-/*String.prototype.toCamelCase = function () {
-	return this
-		.toLowerCase()
-		.replace(/(?:\s|[a-z])(.)/g, function ( $1 ) { return $1.toUpperCase(); })
-		//.replace(/^(.)/, function($1) { return $1.toLowerCase(); })
-		.replace(/\s/g, '');
-};*/
-
 function addEvent ( evt, element, fnc ) {
 	return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));
 }
@@ -37,7 +29,14 @@ var regLoading = / ?loading/gi,
 			}
 			return '';
 		}
-	});
+	}),
+	codeMirror;
+
+try {
+	codeMirror = CodeMirror;
+} catch (e) {
+	codeMirror = null;
+}
 
 module.exports = {
 	addEvent: addEvent,
@@ -48,5 +47,6 @@ module.exports = {
 	regCheatSheet: regCheatSheet,
 	regNoChange: regNoChange,
 	regNormalize: regNormalize,
-	md: md
+	md: md,
+	codeMirror: codeMirror
 };

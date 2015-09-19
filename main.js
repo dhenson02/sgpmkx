@@ -1,9 +1,3 @@
-try {
-	var codeMirror = CodeMirror
-}
-catch ( e ) {
-	var codeMirror = null;
-}
 var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
@@ -13,24 +7,68 @@ var h = require("virtual-dom/h"),
 	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
-	Content = require("./store"),
-	DOMRef = require("./domStore"),
+	codeMirror = misc.codeMirror,
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
 	baseURL = _spPageContextInfo.webAbsoluteUrl,
 	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
 	digest = document.getElementById("__REQUESTDIGEST").value,
-	pages = {},
-	parents = {},
-	subParents = {},
-	currentContent = new Content(),
+	pages = require("./store"),
+	DOMRef = require("./domStore"),
+	current = pages.current,
 	domRefs = new DOMRef(),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
-	tabsDOM = renderTabs([ "Overview" ], { style: { display: "none" } }, handleTab), /*{ Overview: 2 }*/
-	router = null,
-	inTransition = {};
+	tabsDOM = renderTabs([ { title: "Overview", icon: "home"} ], { style: { display: "none" } }, handleTab),
+	inTransition = {},
+	router = Router({
+		'/': {
+			on: function () {
+				startLoading(domRefs.output);
+				loadPage("/");
+			}
+		},
+		'/(\\w+)': {
+			on: function ( section ) {
+				startLoading(domRefs.output);
+				loadPage("/" + section.replace(/\s/g, ""));
+			},
+			'/(\\w+)': {
+				on: function ( section, program ) {
+					startLoading(domRefs.output);
+					loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
+				},
+				'/(\\w+)': {
+					on: function ( section, program, page ) {
+						startLoading(domRefs.output);
+						loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
+					},
+					'/(\\w+)': {
+						on: function ( section, program, page, rabbitHole ) {
+							startLoading(domRefs.output);
+							loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
+						}
+					}
+				}
+			}
+		}
+	}).configure({
+		strict: false,
+		after: resetPage,
+		notfound: function () {
+			sweetAlert({
+				title: "Oops",
+				text: "Page doesn\'t exist.  Sorry :(\n\nI\'ll redirect you to the homepage instead.",
+				timer: 2000,
+				showConfirmButton: false,
+				showCancelButton: false,
+				allowOutsideClick: true
+			}, function () {
+				router.setRoute("/");
+			});
+		}
+	});
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -53,100 +91,8 @@ function getList () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			var results = data.d.results,
-				urls = [],
-				sections = {},
-				i = 0,
-				count = results.length,
-				result;
-			for ( ; i < count; ++i ) {
-				result = results[i];
-
-				/**
-				 * These come down as null if they're empty so let's standardize
-				 * em all as empty strings instead.  Then we can concat to other
-				 * stuff later without doing more checks.
-				 */
-				result.Section = ( result.Section ) ? result.Section.replace(/\s/g, "") : "";
-				result.Program = ( result.Program ) ? result.Program.replace(/\s/g, "") : "";
-				result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
-				result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
-
-				/**
-				 * This creates a new property `Path` and cascades down the
-				 * logical chain of categories.
-				 *
-				 *     PS - `rabbitHole` can be seen on the List as `SubPage` ;)
-				 *
-				 * @type {string}
-				 */
-				result.Path = "/" + (( result.Section !== "" ) ?
-					result.Section + (( result.Program !== "" ) ?
-					"/" + result.Program + (( result.Page !== "" ) ?
-					"/" + result.Page + (( result.rabbitHole !== "" ) ?
-					"/" + result.rabbitHole :
-						"" ) :
-						"" ) :
-						"" ) :
-						"");
-
-				// This allows direct access without having to manipulate
-				// anything (aside from whitespace removal) or search/test for a match.
-				pages[result.Path] = result;
-				urls[i] = result.Path;
-
-				if ( result.Section !== "" && result.Program === "" ) {
-					sections[result.Section] = {
-						path: ( !result.Link ) ? "#/" + result.Section : result.Link.Url,
-						title: result.Title,
-						links: []
-					};
-				}
-
-				if ( result.rabbitHole !== "" ) {
-					subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = "li[data-id='" + result.ID + "'].ph-sub-parent.ph-page-link";
-				}
-				else if ( result.Page !== "" ) {
-					parents["/" + result.Section + "/" + result.Program] = "li[data-id='" + result.ID + "'].ph-parent";
-				}
-
-			}
-
-			var sortedUrls = urls.sort();
-			i = 0;
-			for ( ; i < count; ++i ) {
-				var page = pages[sortedUrls[i]];
-				var isPage = false;
-				var li = "li[data-id='" + page.ID + "']";
-				var attr = { "data-IDD": page.ID, style: { display: "none" } };
-
-				if ( page.rabbitHole !== "" ) {
-					isPage = true;
-					li = "li[data-id='" + page.ID + "'].ph-rabbit-hole";
-				}
-				else if ( page.Page !== "" ) {
-					isPage = true;
-					li = subParents[page.Path] || "li[data-id='" + page.ID + "'].ph-page-link";
-				}
-				else if ( page.Program !== "" ) {
-					li = parents[page.Path] || "li[data-id='" + page.ID + "']";
-				}
-
-				if ( page.Link && page.Link.Url ) {
-					attr["data-href"] = "#" + page.Path;
-				}
-
-				if ( page.Program !== "" ) {
-					sections[page.Section].links.push({
-						path: ( !page.Link ) ? "#" + page.Path : page.Link.Url,
-						title: page.Title,
-						li: li,
-						attr: isPage ? attr : { "data-IDD": page.ID },
-						hr: isPage ? null : h("hr")
-					});
-				}
-			}
-			navDOM = renderNav(sections);
+			pages.init(data);
+			navDOM = renderNav(pages.sections);
 		},
 		error: misc.connError,
 		complete: function () {
@@ -199,11 +145,11 @@ function loadPage ( path ) {
 					showCancelButton: true,
 					showLoaderOnConfirm: true
 				}, function () {
-					window.open(obj.Link.Url, "_blank");
+					window.open(obj.Link, "_blank");
 					return false;
 				});
 			}
-			var subLinks = rootNode.querySelectorAll(".ph-page-link, .ph-rabbit-hole");
+			var subLinks = rootNode.querySelectorAll(".ph-page.link, .ph-rabbit-hole.link");
 			var tabCurrent = rootNode.querySelector(".tab-current");
 			var i = 0;
 			total = subLinks.length;
@@ -214,10 +160,11 @@ function loadPage ( path ) {
 				tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
 			}
 
-			currentContent.set({
+			current.set({
 				id: obj.ID,
 				title: obj.Title || "",
 				_title: obj.Title || "",
+				icon: obj.Icon || "",
 				text: obj.Overview || "",
 				overview: obj.Overview || "",
 				policy: obj.Policy || "",
@@ -234,62 +181,74 @@ function loadPage ( path ) {
 				timestamp: (Date && Date.now() || new Date())
 			});
 
-			var tabsStyle = ( currentContent.program !== "" ) ? null : { style: { display: "none" } };
+			var tabsStyle = ( current.program !== "" ) ? null : { style: { display: "none" } };
 			tabsDOM = renderTabs([
-				"Overview",
-				"Policy",
-				"Training",
-				"Resources",
-				"Tools",
-				"Contributions"
+				{
+					title: "Overview",
+					icon: "home"
+				},
+				{
+					title: "Policy",
+					icon: "notebook"
+				},
+				{
+					title: "Training",
+					icon: "display1"
+				},
+				{
+					title: "Resources",
+					icon: "cloud-upload"
+				},
+				{
+					title: "Tools",
+					icon: "tools"
+				},
+				{
+					title: "Contributions",
+					icon: "users"
+				}
 			], tabsStyle, handleTab);
-			/*{
-			 Overview: currentContent.overview.length,
-			 Policy: currentContent.policy.length,
-			 Training: currentContent.training.length,
-			 Resources: currentContent.resources.length,
-			 Tools: currentContent.tools.length,
-			 Contributions: currentContent.contributions.length
-			 }*/
 
 			resetPage();
-			insertContent(currentContent.text, currentContent.type);
+			insertContent(current.text, current.type);
 			stopLoading(domRefs.output);
 
-			try {
-				rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']").className += " active";
-				rootNode.querySelector("#ph-tabs a.icon-overview").parentNode.className += " tab-current";
+			var activeLink = rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']");
+			var currentTab = rootNode.querySelector("#ph-tabs a.icon-overview");
+			if ( activeLink ) {
+				activeLink.className += " active";
 			}
-			catch ( e ) {
-				console.log(e);
+			if ( currentTab ) {
+				currentTab.parentNode.className += " tab-current";
 			}
 
-			var hashArray = window.location.hash.slice(2).split(/\//);
-			var total;
+			var hashArray = window.location.hash.slice(2).split(/\//),
+				total;
+
 			if ( hashArray.length > 1 ) {
-				var phPages = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-				if ( phPages ) {
+				var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+				if ( phPage ) {
 					i = 0;
-					total = phPages.length;
+					total = phPage.length;
 					for ( ; i < total; ++i ) {
-						phPages[i].removeAttribute("style");
-						phPages[i].parentNode.removeAttribute("style");
+						phPage[i].removeAttribute("style");
+						phPage[i].parentNode.removeAttribute("style");
 					}
 				}
-				if ( hashArray.length > 2 ) {
-					var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-					if ( phRabbitHoles ) {
-						i = 0;
-						total = phRabbitHoles.length;
-						for ( ; i < total; ++i ) {
-							phRabbitHoles[i].removeAttribute("style");
-							phRabbitHoles[i].parentNode.removeAttribute("style");
-						}
-					}
-				}
+				/*if ( hashArray.length > 2 ) {
+				 var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+				 if ( phRabbitHoles ) {
+				 i = 0;
+				 total = phRabbitHoles.length;
+				 for ( ; i < total; ++i ) {
+				 phRabbitHoles[i].removeAttribute("style");
+				 phRabbitHoles[i].parentNode.removeAttribute("style");
+				 }
+				 }
+				 }*/
 			}
 
-			document.title = currentContent.title;
+			document.title = current.title;
 		},
 		error: misc.connError,
 		complete: function () {
@@ -311,61 +270,13 @@ function loadPage ( path ) {
 	});
 }
 
-router = Router({
-	'/': {
-		on: function () {
-			startLoading(domRefs.output);
-			loadPage("/");
-		}
-	},
-	'/(\\w+)': {
-		on: function ( section ) {
-			startLoading(domRefs.output);
-			loadPage("/" + section.replace(/\s/g, ""));
-		},
-		'/(\\w+)': {
-			on: function ( section, program ) {
-				startLoading(domRefs.output);
-				loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
-			},
-			'/(\\w+)': {
-				on: function ( section, program, page ) {
-					startLoading(domRefs.output);
-					loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
-				},
-				'/(\\w+)': {
-					on: function ( section, program, page, rabbitHole ) {
-						startLoading(domRefs.output);
-						loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
-					}
-				}
-			}
-		}
-	}
-}).configure({
-	strict: false,
-	after: resetPage,
-	notfound: function () {
-		sweetAlert({
-			title: "Oops",
-			text: "Page doesn\'t exist.  Sorry :(\n\nI\'ll redirect you to the homepage instead.",
-			timer: 2000,
-			showConfirmButton: false,
-			showCancelButton: false,
-			allowOutsideClick: true
-		}, function () {
-			router.setRoute("/");
-		});
-	}
-});
-
 function handleTab ( page ) {
 	var content = {};
-	content[currentContent.type.toLowerCase()] = currentContent.text;
-	content.text = currentContent[page.toLowerCase()];
+	content[current.type.toLowerCase()] = current.text;
+	content.text = current[page.toLowerCase()];
 	content.type = page;
-	currentContent.set(content);
-	insertContent(currentContent.text, currentContent.type);
+	current.set(content);
+	insertContent(current.text, current.type);
 	if ( codeMirror ) {
 		setupEditor();
 	}
@@ -373,7 +284,7 @@ function handleTab ( page ) {
 
 function render ( navDOM, tabsDOM, title ) {
 	return (
-		h("#wrapper", [
+		h("#ph-wrapper", [
 			/*h("div#init-page-loader.animated.fadeIn", [
 				h("div.loading-spinner", [
 					h("div.dot.dotOne"),
@@ -382,11 +293,11 @@ function render ( navDOM, tabsDOM, title ) {
 				])
 			]),*/
 			h("#ph-side-nav", [navDOM]),
-			h("#content.fullPage", [
+			h("#ph-content.fullPage", [
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
-				h("#contentWrap", [
-					h("#output")
+				h("#ph-contentWrap", [
+					h("#ph-output")
 				])
 			])
 		])
@@ -395,7 +306,7 @@ function render ( navDOM, tabsDOM, title ) {
 
 function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
-		h("#wrapper", [
+		h("#ph-wrapper", [
 			/*h("div#init-page-loader", [
 				h("div.loading-spinner", [
 					h("div.dot.dotOne"),
@@ -404,7 +315,7 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 				])
 			]),*/
 			h("#ph-side-nav", [navDOM]),
-			h("#content.fullPage", [
+			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
 					h("button#toggleButton.ph-btn", {
 						onclick: editPage,
@@ -426,21 +337,21 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 				]),
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
-				h("label#titleFieldLabel", [
+				/*h("label#titleFieldLabel", [
 					"Page title: ",
 					h("input#titleField", {
 						onkeyup: updateTitle,
 						value: String(title || ""),
 						type: "text"
 					})
-				]),
+				]),*/
 
 				h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
-				h("#contentWrap", [
-					h("#input", [
-						h("textarea#textarea", [String(text || "")])
+				h("#ph-contentWrap", [
+					h("#ph-input", [
+						h("textarea#ph-textarea", [String(text || "")])
 					]),
-					h("#output")
+					h("#ph-output")
 				])
 			])
 		])
@@ -484,35 +395,35 @@ function savePage ( event ) {
 	if ( event.preventDefault ) event.preventDefault();
 	else event.returnValue = false;
 
-	currentContent.set({
-		title: currentContent.title.trim(),
-		text: currentContent.text.trim()
+	current.set({
+		title: current.title.trim(),
+		text: current.text.trim()
 	});
 
-	currentContent[currentContent.type.toLowerCase()] = currentContent.text;
+	current[current.type.toLowerCase()] = current.text;
 
-	//var titleDiff = (currentContent.title !== currentContent._title);
-	//var textDiff = (currentContent.text !==
-	// currentContent[currentContent.type.toLowerCase()]);
+	//var titleDiff = (current.title !== current._title);
+	//var textDiff = (current.text !==
+	// current[current.type.toLowerCase()]);
 
 	//if ( textDiff || titleDiff ) {
 	self.innerHTML = "...saving...";
 	var data = {
 		'__metadata': {
-			'type': currentContent.listItemType
+			'type': current.listItemType
 		},
-		'Title': currentContent.title,
-		'Overview': currentContent.overview,
-		'Policy': currentContent.policy,
-		'Training': currentContent.training,
-		'Resources': currentContent.resources,
-		'Tools': currentContent.tools,
-		'Contributions': currentContent.contributions
+		'Title': current.title,
+		'Overview': current.overview,
+		'Policy': current.policy,
+		'Training': current.training,
+		'Resources': current.resources,
+		'Tools': current.tools,
+		'Contributions': current.contributions
 	};
-	//if ( titleDiff ) data["Title"] = currentContent.title;
-	//if ( textDiff ) data[currentContent.type] = currentContent.text;
+	//if ( titleDiff ) data["Title"] = current.title;
+	//if ( textDiff ) data[current.type] = current.text;
 	reqwest({
-		url: sitePath + "/items(" + currentContent.id + ")",
+		url: sitePath + "/items(" + current.id + ")",
 		method: "POST",
 		data: JSON.stringify(data),
 		type: "json",
@@ -534,7 +445,7 @@ function savePage ( event ) {
 		error: function () {
 			self.style.color = "#FF2222";
 			self.style.fontWeight = "bold";
-			self.innerHTML = "Failed!";
+			self.innerHTML = "Connection error - try again.";
 		},
 		complete: function () {
 			if ( !inTransition.tempSaveText ) {
@@ -608,19 +519,19 @@ function createPage ( event ) {
 				page = "",
 				rabbitHole = "";
 
-			if ( currentContent.section !== "" ) {
+			if ( current.section !== "" ) {
 				// Has to be a new Program or lower
-				section = currentContent.section;
-				path += "/" + currentContent.section;
-				if ( currentContent.program !== "" ) {
+				section = current.section;
+				path += "/" + current.section;
+				if ( current.program !== "" ) {
 					// Has to be a new Page or lower
-					program = currentContent.program;
-					path += "/" + currentContent.program;
-					if ( currentContent.page !== "" ) {
+					program = current.program;
+					path += "/" + current.program;
+					if ( current.page !== "" ) {
 						// Has to be a new rabbitHole/SubPage
-						page = currentContent.page;
+						page = current.page;
 						rabbitHole = name;
-						path += "/" + currentContent.page + "/" + name;
+						path += "/" + current.page + "/" + name;
 					}
 					else {
 						page = name;
@@ -652,7 +563,7 @@ function createPage ( event ) {
 					method: "POST",
 					data: JSON.stringify({
 						'__metadata': {
-							'type': currentContent.listItemType
+							'type': current.listItemType
 						},
 						'Title': title,
 						'Overview': '### New Page :)\n#### Joy',
@@ -690,13 +601,13 @@ function createPage ( event ) {
 	});
 }
 
-function updateTitle () {
+/*function updateTitle () {
 	var val = this.value.trim();
 	domRefs.title.innerHTML = val;
-	currentContent.set({
+	current.set({
 		title: val
 	});
-}
+}*/
 
 function editPage () {
 	if ( misc.regFullPage.test(domRefs.content.className) ) {
@@ -722,8 +633,8 @@ function toggleCheatSheet () {
 
 function update ( e ) {
 	var val = e.getValue();
-	insertContent(val, currentContent.type);
-	currentContent.set({
+	insertContent(val, current.type);
+	current.set({
 		text: val
 	});
 }
@@ -734,49 +645,46 @@ function insertContent ( text, type ) {
 
 function pageSetup () {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, currentContent.title) :
-	           renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+	           render(navDOM, tabsDOM, current.title) :
+	           renderEditor(navDOM, tabsDOM, current.title, current.text);
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();
 
-	try {
-		rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']").className += " active";
-		rootNode.querySelector("#ph-tabs a.icon-overview").parentNode.className += " tab-current";
+	var activeLink = rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']");
+	var tabCurrent = rootNode.querySelector("#ph-tabs a.icon-overview");
+	if ( activeLink ) {
+		activeLink.className += " active";
 	}
-	catch ( e ) {
-		console.log(e);
+	if ( tabCurrent ) {
+		tabCurrent.parentNode.className += " tab-current";
 	}
-	try {
-		var hashArray = window.location.hash.slice(2).split(/\//);
-		var i,
-			total;
 
-		if ( hashArray.length > 1 ) {
-			var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-			if ( phPage ) {
-				i = 0;
-				total = phPage.length;
-				for ( ; i < total; ++i ) {
-					phPage[i].removeAttribute("style");
-					phPage[i].parentNode.removeAttribute("style");
-				}
-			}
-			if ( hashArray.length > 2 ) {
-				var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-				if ( phRabbitHoles ) {
-					i = 0;
-					total = phRabbitHoles.length;
-					for ( ; i < total; ++i ) {
-						phRabbitHoles[i].removeAttribute("style");
-						phRabbitHoles[i].parentNode.removeAttribute("style");
-					}
-				}
+	var hashArray = window.location.hash.slice(2).split(/\//),
+		i,
+		total;
+
+	if ( hashArray.length > 1 ) {
+		var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+		if ( phPage ) {
+			i = 0;
+			total = phPage.length;
+			for ( ; i < total; ++i ) {
+				phPage[i].removeAttribute("style");
+				phPage[i].parentNode.removeAttribute("style");
 			}
 		}
-	}
-	catch ( e ) {
-		console.log(e);
+		/*if ( hashArray.length > 2 ) {
+			var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+			if ( phRabbitHoles ) {
+				i = 0;
+				total = phRabbitHoles.length;
+				for ( ; i < total; ++i ) {
+					phRabbitHoles[i].removeAttribute("style");
+					phRabbitHoles[i].parentNode.removeAttribute("style");
+				}
+			}
+		}*/
 	}
 
 	//startLoading(domRefs.output);
@@ -805,7 +713,7 @@ function setupEditor () {
 			editor: null
 		});
 	}
-	var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+	var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
@@ -842,16 +750,15 @@ function resetPage () {
 				editor: null
 			});
 		}
-		var refreshDOM = renderEditor(navDOM, tabsDOM, currentContent.title, currentContent.text);
+		var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
 	}
 	else {
-		refreshDOM = render(navDOM, tabsDOM, currentContent.title);
+		refreshDOM = render(navDOM, tabsDOM, current.title);
 	}
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
 	domRefs = new DOMRef();
-	//startLoading(domRefs.output);
 }
 
 getList();

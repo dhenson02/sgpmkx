@@ -1,15 +1,16 @@
 var h = require("virtual-dom/h");
 
-function renderTab ( title, handleClick, initialTab ) {
+function renderTab ( title, icon, handleClick, initialTab ) {
 	return (
 		h("li" + initialTab, [
-			h("a.icon.icon-" + title.toLowerCase(), {
+			h("a.icon.icon-" + icon, {
 				href: "#",
 				onclick: function ( e ) {
 					e = e || window.event;
 					if ( e.preventDefault ) e.preventDefault();
 					else e.returnValue = false;
 					handleClick(title);
+
 					if ( / ?tab-current/gi.test(this.parentNode.className) === false ) {
 						var tabCurrent = document.querySelector(".tab-current");
 						if ( tabCurrent ) {
@@ -31,7 +32,7 @@ function renderTabs ( tabs, style, launch ) {
 	var count = tabs.length;
 	var initial = ".tab-current";
 	for ( ; i < count; ++i ) {
-		group.push(renderTab(tabs[i], launch, initial));
+		group.push(renderTab(tabs[i].title, tabs[i].icon, launch, initial));
 		initial = "";
 	}
 	/**
@@ -43,12 +44,13 @@ function renderTabs ( tabs, style, launch ) {
 			group.push(renderTab(name, launch));
 		}
 	}*/
-	return (
-		h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
-			h("nav", [
-				h("ul", style, group)
+	return ( ( count === 1 ) ? null : (
+			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
+				h("nav", [
+					h("ul", style, group)
+				])
 			])
-		])
+		)
 	);
 }
 
