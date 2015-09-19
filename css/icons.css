@@ -1,11 +1,6 @@
-.icon {
-	font-family: 'stroke7pixeden';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
+.icon::before {
+	z-index: 10;
+	display: inline-block;
 
 	/* Enable Ligatures ================ */
 	letter-spacing: 0;
@@ -17,8 +12,21 @@
 	font-feature-settings: "liga";
 
 	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: subpixel-antialiased;
 	-moz-osx-font-smoothing: grayscale;
+
+	margin: 0 .4em 0 0;
+	vertical-align: middle;
+	font-size: 1.3em;
+	-webkit-backface-visibility: hidden;
+	font-family: 'stroke7pixeden';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	text-decoration: none;
+	/*line-height: 1;*/
 }
 
 .icon-bandaid:before {

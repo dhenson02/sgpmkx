@@ -24,7 +24,7 @@ function renderSection ( section ) {
 		links[i] = renderLink(section.links[i]);
 	}
 	return (
-		h("li.ph-section-link", [
+		h("li.ph-section.link", [
 			h("p", [
 				h("a", { "href": section.path }, [String(section.title)])
 			]),
