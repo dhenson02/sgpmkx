@@ -3164,3 +3164,7 @@ var data = {
 		]
 	}
 };
+
+var _spPageContextInfo = {
+	webAbsoluteUrl: "https://kx.afms.mil/kj/kx7/PublicHealth"
+};

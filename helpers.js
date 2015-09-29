@@ -40,7 +40,6 @@ try {
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	connError: connError,
 	regLoading: regLoading,
 	regFullPage: regFullPage,
 	regCheatSheet: regCheatSheet,
