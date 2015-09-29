@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dev.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/helpers.js" afterPath="$PROJECT_DIR$/helpers.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/domStore.js" afterPath="$PROJECT_DIR$/domStore.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.js" afterPath="$PROJECT_DIR$/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.min.css" afterPath="$PROJECT_DIR$/main.min.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.min.js" afterPath="$PROJECT_DIR$/main.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/src.iml" afterPath="$PROJECT_DIR$/.idea/src.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/store.js" afterPath="$PROJECT_DIR$/store.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -39,8 +34,8 @@
           <file leaf-file-name="content-src.aspx" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/content-src.aspx">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-0.0">
-                  <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+                <state vertical-scroll-proportion="-35.037037">
+                  <caret line="43" column="98" selection-start-line="43" selection-start-column="98" selection-end-line="43" selection-end-column="98" />
                   <folding />
                 </state>
               </provider>
@@ -51,6 +46,16 @@
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="56" column="36" selection-start-line="56" selection-start-column="36" selection-end-line="56" selection-end-column="36" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="dev.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dev.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="3105" column="18" selection-start-line="3105" selection-start-column="18" selection-end-line="3105" selection-end-column="18" />
                   <folding />
                 </state>
               </provider>
@@ -70,18 +75,28 @@
             <entry file="file://$PROJECT_DIR$/main.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="4" column="33" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="33" />
+                  <caret line="125" column="13" selection-start-line="125" selection-start-column="13" selection-end-line="125" selection-end-column="13" />
                   <folding>
-                    <element signature="e#6453#6951#0" expanded="false" />
+                    <element signature="e#6455#6953#0" expanded="false" />
                     <element signature="n#!!block;n#render#0" expanded="false" />
-                    <element signature="e#7845#8014#0" expanded="false" />
-                    <element signature="e#8300#8453#0" expanded="false" />
-                    <element signature="e#9086#9263#0" expanded="false" />
-                    <element signature="e#9522#9738#0" expanded="false" />
-                    <element signature="e#12176#12556#0" expanded="false" />
-                    <element signature="e#15963#16089#0" expanded="false" />
-                    <element signature="e#17817#18295#0" expanded="false" />
+                    <element signature="e#7847#8016#0" expanded="false" />
+                    <element signature="e#8302#8455#0" expanded="false" />
+                    <element signature="e#9088#9265#0" expanded="false" />
+                    <element signature="e#9524#9740#0" expanded="false" />
+                    <element signature="e#12178#12558#0" expanded="false" />
+                    <element signature="e#15965#16091#0" expanded="false" />
+                    <element signature="e#17819#18297#0" expanded="false" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/index.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.5679758">
+                  <caret line="57" column="16" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="16" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -108,16 +123,6 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="dev.js" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/dev.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="3141" column="35" selection-start-line="3141" selection-start-column="35" selection-end-line="3141" selection-end-column="35" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="tabs.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/tabs.js">
               <provider selected="true" editor-type-id="text-editor">
@@ -130,10 +135,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="nav.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="nav.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/nav.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.031930335">
+                <state vertical-scroll-proportion="0.0">
                   <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
                   <folding />
                 </state>
@@ -207,8 +212,8 @@
           <file leaf-file-name="tabs.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/css/tabs.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5948795">
-                  <caret line="180" column="14" selection-start-line="180" selection-start-column="14" selection-end-line="180" selection-end-column="14" />
+                <state vertical-scroll-proportion="0.796807">
+                  <caret line="187" column="24" selection-start-line="187" selection-start-column="24" selection-end-line="187" selection-end-column="24" />
                   <folding />
                 </state>
               </provider>
@@ -242,9 +247,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package_json" />
-        <option value="Html5" />
         <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="Html5" />
       </list>
     </option>
   </component>
@@ -309,7 +314,6 @@
         <option value="$PROJECT_DIR$/loader.css" />
         <option value="$PROJECT_DIR$/node_modules/animate.css/animate-config.json" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/content-src.aspx" />
         <option value="$PROJECT_DIR$/css/1.css" />
         <option value="$PROJECT_DIR$/css/loader2.css" />
         <option value="$PROJECT_DIR$/css/loader.css" />
@@ -318,7 +322,6 @@
         <option value="$PROJECT_DIR$/css/init.css" />
         <option value="$PROJECT_DIR$/css/generic.css" />
         <option value="$PROJECT_DIR$/css/codemirror.css" />
-        <option value="$PROJECT_DIR$/domStore.js" />
         <option value="$PROJECT_DIR$/tabs.js" />
         <option value="$PROJECT_DIR$/css/tabs.css" />
         <option value="$PROJECT_DIR$/css/icons.css" />
@@ -326,10 +329,13 @@
         <option value="$PROJECT_DIR$/nav.js" />
         <option value="$PROJECT_DIR$/data.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
-        <option value="$PROJECT_DIR$/main.js" />
         <option value="$PROJECT_DIR$/helpers.js" />
         <option value="$PROJECT_DIR$/store.js" />
         <option value="$PROJECT_DIR$/dev.js" />
+        <option value="$PROJECT_DIR$/domStore.js" />
+        <option value="$PROJECT_DIR$/main.js" />
+        <option value="$PROJECT_DIR$/content-src.aspx" />
+        <option value="$PROJECT_DIR$/index.html" />
       </list>
     </option>
   </component>
@@ -493,8 +499,11 @@
       <recent name="$PROJECT_DIR$/old" />
     </key>
   </component>
-  <component name="RunManager" selected="JavaScript Debug.test.html">
+  <component name="RunManager" selected="JavaScript Debug.index.html">
     <configuration default="false" name="test.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/test.html">
+      <method />
+    </configuration>
+    <configuration default="false" name="index.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/index.html">
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
@@ -519,12 +528,14 @@
       <envs />
       <method />
     </configuration>
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.test.html" />
+      <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.test.html" />
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
+        <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.test.html" />
       </list>
     </recent_temporary>
   </component>
@@ -535,12 +546,6 @@
       <created>1437005519578</created>
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
-    </task>
-    <task id="LOCAL-00023" summary="hide/reveal sub list is functional - click and onload">
-      <created>1439360000084</created>
-      <option name="number" value="00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1439360000084</updated>
     </task>
     <task id="LOCAL-00024" summary="improvements to hide/reveal sub-list/nav.  better editor buttons (still not complete tho).  menu and page sizes adjusted accordingly">
       <created>1439373194728</created>
@@ -830,7 +835,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442687490925</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="local code starting to form">
+      <created>1443567479232</created>
+      <option name="number" value="00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1443567479233</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TodoView">
@@ -846,8 +857,9 @@
     <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14229405" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14229405" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -859,7 +871,6 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39953542" sideWeight="0.49862042" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -912,7 +923,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="sweetAlerts have replaced old newModal, createPage() works with confidence" />
     <MESSAGE value="save text reset was doubled" />
     <MESSAGE value="sorting of menu list fixed, hide sub links when clicking main category/home" />
     <MESSAGE value="code styling and added css file for tabs" />
@@ -937,7 +947,8 @@
     <MESSAGE value="adding page load (full page) animation, cant get it high enough in the code because of SharePoint so we'll make due with the vdom and just use a timer to make it last longer" />
     <MESSAGE value="caught up more or less to the minor changes that kept adding up in the other branch." />
     <MESSAGE value="it's all working.  many things to polish." />
-    <option name="LAST_COMMIT_MESSAGE" value="it's all working.  many things to polish." />
+    <MESSAGE value="local code starting to form" />
+    <option name="LAST_COMMIT_MESSAGE" value="local code starting to form" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1039,15 +1050,15 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
           <folding>
-            <element signature="e#6453#6951#0" expanded="false" />
+            <element signature="e#6455#6953#0" expanded="false" />
             <element signature="n#!!block;n#render#0" expanded="false" />
-            <element signature="e#7845#8014#0" expanded="false" />
-            <element signature="e#8300#8453#0" expanded="false" />
-            <element signature="e#9086#9263#0" expanded="false" />
-            <element signature="e#9522#9738#0" expanded="false" />
-            <element signature="e#12176#12556#0" expanded="false" />
-            <element signature="e#15963#16089#0" expanded="false" />
-            <element signature="e#17817#18295#0" expanded="false" />
+            <element signature="e#7847#8016#0" expanded="false" />
+            <element signature="e#8302#8455#0" expanded="false" />
+            <element signature="e#9088#9265#0" expanded="false" />
+            <element signature="e#9524#9740#0" expanded="false" />
+            <element signature="e#12178#12558#0" expanded="false" />
+            <element signature="e#15965#16091#0" expanded="false" />
+            <element signature="e#17819#18297#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1164,15 +1175,15 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="278" column="10" selection-start-line="278" selection-start-column="10" selection-end-line="278" selection-end-column="10" />
           <folding>
-            <element signature="e#6453#6951#0" expanded="false" />
+            <element signature="e#6455#6953#0" expanded="false" />
             <element signature="n#!!block;n#render#0" expanded="false" />
-            <element signature="e#7845#8014#0" expanded="false" />
-            <element signature="e#8300#8453#0" expanded="false" />
-            <element signature="e#9086#9263#0" expanded="false" />
-            <element signature="e#9522#9738#0" expanded="false" />
-            <element signature="e#12176#12556#0" expanded="false" />
-            <element signature="e#15963#16089#0" expanded="false" />
-            <element signature="e#17817#18295#0" expanded="false" />
+            <element signature="e#7847#8016#0" expanded="false" />
+            <element signature="e#8302#8455#0" expanded="false" />
+            <element signature="e#9088#9265#0" expanded="false" />
+            <element signature="e#9524#9740#0" expanded="false" />
+            <element signature="e#12178#12558#0" expanded="false" />
+            <element signature="e#15965#16091#0" expanded="false" />
+            <element signature="e#17819#18297#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1682,14 +1693,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/content-src.aspx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1761,37 +1764,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/tabs.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5948795">
-          <caret line="180" column="14" selection-start-line="180" selection-start-column="14" selection-end-line="180" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="48" column="11" selection-start-line="48" selection-start-column="11" selection-end-line="48" selection-end-column="11" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="33" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="33" />
-          <folding>
-            <element signature="e#6453#6951#0" expanded="false" />
-            <element signature="n#!!block;n#render#0" expanded="false" />
-            <element signature="e#7845#8014#0" expanded="false" />
-            <element signature="e#8300#8453#0" expanded="false" />
-            <element signature="e#9086#9263#0" expanded="false" />
-            <element signature="e#9522#9738#0" expanded="false" />
-            <element signature="e#12176#12556#0" expanded="false" />
-            <element signature="e#15963#16089#0" expanded="false" />
-            <element signature="e#17817#18295#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1813,22 +1790,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/domStore.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="5" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dev.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3141" column="35" selection-start-line="3141" selection-start-column="35" selection-end-line="3141" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1841,8 +1802,66 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nav.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.031930335">
+        <state vertical-scroll-proportion="0.0">
           <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dev.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3105" column="18" selection-start-line="3105" selection-start-column="18" selection-end-line="3105" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domStore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="5" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/tabs.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.796807">
+          <caret line="187" column="24" selection-start-line="187" selection-start-column="24" selection-end-line="187" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="125" column="13" selection-start-line="125" selection-start-column="13" selection-end-line="125" selection-end-column="13" />
+          <folding>
+            <element signature="e#6455#6953#0" expanded="false" />
+            <element signature="n#!!block;n#render#0" expanded="false" />
+            <element signature="e#7847#8016#0" expanded="false" />
+            <element signature="e#8302#8455#0" expanded="false" />
+            <element signature="e#9088#9265#0" expanded="false" />
+            <element signature="e#9524#9740#0" expanded="false" />
+            <element signature="e#12178#12558#0" expanded="false" />
+            <element signature="e#15965#16091#0" expanded="false" />
+            <element signature="e#17819#18297#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/content-src.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-35.037037">
+          <caret line="43" column="98" selection-start-line="43" selection-start-column="98" selection-end-line="43" selection-end-column="98" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5679758">
+          <caret line="57" column="16" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="16" />
           <folding />
         </state>
       </provider>
