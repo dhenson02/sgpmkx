@@ -6,10 +6,6 @@ function removeEvent ( evt, element, fnc ) {
 	return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
 }
 
-function connError ( error ) {
-	console.log("error connecting:", error);
-}
-
 var regLoading = / ?loading/gi,
 	regFullPage = / ?fullPage/gi,
 	regCheatSheet = / ?cheatSheet/gi,
@@ -30,7 +26,10 @@ var regLoading = / ?loading/gi,
 			return '';
 		}
 	}),
-	codeMirror;
+	codeMirror,
+	baseURL = _spPageContextInfo.webAbsoluteUrl,
+	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+	digest = document.getElementById("__REQUESTDIGEST").value;
 
 try {
 	codeMirror = CodeMirror;
@@ -48,5 +47,8 @@ module.exports = {
 	regNoChange: regNoChange,
 	regNormalize: regNormalize,
 	md: md,
-	codeMirror: codeMirror
+	codeMirror: codeMirror,
+	baseURL: baseURL,
+	sitePath: sitePath,
+	digest: digest
 };

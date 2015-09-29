@@ -47,14 +47,17 @@ module.exports = function ( grunt ) {
 			dev: {
 				options: {
 					compress: false,
-					screwIE8: true,
+					screwIE8: false,
 					beautify: true,
 					mangle: false,
 					wrap: false,
 					sourceMap: true
 				},
 				files: {
-					'main.min.js': '.tmp/main.js'
+					'main.min.js': [
+						'dev.js',
+						'.tmp/main.js'
+					]
 				}
 			}
 		},
