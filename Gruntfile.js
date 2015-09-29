@@ -54,10 +54,7 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'main.min.js': [
-						'dev.js',
-						'.tmp/main.js'
-					]
+					'main.min.js': '.tmp/main.js'
 				}
 			}
 		},
@@ -151,13 +148,13 @@ module.exports = function ( grunt ) {
 					atBegin: true
 				},
 				files: [
+					'data.js',
 					'main.js',
 					'nav.js',
 					'tabs.js',
 					'helpers.js',
 					'store.js',
-					'domStore.js',
-					'dev.js'
+					'domStore.js'
 				],
 				tasks: [
 					'browserify:dist',

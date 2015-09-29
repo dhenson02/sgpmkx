@@ -1,3 +1,6 @@
+var events = require("./store").events,
+	pages = require("./store").pages;
+
 var data = {
 	"d": {
 		"results": [
@@ -3168,3 +3171,22 @@ var data = {
 var _spPageContextInfo = {
 	webAbsoluteUrl: "https://kx.afms.mil/kj/kx7/PublicHealth"
 };
+
+var baseURL = _spPageContextInfo.webAbsoluteUrl,
+	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+	digest = document.getElementById("__REQUESTDIGEST").value;
+
+events.on("page.init", function () {
+	setTimeout(function () {
+		"use strict";
+		events.emit("data.loaded", data);
+	}, 1500);
+});
+
+module.exports = {
+	data: data,
+	baseURL: baseURL,
+	sitePath: sitePath,
+	digest: digest
+};
+

@@ -1,4 +1,6 @@
-var h = require("virtual-dom/h");
+var h = require("virtual-dom/h"),
+	Events = require("eventemitter3"),
+	events = new Events();
 
 function Content () {
 	if ( !(this instanceof Content) ) {
@@ -154,7 +156,10 @@ Pages.prototype.set = function ( data ) {
 
 var pages = new Pages();
 
-module.exports = pages;
+module.exports = {
+	events: events,
+	pages: pages
+};
 
 /**
  * For Tools:

@@ -6,14 +6,17 @@ var h = require("virtual-dom/h"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
+	data = require("./data"),
 	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
-	//baseURL = misc.baseURL,
-	sitePath = misc.sitePath,
-	digest = misc.digest,
-	pages = require("./store"),
+	baseURL = data.baseURL,
+	sitePath = "",//data.sitePath,
+	digest = data.digest,
+	store = require("./store"),
+	pages = store.pages,
+	events = store.events,
 	DOMRef = require("./domStore"),
 	current = pages.current,
 	domRefs = new DOMRef(),
@@ -772,4 +775,5 @@ function resetPage () {
 	domRefs = new DOMRef();
 }
 
-getList();
+events.emit("page.init");
+//getList();

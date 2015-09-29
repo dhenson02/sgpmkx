@@ -26,10 +26,7 @@ var regLoading = / ?loading/gi,
 			return '';
 		}
 	}),
-	codeMirror,
-	baseURL = _spPageContextInfo.webAbsoluteUrl,
-	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
-	digest = document.getElementById("__REQUESTDIGEST").value;
+	codeMirror;
 
 try {
 	codeMirror = CodeMirror;
@@ -46,8 +43,5 @@ module.exports = {
 	regNoChange: regNoChange,
 	regNormalize: regNormalize,
 	md: md,
-	codeMirror: codeMirror,
-	baseURL: baseURL,
-	sitePath: sitePath,
-	digest: digest
+	codeMirror: codeMirror
 };
