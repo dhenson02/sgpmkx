@@ -2,6 +2,8 @@ var events = require("./store").events,
 	pages = require("./store").pages,
 	map = require("lodash/collection/map"),
 	reduce = require("lodash/collection/reduce"),
+	// For dev purposes only
+	// ------
 	data = {
 		"d": {
 			"results": [
@@ -3175,6 +3177,7 @@ var events = require("./store").events,
 	_spPageContextInfo = {
 		webAbsoluteUrl: "https://kx.afms.mil/kj/kx7/PublicHealth"
 	},
+	// ------
 	baseURL = _spPageContextInfo.webAbsoluteUrl,
 	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
 	digest = document.getElementById("__REQUESTDIGEST").value;

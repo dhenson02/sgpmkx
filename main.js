@@ -89,7 +89,7 @@ events.on("*.loading", function () {
 	if ( inTransition.output === true ) {
 		return false;
 	}
-	inTransition[target.id] = true;
+	inTransition.output = true;
 	if ( regLoading.test(target.className) === false ) {
 		inTransition.tmp = target.innerHTML;
 		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
@@ -208,7 +208,6 @@ events.on("page.loaded", function ( data ) {
 
 	resetPage();
 	insertContent(current.text, current.type);
-	//stopLoading(domRefs.output);
 
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
 	var currentTab = document.querySelector("#ph-tabs a.icon-overview");
@@ -232,20 +231,13 @@ events.on("page.loaded", function ( data ) {
 				phPage[i].parentNode.removeAttribute("style");
 			}
 		}
-		/*if ( hashArray.length > 2 ) {
-		 var phRabbitHoles = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-		 if ( phRabbitHoles ) {
-		 i = 0;
-		 total = phRabbitHoles.length;
-		 for ( ; i < total; ++i ) {
-		 phRabbitHoles[i].removeAttribute("style");
-		 phRabbitHoles[i].parentNode.removeAttribute("style");
-		 }
-		 }
-		 }*/
 	}
 
 	document.title = current.title;
+
+	if ( codeMirror ) {
+		setupEditor();
+	}
 });
 
 function handleTab ( page ) {
@@ -667,7 +659,7 @@ function pageSetup () {
 
 }
 
-events.on("page.rendered", function () {
+function setupEditor () {
 	console.log("Loading editor...");
 	if ( domRefs.editor ) {
 		var wrap = domRefs.editor.getWrapperElement();
@@ -699,7 +691,7 @@ events.on("page.rendered", function () {
 	domRefs.editor.refresh();
 	domRefs.buttons.childNodes[0].removeAttribute("style");
 	console.log("Editor loaded");
-});
+}
 
 function resetPage () {
 	console.log("Page reset");
