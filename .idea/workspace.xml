@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="very much nicer file setup.  new button ends with a link instead of auto forward">
+    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/img/082514_2039_PublicHealt1.gif" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/img/ajax-loader_dark.gif" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/img/ajax-loader_dkBlue.gif" />
@@ -6942,7 +6942,7 @@
               <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/main.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.2752443">
+                    <state vertical-scroll-proportion="0.24492754">
                       <caret line="446" column="25" selection-start-line="446" selection-start-column="25" selection-end-line="446" selection-end-column="25" />
                       <folding>
                         <element signature="e#2202#2311#0" expanded="false" />
@@ -6994,8 +6994,8 @@
               <file leaf-file-name="nav.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/nav.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.24726135">
-                      <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
+                    <state vertical-scroll-proportion="0.8363636">
+                      <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
                       <folding />
                     </state>
                   </provider>
@@ -7010,7 +7010,7 @@
           <file leaf-file-name="init-dev.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/init-dev.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.1791531">
+                <state vertical-scroll-proportion="0.1594203">
                   <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
                   <folding />
                 </state>
@@ -7511,12 +7511,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00029" summary="adjusted h1 margin-bottom since default layout overrides to 0">
-      <created>1439604985112</created>
-      <option name="number" value="00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1439604985112</updated>
-    </task>
     <task id="LOCAL-00030" summary="added loading animation - will perfect later">
       <created>1439608908689</created>
       <option name="number" value="00030" />
@@ -7805,7 +7799,13 @@
       <option name="project" value="LOCAL" />
       <updated>1443587181726</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="adding the resource files to git">
+      <created>1443587907401</created>
+      <option name="number" value="00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1443587907401</updated>
+    </task>
+    <option name="localTasksCounter" value="79" />
     <servers />
   </component>
   <component name="TodoView">
@@ -7819,18 +7819,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14229405" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.4969325" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22648084" sideWeight="0.51516545" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13821138" sideWeight="0.51516545" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4018583" sideWeight="0.48483455" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -7887,7 +7887,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="fixed input value validator for createPage" />
     <MESSAGE value="re-working fields and display of pages (vs. programs vs. sections).  tabs still being worked" />
     <MESSAGE value="buttons with .btn are now actually...button elements (since SharePoint no longer overpowers them into submitting)." />
     <MESSAGE value="left nav styling with logo" />
@@ -7912,7 +7911,8 @@
     <MESSAGE value="Merge branch 'local3' - mainly set up as dev but easily transferable to real" />
     <MESSAGE value="straightened out file setup" />
     <MESSAGE value="very much nicer file setup.  new button ends with a link instead of auto forward" />
-    <option name="LAST_COMMIT_MESSAGE" value="very much nicer file setup.  new button ends with a link instead of auto forward" />
+    <MESSAGE value="adding the resource files to git" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding the resource files to git" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -8707,7 +8707,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/css/init-dev.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1791531">
+        <state vertical-scroll-proportion="0.1594203">
           <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
           <folding />
         </state>
@@ -8750,23 +8750,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24726135">
-          <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2752443">
+        <state vertical-scroll-proportion="0.24492754">
           <caret line="446" column="25" selection-start-line="446" selection-start-column="25" selection-end-line="446" selection-end-column="25" />
           <folding>
             <element signature="e#2202#2311#0" expanded="false" />
             <element signature="n#!!block;n#render#0" expanded="false" />
             <element signature="n#!!block;n#renderEditor#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8363636">
+          <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
+          <folding />
         </state>
       </provider>
     </entry>
