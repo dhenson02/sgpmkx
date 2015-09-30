@@ -1,16 +1,14 @@
 var events = require("./store").events,
 	pages = require("./store").pages,
+	reqwest = require("reqwest"),
 	baseURL = _spPageContextInfo.webAbsoluteUrl,
 	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
-	digest = document.getElementById("__REQUESTDIGEST").value,
+	digest = document.getElementById("__REQUESTDIGEST").value;/*
 	data = window.__PHDATA__,
-	data_ = window.__PHDATA___;/*reduce(data.d.results, function ( obj, item ) {
-		obj[item.ID] = { d: item };
-		return obj;
-	}, {});*/
+	data_ = window.__PHDATA___;*/
 
 events.on("list.loading", function () {
-	/*reqwest({
+	reqwest({
 		url: sitePath + "/items",
 		method: "GET",
 		type: "json",
@@ -27,10 +25,10 @@ events.on("list.loading", function () {
 		error: function ( error ) {
 			console.log("error connecting:", error);
 		}
-	});*/
-	setTimeout(function () {
+	});
+	/*setTimeout(function () {
 		events.emit("list.success", data);
-	}, 250);
+	}, 250);*/
 });
 
 events.on("page.loading", function ( path ) {
@@ -39,7 +37,7 @@ events.on("page.loading", function ( path ) {
 		events.emit("missing", path);
 		return false;
 	}
-	/*reqwest({
+	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
 		method: "GET",
 		type: "json",
@@ -55,21 +53,16 @@ events.on("page.loading", function ( path ) {
 		},
 		error: function ( error ) {
 			console.log("error connecting:", error);
-		},
-		complete: function () {
-			if ( codeMirror ) {
-				setupEditor();
-			}
 		}
-	});*/
-	setTimeout(function () {
+	});
+	/*setTimeout(function () {
 		events.emit("page.loaded", data_[pages[path].ID]);
-	}, 250);
+	}, 250);*/
 });
 
 module.exports = {
-	data: data,
-	data_: data_,
+	/*data: data,
+	data_: data_,*/
 	baseURL: baseURL,
 	sitePath: sitePath,
 	digest: digest

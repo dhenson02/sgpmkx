@@ -12,7 +12,7 @@ var h = require("virtual-dom/h"),
 	codeMirror = misc.codeMirror,
 
 	data = require("./data"),
-	sitePath = "",//data.sitePath,
+	sitePath = data.sitePath,
 	digest = data.digest,
 
 	pages = require("./store").pages,
@@ -84,17 +84,14 @@ sweetAlert.setDefaults({
 });
 
 events.on("*.loading", function () {
-	//var regLoading = / ?loading/gi;
 	var target = domRefs.output;
 	if ( inTransition.output === true ) {
 		return false;
 	}
 	inTransition.output = true;
-	//if ( regLoading.test(target.className) === false ) {
-		inTransition.tmp = target.innerHTML;
-		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-		target.className += " loading";
-	//}
+	inTransition.tmp = target.innerHTML;
+	target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
+	target.className += " loading";
 });
 
 events.on("*.loaded", function () {
@@ -255,7 +252,8 @@ function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
-				h("input#ph-search")
+				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
+				h("input#ph-search", { placeHolder: "Search...!"})
 			]),
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
@@ -273,7 +271,8 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
-				h("input#ph-search")
+				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
+				h("input#ph-search", { placeHolder: "Search...!" })
 			]),
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
@@ -375,7 +374,7 @@ function savePage ( event ) {
 		success: function () {
 			self.style.fontWeight = "bold";
 			self.innerHTML = "Saved!";
-			events.emit("list.loading");
+			//events.emit("list.loading");
 		},
 		error: function () {
 			self.style.color = "#FF2222";
@@ -625,6 +624,7 @@ function pageSetup () {
 		},
 		set: function ( item ) {
 			router.setRoute(item);
+			return false;
 		},
 		render: function ( li, item ) {
 			li.innerText = li.textContent = item.renderText;
@@ -695,4 +695,3 @@ function resetPage () {
 }
 
 events.emit("list.loading");
-//getList();

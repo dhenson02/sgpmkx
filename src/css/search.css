@@ -1,3 +1,8 @@
 #ph-search-wrap {
-float: right;
+	float: right;
+	z-index: 20;
+}
+#ph-search {
+	float: right;
+	z-index: 22;
 }

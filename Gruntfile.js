@@ -4,6 +4,11 @@ module.exports = function ( grunt ) {
 			options: {},
 			dist: {
 				files: {
+					'.tmp/main.js': 'src/js/main.js'
+				}
+			},
+			dev: {
+				files: {
 					'.tmp/main.js': 'src/js/main.js',
 					'.tmp/dev.js': 'src/js/dev.js'
 				}
@@ -157,7 +162,7 @@ module.exports = function ( grunt ) {
 					'src/js/*.js'
 				],
 				tasks: [
-					'browserify:dist',
+					'browserify:dev',
 					'uglify:dev',
 					'purifycss:dev',
 					'cssmin:dev'
