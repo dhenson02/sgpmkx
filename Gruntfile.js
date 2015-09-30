@@ -73,9 +73,11 @@ module.exports = function ( grunt ) {
 					'src/css/nav.css',
 					'src/css/tabs.css',
 					'src/css/loader.css',
+					'src/css/search.css',
 					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
-					'node_modules/animate.css/animate.min.css'
+					'node_modules/horsey/dist/horsey.min.css'
+					/*'node_modules/animate.css/animate.min.css'*/
 				],
 				dest: '.tmp/main.css'
 			},
@@ -91,9 +93,11 @@ module.exports = function ( grunt ) {
 					'src/css/nav.css',
 					'src/css/tabs.css',
 					'src/css/loader.css',
+					'src/css/search.css',
 					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
-					'node_modules/animate.css/animate.min.css'
+					'node_modules/horsey/dist/horsey.css'
+					/*'node_modules/animate.css/animate.min.css'*/
 				],
 				dest: '.tmp/main.css'
 			}
@@ -137,8 +141,9 @@ module.exports = function ( grunt ) {
 				},
 				files: [
 					'src/css/*.css',
-					'node_modules/sweetalert/dist/sweetalert.css',
-					'node_modules/animate.css/*.min.css'
+					'node_modules/sweetalert/dist/*.css',
+					'node_modules/horsey/dist/*.css'
+					/*'node_modules/animate.css/!*.min.css'*/
 				],
 				tasks: ['purifycss:dev', 'cssmin:dev']
 			},

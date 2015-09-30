@@ -1,6 +1,7 @@
 var h = require("virtual-dom/h"),
 	Events = require("eventemitter2").EventEmitter2,
-	events = new Events({ wildcard: true });
+	events = new Events({ wildcard: true }),
+	pluck = require("lodash/collection/pluck");
 
 function Content () {
 	if ( !(this instanceof Content) ) {
@@ -106,8 +107,14 @@ Pages.prototype.init = function ( data ) {
 
 	urls.sort();
 	i = 0;
+	this.titles = [];
 	for ( ; i < count; ++i ) {
 		var page = this[urls[i]];
+		this.titles[i] = {
+			text: page.Title + " " + pluck(page.Keywords.results, "Label").join(" "),
+			value: page.Path,
+			renderText: page.Title
+		};
 		var isPage = false;
 		var level;
 		var name = page.rabbitHole || page.Page || page.Program;

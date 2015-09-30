@@ -6,12 +6,12 @@ var h = require("virtual-dom/h"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
+	horsey = require("horsey"),
 
 	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
 
 	data = require("./data"),
-	baseURL = data.baseURL,
 	sitePath = "",//data.sitePath,
 	digest = data.digest,
 
@@ -20,7 +20,7 @@ var h = require("virtual-dom/h"),
 	current = pages.current,
 
 	DOMRef = require("./domStore").DOMRef,
-	domRefs = require("./domStore").domRefs,
+	domRefs = new DOMRef(),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
@@ -84,17 +84,17 @@ sweetAlert.setDefaults({
 });
 
 events.on("*.loading", function () {
-	var regLoading = / ?loading/gi;
+	//var regLoading = / ?loading/gi;
 	var target = domRefs.output;
 	if ( inTransition.output === true ) {
 		return false;
 	}
 	inTransition.output = true;
-	if ( regLoading.test(target.className) === false ) {
+	//if ( regLoading.test(target.className) === false ) {
 		inTransition.tmp = target.innerHTML;
 		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
 		target.className += " loading";
-	}
+	//}
 });
 
 events.on("*.loaded", function () {
@@ -124,7 +124,6 @@ events.on("missing", function ( path ) {
 });
 
 events.on("page.loaded", function ( data ) {
-	console.log("page data: ", data);
 	var obj = data.d;
 	if ( !obj ) {
 		router.setRoute("/");
@@ -255,13 +254,9 @@ function handleTab ( page ) {
 function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#ph-wrapper", [
-			/*h("div#init-page-loader.animated.fadeIn", [
-			 h("div.loading-spinner", [
-			 h("div.dot.dotOne"),
-			 h("div.dot.dotTwo"),
-			 h("div.dot.dotThree")
-			 ])
-			 ]),*/
+			h("#ph-search-wrap", [
+				h("input#ph-search")
+			]),
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
 				tabsDOM,
@@ -277,13 +272,9 @@ function render ( navDOM, tabsDOM, title ) {
 function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#ph-wrapper", [
-			/*h("div#init-page-loader", [
-			 h("div.loading-spinner", [
-			 h("div.dot.dotOne"),
-			 h("div.dot.dotTwo"),
-			 h("div.dot.dotThree")
-			 ])
-			 ]),*/
+			h("#ph-search-wrap", [
+				h("input#ph-search")
+			]),
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
@@ -307,15 +298,6 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 				]),
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
-				/*h("label#titleFieldLabel", [
-				 "Page title: ",
-				 h("input#titleField", {
-				 onkeyup: updateTitle,
-				 value: String(title || ""),
-				 type: "text"
-				 })
-				 ]),*/
-
 				h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
 				h("#ph-contentWrap", [
 					h("#ph-input", [
@@ -620,16 +602,34 @@ function pageSetup () {
 
 	if ( window.location.hash ) {
 		/**
-		 * Example:  copy + paste URL to https://kx.afms.mil/kj/kx7/PublicHealth/[...]/#/FH/TravelMedicine
+		 * Example:  copy + paste URL to
+		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]/#/FH/TravelMedicine
 		 */
 		router.init();
 	}
 	else {
 		/**
-		 * Example:  copy + paste URL to https://kx.afms.mil/kj/kx7/PublicHealth/[...]
+		 * Example:  copy + paste URL to
+		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]
 		 */
 		router.init("/");
 	}
+
+	horsey(document.getElementById("ph-search"), {
+		suggestions: pages.titles,
+		getValue: function ( item ) {
+			return item.value;
+		},
+		getText: function ( item ) {
+			return item.text;
+		},
+		set: function ( item ) {
+			router.setRoute(item);
+		},
+		render: function ( li, item ) {
+			li.innerText = li.textContent = item.renderText;
+		}
+	});
 
 }
 

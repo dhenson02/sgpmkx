@@ -31,10 +31,10 @@ DOMRef.prototype.set = function ( data ) {
 	/!*domRefs = new DOMRef();*!/
 };*/
 
-var domRefs = new DOMRef();
+//var domRefs = new DOMRef();
 //var rootNode, dirtyDOM;
 
 module.exports = {
-	DOMRef: DOMRef,
-	domRefs: domRefs
+	DOMRef: DOMRef
+	//domRefs: domRefs
 };
