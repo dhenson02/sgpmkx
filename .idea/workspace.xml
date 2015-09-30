@@ -2,54 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/082514_2039_PublicHealt1.gif" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo-gs.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo128-gs.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo128.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo48-gs.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo48.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo64-gs.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo96-gs.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/phLogo96.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/loading-bubbles.svg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/main.min.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/main.min.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/css_old/landing.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/css_old/landing.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/css_old/pageview.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/css_old/pageview.pure.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/codemirror-compressed.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/content.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/content2.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/content3.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/content4.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/landAction.aspx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/landing.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/landing.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/landing.min.js.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/old/landing.pre.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/content3a.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/content3a.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/content3a.pre.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/content3b.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/domStore-dist.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/manager.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/potentials/store-dist.js" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data.js" afterPath="$PROJECT_DIR$/js/data.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/dependencies.min.js" afterPath="$PROJECT_DIR$/js/dependencies.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/domStore.js" afterPath="$PROJECT_DIR$/js/domStore.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/editor3.min.js" afterPath="$PROJECT_DIR$/js/editor3.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/helpers.js" afterPath="$PROJECT_DIR$/js/helpers.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/main.js" afterPath="$PROJECT_DIR$/js/main.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/main.min.js" afterPath="$PROJECT_DIR$/js/main.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/markdown-it.min.js" afterPath="$PROJECT_DIR$/js/markdown-it.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/nav.js" afterPath="$PROJECT_DIR$/js/nav.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/store.js" afterPath="$PROJECT_DIR$/js/store.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/tabs.js" afterPath="$PROJECT_DIR$/js/tabs.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/js/data.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/js/dev.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/css/init-dev.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/css/main.min.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/js/main.min.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/css/main.min.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dist/main.min.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dist/main.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/082514_2039_PublicHealt1.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/ajax-loader_dark.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/ajax-loader_dkBlue.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/ajax-loader_green.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/ajax-loader_ltBlue.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/ajax-loader_red.gif" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/loading-bubbles.svg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo-gs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo128-gs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo128.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo48-gs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo48.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo64-gs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo64.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo96-gs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/img/phLogo96.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/js/data.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/js/main.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/main.min.css" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/content-src.aspx" afterPath="$PROJECT_DIR$/dist/content-src.aspx" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/buttons.css" afterPath="$PROJECT_DIR$/src/css/buttons.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/codemirror.css" afterPath="$PROJECT_DIR$/src/css/codemirror.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/generic.css" afterPath="$PROJECT_DIR$/src/css/generic.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/icons.css" afterPath="$PROJECT_DIR$/src/css/icons.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/init.css" afterPath="$PROJECT_DIR$/src/css/init.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/loader.css" afterPath="$PROJECT_DIR$/src/css/loader.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/loader2.css" afterPath="$PROJECT_DIR$/src/css/loader2.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/main.css" afterPath="$PROJECT_DIR$/src/css/main.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/nav.css" afterPath="$PROJECT_DIR$/src/css/nav.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/shadow.css" afterPath="$PROJECT_DIR$/src/css/shadow.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/css/tabs.css" afterPath="$PROJECT_DIR$/src/css/tabs.css" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/dependencies.min.js" afterPath="$PROJECT_DIR$/dist/js/dependencies.min.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/domStore.js" afterPath="$PROJECT_DIR$/src/js/domStore.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/editor3.min.js" afterPath="$PROJECT_DIR$/dist/js/editor3.min.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/helpers.js" afterPath="$PROJECT_DIR$/src/js/helpers.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/main.js" afterPath="$PROJECT_DIR$/src/js/main.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/markdown-it.min.js" afterPath="$PROJECT_DIR$/dist/js/markdown-it.min.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/nav.js" afterPath="$PROJECT_DIR$/src/js/nav.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/store.js" afterPath="$PROJECT_DIR$/src/js/store.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/js/tabs.js" afterPath="$PROJECT_DIR$/src/js/tabs.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/main_template.html" afterPath="$PROJECT_DIR$/dist/main_template.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_template.html" afterPath="$PROJECT_DIR$/main_template.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -79,20 +82,20 @@
           <split-first>
             <leaf>
               <file leaf-file-name="content-src.aspx" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/content-src.aspx">
+                <entry file="file://$PROJECT_DIR$/dist/content-src.aspx">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="-0.0">
-                      <caret line="43" column="98" selection-start-line="43" selection-start-column="98" selection-end-line="43" selection-end-column="98" />
+                    <state vertical-scroll-proportion="-9.814815">
+                      <caret line="41" column="53" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="main_template.html" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/main_template.html">
+              <file leaf-file-name="main_template.html" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dist/main_template.html">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.050458714">
-                      <caret line="43" column="13" selection-start-line="43" selection-start-column="13" selection-end-line="43" selection-end-column="13" />
+                    <state vertical-scroll-proportion="-35.851852">
+                      <caret line="44" column="27" selection-start-line="44" selection-start-column="27" selection-end-line="44" selection-end-column="27" />
                       <folding />
                     </state>
                   </provider>
@@ -102,14 +105,27 @@
                 <entry file="file://$PROJECT_DIR$/Gruntfile.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
-                      <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+                      <caret line="141" column="18" selection-start-line="141" selection-start-column="18" selection-end-line="141" selection-end-column="18" />
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
+              <file leaf-file-name="data.js" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/src/js/data.js">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="64" column="28" selection-start-line="64" selection-start-column="28" selection-end-line="64" selection-end-column="28" />
+                      <folding>
+                        <element signature="e#442#900#0" expanded="false" />
+                        <element signature="e#1135#1694#0" expanded="false" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
               <file leaf-file-name="helpers.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/helpers.js">
+                <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
                       <caret line="17" column="51" selection-start-line="17" selection-start-column="51" selection-end-line="17" selection-end-column="51" />
@@ -118,11 +134,11 @@
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/main.js">
+              <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/src/js/main.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.0">
-                      <caret line="240" column="3" selection-start-line="240" selection-start-column="3" selection-end-line="240" selection-end-column="3" />
+                    <state vertical-scroll-proportion="0.1274298">
+                      <caret line="504" column="24" selection-start-line="504" selection-start-column="24" selection-end-line="504" selection-end-column="24" />
                       <folding>
                         <element signature="e#2202#2311#0" expanded="false" />
                         <element signature="n#!!block;n#render#0" expanded="false" />
@@ -133,27 +149,33 @@
                 </entry>
               </file>
               <file leaf-file-name="store.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/store.js">
+                <entry file="file://$PROJECT_DIR$/src/js/store.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
-                      <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-                      <folding />
+                      <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+                      <folding>
+                        <element signature="e#1586#1788#0" expanded="true" />
+                      </folding>
                     </state>
                   </provider>
                 </entry>
               </file>
               <file leaf-file-name="domStore.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/domStore.js">
+                <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
-                      <caret line="30" column="33" selection-start-line="30" selection-start-column="33" selection-end-line="30" selection-end-column="33" />
+                      <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
+            </leaf>
+          </split-first>
+          <split-second>
+            <leaf>
               <file leaf-file-name="tabs.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/tabs.js">
+                <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
                       <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
@@ -164,30 +186,12 @@
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="nav.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/js/nav.js">
+              <file leaf-file-name="nav.js" pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/src/js/nav.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.0">
-                      <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+                    <state vertical-scroll-proportion="0.27868852">
+                      <caret line="46" column="22" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
                       <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-            </leaf>
-          </split-first>
-          <split-second>
-            <leaf>
-              <file leaf-file-name="data.js" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/js/data.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.45081967">
-                      <caret line="3175" column="11" selection-start-line="3175" selection-start-column="11" selection-end-line="3175" selection-end-column="11" />
-                      <folding>
-                        <element signature="e#208#138421#0" expanded="false" />
-                        <element signature="e#138839#139297#0" expanded="false" />
-                        <element signature="e#139532#140091#0" expanded="false" />
-                      </folding>
                     </state>
                   </provider>
                 </entry>
@@ -198,28 +202,38 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="main.css" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/css/main.css">
+          <file leaf-file-name="init-dev.css" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/css/init-dev.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.9049676">
-                  <caret line="241" column="30" selection-start-line="241" selection-start-column="30" selection-end-line="241" selection-end-column="30" />
+                <state vertical-scroll-proportion="0.237581">
+                  <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
           <file leaf-file-name="init.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/init.css">
+            <entry file="file://$PROJECT_DIR$/src/css/init.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="6" column="24" selection-start-line="6" selection-start-column="24" selection-end-line="6" selection-end-column="24" />
+                  <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.css" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/css/main.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="194" column="34" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
           <file leaf-file-name="buttons.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/buttons.css">
+            <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
@@ -229,7 +243,7 @@
             </entry>
           </file>
           <file leaf-file-name="generic.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/generic.css">
+            <entry file="file://$PROJECT_DIR$/src/css/generic.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="159" column="0" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
@@ -239,17 +253,17 @@
             </entry>
           </file>
           <file leaf-file-name="codemirror.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/codemirror.css">
+            <entry file="file://$PROJECT_DIR$/src/css/codemirror.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
           <file leaf-file-name="nav.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/nav.css">
+            <entry file="file://$PROJECT_DIR$/src/css/nav.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="111" column="1" selection-start-line="111" selection-start-column="1" selection-end-line="111" selection-end-column="1" />
@@ -259,7 +273,7 @@
             </entry>
           </file>
           <file leaf-file-name="tabs.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/tabs.css">
+            <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="191" column="0" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
@@ -269,7 +283,7 @@
             </entry>
           </file>
           <file leaf-file-name="icons.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/icons.css">
+            <entry file="file://$PROJECT_DIR$/src/css/icons.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
@@ -279,7 +293,7 @@
             </entry>
           </file>
           <file leaf-file-name="loader.css" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/css/loader.css">
+            <entry file="file://$PROJECT_DIR$/src/css/loader.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
                   <caret line="59" column="11" selection-start-line="59" selection-start-column="11" selection-end-line="59" selection-end-column="11" />
@@ -296,9 +310,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package_json" />
-        <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="Html5" />
+        <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -366,7 +380,6 @@
         <option value="$PROJECT_DIR$/css/loader.css" />
         <option value="$PROJECT_DIR$/css/buttons.css" />
         <option value="$PROJECT_DIR$/css/main.css" />
-        <option value="$PROJECT_DIR$/css/init.css" />
         <option value="$PROJECT_DIR$/css/generic.css" />
         <option value="$PROJECT_DIR$/css/codemirror.css" />
         <option value="$PROJECT_DIR$/tabs.js" />
@@ -385,8 +398,20 @@
         <option value="$PROJECT_DIR$/main.min.js" />
         <option value="$PROJECT_DIR$/data.js" />
         <option value="$PROJECT_DIR$/main.js" />
-        <option value="$PROJECT_DIR$/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/js/dev.js" />
+        <option value="$PROJECT_DIR$/js/data.js" />
+        <option value="$PROJECT_DIR$/js/domStore.js" />
+        <option value="$PROJECT_DIR$/js/nav.js" />
         <option value="$PROJECT_DIR$/main_template.html" />
+        <option value="$PROJECT_DIR$/js/main.js" />
+        <option value="$PROJECT_DIR$/css/init-dev.css" />
+        <option value="$PROJECT_DIR$/css/init.css" />
+        <option value="$PROJECT_DIR$/dist/css/main.min.css" />
+        <option value="$PROJECT_DIR$/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/src/js/nav.js" />
+        <option value="$PROJECT_DIR$/src/css/init-dev.css" />
+        <option value="$PROJECT_DIR$/dist/main_template.html" />
+        <option value="$PROJECT_DIR$/src/js/main.js" />
       </list>
     </option>
   </component>
@@ -520,7 +545,29 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sgpm" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -538,6 +585,42 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sgpm" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dist" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sgpm" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dist" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -548,7 +631,7 @@
     <property name="options.lastSelected" value="configurable.group.appearance" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.null" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../one/sgpm" />
     <property name="FullScreen" value="false" />
@@ -573,17 +656,15 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/dist" />
+      <recent name="$PROJECT_DIR$/dist/js" />
+      <recent name="$PROJECT_DIR$/dist/css" />
+      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/js" />
-      <recent name="$PROJECT_DIR$/css_old" />
-      <recent name="$PROJECT_DIR$/img" />
-      <recent name="$PROJECT_DIR$/old" />
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.main_template.html">
-    <configuration default="false" name="index.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/index.html">
-      <method />
-    </configuration>
-    <configuration default="false" name="main_template.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/main_template.html">
+    <configuration default="false" name="main_template.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/src/dist/main_template.html">
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
@@ -608,14 +689,12 @@
       <envs />
       <method />
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
-      <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.main_template.html" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.main_template.html" />
     </list>
     <recent_temporary>
-      <list size="2">
+      <list size="1">
         <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.main_template.html" />
-        <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
       </list>
     </recent_temporary>
   </component>
@@ -626,12 +705,6 @@
       <created>1437005519578</created>
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
-    </task>
-    <task id="LOCAL-00027" summary="dependencies.js only load if necessary (IE &lt; 9), also fix line-height on landing page">
-      <created>1439603781049</created>
-      <option name="number" value="00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1439603781049</updated>
     </task>
     <task id="LOCAL-00028" summary="nav menu header logo/text equidistant to below list items">
       <created>1439604849341</created>
@@ -921,7 +994,13 @@
       <option name="project" value="LOCAL" />
       <updated>1443575257199</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="straightened out file setup">
+      <created>1443583124167</created>
+      <option name="number" value="00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1443583124167</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TodoView">
@@ -939,27 +1018,27 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14229405" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.4969325" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4018583" sideWeight="0.5096571" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4018583" sideWeight="0.51516545" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4018583" sideWeight="0.48483455" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32945284" sideWeight="0.4939117" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4018583" sideWeight="0.49034292" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1003,7 +1082,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="code styling and added css file for tabs" />
     <MESSAGE value="hiding tabs if not on sub-category or lower" />
     <MESSAGE value="fixed input value validator for createPage" />
     <MESSAGE value="re-working fields and display of pages (vs. programs vs. sections).  tabs still being worked" />
@@ -1028,7 +1106,8 @@
     <MESSAGE value="local code starting to form" />
     <MESSAGE value="index.html and default data set" />
     <MESSAGE value="Merge branch 'local3' - mainly set up as dev but easily transferable to real" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'local3' - mainly set up as dev but easily transferable to real" />
+    <MESSAGE value="straightened out file setup" />
+    <option name="LAST_COMMIT_MESSAGE" value="straightened out file setup" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1040,7 +1119,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/css/init.css">
+    <entry file="file://$PROJECT_DIR$/src/css/init.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="24" selection-start-line="6" selection-start-column="24" selection-end-line="6" selection-end-column="24" />
@@ -1048,7 +1127,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/buttons.css">
+    <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
@@ -1056,7 +1135,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/generic.css">
+    <entry file="file://$PROJECT_DIR$/src/css/generic.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="159" column="0" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
@@ -1064,7 +1143,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/codemirror.css">
+    <entry file="file://$PROJECT_DIR$/src/css/codemirror.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
@@ -1072,7 +1151,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/nav.css">
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1080,7 +1159,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/tabs.css">
+    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
@@ -1088,7 +1167,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/icons.css">
+    <entry file="file://$PROJECT_DIR$/src/css/icons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
@@ -1096,7 +1175,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/loader.css">
+    <entry file="file://$PROJECT_DIR$/src/css/loader.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="11" selection-start-line="59" selection-start-column="11" selection-end-line="59" selection-end-column="11" />
@@ -1104,7 +1183,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/content-src.aspx">
+    <entry file="file://$PROJECT_DIR$/dist/content-src.aspx">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
@@ -1120,7 +1199,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/main.js">
+    <entry file="file://$PROJECT_DIR$/src/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
@@ -1132,7 +1211,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
@@ -1140,15 +1219,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="25" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="54" selection-start-line="4" selection-start-column="54" selection-end-line="4" selection-end-column="54" />
@@ -1156,7 +1237,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/tabs.js">
+    <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
@@ -1166,7 +1247,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
@@ -1174,7 +1255,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/main.css">
+    <entry file="file://$PROJECT_DIR$/src/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="170" column="4" selection-start-line="170" selection-start-column="4" selection-end-line="170" selection-end-column="4" />
@@ -1182,7 +1263,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/buttons.css">
+    <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
@@ -1190,7 +1271,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/generic.css">
+    <entry file="file://$PROJECT_DIR$/src/css/generic.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
@@ -1198,7 +1279,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/codemirror.css">
+    <entry file="file://$PROJECT_DIR$/src/css/codemirror.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="14" column="147" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="147" />
@@ -1206,7 +1287,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/nav.css">
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1214,7 +1295,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/tabs.css">
+    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
@@ -1222,7 +1303,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/loader.css">
+    <entry file="file://$PROJECT_DIR$/src/css/loader.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="57" column="9" selection-start-line="57" selection-start-column="9" selection-end-line="57" selection-end-column="9" />
@@ -1230,14 +1311,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/loader2.css">
+    <entry file="file://$PROJECT_DIR$/src/css/loader2.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="283" column="0" selection-start-line="283" selection-start-column="0" selection-end-line="283" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/main.js">
+    <entry file="file://$PROJECT_DIR$/src/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="278" column="10" selection-start-line="278" selection-start-column="10" selection-end-line="278" selection-end-column="10" />
@@ -1249,7 +1330,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
@@ -1257,22 +1338,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main_template.html">
+    <entry file="file://$PROJECT_DIR$/dist/main_template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
@@ -1280,7 +1363,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="40" selection-start-line="12" selection-start-column="40" selection-end-line="12" selection-end-column="40" />
@@ -1288,15 +1371,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1" column="7" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
@@ -1312,7 +1397,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
@@ -1320,7 +1405,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="10" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
@@ -1328,15 +1413,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
@@ -1352,7 +1439,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
@@ -1360,7 +1447,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="10" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
@@ -1368,15 +1455,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
@@ -1392,7 +1481,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
@@ -1400,7 +1489,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="11" column="90" selection-start-line="11" selection-start-column="90" selection-end-line="11" selection-end-column="90" />
@@ -1408,15 +1497,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
@@ -1432,7 +1523,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
@@ -1440,15 +1531,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
@@ -1464,7 +1557,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
@@ -1472,15 +1565,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="48" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="48" />
@@ -1528,24 +1623,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/editor3.min.js">
+    <entry file="file://$PROJECT_DIR$/dist/js/editor3.min.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.056631893">
           <caret line="2" column="61" selection-start-line="0" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/markdown-it.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15373564">
-          <caret line="5" column="3671" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1635,15 +1723,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/init.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="24" selection-start-line="6" selection-start-column="24" selection-end-line="6" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/buttons.css">
+    <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
@@ -1651,7 +1731,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/generic.css">
+    <entry file="file://$PROJECT_DIR$/src/css/generic.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="159" column="0" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
@@ -1659,22 +1739,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/codemirror.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/loader2.css">
+    <entry file="file://$PROJECT_DIR$/src/css/loader2.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7480916">
           <caret line="283" column="0" selection-start-line="283" selection-start-column="0" selection-end-line="283" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/nav.css">
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="111" column="1" selection-start-line="111" selection-start-column="1" selection-end-line="111" selection-end-column="1" />
@@ -1682,7 +1754,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/loader.css">
+    <entry file="file://$PROJECT_DIR$/src/css/loader.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="11" selection-start-line="59" selection-start-column="11" selection-end-line="59" selection-end-column="11" />
@@ -1690,7 +1762,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/icons.css">
+    <entry file="file://$PROJECT_DIR$/src/css/icons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
@@ -1698,15 +1770,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/content-src.aspx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="98" selection-start-line="43" selection-start-column="98" selection-end-line="43" selection-end-column="98" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/dependencies.min.js">
+    <entry file="file://$PROJECT_DIR$/dist/js/dependencies.min.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="45" column="319" selection-start-line="45" selection-start-column="319" selection-end-line="45" selection-end-column="319" />
@@ -1722,7 +1786,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/tabs.js">
+    <entry file="file://$PROJECT_DIR$/.tmp/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34989202">
+          <caret line="3473" column="16" selection-start-line="3473" selection-start-column="16" selection-end-line="3473" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="191" column="0" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="51" selection-start-line="17" selection-start-column="51" selection-end-line="17" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
@@ -1732,66 +1820,135 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/nav.js">
+    <entry file="file://$PROJECT_DIR$/src/js/domStore.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/store.js">
+    <entry file="file://$PROJECT_DIR$/src/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+          <caret line="194" column="34" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.tmp/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34989202">
-          <caret line="3473" column="16" selection-start-line="3473" selection-start-column="16" selection-end-line="3473" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/main.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33261338">
-          <caret line="3280" column="32" selection-start-line="3280" selection-start-column="32" selection-end-line="3280" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/tabs.css">
+    <entry file="file://$PROJECT_DIR$/src/css/codemirror.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="191" column="0" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/helpers.js">
+    <entry file="file://$PROJECT_DIR$/src/css/init.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="51" selection-start-line="17" selection-start-column="51" selection-end-line="17" selection-end-column="51" />
+          <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/main.css">
+    <entry file="file://$PROJECT_DIR$/dist/js/markdown-it.min.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9049676">
-          <caret line="241" column="30" selection-start-line="241" selection-start-column="30" selection-end-line="241" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.15550756">
+          <caret line="5" column="3671" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/main.js">
+    <entry file="file://$PROJECT_DIR$/dist/css/editor/neo.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38012958">
+          <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/dev.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.047516197">
+          <caret line="3161" column="51" selection-start-line="3161" selection-start-column="51" selection-end-line="3161" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/js/main.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.095032394">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/css/main.min.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="240" column="3" selection-start-line="240" selection-start-column="3" selection-end-line="240" selection-end-column="3" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/content-src.aspx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.814815">
+          <caret line="41" column="53" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="141" column="18" selection-start-line="141" selection-start-column="18" selection-end-line="141" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/init-dev.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.237581">
+          <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+          <folding>
+            <element signature="e#1586#1788#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/main_template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-35.851852">
+          <caret line="44" column="27" selection-start-line="44" selection-start-column="27" selection-end-line="44" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/data.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="64" column="28" selection-start-line="64" selection-start-column="28" selection-end-line="64" selection-end-column="28" />
+          <folding>
+            <element signature="e#442#900#0" expanded="false" />
+            <element signature="e#1135#1694#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1274298">
+          <caret line="504" column="24" selection-start-line="504" selection-start-column="24" selection-end-line="504" selection-end-column="24" />
           <folding>
             <element signature="e#2202#2311#0" expanded="false" />
             <element signature="n#!!block;n#render#0" expanded="false" />
@@ -1800,38 +1957,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/domStore.js">
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="30" column="33" selection-start-line="30" selection-start-column="33" selection-end-line="30" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/data.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45081967">
-          <caret line="3175" column="11" selection-start-line="3175" selection-start-column="11" selection-end-line="3175" selection-end-column="11" />
-          <folding>
-            <element signature="e#208#138421#0" expanded="false" />
-            <element signature="e#138839#139297#0" expanded="false" />
-            <element signature="e#139532#140091#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main_template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.050458714">
-          <caret line="43" column="13" selection-start-line="43" selection-start-column="13" selection-end-line="43" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.27868852">
+          <caret line="46" column="22" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
           <folding />
         </state>
       </provider>

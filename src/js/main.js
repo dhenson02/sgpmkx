@@ -537,14 +537,9 @@ function createPage ( event ) {
 					success: function () {
 						sweetAlert({
 							title: "Success!",
-							text: title + " was created at " + path,
+							text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
 							type: "success",
-							showCancelButton: true,
-							cancelButtonText: "Stay here",
-							confirmButtonText: "Visit new page"
-						}, function () {
-							router.setRoute(path);
-							return false;
+							html: true
 						});
 					},
 					error: function ( error ) {
@@ -555,14 +550,6 @@ function createPage ( event ) {
 		});
 	});
 }
-
-/*function updateTitle () {
- var val = this.value.trim();
- domRefs.title.innerHTML = val;
- current.set({
- title: val
- });
- }*/
 
 function editPage () {
 	if ( misc.regFullPage.test(domRefs.content.className) ) {
@@ -629,20 +616,7 @@ function pageSetup () {
 				phPage[i].parentNode.removeAttribute("style");
 			}
 		}
-		/*if ( hashArray.length > 2 ) {
-		 var phRabbitHoles = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-		 if ( phRabbitHoles ) {
-		 i = 0;
-		 total = phRabbitHoles.length;
-		 for ( ; i < total; ++i ) {
-		 phRabbitHoles[i].removeAttribute("style");
-		 phRabbitHoles[i].parentNode.removeAttribute("style");
-		 }
-		 }
-		 }*/
 	}
-
-	//startLoading(domRefs.output);
 
 	if ( window.location.hash ) {
 		/**
@@ -675,7 +649,7 @@ function setupEditor () {
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
-	/*domRefs = new DOMRef();*/
+	domRefs = new DOMRef();
 
 	domRefs.set({
 		editor: codeMirror.fromTextArea(domRefs.textarea, {
@@ -683,7 +657,7 @@ function setupEditor () {
 			lineNumbers: false,
 			matchBrackets: true,
 			lineWrapping: true,
-			theme: "mdn-like",
+			theme: "neo",
 			extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
 		})
 	});

@@ -4,7 +4,8 @@ module.exports = function ( grunt ) {
 			options: {},
 			dist: {
 				files: {
-					'.tmp/main.js': 'js/main.js'
+					'.tmp/main.js': 'src/js/main.js',
+					'.tmp/dev.js': 'src/js/dev.js'
 				}
 			}
 		},
@@ -41,7 +42,7 @@ module.exports = function ( grunt ) {
 					preserveComments: "some"
 				},
 				files: {
-					'dist/main.min.js': '.tmp/main.js'
+					'dist/js/main.min.js': '.tmp/main.js'
 				}
 			},
 			dev: {
@@ -54,24 +55,42 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'dist/main.min.js': '.tmp/main.js'
+					'dist/js/main.min.js': ['.tmp/dev.js', '.tmp/main.js']
 				}
 			}
 		},
 		purifycss: {
 			options: {},
 			dist: {
-				src: ['main_template.html', 'dist/main.min.js'],
+				src: ['dist/main_template.html', 'dist/js/main.min.js'],
 				css: [
-					'css/init.css',
-					'css/main.css',
-					'css/icons.css',
-					'css/buttons.css',
-					'css/generic.css',
-					'css/codemirror.css',
-					'css/nav.css',
-					'css/tabs.css',
-					'css/loader.css',
+					'src/css/init.css',
+					'src/css/main.css',
+					'src/css/icons.css',
+					'src/css/buttons.css',
+					'src/css/generic.css',
+					'src/css/codemirror.css',
+					'src/css/nav.css',
+					'src/css/tabs.css',
+					'src/css/loader.css',
+					/*'css/loader2.css',*/
+					'node_modules/sweetalert/dist/sweetalert.css',
+					'node_modules/animate.css/animate.min.css'
+				],
+				dest: '.tmp/main.css'
+			},
+			dev: {
+				src: ['dist/main_template.html', 'dist/js/main.min.js'],
+				css: [
+					'src/css/init-dev.css',
+					'src/css/main.css',
+					'src/css/icons.css',
+					'src/css/buttons.css',
+					'src/css/generic.css',
+					'src/css/codemirror.css',
+					'src/css/nav.css',
+					'src/css/tabs.css',
+					'src/css/loader.css',
 					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/animate.css/animate.min.css'
@@ -90,7 +109,7 @@ module.exports = function ( grunt ) {
 					keepSpecialComments: 1
 				},
 				files: {
-					'dist/main.min.css': '.tmp/main.css'
+					'dist/css/main.min.css': '.tmp/main.css'
 				}
 			},
 			dev: {
@@ -98,7 +117,7 @@ module.exports = function ( grunt ) {
 					keepSpecialComments: 2
 				},
 				files: {
-					'dist/main.min.css': '.tmp/main.css'
+					'dist/css/main.min.css': '.tmp/main.css'
 				}
 			}
 		},
@@ -117,11 +136,11 @@ module.exports = function ( grunt ) {
 					atBegin: false
 				},
 				files: [
-					'css/*.css',
+					'src/css/*.css',
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/animate.css/*.min.css'
 				],
-				tasks: ['purifycss', 'cssmin:dev']
+				tasks: ['purifycss:dev', 'cssmin:dev']
 			},
 			scripts: {
 				options: {
@@ -130,12 +149,12 @@ module.exports = function ( grunt ) {
 					atBegin: true
 				},
 				files: [
-					'js/*.js'
+					'src/js/*.js'
 				],
 				tasks: [
 					'browserify:dist',
 					'uglify:dev',
-					'purifycss:dist',
+					'purifycss:dev',
 					'cssmin:dev'
 				]
 			}
@@ -157,7 +176,7 @@ module.exports = function ( grunt ) {
 	grunt.registerTask('dev', [
 		'browserify:dist',
 		'uglify:dev',
-		'purifycss:dist',
+		'purifycss:dev',
 		'cssmin:dev'
 	]);
 };
