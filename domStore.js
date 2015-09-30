@@ -12,15 +12,16 @@ function DOMRef () {
 	this.textarea = document.getElementById("ph-textarea");
 	this.editor = null;
 	this.output = document.getElementById("ph-output");
-	this.set = function ( data ) {
-		var name;
-		for ( name in data ) {
-			if ( this.hasOwnProperty(name) ) {
-				this[name] = data[name];
-			}
-		}
-		return this;
-	};
 }
+
+DOMRef.prototype.set = function ( data ) {
+	var name;
+	for ( name in data ) {
+		if ( this.hasOwnProperty(name) ) {
+			this[name] = data[name];
+		}
+	}
+	return this;
+};
 
 module.exports = DOMRef;

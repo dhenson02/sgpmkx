@@ -6,10 +6,6 @@ function removeEvent ( evt, element, fnc ) {
 	return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
 }
 
-function connError ( error ) {
-	console.log("error connecting:", error);
-}
-
 var regLoading = / ?loading/gi,
 	regFullPage = / ?fullPage/gi,
 	regCheatSheet = / ?cheatSheet/gi,
@@ -41,7 +37,6 @@ try {
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	connError: connError,
 	regLoading: regLoading,
 	regFullPage: regFullPage,
 	regCheatSheet: regCheatSheet,

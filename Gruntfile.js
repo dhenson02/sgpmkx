@@ -47,7 +47,7 @@ module.exports = function ( grunt ) {
 			dev: {
 				options: {
 					compress: false,
-					screwIE8: true,
+					screwIE8: false,
 					beautify: true,
 					mangle: false,
 					wrap: false,
@@ -60,8 +60,26 @@ module.exports = function ( grunt ) {
 		},
 		purifycss: {
 			options: {},
-			content: {
+			dist: {
 				src: ['content-src.aspx', 'main.min.js'],
+				css: [
+					'css/init.css',
+					'css/main.css',
+					'css/icons.css',
+					'css/buttons.css',
+					'css/generic.css',
+					'css/codemirror.css',
+					'css/nav.css',
+					'css/tabs.css',
+					'css/loader.css',
+					/*'css/loader2.css',*/
+					'node_modules/sweetalert/dist/sweetalert.css',
+					'node_modules/animate.css/animate.min.css'
+				],
+				dest: '.tmp/main.css'
+			},
+			dev: {
+				src: ['main_template.html', 'main.min.js'],
 				css: [
 					'css/init.css',
 					'css/main.css',
@@ -95,7 +113,7 @@ module.exports = function ( grunt ) {
 			},
 			dev: {
 				options: {
-					keepSpecialComments: 0
+					keepSpecialComments: 2
 				},
 				files: {
 					'main.min.css': '.tmp/main.css'
@@ -130,6 +148,7 @@ module.exports = function ( grunt ) {
 					atBegin: true
 				},
 				files: [
+					'data.js',
 					'main.js',
 					'nav.js',
 					'tabs.js',
@@ -140,7 +159,7 @@ module.exports = function ( grunt ) {
 				tasks: [
 					'browserify:dist',
 					'uglify:dev',
-					'purifycss',
+					'purifycss:dev',
 					'cssmin:dev'
 				]
 			}
@@ -156,13 +175,13 @@ module.exports = function ( grunt ) {
 	grunt.registerTask('default', [
 		'browserify:dist',
 		'uglify:dist',
-		'purifycss',
+		'purifycss:dist',
 		'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
 		'browserify:dist',
 		'uglify:dev',
-		'purifycss',
+		'purifycss:dev',
 		'cssmin:dev'
 	]);
 };

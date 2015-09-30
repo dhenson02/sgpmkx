@@ -6,21 +6,29 @@ var h = require("virtual-dom/h"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
+	data = require("./data"),
 	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
-	baseURL = _spPageContextInfo.webAbsoluteUrl,
-	sitePath = baseURL + "/_api/lists/getByTitle('Content')",
-	digest = document.getElementById("__REQUESTDIGEST").value,
-	pages = require("./store"),
+	baseURL = data.baseURL,
+	sitePath = "",//data.sitePath,
+	digest = data.digest,
+	store = require("./store"),
+	pages = store.pages,
+	events = store.events,
 	DOMRef = require("./domStore"),
 	current = pages.current,
 	domRefs = new DOMRef(),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
-	tabsDOM = renderTabs([ { title: "Overview", icon: "home"} ], { style: { display: "none" } }, handleTab),
+	tabsDOM = renderTabs([
+		{
+			title: "Overview",
+			icon: "home"
+		}
+	], { style: { display: "none" } }, handleTab),
 	inTransition = {},
 	router = Router({
 		'/': {
@@ -94,7 +102,9 @@ function getList () {
 			pages.init(data);
 			navDOM = renderNav(pages.sections);
 		},
-		error: misc.connError,
+		error: function ( error ) {
+			console.log("error connecting:", error);
+		},
 		complete: function () {
 			pageSetup();
 		}
@@ -250,22 +260,24 @@ function loadPage ( path ) {
 
 			document.title = current.title;
 		},
-		error: misc.connError,
+		error: function ( error ) {
+			console.log("error connecting:", error);
+		},
 		complete: function () {
 			if ( codeMirror ) {
 				setupEditor();
 			}
 			/*if ( !initialized ) {
-				setTimeout(function() {
-					"use strict";
-					var initLoader = document.getElementById("init-page-loader");
-					initLoader.className = "animated fadeOut";
-					setTimeout(function() {
-						initLoader.parentNode.removeChild(initLoader);
-						initialized = true;
-					}, 300);
-				}, 1500);
-			}*/
+			 setTimeout(function() {
+			 "use strict";
+			 var initLoader = document.getElementById("init-page-loader");
+			 initLoader.className = "animated fadeOut";
+			 setTimeout(function() {
+			 initLoader.parentNode.removeChild(initLoader);
+			 initialized = true;
+			 }, 300);
+			 }, 1500);
+			 }*/
 		}
 	});
 }
@@ -286,12 +298,12 @@ function render ( navDOM, tabsDOM, title ) {
 	return (
 		h("#ph-wrapper", [
 			/*h("div#init-page-loader.animated.fadeIn", [
-				h("div.loading-spinner", [
-					h("div.dot.dotOne"),
-					h("div.dot.dotTwo"),
-					h("div.dot.dotThree")
-				])
-			]),*/
+			 h("div.loading-spinner", [
+			 h("div.dot.dotOne"),
+			 h("div.dot.dotTwo"),
+			 h("div.dot.dotThree")
+			 ])
+			 ]),*/
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
 				tabsDOM,
@@ -308,12 +320,12 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 	return (
 		h("#ph-wrapper", [
 			/*h("div#init-page-loader", [
-				h("div.loading-spinner", [
-					h("div.dot.dotOne"),
-					h("div.dot.dotTwo"),
-					h("div.dot.dotThree")
-				])
-			]),*/
+			 h("div.loading-spinner", [
+			 h("div.dot.dotOne"),
+			 h("div.dot.dotTwo"),
+			 h("div.dot.dotThree")
+			 ])
+			 ]),*/
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
@@ -338,13 +350,13 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
 				/*h("label#titleFieldLabel", [
-					"Page title: ",
-					h("input#titleField", {
-						onkeyup: updateTitle,
-						value: String(title || ""),
-						type: "text"
-					})
-				]),*/
+				 "Page title: ",
+				 h("input#titleField", {
+				 onkeyup: updateTitle,
+				 value: String(title || ""),
+				 type: "text"
+				 })
+				 ]),*/
 
 				h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
 				h("#ph-contentWrap", [
@@ -359,18 +371,18 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 }
 
 /*function renderLoader() {
-	return (
-		h("#ph-loader.loader-group", [
-			h(".bigSqr", [
-				h(".square.first"),
-				h(".square.second"),
-				h(".square.third"),
-				h(".square.fourth")
-			]),
-			h(".text", ["loading..."])
-		])
-	);
-}*/
+ return (
+ h("#ph-loader.loader-group", [
+ h(".bigSqr", [
+ h(".square.first"),
+ h(".square.second"),
+ h(".square.third"),
+ h(".square.fourth")
+ ]),
+ h(".text", ["loading..."])
+ ])
+ );
+ }*/
 
 function startLoading ( target ) {
 	if ( inTransition[target.id] === true ) {
@@ -594,7 +606,9 @@ function createPage ( event ) {
 							return false;
 						});
 					},
-					error: misc.connError
+					error: function ( error ) {
+						console.log("error connecting:", error);
+					}
 				});
 			});
 		});
@@ -602,12 +616,12 @@ function createPage ( event ) {
 }
 
 /*function updateTitle () {
-	var val = this.value.trim();
-	domRefs.title.innerHTML = val;
-	current.set({
-		title: val
-	});
-}*/
+ var val = this.value.trim();
+ domRefs.title.innerHTML = val;
+ current.set({
+ title: val
+ });
+ }*/
 
 function editPage () {
 	if ( misc.regFullPage.test(domRefs.content.className) ) {
@@ -645,8 +659,8 @@ function insertContent ( text, type ) {
 
 function pageSetup () {
 	dirtyDOM = ( !codeMirror ) ?
-	           render(navDOM, tabsDOM, current.title) :
-	           renderEditor(navDOM, tabsDOM, current.title, current.text);
+		render(navDOM, tabsDOM, current.title) :
+		renderEditor(navDOM, tabsDOM, current.title, current.text);
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();
@@ -675,16 +689,16 @@ function pageSetup () {
 			}
 		}
 		/*if ( hashArray.length > 2 ) {
-			var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-			if ( phRabbitHoles ) {
-				i = 0;
-				total = phRabbitHoles.length;
-				for ( ; i < total; ++i ) {
-					phRabbitHoles[i].removeAttribute("style");
-					phRabbitHoles[i].parentNode.removeAttribute("style");
-				}
-			}
-		}*/
+		 var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+		 if ( phRabbitHoles ) {
+		 i = 0;
+		 total = phRabbitHoles.length;
+		 for ( ; i < total; ++i ) {
+		 phRabbitHoles[i].removeAttribute("style");
+		 phRabbitHoles[i].parentNode.removeAttribute("style");
+		 }
+		 }
+		 }*/
 	}
 
 	//startLoading(domRefs.output);
@@ -761,4 +775,5 @@ function resetPage () {
 	domRefs = new DOMRef();
 }
 
-getList();
+events.emit("page.init");
+//getList();
