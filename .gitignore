@@ -1,37 +1,12 @@
-# Created by .ignore support plugin (hsz.mobi)
-
-### Sass template
-.sass-cache/
-
-### JetBrains template
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
-*.iml
-
-## Directory-based project format:
-.idea/
-
-## File-based project format:
-*.ipr
-*.iws
-
-# IntelliJ
-out/
-.idea_modules/
-# Logs
+node_modules
+potentials
+.tmp
+old
+.sass-cache
+.idea
+.idea_modules
 logs
-# Runtime data
 pids
 *.pid
 *.seed
-
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
-
-# Dependency directory
-# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
-node_modules/
-
-gen
-lib/
-potentials/
-.tmp/
