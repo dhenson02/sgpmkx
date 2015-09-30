@@ -4,7 +4,7 @@ module.exports = function ( grunt ) {
 			options: {},
 			dist: {
 				files: {
-					'.tmp/main.js': 'main.js'
+					'.tmp/main.js': 'js/main.js'
 				}
 			}
 		},
@@ -41,7 +41,7 @@ module.exports = function ( grunt ) {
 					preserveComments: "some"
 				},
 				files: {
-					'main.min.js': '.tmp/main.js'
+					'dist/main.min.js': '.tmp/main.js'
 				}
 			},
 			dev: {
@@ -54,32 +54,14 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'main.min.js': '.tmp/main.js'
+					'dist/main.min.js': '.tmp/main.js'
 				}
 			}
 		},
 		purifycss: {
 			options: {},
 			dist: {
-				src: ['content-src.aspx', 'main.min.js'],
-				css: [
-					'css/init.css',
-					'css/main.css',
-					'css/icons.css',
-					'css/buttons.css',
-					'css/generic.css',
-					'css/codemirror.css',
-					'css/nav.css',
-					'css/tabs.css',
-					'css/loader.css',
-					/*'css/loader2.css',*/
-					'node_modules/sweetalert/dist/sweetalert.css',
-					'node_modules/animate.css/animate.min.css'
-				],
-				dest: '.tmp/main.css'
-			},
-			dev: {
-				src: ['main_template.html', 'main.min.js'],
+				src: ['main_template.html', 'dist/main.min.js'],
 				css: [
 					'css/init.css',
 					'css/main.css',
@@ -108,7 +90,7 @@ module.exports = function ( grunt ) {
 					keepSpecialComments: 1
 				},
 				files: {
-					'main.min.css': '.tmp/main.css'
+					'dist/main.min.css': '.tmp/main.css'
 				}
 			},
 			dev: {
@@ -116,7 +98,7 @@ module.exports = function ( grunt ) {
 					keepSpecialComments: 2
 				},
 				files: {
-					'main.min.css': '.tmp/main.css'
+					'dist/main.min.css': '.tmp/main.css'
 				}
 			}
 		},
@@ -148,18 +130,12 @@ module.exports = function ( grunt ) {
 					atBegin: true
 				},
 				files: [
-					'data.js',
-					'main.js',
-					'nav.js',
-					'tabs.js',
-					'helpers.js',
-					'store.js',
-					'domStore.js'
+					'js/*.js'
 				],
 				tasks: [
 					'browserify:dist',
 					'uglify:dev',
-					'purifycss:dev',
+					'purifycss:dist',
 					'cssmin:dev'
 				]
 			}
@@ -181,7 +157,7 @@ module.exports = function ( grunt ) {
 	grunt.registerTask('dev', [
 		'browserify:dist',
 		'uglify:dev',
-		'purifycss:dev',
+		'purifycss:dist',
 		'cssmin:dev'
 	]);
 };
