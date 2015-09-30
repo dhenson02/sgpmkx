@@ -24,4 +24,17 @@ DOMRef.prototype.set = function ( data ) {
 	return this;
 };
 
-module.exports = DOMRef;
+/*DOMRef.prototype.updateDOM = function  ( refreshDOM ) {
+	var patches = diff(dirtyDOM, refreshDOM);
+	rootNode = patch(rootNode, patches);
+	dirtyDOM = refreshDOM;
+	/!*domRefs = new DOMRef();*!/
+};*/
+
+var domRefs = new DOMRef();
+//var rootNode, dirtyDOM;
+
+module.exports = {
+	DOMRef: DOMRef,
+	domRefs: domRefs
+};

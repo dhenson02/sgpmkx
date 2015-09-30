@@ -6,23 +6,26 @@ var h = require("virtual-dom/h"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
-	data = require("./data"),
+
 	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
-	renderNav = require("./nav"),
-	renderTabs = require("./tabs"),
+
+	data = require("./data"),
 	baseURL = data.baseURL,
 	sitePath = "",//data.sitePath,
 	digest = data.digest,
-	store = require("./store"),
-	pages = store.pages,
-	events = store.events,
-	DOMRef = require("./domStore"),
+
+	pages = require("./store").pages,
+	events = require("./store").events,
 	current = pages.current,
-	domRefs = new DOMRef(),
+
+	DOMRef = require("./domStore").DOMRef,
+	domRefs = require("./domStore").domRefs,
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
+	renderNav = require("./nav"),
+	renderTabs = require("./tabs"),
 	tabsDOM = renderTabs([
 		{
 			title: "Overview",
@@ -33,29 +36,24 @@ var h = require("virtual-dom/h"),
 	router = Router({
 		'/': {
 			on: function () {
-				startLoading(domRefs.output);
-				loadPage("/");
+				events.emit("page.loading", "/");
 			}
 		},
 		'/(\\w+)': {
 			on: function ( section ) {
-				startLoading(domRefs.output);
-				loadPage("/" + section.replace(/\s/g, ""));
+				events.emit("page.loading", "/" + section.replace(/\s/g, ""));
 			},
 			'/(\\w+)': {
 				on: function ( section, program ) {
-					startLoading(domRefs.output);
-					loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
+					events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page ) {
-						startLoading(domRefs.output);
-						loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
+						events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
 					},
 					'/(\\w+)': {
 						on: function ( section, program, page, rabbitHole ) {
-							startLoading(domRefs.output);
-							loadPage("/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
+							events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
 						}
 					}
 				}
@@ -85,202 +83,170 @@ sweetAlert.setDefaults({
 	confirmButtonText: "Yes!"
 });
 
-function getList () {
-
-	reqwest({
-		url: sitePath + "/items",
-		method: "GET",
-		type: "json",
-		contentType: "application/json",
-		withCredentials: true,
-		headers: {
-			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose"
-		},
-		success: function ( data ) {
-			pages.init(data);
-			navDOM = renderNav(pages.sections);
-		},
-		error: function ( error ) {
-			console.log("error connecting:", error);
-		},
-		complete: function () {
-			pageSetup();
-		}
-	});
-}
-
-function loadPage ( path ) {
-	console.log("Begin loadPage...");
-	if ( !pages[path] ) {
-		sweetAlert({
-			title: "Uh oh",
-			text: "The address you entered doesn't seem to match any of our pages.  Try the search!  For now I'll just load the homepage for you.",
-			confirmButtonText: "OK!",
-			allowOutsideClick: false,
-			allowEscapeKey: false,
-			showCancelButton: false
-		}, function () {
-			router.setRoute("/");
-		});
+events.on("*.loading", function () {
+	var regLoading = / ?loading/gi;
+	var target = domRefs.output;
+	if ( inTransition.output === true ) {
 		return false;
 	}
-	reqwest({
-		url: sitePath + "/items(" + pages[path].ID + ")",
-		method: "GET",
-		type: "json",
-		contentType: "application/json",
-		withCredentials: true,
-		headers: {
-			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose"
-		},
-		success: function ( data ) {
-			var obj = data.d;
-			if ( !obj ) {
-				router.setRoute("/");
-				return false;
-			}
-			if ( obj.Link ) {
-				sweetAlert({
-					title: "See ya!",
-					text: "You are now leaving the Public Health Kx.  Bye!",
-					type: "warning",
-					cancelButtonText: "Nah I'll stay",
-					confirmButtonText: "Go!",
-					//confirmButtonColor: "#ec6c62",
-					closeOnConfirm: false,
-					showCancelButton: true,
-					showLoaderOnConfirm: true
-				}, function () {
-					window.open(obj.Link, "_blank");
-					return false;
-				});
-			}
-			var subLinks = rootNode.querySelectorAll(".ph-page.link, .ph-rabbit-hole.link");
-			var tabCurrent = rootNode.querySelector(".tab-current");
-			var i = 0;
-			total = subLinks.length;
-			for ( ; i < total; ++i ) {
-				subLinks[i].style.display = "none";
-			}
-			if ( tabCurrent ) {
-				tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
-			}
+	inTransition[target.id] = true;
+	if ( regLoading.test(target.className) === false ) {
+		inTransition.tmp = target.innerHTML;
+		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
+		target.className += " loading";
+	}
+});
 
-			current.set({
-				id: obj.ID,
-				title: obj.Title || "",
-				_title: obj.Title || "",
-				icon: obj.Icon || "",
-				text: obj.Overview || "",
-				overview: obj.Overview || "",
-				policy: obj.Policy || "",
-				training: obj.Training || "",
-				resources: obj.Resources || "",
-				tools: obj.Tools || "",
-				contributions: obj.Contributions || "",
-				section: obj.Section || "",
-				program: obj.Program || "",
-				page: obj.Page || "",
-				rabbitHole: obj.rabbitHole || "",
-				type: "Overview",
-				listItemType: obj.__metadata.type,
-				timestamp: (Date && Date.now() || new Date())
-			});
+events.on("*.loaded", function () {
+	var regLoading = / ?loading/gi;
+	var target = domRefs.output;
+	inTransition.output = false;
+	target.className = target.className.replace(regLoading, "");
+});
 
-			var tabsStyle = ( current.program !== "" ) ? null : { style: { display: "none" } };
-			tabsDOM = renderTabs([
-				{
-					title: "Overview",
-					icon: "home"
-				},
-				{
-					title: "Policy",
-					icon: "notebook"
-				},
-				{
-					title: "Training",
-					icon: "display1"
-				},
-				{
-					title: "Resources",
-					icon: "cloud-upload"
-				},
-				{
-					title: "Tools",
-					icon: "tools"
-				},
-				{
-					title: "Contributions",
-					icon: "users"
-				}
-			], tabsStyle, handleTab);
+events.on("list.success", function ( data ) {
+	pages.init(data);
+	navDOM = renderNav(pages.sections);
+	pageSetup();
+});
 
-			resetPage();
-			insertContent(current.text, current.type);
-			stopLoading(domRefs.output);
-
-			var activeLink = rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-			var currentTab = rootNode.querySelector("#ph-tabs a.icon-overview");
-			if ( activeLink ) {
-				activeLink.className += " active";
-			}
-			if ( currentTab ) {
-				currentTab.parentNode.className += " tab-current";
-			}
-
-			var hashArray = window.location.hash.slice(2).split(/\//),
-				total;
-
-			if ( hashArray.length > 1 ) {
-				var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-				if ( phPage ) {
-					i = 0;
-					total = phPage.length;
-					for ( ; i < total; ++i ) {
-						phPage[i].removeAttribute("style");
-						phPage[i].parentNode.removeAttribute("style");
-					}
-				}
-				/*if ( hashArray.length > 2 ) {
-				 var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
-				 if ( phRabbitHoles ) {
-				 i = 0;
-				 total = phRabbitHoles.length;
-				 for ( ; i < total; ++i ) {
-				 phRabbitHoles[i].removeAttribute("style");
-				 phRabbitHoles[i].parentNode.removeAttribute("style");
-				 }
-				 }
-				 }*/
-			}
-
-			document.title = current.title;
-		},
-		error: function ( error ) {
-			console.log("error connecting:", error);
-		},
-		complete: function () {
-			if ( codeMirror ) {
-				setupEditor();
-			}
-			/*if ( !initialized ) {
-			 setTimeout(function() {
-			 "use strict";
-			 var initLoader = document.getElementById("init-page-loader");
-			 initLoader.className = "animated fadeOut";
-			 setTimeout(function() {
-			 initLoader.parentNode.removeChild(initLoader);
-			 initialized = true;
-			 }, 300);
-			 }, 1500);
-			 }*/
-		}
+events.on("missing", function ( path ) {
+	sweetAlert({
+		title: "Uh oh",
+		text: path + " doesn't seem to match any of our pages.  Try the search!  For now I'll just load the homepage for you.",
+		confirmButtonText: "OK!",
+		allowOutsideClick: false,
+		allowEscapeKey: false,
+		showCancelButton: false
+	}, function () {
+		router.setRoute("/");
 	});
-}
+});
+
+events.on("page.loaded", function ( data ) {
+	console.log("page data: ", data);
+	var obj = data.d;
+	if ( !obj ) {
+		router.setRoute("/");
+		return false;
+	}
+	if ( obj.Link ) {
+		sweetAlert({
+			title: "See ya!",
+			text: "You are now leaving the Public Health Kx.  Bye!",
+			type: "warning",
+			cancelButtonText: "Nah I'll stay",
+			confirmButtonText: "Go!",
+			//confirmButtonColor: "#ec6c62",
+			closeOnConfirm: false,
+			showCancelButton: true,
+			showLoaderOnConfirm: true
+		}, function () {
+			window.open(obj.Link, "_blank");
+			return false;
+		});
+	}
+	var subLinks = document.querySelectorAll(".ph-page.link, .ph-rabbit-hole.link");
+	var tabCurrent = document.querySelector(".tab-current");
+	var i = 0;
+	total = subLinks.length;
+	for ( ; i < total; ++i ) {
+		subLinks[i].style.display = "none";
+	}
+	if ( tabCurrent ) {
+		tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
+	}
+
+	current.set({
+		id: obj.ID,
+		title: obj.Title || "",
+		_title: obj.Title || "",
+		icon: obj.Icon || "",
+		text: obj.Overview || "",
+		overview: obj.Overview || "",
+		policy: obj.Policy || "",
+		training: obj.Training || "",
+		resources: obj.Resources || "",
+		tools: obj.Tools || "",
+		contributions: obj.Contributions || "",
+		section: obj.Section || "",
+		program: obj.Program || "",
+		page: obj.Page || "",
+		rabbitHole: obj.rabbitHole || "",
+		type: "Overview",
+		listItemType: obj.__metadata.type,
+		timestamp: (Date && Date.now() || new Date())
+	});
+
+	var tabsStyle = ( current.program !== "" ) ? null : { style: { display: "none" } };
+	tabsDOM = renderTabs([
+		{
+			title: "Overview",
+			icon: "home"
+		},
+		{
+			title: "Policy",
+			icon: "notebook"
+		},
+		{
+			title: "Training",
+			icon: "display1"
+		},
+		{
+			title: "Resources",
+			icon: "cloud-upload"
+		},
+		{
+			title: "Tools",
+			icon: "tools"
+		},
+		{
+			title: "Contributions",
+			icon: "users"
+		}
+	], tabsStyle, handleTab);
+
+	resetPage();
+	insertContent(current.text, current.type);
+	//stopLoading(domRefs.output);
+
+	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
+	var currentTab = document.querySelector("#ph-tabs a.icon-overview");
+	if ( activeLink ) {
+		activeLink.className += " active";
+	}
+	if ( currentTab ) {
+		currentTab.parentNode.className += " tab-current";
+	}
+
+	var hashArray = window.location.hash.slice(2).split(/\//),
+		total;
+
+	if ( hashArray.length > 1 ) {
+		var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+		if ( phPage ) {
+			i = 0;
+			total = phPage.length;
+			for ( ; i < total; ++i ) {
+				phPage[i].removeAttribute("style");
+				phPage[i].parentNode.removeAttribute("style");
+			}
+		}
+		/*if ( hashArray.length > 2 ) {
+		 var phRabbitHoles = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+		 if ( phRabbitHoles ) {
+		 i = 0;
+		 total = phRabbitHoles.length;
+		 for ( ; i < total; ++i ) {
+		 phRabbitHoles[i].removeAttribute("style");
+		 phRabbitHoles[i].parentNode.removeAttribute("style");
+		 }
+		 }
+		 }*/
+	}
+
+	document.title = current.title;
+});
 
 function handleTab ( page ) {
 	var content = {};
@@ -384,23 +350,6 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
  );
  }*/
 
-function startLoading ( target ) {
-	if ( inTransition[target.id] === true ) {
-		return false;
-	}
-	inTransition[target.id] = true;
-	if ( misc.regLoading.test(target.className) === false ) {
-		inTransition["tmp"] = target.innerHTML;
-		target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-		target.className += " loading";
-	}
-}
-
-function stopLoading ( target ) {
-	inTransition[target.id] = false;
-	target.className = target.className.replace(misc.regLoading, "");
-}
-
 function savePage ( event ) {
 	var self = this;
 	event = event || window.event;
@@ -452,7 +401,7 @@ function savePage ( event ) {
 		success: function () {
 			self.style.fontWeight = "bold";
 			self.innerHTML = "Saved!";
-			getList();
+			events.emit("list.loading");
 		},
 		error: function () {
 			self.style.color = "#FF2222";
@@ -665,8 +614,8 @@ function pageSetup () {
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
 	domRefs = new DOMRef();
 
-	var activeLink = rootNode.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-	var tabCurrent = rootNode.querySelector("#ph-tabs a.icon-overview");
+	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
+	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
 	if ( activeLink ) {
 		activeLink.className += " active";
 	}
@@ -679,7 +628,7 @@ function pageSetup () {
 		total;
 
 	if ( hashArray.length > 1 ) {
-		var phPage = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+		var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
 		if ( phPage ) {
 			i = 0;
 			total = phPage.length;
@@ -689,7 +638,7 @@ function pageSetup () {
 			}
 		}
 		/*if ( hashArray.length > 2 ) {
-		 var phRabbitHoles = rootNode.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
+		 var phRabbitHoles = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/'], #ph-nav [data-href^='#/" + hashArray[0] + "/" + hashArray[1] + "/" + hashArray[2] + "/']");
 		 if ( phRabbitHoles ) {
 		 i = 0;
 		 total = phRabbitHoles.length;
@@ -718,7 +667,7 @@ function pageSetup () {
 
 }
 
-function setupEditor () {
+events.on("page.rendered", function () {
 	console.log("Loading editor...");
 	if ( domRefs.editor ) {
 		var wrap = domRefs.editor.getWrapperElement();
@@ -728,10 +677,14 @@ function setupEditor () {
 		});
 	}
 	var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
+
+	//domRefs.updateDom(dirtyDOM, refreshDOM);
+
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
-	domRefs = new DOMRef();
+	/*domRefs = new DOMRef();*/
+
 	domRefs.set({
 		editor: codeMirror.fromTextArea(domRefs.textarea, {
 			mode: 'gfm',
@@ -746,11 +699,11 @@ function setupEditor () {
 	domRefs.editor.refresh();
 	domRefs.buttons.childNodes[0].removeAttribute("style");
 	console.log("Editor loaded");
-}
+});
 
 function resetPage () {
 	console.log("Page reset");
-	var oldActive = rootNode.querySelectorAll("a.active"),
+	var oldActive = document.querySelectorAll("a.active"),
 		i = 0,
 		total = oldActive.length;
 	for ( ; i < total; ++i ) {
@@ -775,5 +728,5 @@ function resetPage () {
 	domRefs = new DOMRef();
 }
 
-events.emit("page.init");
+events.emit("list.loading");
 //getList();

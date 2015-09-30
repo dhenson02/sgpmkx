@@ -6,8 +6,7 @@ function removeEvent ( evt, element, fnc ) {
 	return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
 }
 
-var regLoading = / ?loading/gi,
-	regFullPage = / ?fullPage/gi,
+var regFullPage = / ?fullPage/gi,
 	regCheatSheet = / ?cheatSheet/gi,
 	regNoChange = / ?nochange/gi,
 	regNormalize = /[^a-zA-Z0-9_-]/g,
@@ -37,7 +36,6 @@ try {
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	regLoading: regLoading,
 	regFullPage: regFullPage,
 	regCheatSheet: regCheatSheet,
 	regNoChange: regNoChange,

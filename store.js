@@ -1,6 +1,6 @@
 var h = require("virtual-dom/h"),
-	Events = require("eventemitter3"),
-	events = new Events();
+	Events = require("eventemitter2").EventEmitter2,
+	events = new Events({ wildcard: true });
 
 function Content () {
 	if ( !(this instanceof Content) ) {
