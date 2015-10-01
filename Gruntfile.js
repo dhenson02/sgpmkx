@@ -9,8 +9,8 @@ module.exports = function ( grunt ) {
 			},
 			dev: {
 				files: {
-					'.tmp/main.js': 'src/js/main.js',
-					'.tmp/dev.js': 'src/js/dev.js'
+					'.tmp/dev.js': 'src/js/dev.js',
+					'.tmp/main.js': 'src/js/main.js'
 				}
 			}
 		},

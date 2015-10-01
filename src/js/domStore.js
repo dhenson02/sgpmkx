@@ -43,15 +43,15 @@ DOM.prototype.update = function  () {
 	var patches = diff(this.dirtyDOM, refreshDOM);
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
-	this.reset();
 	document.title = pages.current.title;
+	this.reset();
 	if ( codeMirror ) this.initEditor();
 };
 
 DOM.prototype.reset = function () {
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
-	this.buttons = document.getElementById("ph-buttons");
+	//this.buttons = document.getElementById("ph-buttons");
 	//this.contentWrap = document.getElementById("ph-contentWrap");
 	this.cheatSheet = document.getElementById("cheatSheet");
 	this.input = document.getElementById("ph-input");
