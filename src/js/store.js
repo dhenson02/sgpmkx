@@ -64,7 +64,7 @@ function Pages () {
 		return new Pages();
 	}
 	this.current = new Content();
-	this.viewMode = "fullPage";
+	this.fullPage = true;
 }
 
 Pages.prototype.init = function ( data ) {
@@ -240,14 +240,14 @@ Pages.prototype.create = function ( path ) {
 
 			sweetAlert({
 				title: "Confirm",
-				text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
+				text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),
 				closeOnConfirm: false,
 				showCancelButton: true,
 				showLoaderOnConfirm: true,
 				html: true,
 				type: "warning"
 			}, function () {
-				events.emit("create", data, path, title);
+				events.emit("content.create", data, path, title);
 			});
 		});
 	});

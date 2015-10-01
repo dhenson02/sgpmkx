@@ -23,14 +23,16 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			events.emit("page.success", data);
+			pages.init(data);
+			events.emit("page.success");
 		},
 		error: function ( error ) {
 			console.log("error connecting:", error);
 		}
 	});
 	/*setTimeout(function () {
-		events.emit("page.success", data);
+	 pages.init(data);
+		events.emit("page.success");
 	}, 250);*/
 });
 

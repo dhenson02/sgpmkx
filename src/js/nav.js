@@ -1,7 +1,8 @@
 var h = require("virtual-dom/h"),
 	codeMirror = require("./helpers").codeMirror,
 	pages = require("./store").pages,
-	events = require("./data").events;
+	events = require("./store").events,
+	map = require("lodash/collection/map");
 
 function renderLink ( link ) {
 	return (
@@ -28,7 +29,7 @@ function renderSection ( section ) {
 	}
 	if ( codeMirror ) {
 		links[++i] = (
-			h("a#createButton.ph-btn", {
+			h("a.ph-btn.ph-create", {
 				href: "#",
 				onclick: function ( event ) {
 					event = event || window.event;
@@ -50,17 +51,17 @@ function renderSection ( section ) {
 	);
 }
 
-function renderNav ( sections ) {
+function renderNav () {
 	var links = [],
 		name;
 
-	for ( name in sections ) {
-		if ( sections.hasOwnProperty(name) ) {
-			links.push(renderSection(sections[name]));
+	for ( name in pages.sections ) {
+		if ( pages.sections.hasOwnProperty(name) ) {
+			links.push(renderSection(pages.sections[name]));
 		}
 	}
 	links.push(
-		h("a#createButton.ph-btn", {
+		h("a.ph-btn.ph-create", {
 			href: "#",
 			onclick: function ( event ) {
 				event = event || window.event;

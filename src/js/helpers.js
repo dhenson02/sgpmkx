@@ -33,9 +33,6 @@ try {
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	regFullPage: regFullPage,
-	regCheatSheet: regCheatSheet,
-	regNoChange: regNoChange,
 	md: md,
 	inTransition: inTransition,
 	codeMirror: codeMirror

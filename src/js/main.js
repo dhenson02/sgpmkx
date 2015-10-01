@@ -1,7 +1,6 @@
 var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
-	createElement = require("virtual-dom/create-element"),
 	reqwest = require("reqwest"),
 	Router = require("director/build/director").Router,
 	console = console || require("console"),
@@ -12,28 +11,11 @@ var h = require("virtual-dom/h"),
 	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
-	data = require("./data"),
-	sitePath = data.sitePath,
-	digest = data.digest,
-
 	pages = require("./store").pages,
 	events = require("./store").events,
 	current = pages.current,
 
-	//DOMRef = require("./domStore").DOMRef,
-	//domRefs = new DOMRef(),
 	DOM = require("./domStore"),
-	dirtyDOM = null,
-	rootNode = null,
-	navDOM = null,
-	renderNav = require("./nav"),
-	renderTabs = require("./tabs"),
-	tabsDOM = renderTabs([
-		{
-			title: "Overview",
-			icon: "home"
-		}
-	], { style: { display: "none" } }, handleTab),
 	router = Router({
 		'/': {
 			on: function () {
@@ -84,28 +66,64 @@ sweetAlert.setDefaults({
 	confirmButtonText: "Yes!"
 });
 
-events.on("*.loading", function () {
-	var target = DOM.output;
-	if ( inTransition.output === true ) {
-		return false;
+events.on("page.success", function () {
+	DOM.init();
+
+	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
+	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
+	if ( activeLink ) {
+		activeLink.className += " active";
 	}
-	inTransition.output = true;
-	inTransition.tmp = target.innerHTML;
-	target.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-	target.className += " loading";
-});
+	if ( tabCurrent ) {
+		tabCurrent.parentNode.className += " tab-current";
+	}
 
-events.on("*.loaded", function () {
-	var regLoading = / ?loading/gi;
-	var target = DOM.output;
-	inTransition.output = false;
-	target.className = target.className.replace(regLoading, "");
-});
+	var hashArray = window.location.hash.slice(2).split(/\//),
+		i,
+		total;
 
-events.on("page.success", function ( data ) {
-	pages.init(data);
-	navDOM = renderNav(pages.sections);
-	pageSetup();
+	if ( hashArray.length > 1 ) {
+		var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
+		if ( phPage ) {
+			i = 0;
+			total = phPage.length;
+			for ( ; i < total; ++i ) {
+				phPage[i].removeAttribute("style");
+				phPage[i].parentNode.removeAttribute("style");
+			}
+		}
+	}
+
+	if ( window.location.hash ) {
+		/**
+		 * Example:  copy + paste URL to
+		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]/#/FH/TravelMedicine
+		 */
+		router.init();
+	}
+	else {
+		/**
+		 * Example:  copy + paste URL to
+		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]
+		 */
+		router.init("/");
+	}
+	horsey(document.getElementById("ph-search"), {
+		suggestions: pages.titles,
+		getValue: function ( item ) {
+			return item.value;
+		},
+		getText: function ( item ) {
+			return item.text;
+		},
+		set: function ( item ) {
+			router.setRoute(item);
+			return false;
+		},
+		render: function ( li, item ) {
+			li.innerText = li.textContent = item.renderText;
+		}
+	});
 });
 
 events.on("missing", function ( path ) {
@@ -176,36 +194,8 @@ events.on("content.loaded", function ( data ) {
 		timestamp: (Date && Date.now() || new Date())
 	});
 
-	var tabsStyle = ( current.program !== "" ) ? null : { style: { display: "none" } };
-	tabsDOM = renderTabs([
-		{
-			title: "Overview",
-			icon: "home"
-		},
-		{
-			title: "Policy",
-			icon: "notebook"
-		},
-		{
-			title: "Training",
-			icon: "display1"
-		},
-		{
-			title: "Resources",
-			icon: "cloud-upload"
-		},
-		{
-			title: "Tools",
-			icon: "tools"
-		},
-		{
-			title: "Contributions",
-			icon: "users"
-		}
-	], tabsStyle, handleTab);
-
 	resetPage();
-	insertContent(current.text, current.type);
+	DOM.renderOut(current.text, current.type);
 
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
 	var currentTab = document.querySelector("#ph-tabs .icon-home");
@@ -231,93 +221,21 @@ events.on("content.loaded", function ( data ) {
 		}
 	}
 
-	document.title = current.title;
-
-	if ( codeMirror ) {
-		setupEditor();
-	}
+	DOM.update();
 });
 
-function handleTab ( page ) {
+events.on("tab.change", function ( page ) {
 	var content = {};
 	content[current.type.toLowerCase()] = current.text;
 	content.text = current[page.toLowerCase()];
 	content.type = page;
 	current.set(content);
-	insertContent(current.text, current.type);
+	DOM.renderOut(current.text, current.type);
 	if ( codeMirror ) {
-		setupEditor();
+		DOM.update();
 	}
-}
+});
 
-function render ( navDOM, tabsDOM, title ) {
-	return (
-		h("#ph-wrapper", [
-			h("#ph-search-wrap", [
-				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
-				h("input#ph-search", { placeHolder: "Search...!"})
-			]),
-			h("#ph-side-nav", [navDOM]),
-			h("#ph-content.fullPage", [
-				tabsDOM,
-				h("h1#ph-title", [String(title || "")]),
-				h("#ph-contentWrap", [
-					h("#ph-output")
-				])
-			])
-		])
-	);
-}
-
-function renderEditor ( navDOM, tabsDOM, title, text ) {
-	return (
-		h("#ph-wrapper", [
-			h("#ph-search-wrap", [
-				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
-				h("input#ph-search", { placeHolder: "Search...!" })
-			]),
-			h("#ph-side-nav", [navDOM]),
-			h("#ph-content.fullPage", [
-				h("#ph-buttons", [
-					h("input.ph-toggle-editor", {
-						type: "checkbox",
-						checked: (pages.viewMode) ? "checked" : "",
-						onchange: function () {
-							pages.viewMode = ( pages.viewMode ) ? "fullPage" : "";
-							DOM.content.className = pages.viewMode;
-							DOM.editor.refresh();
-							return false;
-						},
-						style: { display: "none" }
-					}, ["Edit page"]),
-					h("div.clearfix"),
-					h("button#cheatSheetButton.ph-btn", {
-						onclick: toggleCheatSheet,
-						type: "button"
-					}, ["Markdown help"]),
-					h("a#saveButton.ph-btn", {
-						href: "#",
-						onclick: function ( event ) {
-							event = event || window.event;
-							if ( event.preventDefault ) event.preventDefault();
-							else event.returnValue = false;
-							current.save(this);
-						}
-					}, ["Save"])
-				]),
-				tabsDOM,
-				h("h1#ph-title", [String(title || "")]),
-				h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
-				h("#ph-contentWrap", [
-					h("#ph-input", [
-						h("textarea#ph-textarea", [String(text || "")])
-					]),
-					h("#ph-output")
-				])
-			])
-		])
-	);
-}
 
 /*function renderLoader() {
  return (
@@ -333,154 +251,29 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
  );
  }*/
 
-function toggleCheatSheet () {
-	if ( DOM.cheatSheet.style.display === "none" ) {
-		DOM.cheatSheet.removeAttribute("style");
-	}
-	else {
-		DOM.cheatSheet.style.display = "none";
-	}
-	return false;
-}
-
-function update ( e ) {
-	var val = e.getValue();
-	insertContent(val, current.type);
-	current.set({
-		text: val
-	});
-}
-
-function insertContent ( text, type ) {
-	DOM.output.innerHTML = misc.md.render("## " + type + "\n" + text);
-}
-
-function pageSetup () {
-	dirtyDOM = ( !codeMirror ) ?
-		render(navDOM, tabsDOM, current.title) :
-		renderEditor(navDOM, tabsDOM, current.title, current.text);
-	rootNode = createElement(dirtyDOM);
-	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
-	DOM.reset();
-
-	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
-	if ( activeLink ) {
-		activeLink.className += " active";
-	}
-	if ( tabCurrent ) {
-		tabCurrent.parentNode.className += " tab-current";
-	}
-
-	var hashArray = window.location.hash.slice(2).split(/\//),
-		i,
-		total;
-
-	if ( hashArray.length > 1 ) {
-		var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-		if ( phPage ) {
-			i = 0;
-			total = phPage.length;
-			for ( ; i < total; ++i ) {
-				phPage[i].removeAttribute("style");
-				phPage[i].parentNode.removeAttribute("style");
-			}
-		}
-	}
-
-	if ( window.location.hash ) {
-		/**
-		 * Example:  copy + paste URL to
-		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]/#/FH/TravelMedicine
-		 */
-		router.init();
-	}
-	else {
-		/**
-		 * Example:  copy + paste URL to
-		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]
-		 */
-		router.init("/");
-	}
-
-	horsey(document.getElementById("ph-search"), {
-		suggestions: pages.titles,
-		getValue: function ( item ) {
-			return item.value;
-		},
-		getText: function ( item ) {
-			return item.text;
-		},
-		set: function ( item ) {
-			router.setRoute(item);
-			return false;
-		},
-		render: function ( li, item ) {
-			li.innerText = li.textContent = item.renderText;
-		}
-	});
-
-}
-
-function setupEditor () {
-	console.log("Loading editor...");
-	if ( DOM.editor ) {
-		var wrap = DOM.editor.getWrapperElement();
-		wrap.parentNode.removeChild(wrap);
-		DOM.set({
-			editor: null
-		});
-	}
-	var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
-
-	//DOM.updateDom(dirtyDOM, refreshDOM);
-
-	var patches = diff(dirtyDOM, refreshDOM);
-	rootNode = patch(rootNode, patches);
-	dirtyDOM = refreshDOM;
-	DOM.reset();
-
-	DOM.set({
-		editor: codeMirror.fromTextArea(DOM.textarea, {
-			mode: 'gfm',
-			lineNumbers: false,
-			matchBrackets: true,
-			lineWrapping: true,
-			theme: "neo",
-			extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
-		})
-	});
-	DOM.editor.on("change", update);
-	DOM.editor.refresh();
-	DOM.buttons.childNodes[0].removeAttribute("style");
-	console.log("Editor loaded");
-}
-
 function resetPage () {
-	console.log("Page reset");
 	var oldActive = document.querySelectorAll("a.active"),
 		i = 0,
 		total = oldActive.length;
 	for ( ; i < total; ++i ) {
 		oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
 	}
-	if ( codeMirror ) {
-		if ( DOM.editor ) {
-			var wrap = DOM.editor.getWrapperElement();
-			wrap.parentNode.removeChild(wrap);
-			DOM.set({
-				editor: null
-			});
-		}
-		var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
-	}
-	else {
-		refreshDOM = render(navDOM, tabsDOM, current.title);
-	}
-	var patches = diff(dirtyDOM, refreshDOM);
-	rootNode = patch(rootNode, patches);
-	dirtyDOM = refreshDOM;
-	DOM.reset();
+	DOM.update();
 }
+
+events.on("content.loading", function () {
+	if ( inTransition.output ) {
+		return false;
+	}
+	inTransition.output = DOM.output.innerHTML;
+	DOM.output.className += " loading";
+	DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
+});
+
+events.on("content.loaded", function () {
+	var regLoading = / ?loading/gi;
+	inTransition.output = null;
+	DOM.output.className = DOM.output.className.replace(regLoading, "");
+});
 
 events.emit("page.loading");

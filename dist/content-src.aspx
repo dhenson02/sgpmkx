@@ -28,6 +28,8 @@
 		}
 	}
 
+	phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+
 //]]>
 </script>
 <style type="text/css">
