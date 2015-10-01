@@ -1,7 +1,7 @@
 var h = require("virtual-dom/h"),
 	codeMirror = require("./helpers").codeMirror,
 	pages = require("./store").pages,
-	events = require("./data").events;
+	events = require("./store").events;
 
 function renderLink ( link ) {
 	return (

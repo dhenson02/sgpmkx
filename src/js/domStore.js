@@ -38,6 +38,9 @@ DOM.prototype.init = function () {
 };
 
 DOM.prototype.render = function ( cfg ) {
+	cfg = {
+		nav: cfg.nav || Nav.cfg
+	};
 	var refreshDOM = ( !codeMirror ) ?
 		renderPage(cfg) :
 		renderEditor(cfg);
@@ -60,11 +63,17 @@ DOM.prototype.reset = function () {
 };
 
 var dom = new DOM();
-var rootNode, dirtyDOM;
 
-/*module.exports = {
-	DOM: DOM,
-	domRefs: domRefs
-};*/
+events.on("tab.change", function ( page ) {
+	var content = {};
+	content[current.type.toLowerCase()] = current.text;
+	content.text = current[page.toLowerCase()];
+	content.type = page;
+	current.set(content);
+	insertContent(current.text, current.type);
+	if ( codeMirror ) {
+		setupEditor();
+	}
+});
 
 module.exports = dom;

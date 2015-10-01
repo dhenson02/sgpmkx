@@ -19,9 +19,9 @@ function render ( cfg ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [new Nav(cfg.nav||{})]),
+			h("#ph-side-nav", [new Nav(cfg.nav)]),
 			h("#ph-content.fullPage", [
-				new Tabs(cfg.tabs||{}),
+				new Tabs(),
 				h("h1#ph-title", [String(current.title || "")]),
 				h("#ph-contentWrap", [
 					h("#ph-output")
@@ -42,7 +42,7 @@ function editor ( cfg ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [new Nav()]),
+			h("#ph-side-nav", [new Nav(cfg.nav)]),
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
 					h("label.ph-toggle-label", { htmlFor: "ph-toggle" }, [
@@ -84,7 +84,7 @@ function editor ( cfg ) {
 					}, ["Save"])
 				]),
 				new Tabs(),
-				h("h1#ph-title", [String(title || "")]),
+				h("h1#ph-title", [String(current.title)]),
 				h("#cheatSheet", {
 					style: {
 						display: "none"
@@ -94,7 +94,7 @@ function editor ( cfg ) {
 				]),
 				h("#ph-contentWrap", [
 					h("#ph-input", [
-						h("textarea#ph-textarea", [String(text || "")])
+						h("textarea#ph-textarea", [String(current.text)])
 					]),
 					h("#ph-output")
 				])

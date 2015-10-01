@@ -3,18 +3,20 @@ var h = require("virtual-dom/h"),
 	events = require("./store").events,
 	pages = require("./store").pages;
 
-function Tabs ( cfg ) {
-	this.type = "Widget";
-	this.tabs = cfg || [
-		{ title: "Overview", icon: "home" },
-		{ title: "Policy", icon: "notebook" },
-		{ title: "Training", icon: "display1" },
-		{ title: "Resources", icon: "cloud-upload" },
-		{ title: "Tools", icon: "tools" },
-		{ title: "Contributions", icon: "users" }
-	];
+function Tabs () {
 	this.style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } };
 }
+
+Tabs.prototype.type = "Widget";
+
+Tabs.prototype.tabs = [
+	{ title: "Overview", icon: "home" },
+	{ title: "Policy", icon: "notebook" },
+	{ title: "Training", icon: "display1" },
+	{ title: "Resources", icon: "cloud-upload" },
+	{ title: "Tools", icon: "tools" },
+	{ title: "Contributions", icon: "users" }
+];
 
 Tabs.prototype.init = function () {
 	var tabs = map(this.tabs, function ( tab ) {
@@ -55,23 +57,20 @@ Tabs.prototype.init = function () {
 	 }
 	 }*/
 	return createElement(
-		( this.tabs && this.tabs.length === 1 ) ?
-			null :
-			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
-				h("nav", [
-					h("ul",
-						this.style,
-						tabs
-					)
-				])
+		h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
+			h("nav", [
+				h("ul",
+					this.style,
+					tabs
+				)
 			])
-
+		])
 	);
 };
 
 Tabs.prototype.update = function ( prev, dom ) {
 	this.style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } };
-	return ( this.style != prev.style ) ? this.init() : createElement(null); //h(null)
+	return ( this.style != prev.style ) ? this.init() : createElement(h(null));
 };
 
 module.exports = Tabs;

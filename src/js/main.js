@@ -227,17 +227,6 @@ events.on("content.created", function ( path, title ) {
 	});
 });
 
-events.on("tab.change", function ( page ) {
-	var content = {};
-	content[current.type.toLowerCase()] = current.text;
-	content.text = current[page.toLowerCase()];
-	content.type = page;
-	current.set(content);
-	insertContent(current.text, current.type);
-	if ( codeMirror ) {
-		setupEditor();
-	}
-});
 
 /*function Loader () {}
 Loader.prototype.init = function () {
@@ -258,18 +247,6 @@ Loader.prototype.update = function ( prev, el ) {
 
 	}
 };*/
-
-function update ( e ) {
-	var val = e.getValue();
-	insertContent(val, current.type);
-	current.set({
-		text: val
-	});
-}
-
-function insertContent ( text, type ) {
-	DOM.output.innerHTML = misc.md.render("## " + type + "\n" + text);
-}
 
 function pageSetup () {
 	DOM.init();
