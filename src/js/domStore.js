@@ -1,10 +1,27 @@
-function DOMRef () {
-	if ( !(this instanceof DOMRef) ) {
-		return new DOMRef();
+var h = require("virtual-dom/h"),
+	diff = require("virtual-dom/diff"),
+	patch = require("virtual-dom/patch"),
+	createElement = require("virtual-dom/create-element"),
+	renderPage = require("./page").render,
+	renderEditor = require("./page").editor,
+	codeMirror = require("./helpers").codeMirror,
+	pages = require("./store").pages,
+	events = require("./store").events,
+	current = pages.current;
+
+function DOM () {
+	if ( !(this instanceof DOM) ) {
+		return new DOM();
 	}
+
+	this.dirtyDOM = ( !codeMirror ) ?
+		renderPage() :
+		renderEditor();
+	this.rootNode = createElement(this.dirtyDOM);
+
 }
 
-DOMRef.prototype.set = function ( data ) {
+DOM.prototype.set = function ( data ) {
 	var name;
 	for ( name in data ) {
 		if ( this.hasOwnProperty(name) ) {
@@ -14,14 +31,23 @@ DOMRef.prototype.set = function ( data ) {
 	return this;
 };
 
-DOMRef.prototype.update = function  ( refreshDOM ) {
-	var patches = diff(dirtyDOM, refreshDOM);
-	rootNode = patch(rootNode, patches);
-	dirtyDOM = refreshDOM;
+DOM.prototype.init = function () {
+	var el = document.getElementById("ph-wrapper");
+	el.parentNode.replaceChild(this.rootNode, el);
 	this.reset();
 };
 
-DOMRef.prototype.reset = function () {
+DOM.prototype.render = function ( cfg ) {
+	var refreshDOM = ( !codeMirror ) ?
+		renderPage(cfg) :
+		renderEditor(cfg);
+	var patches = diff(this.dirtyDOM, refreshDOM);
+	this.rootNode = patch(this.rootNode, patches);
+	this.dirtyDOM = refreshDOM;
+	this.reset();
+};
+
+DOM.prototype.reset = function () {
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
 	this.buttons = document.getElementById("ph-buttons");
@@ -33,12 +59,12 @@ DOMRef.prototype.reset = function () {
 	this.output = document.getElementById("ph-output");
 };
 
-var DOM = new DOMRef();
+var dom = new DOM();
 var rootNode, dirtyDOM;
 
 /*module.exports = {
-	DOMRef: DOMRef,
+	DOM: DOM,
 	domRefs: domRefs
 };*/
 
-module.exports = DOM;
+module.exports = dom;

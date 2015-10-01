@@ -20,12 +20,12 @@ var h = require("virtual-dom/h"),
 	events = require("./store").events,
 	current = pages.current,
 
-	//DOMRef = require("./domStore").DOMRef,
-	//domRefs = new DOMRef(),
 	DOM = require("./domStore"),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
+	render = require("./page").render,
+	renderEditor = require("./page").editor,
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
 	tabsDOM = renderTabs([
@@ -33,7 +33,7 @@ var h = require("virtual-dom/h"),
 			title: "Overview",
 			icon: "home"
 		}
-	], { style: { display: "none" } }, handleTab),
+	], { style: { display: "none" } }),
 	router = Router({
 		'/': {
 			on: function () {
@@ -104,7 +104,11 @@ events.on("*.loaded", function () {
 
 events.on("page.success", function ( data ) {
 	pages.init(data);
-	navDOM = renderNav(pages.sections);
+	//navDOM = renderNav(pages.sections);
+	DOM.set({
+		nav: pages.sections
+	});
+	DOM.render();
 	pageSetup();
 });
 
@@ -176,33 +180,9 @@ events.on("content.loaded", function ( data ) {
 		timestamp: (Date && Date.now() || new Date())
 	});
 
-	var tabsStyle = ( current.program !== "" ) ? null : { style: { display: "none" } };
-	tabsDOM = renderTabs([
-		{
-			title: "Overview",
-			icon: "home"
-		},
-		{
-			title: "Policy",
-			icon: "notebook"
-		},
-		{
-			title: "Training",
-			icon: "display1"
-		},
-		{
-			title: "Resources",
-			icon: "cloud-upload"
-		},
-		{
-			title: "Tools",
-			icon: "tools"
-		},
-		{
-			title: "Contributions",
-			icon: "users"
-		}
-	], tabsStyle, handleTab);
+	DOM.render({
+		tabs: ( current.program !== "" ) ? null : { style: { display: "none" } }
+	});
 
 	resetPage();
 	insertContent(current.text, current.type);
@@ -238,7 +218,16 @@ events.on("content.loaded", function ( data ) {
 	}
 });
 
-function handleTab ( page ) {
+events.on("content.created", function ( path, title ) {
+	sweetAlert({
+		title: "Success!",
+		text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
+		type: "success",
+		html: true
+	});
+});
+
+events.on("tab.change", function ( page ) {
 	var content = {};
 	content[current.type.toLowerCase()] = current.text;
 	content.text = current[page.toLowerCase()];
@@ -248,100 +237,27 @@ function handleTab ( page ) {
 	if ( codeMirror ) {
 		setupEditor();
 	}
-}
+});
 
-function render ( navDOM, tabsDOM, title ) {
-	return (
-		h("#ph-wrapper", [
-			h("#ph-search-wrap", [
-				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
-				h("input#ph-search", { placeHolder: "Search...!"})
+/*function Loader () {}
+Loader.prototype.init = function () {
+	return createElement(
+		h("#ph-loader.loader-group", [
+			h(".bigSqr", [
+				h(".square.first"),
+				h(".square.second"),
+				h(".square.third"),
+				h(".square.fourth")
 			]),
-			h("#ph-side-nav", [navDOM]),
-			h("#ph-content.fullPage", [
-				tabsDOM,
-				h("h1#ph-title", [String(title || "")]),
-				h("#ph-contentWrap", [
-					h("#ph-output")
-				])
-			])
+			h(".text", ["loading..."])
 		])
 	);
-}
+};
+Loader.prototype.update = function ( prev, el ) {
+	if ( inTransition.output ) {
 
-function renderEditor ( navDOM, tabsDOM, title, text ) {
-	return (
-		h("#ph-wrapper", [
-			h("#ph-search-wrap", [
-				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
-				h("input#ph-search", { placeHolder: "Search...!" })
-			]),
-			h("#ph-side-nav", [navDOM]),
-			h("#ph-content.fullPage", [
-				h("#ph-buttons", [
-					h("input.ph-toggle-editor", {
-						type: "checkbox",
-						checked: (pages.viewMode) ? "checked" : "",
-						onchange: function () {
-							pages.viewMode = ( pages.viewMode ) ? "fullPage" : "";
-							DOM.content.className = pages.viewMode;
-							DOM.editor.refresh();
-							return false;
-						},
-						style: { display: "none" }
-					}, ["Edit page"]),
-					h("div.clearfix"),
-					h("button#cheatSheetButton.ph-btn", {
-						onclick: toggleCheatSheet,
-						type: "button"
-					}, ["Markdown help"]),
-					h("a#saveButton.ph-btn", {
-						href: "#",
-						onclick: function ( event ) {
-							event = event || window.event;
-							if ( event.preventDefault ) event.preventDefault();
-							else event.returnValue = false;
-							current.save(this);
-						}
-					}, ["Save"])
-				]),
-				tabsDOM,
-				h("h1#ph-title", [String(title || "")]),
-				h("#cheatSheet", { style: { display: "none" } }, ["This will be a cheat-sheet for markdown"]),
-				h("#ph-contentWrap", [
-					h("#ph-input", [
-						h("textarea#ph-textarea", [String(text || "")])
-					]),
-					h("#ph-output")
-				])
-			])
-		])
-	);
-}
-
-/*function renderLoader() {
- return (
- h("#ph-loader.loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", ["loading..."])
- ])
- );
- }*/
-
-function toggleCheatSheet () {
-	if ( DOM.cheatSheet.style.display === "none" ) {
-		DOM.cheatSheet.removeAttribute("style");
 	}
-	else {
-		DOM.cheatSheet.style.display = "none";
-	}
-	return false;
-}
+};*/
 
 function update ( e ) {
 	var val = e.getValue();
@@ -356,12 +272,7 @@ function insertContent ( text, type ) {
 }
 
 function pageSetup () {
-	dirtyDOM = ( !codeMirror ) ?
-		render(navDOM, tabsDOM, current.title) :
-		renderEditor(navDOM, tabsDOM, current.title, current.text);
-	rootNode = createElement(dirtyDOM);
-	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
-	DOM.reset();
+	DOM.init();
 
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
 	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");

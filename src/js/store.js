@@ -68,13 +68,14 @@ function Pages () {
 }
 
 Pages.prototype.init = function ( data ) {
+	this.sections = {};
+
 	var urls = [],
 		i = 0,
 		count = data.d.results.length,
 		result,
 		parents = {},
 		subParents = {};
-	this.sections = {};
 	for ( ; i < count; ++i ) {
 		result = data.d.results[i];
 
@@ -188,7 +189,6 @@ Pages.prototype.set = function ( data ) {
 Pages.prototype.create = function ( path ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this;
-
 	sweetAlert({
 		title: "New page",
 		text: "Give it a name:",
@@ -226,6 +226,11 @@ Pages.prototype.create = function ( path ) {
 			path += "/" + newName.replace(regNormalize, "");
 			var pathArray = path.slice(1).split("/");
 
+			if ( self[path] ) {
+				sweetAlert.showInputError("That page already exists.  If you disagree, refresh the page and try again.");
+				return false;
+			}
+
 			var data = {
 				'__metadata': {
 					'type': self.current.listItemType
@@ -240,14 +245,15 @@ Pages.prototype.create = function ( path ) {
 
 			sweetAlert({
 				title: "Confirm",
-				text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
+				text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),
 				closeOnConfirm: false,
 				showCancelButton: true,
 				showLoaderOnConfirm: true,
 				html: true,
 				type: "warning"
 			}, function () {
-				events.emit("create", data, path, title);
+				events.emit("content.create", data, path, title);
+				return false;
 			});
 		});
 	});
