@@ -27,5 +27,7 @@
     <orderEntry type="library" name="browserify-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="Node.js v0.11.13 Core Modules" level="application" />
     <orderEntry type="library" name="src node_modules" level="project" />
+    <orderEntry type="library" name="lodash-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="sgpm node_modules" level="project" />
   </component>
 </module>

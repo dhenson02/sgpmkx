@@ -9,6 +9,7 @@ var h = require("virtual-dom/h"),
 	horsey = require("horsey"),
 
 	misc = require("./helpers"),
+	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
 	data = require("./data"),
@@ -19,8 +20,9 @@ var h = require("virtual-dom/h"),
 	events = require("./store").events,
 	current = pages.current,
 
-	DOMRef = require("./domStore").DOMRef,
-	domRefs = new DOMRef(),
+	//DOMRef = require("./domStore").DOMRef,
+	//domRefs = new DOMRef(),
+	DOM = require("./domStore"),
 	dirtyDOM = null,
 	rootNode = null,
 	navDOM = null,
@@ -32,28 +34,27 @@ var h = require("virtual-dom/h"),
 			icon: "home"
 		}
 	], { style: { display: "none" } }, handleTab),
-	inTransition = {},
 	router = Router({
 		'/': {
 			on: function () {
-				events.emit("page.loading", "/");
+				events.emit("content.loading", "/");
 			}
 		},
 		'/(\\w+)': {
 			on: function ( section ) {
-				events.emit("page.loading", "/" + section.replace(/\s/g, ""));
+				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
 			},
 			'/(\\w+)': {
 				on: function ( section, program ) {
-					events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
+					events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page ) {
-						events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
+						events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
 					},
 					'/(\\w+)': {
 						on: function ( section, program, page, rabbitHole ) {
-							events.emit("page.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
+							events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
 						}
 					}
 				}
@@ -84,7 +85,7 @@ sweetAlert.setDefaults({
 });
 
 events.on("*.loading", function () {
-	var target = domRefs.output;
+	var target = DOM.output;
 	if ( inTransition.output === true ) {
 		return false;
 	}
@@ -96,12 +97,12 @@ events.on("*.loading", function () {
 
 events.on("*.loaded", function () {
 	var regLoading = / ?loading/gi;
-	var target = domRefs.output;
+	var target = DOM.output;
 	inTransition.output = false;
 	target.className = target.className.replace(regLoading, "");
 });
 
-events.on("list.success", function ( data ) {
+events.on("page.success", function ( data ) {
 	pages.init(data);
 	navDOM = renderNav(pages.sections);
 	pageSetup();
@@ -120,7 +121,7 @@ events.on("missing", function ( path ) {
 	});
 });
 
-events.on("page.loaded", function ( data ) {
+events.on("content.loaded", function ( data ) {
 	var obj = data.d;
 	if ( !obj ) {
 		router.setRoute("/");
@@ -157,6 +158,7 @@ events.on("page.loaded", function ( data ) {
 		id: obj.ID,
 		title: obj.Title || "",
 		_title: obj.Title || "",
+		keywords: (obj.Keywords && obj.Keywords.results) || [],
 		icon: obj.Icon || "",
 		text: obj.Overview || "",
 		overview: obj.Overview || "",
@@ -206,7 +208,7 @@ events.on("page.loaded", function ( data ) {
 	insertContent(current.text, current.type);
 
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-	var currentTab = document.querySelector("#ph-tabs a.icon-overview");
+	var currentTab = document.querySelector("#ph-tabs .icon-home");
 	if ( activeLink ) {
 		activeLink.className += " active";
 	}
@@ -277,8 +279,15 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
-					h("button#toggleButton.ph-btn", {
-						onclick: editPage,
+					h("input.ph-toggle-editor", {
+						type: "checkbox",
+						checked: (pages.viewMode) ? "checked" : "",
+						onchange: function () {
+							pages.viewMode = ( pages.viewMode ) ? "fullPage" : "";
+							DOM.content.className = pages.viewMode;
+							DOM.editor.refresh();
+							return false;
+						},
 						style: { display: "none" }
 					}, ["Edit page"]),
 					h("div.clearfix"),
@@ -286,14 +295,15 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
 						onclick: toggleCheatSheet,
 						type: "button"
 					}, ["Markdown help"]),
-					h("button#saveButton.ph-btn", {
-						onclick: savePage,
-						type: "button"
-					}, ["Save"]),
-					h("button#createButton.ph-btn", {
-						onclick: createPage,
-						type: "button"
-					}, ["New"])
+					h("a#saveButton.ph-btn", {
+						href: "#",
+						onclick: function ( event ) {
+							event = event || window.event;
+							if ( event.preventDefault ) event.preventDefault();
+							else event.returnValue = false;
+							current.save(this);
+						}
+					}, ["Save"])
 				]),
 				tabsDOM,
 				h("h1#ph-title", [String(title || "")]),
@@ -323,233 +333,12 @@ function renderEditor ( navDOM, tabsDOM, title, text ) {
  );
  }*/
 
-function savePage ( event ) {
-	var self = this;
-	event = event || window.event;
-	if ( event.preventDefault ) event.preventDefault();
-	else event.returnValue = false;
-
-	current.set({
-		title: current.title.trim(),
-		text: current.text.trim()
-	});
-
-	current[current.type.toLowerCase()] = current.text;
-
-	//var titleDiff = (current.title !== current._title);
-	//var textDiff = (current.text !==
-	// current[current.type.toLowerCase()]);
-
-	//if ( textDiff || titleDiff ) {
-	self.innerHTML = "...saving...";
-	var data = {
-		'__metadata': {
-			'type': current.listItemType
-		},
-		'Title': current.title,
-		'Overview': current.overview,
-		'Policy': current.policy,
-		'Training': current.training,
-		'Resources': current.resources,
-		'Tools': current.tools,
-		'Contributions': current.contributions
-	};
-	//if ( titleDiff ) data["Title"] = current.title;
-	//if ( textDiff ) data[current.type] = current.text;
-	reqwest({
-		url: sitePath + "/items(" + current.id + ")",
-		method: "POST",
-		data: JSON.stringify(data),
-		type: "json",
-		contentType: "application/json",
-		withCredentials: true,
-		headers: {
-			"X-HTTP-Method": "MERGE",
-			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose",
-			"X-RequestDigest": digest,
-			"IF-MATCH": "*"
-		},
-		success: function () {
-			self.style.fontWeight = "bold";
-			self.innerHTML = "Saved!";
-			//events.emit("list.loading");
-		},
-		error: function () {
-			self.style.color = "#FF2222";
-			self.style.fontWeight = "bold";
-			self.innerHTML = "Connection error - try again.";
-		},
-		complete: function () {
-			if ( !inTransition.tempSaveText ) {
-				inTransition.tempSaveText = setTimeout(function () {
-					self.removeAttribute("style");
-					self.innerHTML = "Save";
-				}, 1500);
-			}
-		}
-	});
-	/*}
-	 else {
-	 if ( !misc.regNoChange.test(self.className) ) {
-	 self.className += " nochange";
-	 }
-	 self.innerHTML = "No change";
-	 if ( inTransition.tempSaveText ) {
-	 clearTimeout(inTransition.tempSaveText);
-	 }
-	 inTransition.tempSaveText = setTimeout(function () {
-	 self.className = self.className.replace(misc.regNoChange, "");
-	 self.innerHTML = "Save";
-	 }, 1500);
-	 }*/
-	return false;
-}
-
-function createPage ( event ) {
-	event = event || window.event;
-	if ( event.preventDefault ) event.preventDefault();
-	else event.returnValue = false;
-	var location = window.location.hash.slice(1);
-
-	sweetAlert({
-		title: "New page",
-		text: "Give it a name:",
-		type: "input",
-		closeOnConfirm: false,
-		showCancelButton: true
-	}, function ( title ) {
-		if ( title === false ) {
-			return false;
-		}
-		if ( title === "" ) {
-			sweetAlert.showInputError("Please enter a page title!");
-			return false;
-		}
-		var firstTry = title.replace(misc.regNormalize, "");
-		sweetAlert({
-			title: "Perfect!",
-			text: "What a great name.  Can you shorten it at all to make the URL easier to manage?  If not, just hit continue!",
-			type: "input",
-			closeOnConfirm: false,
-			showCancelButton: true,
-			inputValue: firstTry,
-			confirmButtonText: "Continue",
-			cancelButtonText: "I want off this ride"
-		}, function ( newName ) {
-			if ( newName === false ) {
-				return false;
-			}
-			if ( newName === "" ) {
-				sweetAlert.showInputError("Are you trying to cancel or do you just want me to use what we already have so far?");
-				return false;
-			}
-
-			var name = newName.replace(misc.regNormalize, ""),
-				path = "",
-				section = "",
-				program = "",
-				page = "",
-				rabbitHole = "";
-
-			if ( current.section !== "" ) {
-				// Has to be a new Program or lower
-				section = current.section;
-				path += "/" + current.section;
-				if ( current.program !== "" ) {
-					// Has to be a new Page or lower
-					program = current.program;
-					path += "/" + current.program;
-					if ( current.page !== "" ) {
-						// Has to be a new rabbitHole/SubPage
-						page = current.page;
-						rabbitHole = name;
-						path += "/" + current.page + "/" + name;
-					}
-					else {
-						page = name;
-						path += "/" + name;
-					}
-				}
-				else {
-					program = name;
-					path += "/" + name;
-				}
-			}
-			else {
-				// Has to be a new Section
-				section = name;
-				path += "/" + name;
-			}
-
-			sweetAlert({
-				title: "Confirm",
-				text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
-				closeOnConfirm: false,
-				showCancelButton: true,
-				showLoaderOnConfirm: true,
-				html: true,
-				type: "warning"
-			}, function () {
-				reqwest({
-					url: sitePath + "/items",
-					method: "POST",
-					data: JSON.stringify({
-						'__metadata': {
-							'type': current.listItemType
-						},
-						'Title': title,
-						'Overview': '### New Page :)\n#### Joy',
-						'Section': section,
-						'Program': program,
-						'Page': page,
-						'rabbitHole': rabbitHole
-					}),
-					type: "json",
-					contentType: "application/json",
-					withCredentials: true,
-					headers: {
-						"Accept": "application/json;odata=verbose",
-						"text-Type": "application/json;odata=verbose",
-						"Content-Type": "application/json;odata=verbose",
-						"X-RequestDigest": digest
-					},
-					success: function () {
-						sweetAlert({
-							title: "Success!",
-							text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
-							type: "success",
-							html: true
-						});
-					},
-					error: function ( error ) {
-						console.log("error connecting:", error);
-					}
-				});
-			});
-		});
-	});
-}
-
-function editPage () {
-	if ( misc.regFullPage.test(domRefs.content.className) ) {
-		domRefs.content.className = domRefs.content.className.replace(misc.regFullPage, "");
-		//domRefs.editor.refresh();
-	}
-	else {
-		domRefs.content.className += " fullPage";
-	}
-	domRefs.editor.refresh();
-	return false;
-}
-
 function toggleCheatSheet () {
-	if ( domRefs.cheatSheet.style.display === "none" ) {
-		domRefs.cheatSheet.removeAttribute("style");
+	if ( DOM.cheatSheet.style.display === "none" ) {
+		DOM.cheatSheet.removeAttribute("style");
 	}
 	else {
-		domRefs.cheatSheet.style.display = "none";
+		DOM.cheatSheet.style.display = "none";
 	}
 	return false;
 }
@@ -563,7 +352,7 @@ function update ( e ) {
 }
 
 function insertContent ( text, type ) {
-	domRefs.output.innerHTML = misc.md.render("## " + type + "\n" + text);
+	DOM.output.innerHTML = misc.md.render("## " + type + "\n" + text);
 }
 
 function pageSetup () {
@@ -572,7 +361,7 @@ function pageSetup () {
 		renderEditor(navDOM, tabsDOM, current.title, current.text);
 	rootNode = createElement(dirtyDOM);
 	phWrapper.parentNode.replaceChild(rootNode, phWrapper);
-	domRefs = new DOMRef();
+	DOM.reset();
 
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
 	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
@@ -635,24 +424,24 @@ function pageSetup () {
 
 function setupEditor () {
 	console.log("Loading editor...");
-	if ( domRefs.editor ) {
-		var wrap = domRefs.editor.getWrapperElement();
+	if ( DOM.editor ) {
+		var wrap = DOM.editor.getWrapperElement();
 		wrap.parentNode.removeChild(wrap);
-		domRefs.set({
+		DOM.set({
 			editor: null
 		});
 	}
 	var refreshDOM = renderEditor(navDOM, tabsDOM, current.title, current.text);
 
-	//domRefs.updateDom(dirtyDOM, refreshDOM);
+	//DOM.updateDom(dirtyDOM, refreshDOM);
 
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
-	domRefs = new DOMRef();
+	DOM.reset();
 
-	domRefs.set({
-		editor: codeMirror.fromTextArea(domRefs.textarea, {
+	DOM.set({
+		editor: codeMirror.fromTextArea(DOM.textarea, {
 			mode: 'gfm',
 			lineNumbers: false,
 			matchBrackets: true,
@@ -661,9 +450,9 @@ function setupEditor () {
 			extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
 		})
 	});
-	domRefs.editor.on("change", update);
-	domRefs.editor.refresh();
-	domRefs.buttons.childNodes[0].removeAttribute("style");
+	DOM.editor.on("change", update);
+	DOM.editor.refresh();
+	DOM.buttons.childNodes[0].removeAttribute("style");
 	console.log("Editor loaded");
 }
 
@@ -676,10 +465,10 @@ function resetPage () {
 		oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
 	}
 	if ( codeMirror ) {
-		if ( domRefs.editor ) {
-			var wrap = domRefs.editor.getWrapperElement();
+		if ( DOM.editor ) {
+			var wrap = DOM.editor.getWrapperElement();
 			wrap.parentNode.removeChild(wrap);
-			domRefs.set({
+			DOM.set({
 				editor: null
 			});
 		}
@@ -691,7 +480,7 @@ function resetPage () {
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
-	domRefs = new DOMRef();
+	DOM.reset();
 }
 
-events.emit("list.loading");
+events.emit("page.loading");

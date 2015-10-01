@@ -11,7 +11,7 @@ function renderTab ( title, icon, handleClick, initialTab ) {
 					else e.returnValue = false;
 					handleClick(title);
 
-					if ( / ?tab-current/gi.test(this.parentNode.className) === false ) {
+					if ( / ?tab\-current/gi.test(this.parentNode.className) === false ) {
 						var tabCurrent = document.querySelector(".tab-current");
 						if ( tabCurrent ) {
 							tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
@@ -20,19 +20,24 @@ function renderTab ( title, icon, handleClick, initialTab ) {
 					}
 					return false;
 				}
-			}, [h("span", [String(title)])])
+			}, [
+				h("span", [
+					String(title)
+				])
+			])
 		])
 	);
 }
 
 function renderTabs ( tabs, style, launch ) {
 
-	var group = [];
-	var i = 0;
-	var count = tabs.length;
-	var initial = ".tab-current";
+	var group = [],
+		i = 0,
+		count = tabs.length,
+		initial = ".tab-current";
 	for ( ; i < count; ++i ) {
-		group.push(renderTab(tabs[i].title, tabs[i].icon, launch, initial));
+		//group.push(renderTab(tabs[i].title, tabs[i].icon, launch, initial));
+		group[i] = (renderTab(tabs[i].title, tabs[i].icon, launch, initial));
 		initial = "";
 	}
 	/**

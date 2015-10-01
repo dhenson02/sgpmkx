@@ -168,7 +168,7 @@
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current {
-	z-index: 100;
+	z-index: 6;
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current a {

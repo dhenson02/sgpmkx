@@ -1,7 +1,8 @@
 var h = require("virtual-dom/h"),
 	Events = require("eventemitter2").EventEmitter2,
 	events = new Events({ wildcard: true }),
-	pluck = require("lodash/collection/pluck");
+	pluck = require("lodash/collection/pluck"),
+	misc = require("./helpers");
 
 function Content () {
 	if ( !(this instanceof Content) ) {
@@ -9,6 +10,7 @@ function Content () {
 	}
 	this.id = -1;
 	this.title = "";
+	this.keywords = [];
 	this.icon = "";
 	this.text = "";
 	this.overview = "";
@@ -36,11 +38,33 @@ Content.prototype.set = function ( data ) {
 	return this;
 };
 
+Content.prototype.save = function ( self ) {
+	this.set({
+		text: this.text.trim()
+	});
+	this[this.type.toLowerCase()] = this.text;
+	var data = {
+		'__metadata': {
+			'type': this.listItemType
+		},
+		'Title': this.title,
+		'Keywords': this.keywords,
+		'Overview': this.overview,
+		'Policy': this.policy,
+		'Training': this.training,
+		'Resources': this.resources,
+		'Tools': this.tools,
+		'Contributions': this.contributions
+	};
+	events.emit("content.save", data, this.id, self);
+};
+
 function Pages () {
 	if ( !(this instanceof Pages) ) {
 		return new Pages();
 	}
 	this.current = new Content();
+	this.viewMode = "fullPage";
 }
 
 Pages.prototype.init = function ( data ) {
@@ -109,15 +133,15 @@ Pages.prototype.init = function ( data ) {
 	i = 0;
 	this.titles = [];
 	for ( ; i < count; ++i ) {
-		var page = this[urls[i]];
+		var page = this[urls[i]],
+			isPage = false,
+			level,
+			name = page.rabbitHole || page.Page || page.Program;
 		this.titles[i] = {
 			text: page.Title + " " + pluck(page.Keywords.results, "Label").join(" "),
 			value: page.Path,
 			renderText: page.Title
 		};
-		var isPage = false;
-		var level;
-		var name = page.rabbitHole || page.Page || page.Program;
 
 		if ( page.rabbitHole !== "" ) {
 			isPage = true;
@@ -159,6 +183,74 @@ Pages.prototype.set = function ( data ) {
 		}
 	}
 	return this;
+};
+
+Pages.prototype.create = function ( path ) {
+	var regNormalize = /[^a-zA-Z0-9_-]/g,
+		self = this;
+
+	sweetAlert({
+		title: "New page",
+		text: "Give it a name:",
+		type: "input",
+		closeOnConfirm: false,
+		showCancelButton: true
+	}, function ( title ) {
+		if ( title === false ) {
+			return false;
+		}
+		if ( title === "" || ( title.length && title.length < 2 ) ) {
+			sweetAlert.showInputError("Please enter a page title (of at least 2 characters)!");
+			return false;
+		}
+		var firstTry = title.replace(regNormalize, "");
+
+		sweetAlert({
+			title: "Perfect!",
+			text: "Now let\'s shorten it to make the URL easier to manage (example provided).",
+			type: "input",
+			closeOnConfirm: false,
+			showCancelButton: true,
+			inputValue: firstTry,
+			confirmButtonText: "Continue",
+			cancelButtonText: "I want off this ride"
+		}, function ( newName ) {
+			if ( newName === false ) {
+				return false;
+			}
+			if ( newName === "" || ( newName.length && newName.length < 2 ) ) {
+				sweetAlert.showInputError("Are you trying to cancel or do you just want me to use what we already have so far?");
+				return false;
+			}
+
+			path += "/" + newName.replace(regNormalize, "");
+			var pathArray = path.slice(1).split("/");
+
+			var data = {
+				'__metadata': {
+					'type': self.current.listItemType
+				},
+				'Title': title,
+				'Overview': '### New Page :)\n#### Joy',
+				'Section': pathArray.shift() || "",
+				'Program': pathArray.shift() || "",
+				'Page': pathArray.shift() || "",
+				'rabbitHole': pathArray.shift() || ""
+			};
+
+			sweetAlert({
+				title: "Confirm",
+				text: misc.md.render("Your page will have the title:\n\n**`" + title + "`**\n\nPage location: **`" + path + "`**\n"),
+				closeOnConfirm: false,
+				showCancelButton: true,
+				showLoaderOnConfirm: true,
+				html: true,
+				type: "warning"
+			}, function () {
+				events.emit("create", data, path, title);
+			});
+		});
+	});
 };
 
 var pages = new Pages();

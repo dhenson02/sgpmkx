@@ -1,4 +1,7 @@
-var h = require("virtual-dom/h");
+var h = require("virtual-dom/h"),
+	codeMirror = require("./helpers").codeMirror,
+	pages = require("./store").pages,
+	events = require("./data").events;
 
 function renderLink ( link ) {
 	return (
@@ -23,6 +26,19 @@ function renderSection ( section ) {
 	for ( ; i < count; ++i ) {
 		links[i] = renderLink(section.links[i]);
 	}
+	if ( codeMirror ) {
+		links[++i] = (
+			h("a#createButton.ph-btn", {
+				href: "#",
+				onclick: function ( event ) {
+					event = event || window.event;
+					if ( event.preventDefault ) event.preventDefault();
+					else event.returnValue = false;
+					pages.create(section.path);
+				}
+			}, ["New"])
+		);
+	}
 	return (
 		h("li.ph-section.link", [
 			h("p", [
@@ -43,6 +59,17 @@ function renderNav ( sections ) {
 			links.push(renderSection(sections[name]));
 		}
 	}
+	links.push(
+		h("a#createButton.ph-btn", {
+			href: "#",
+			onclick: function ( event ) {
+				event = event || window.event;
+				if ( event.preventDefault ) event.preventDefault();
+				else event.returnValue = false;
+				pages.create("/");
+			}
+		}, ["New"])
+	);
 	return (
 		h("#ph-nav", [
 			h(".header", [

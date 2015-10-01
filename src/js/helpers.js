@@ -6,11 +6,7 @@ function removeEvent ( evt, element, fnc ) {
 	return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
 }
 
-var regFullPage = / ?fullPage/gi,
-	regCheatSheet = / ?cheatSheet/gi,
-	regNoChange = / ?nochange/gi,
-	regNormalize = /[^a-zA-Z0-9_-]/g,
-	md = markdownit({
+var md = markdownit({
 		xhtmlOut: true,
 		typographer: true,
 		quotes: '“”‘’',
@@ -25,6 +21,7 @@ var regFullPage = / ?fullPage/gi,
 			return '';
 		}
 	}),
+	inTransition = {},
 	codeMirror;
 
 try {
@@ -39,7 +36,7 @@ module.exports = {
 	regFullPage: regFullPage,
 	regCheatSheet: regCheatSheet,
 	regNoChange: regNoChange,
-	regNormalize: regNormalize,
 	md: md,
+	inTransition: inTransition,
 	codeMirror: codeMirror
 };

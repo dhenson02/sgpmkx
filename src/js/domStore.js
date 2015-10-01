@@ -2,16 +2,6 @@ function DOMRef () {
 	if ( !(this instanceof DOMRef) ) {
 		return new DOMRef();
 	}
-	this.content = document.getElementById("ph-content");
-	this.title = document.getElementById("ph-title");
-	this.buttons = document.getElementById("ph-buttons");
-	this.titleField = document.getElementById("titleField");
-	this.contentWrap = document.getElementById("ph-contentWrap");
-	this.cheatSheet = document.getElementById("cheatSheet");
-	this.input = document.getElementById("ph-input");
-	this.textarea = document.getElementById("ph-textarea");
-	this.editor = null;
-	this.output = document.getElementById("ph-output");
 }
 
 DOMRef.prototype.set = function ( data ) {
@@ -24,17 +14,31 @@ DOMRef.prototype.set = function ( data ) {
 	return this;
 };
 
-/*DOMRef.prototype.updateDOM = function  ( refreshDOM ) {
+DOMRef.prototype.update = function  ( refreshDOM ) {
 	var patches = diff(dirtyDOM, refreshDOM);
 	rootNode = patch(rootNode, patches);
 	dirtyDOM = refreshDOM;
-	/!*domRefs = new DOMRef();*!/
+	this.reset();
+};
+
+DOMRef.prototype.reset = function () {
+	this.content = document.getElementById("ph-content");
+	this.title = document.getElementById("ph-title");
+	this.buttons = document.getElementById("ph-buttons");
+	//this.contentWrap = document.getElementById("ph-contentWrap");
+	this.cheatSheet = document.getElementById("cheatSheet");
+	this.input = document.getElementById("ph-input");
+	this.textarea = document.getElementById("ph-textarea");
+	this.editor = null;
+	this.output = document.getElementById("ph-output");
+};
+
+var DOM = new DOMRef();
+var rootNode, dirtyDOM;
+
+/*module.exports = {
+	DOMRef: DOMRef,
+	domRefs: domRefs
 };*/
 
-//var domRefs = new DOMRef();
-//var rootNode, dirtyDOM;
-
-module.exports = {
-	DOMRef: DOMRef
-	//domRefs: domRefs
-};
+module.exports = DOM;
