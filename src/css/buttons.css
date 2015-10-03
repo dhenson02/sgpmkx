@@ -3,13 +3,32 @@
 	margin: 10px auto 10px;
 	text-align: center;
 	position: relative;
+	display: block;
 }
 
 .fullPage #ph-buttons {
 	max-width: 960px;
 	/*max-width: 800px;*/
 	max-width: calc(100% - 320px);
+	display: none;
 }
+
+.ph-btn {
+	font-style: normal;
+}
+
+.ph-toggle-label {
+	position: relative;
+	left: 50px;
+	top: 20px;
+	cursor: pointer;
+}
+
+.ph-toggle-label input {
+	visibility: hidden;
+}
+
+/*
 
 .ph-btn {
 	position: relative;
@@ -24,6 +43,7 @@
 	width: auto;
 	margin: 10px;
 }
+*/
 
 /* use if .ph-btn is <a> with a <span> inside */
 /*.ph-btn > span {

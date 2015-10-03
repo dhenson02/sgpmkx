@@ -12,7 +12,9 @@ function renderLink ( link ) {
 				target: ( link.href.charAt(0) !== "#" ) ? "_blank" : ""
 			}, [
 				( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
-				String(link.title),
+					//h("i.link", [String(link.title)]) :
+					//h("i.link.icon.icon-" + link.icon, [String(link.title)]),
+				h("span.link-title", [String(link.title)]),
 				h("span.place")
 			]),
 			link.hr
@@ -27,23 +29,32 @@ function renderSection ( section ) {
 	for ( ; i < count; ++i ) {
 		links[i] = renderLink(section.links[i]);
 	}
-	if ( codeMirror ) {
+	/*if ( codeMirror ) {
 		links[++i] = (
-			h("a.ph-btn.ph-create", {
-				href: "#",
-				onclick: function ( event ) {
-					event = event || window.event;
-					if ( event.preventDefault ) event.preventDefault();
-					else event.returnValue = false;
-					pages.create(section.path);
-				}
-			}, ["New"])
+			h("li.ph-program.ph-btn", [
+				h("a.ph-create", {
+					href: "#",
+					onclick: function ( event ) {
+						event = event || window.event;
+						if ( event.preventDefault ) event.preventDefault();
+						else event.returnValue = false;
+						pages.create(section.path.slice(1));
+					}
+				}, [
+					h("i.icon.icon-file"),
+					h("span.btn-title", [String("New " + section.title + " program")])
+				])
+			])
 		);
-	}
+	}*/
 	return (
 		h("li.ph-section.link", [
 			h("p", [
-				h("a", { "href": section.path }, [String(section.title)])
+				h("a", {
+					"href": section.path
+				}, [
+					h("span.link-title", [String(section.title)])
+				])
 			]),
 			h("hr"),
 			h("ul", links)
@@ -60,17 +71,27 @@ function renderNav () {
 			links.push(renderSection(pages.sections[name]));
 		}
 	}
-	links.push(
-		h("a.ph-btn.ph-create", {
-			href: "#",
-			onclick: function ( event ) {
-				event = event || window.event;
-				if ( event.preventDefault ) event.preventDefault();
-				else event.returnValue = false;
-				pages.create("/");
-			}
-		}, ["New"])
-	);
+	if ( codeMirror ) {
+		links.unshift(
+			h("li.ph-btn", [
+				h("p", [
+					h("a.ph-create", {
+						href: "#",
+						title: "New section",
+						onclick: function ( event ) {
+							event = event || window.event;
+							if ( event.preventDefault ) event.preventDefault();
+							else event.returnValue = false;
+							pages.create("/");
+						}
+					}, [
+						//h("i.icon.icon-file"),
+						h("span.btn-title", ["Add content"])
+					])
+				])
+			])
+		);
+	}
 	return (
 		h("#ph-nav", [
 			h(".header", [
@@ -94,9 +115,21 @@ function renderNav () {
 			]),
 			h("#ph-site-pages", [
 				h("div", [
-					h("a.site-page", { href: "#/leaders" }, ["Leaders"]),
-					h("a.site-page", { href: "#/news" }, ["News"]),
-					h("a.site-page", { href: "#/contact" }, ["Address Book"])
+					h("a.site-page", {
+						href: "#/leaders"
+					}, [
+						"Leaders"
+					]),
+					h("a.site-page", {
+						href: "#/news"
+					}, [
+						"News"
+					]),
+					h("a.site-page", {
+						href: "#/contact"
+					}, [
+						"Address Book"
+					])
 				])
 			]),
 			h("ul.nav", links)

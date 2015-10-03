@@ -25,7 +25,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
 				h("label", [
-					"Search (for now use up and down keys to select, then press enter):\n",
+					"Search:\n",
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
@@ -33,27 +33,26 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [navDOM]),
+			h("#ph-side-nav", [navDOM]), h("label.ph-toggle-label", [
+				"Hide editor ",
+				h("input.ph-toggle-editor", {
+					type: "checkbox",
+					name: "ph-toggle",
+					//checked: ( pages.fullPage ) ? "" : "checked",
+					checked: pages.fullPage,
+					onchange: function () {
+						pages.fullPage = this.checked;
+						DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
+						DOM.editor.refresh();
+						return false;
+					}
+					/*style: { display: "none" }*/
+				})
+			]),
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
-					h("label.ph-toggle-label", [
-						"Hide editor ",
-						h("input.ph-toggle-editor", {
-							type: "checkbox",
-							name: "ph-toggle",
-							//checked: ( pages.fullPage ) ? "" : "checked",
-							checked: pages.fullPage,
-							onchange: function () {
-								pages.fullPage = this.checked;
-								DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
-								DOM.editor.refresh();
-								return false;
-							}
-							/*style: { display: "none" }*/
-						})
-					]),
-					h("div.clearfix"),
-					h("a.ph-btn.ph-cheatsheet", {
+					//h("div.clearfix"),
+					h("a.ph-cheatsheet", {
 						href: "#",
 						onclick: function ( event ) {
 							event = event || window.event;
@@ -68,9 +67,13 @@ function editor ( navDOM, tabsDOM, DOM ) {
 							}
 							return false;
 						}
-					}, ["Markdown help"]),
-					h("a.ph-btn.ph-save", {
+					}, [
+						"Markdown help"
+						//h("i.icon.icon-pen", ["Markdown help"])
+					]),
+					h("a.ph-save", {
 						href: "#",
+						title: "Save",
 						onclick: function ( event ) {
 							event = event || window.event;
 							if ( event.preventDefault ) event.preventDefault();
@@ -78,7 +81,9 @@ function editor ( navDOM, tabsDOM, DOM ) {
 
 							pages.current.save(this);
 						}
-					}, ["Save"])
+					}, [
+						h("i.icon.icon-diskette"/*, ["Save"]*/)
+					])
 				]),
 				tabsDOM,
 				h("h1#ph-title", [String(pages.current.title || "")]),

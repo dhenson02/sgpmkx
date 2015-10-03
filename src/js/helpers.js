@@ -7,7 +7,7 @@ function removeEvent ( evt, element, fnc ) {
 }
 
 var md = markdownit({
-		xhtmlOut: true,
+		//xhtmlOut: true,
 		typographer: true,
 		quotes: '“”‘’',
 		highlight: function ( code, lang ) {
@@ -22,6 +22,7 @@ var md = markdownit({
 		}
 	}),
 	inTransition = {},
+	clicked = -1,
 	codeMirror;
 
 try {
@@ -35,5 +36,6 @@ module.exports = {
 	removeEvent: removeEvent,
 	md: md,
 	inTransition: inTransition,
+	clicked: clicked,
 	codeMirror: codeMirror
 };

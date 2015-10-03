@@ -225,12 +225,14 @@ Pages.prototype.create = function ( path ) {
 
 			path += "/" + newName.replace(regNormalize, "");
 			var pathArray = path.slice(1).split("/");
-
+			var keywords = null;
+			
 			var data = {
 				'__metadata': {
 					'type': self.current.listItemType
 				},
 				'Title': title,
+				'Keywords': keywords || [],
 				'Overview': '### New Page :)\n#### Joy',
 				'Section': pathArray.shift() || "",
 				'Program': pathArray.shift() || "",

@@ -49,6 +49,9 @@ app.post("/items(:id)", function ( req, res ) {
 		if ( Array.isArray(val) ) {
 			return { results: val };
 		}
+		else {
+			return val;
+		}
 	});
 	data.ID = id;
 	data.Id = id;
@@ -69,6 +72,9 @@ app.post('/items', function ( req, res ) {
 	var data = mapValues(req.body, function ( val ) {
 		if ( Array.isArray(val) ) {
 			return { results: val };
+		}
+		else {
+			return val;
 		}
 	});
 	data.ID = id;

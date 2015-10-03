@@ -1,5 +1,5 @@
 .icon::before {
-	z-index: 10;
+	z-index: 5;
 	display: inline-block;
 
 	/* Enable Ligatures ================ */
@@ -15,7 +15,7 @@
 	-webkit-font-smoothing: subpixel-antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	margin: 0 .4em 0 0;
+	margin: 0 .5em 0 0;
 	vertical-align: middle;
 	font-size: 1.3em;
 	-webkit-backface-visibility: hidden;

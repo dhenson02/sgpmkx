@@ -6,7 +6,7 @@
 #ph-tabs {
 	position: relative;
 	overflow: hidden;
-	margin: 0 auto;
+	margin:20px auto 0;
 	width: 100%;
 	font-weight: 300;
 	font-size: 1.25em;
@@ -168,7 +168,7 @@
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current {
-	z-index: 6;
+	z-index: 1;
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current a {

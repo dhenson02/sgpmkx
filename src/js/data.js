@@ -4,6 +4,7 @@ var	pages = require("./store").pages,
 	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
+	clicked = misc.clicked,
 	DOM = require("./domStore");
 
 function init () {
@@ -11,6 +12,8 @@ function init () {
 }
 
 events.on("page.loading", function () {
+	var timestamp = (Date && Date.now() || new Date());
+	clicked = parseInt(timestamp, 10);
 	reqwest({
 		url: sitePath + "/items",
 		method: "GET",
@@ -23,6 +26,9 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
+			if ( clicked !== parseInt(timestamp, 10) ) {
+				return false;
+			}
 			pages.init(data);
 			events.emit("page.loaded");
 			events.emit("page.success");
@@ -34,11 +40,12 @@ events.on("page.loading", function () {
 });
 
 events.on("content.loading", function ( path ) {
-	console.log("Begin loadPage...");
 	if ( !pages[path] ) {
 		events.emit("missing", path);
 		return false;
 	}
+	var timestamp = (Date && Date.now() || new Date());
+	clicked = parseInt(timestamp, 10);
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
 		method: "GET",
@@ -51,6 +58,9 @@ events.on("content.loading", function ( path ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
+			if ( clicked !== parseInt(timestamp, 10) ) {
+				return false;
+			}
 			events.emit("content.loaded", data);
 		},
 		error: function ( error ) {
@@ -76,7 +86,7 @@ events.on("content.create", function ( data, path, title ) {
 		success: function () {
 			sweetAlert({
 				title: "Success!",
-				text: title + " was created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
+				text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
 				type: "success",
 				showConfirmButton: false,
 				showCancelButton: false,
@@ -88,8 +98,10 @@ events.on("content.create", function ( data, path, title ) {
 				title: "Failure",
 				text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
 				type: "fail",
+				showCancelButton: false,
 				html: true
 			});
+			console.log(error);
 		}
 	});
 });

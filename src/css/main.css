@@ -224,6 +224,10 @@ body {
 	opacity: .35;
 }
 
+.link, .ph-btn {
+	font-style: normal;
+}
+
 @media all and (max-width: 1024px) {
 	#ph-content {
 		/*min-width: fit-content;*/
