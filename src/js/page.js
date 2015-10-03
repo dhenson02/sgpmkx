@@ -1,7 +1,6 @@
 var h = require("virtual-dom/h"),
-	store = require("./store"),
-	pages = store.pages,
-	events = store.events;
+	pages = require("./store").pages,
+	events = require("./store").events;
 
 function render ( navDOM, tabsDOM ) {
 	return (
@@ -21,7 +20,6 @@ function render ( navDOM, tabsDOM ) {
 		])
 	);
 }
-
 function editor ( navDOM, tabsDOM, DOM ) {
 	return (
 		h("#ph-wrapper", [
@@ -39,18 +37,20 @@ function editor ( navDOM, tabsDOM, DOM ) {
 			h("#ph-content.fullPage", [
 				h("#ph-buttons", [
 					h("label.ph-toggle-label", [
+						"Hide editor ",
 						h("input.ph-toggle-editor", {
 							type: "checkbox",
 							name: "ph-toggle",
-							checked: ( pages.fullPage ) ? "checked" : "",
+							//checked: ( pages.fullPage ) ? "" : "checked",
+							checked: pages.fullPage,
 							onchange: function () {
-								pages.fullPage = !!this.checked;
+								pages.fullPage = this.checked;
 								DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
 								DOM.editor.refresh();
 								return false;
 							}
 							/*style: { display: "none" }*/
-						}, ["Editor"])
+						})
 					]),
 					h("div.clearfix"),
 					h("a.ph-btn.ph-cheatsheet", {

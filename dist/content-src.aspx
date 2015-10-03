@@ -9,7 +9,9 @@
 
 	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
-		digest = document.getElementById("__REQUESTDIGEST").value;
+		digest = document.getElementById("__REQUESTDIGEST").value,
+		phImages = "/kj/kx7/PublicHealth/SiteAssets/Images",
+		phLive = true;
 
     /* Get rid of the ugly nav on the left if it's there */
     try {

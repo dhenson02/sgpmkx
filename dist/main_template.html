@@ -12,7 +12,7 @@
 </head>
 <body>
 	<input id="__REQUESTDIGEST" type="hidden" value="hey"/>
-	<div id="wrapper"></div>
+	<div id="wrapper"><strong>speak</strong></div>
 	<script type="text/javascript">
 		//<![CDATA[
 		var _spPageContextInfo = {
@@ -21,7 +21,9 @@
 
 		var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 			sitePath = baseURL,
-			digest = document.getElementById("__REQUESTDIGEST").value;
+			digest = document.getElementById("__REQUESTDIGEST").value,
+			phLive = false,
+			phImages = "img";
 		/* Get rid of the ugly nav on the left if it's there */
 		try {
 			var leftNav = document.getElementById("leftnav");

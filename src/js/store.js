@@ -256,8 +256,8 @@ Pages.prototype.create = function ( path ) {
 var pages = new Pages();
 
 module.exports = {
-	events: events,
-	pages: pages
+	pages: pages,
+	events: events
 };
 
 /**

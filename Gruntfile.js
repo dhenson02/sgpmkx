@@ -54,7 +54,7 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'dist/js/main.min.js': ['.tmp/main.js']
+					'dist/js/main.min.js': '.tmp/main.js'
 				}
 			}
 		},

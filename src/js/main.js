@@ -10,10 +10,9 @@ var h = require("virtual-dom/h"),
 	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
-	store = require("./store"),
-	pages = store.pages,
+	pages = require("./store").pages,
+	events = require("./store").events,
 	current = pages.current,
-	events = store.events,
 
 	DOM = require("./domStore"),
 	router = Router({
@@ -57,7 +56,8 @@ var h = require("virtual-dom/h"),
 				router.setRoute("/");
 			});
 		}
-	});
+	}),
+	pageInit = require("./data");
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -276,4 +276,4 @@ events.on("content.loaded", function () {
 	DOM.output.className = DOM.output.className.replace(regLoading, "");
 });
 
-events.emit("page.loading");
+pageInit();

@@ -1,8 +1,11 @@
-var misc = require("./helpers"),
+var h = require("virtual-dom/h"),
+	diff = require("virtual-dom/diff"),
+	patch = require("virtual-dom/patch"),
+	createElement = require("virtual-dom/create-element"),
+	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
-	store = require("./store"),
-	pages = store.pages,
-	events = store.events,
+	pages = require("./store").pages,
+	events = require("./store").events,
 	render = require("./page").render,
 	renderEditor = require("./page").editor,
 	renderNav = require("./nav"),
@@ -33,7 +36,7 @@ DOM.prototype.preRender = function () {
 };
 
 DOM.prototype.init = function () {
-	var wrapper = document.getElementById("wrapper") || document.getElementById("ph-wrapper");
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
@@ -68,6 +71,7 @@ DOM.prototype.reset = function () {
 
 DOM.prototype.initEditor = function () {
 	console.log("Loading editor...");
+	var self = this;
 	this.editor = codeMirror.fromTextArea(this.textarea, {
 		mode: 'gfm',
 		lineNumbers: false,
@@ -76,22 +80,22 @@ DOM.prototype.initEditor = function () {
 		theme: "neo",
 		extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
 	});
-	this.editor.on("change", this.updateEditor);
+	this.editor.on("change", updateEditor);
 	this.editor.refresh();
+	function updateEditor ( e ) {
+		var val = e.getValue();
+		self.renderOut(val, pages.current.type);
+		pages.current.set({
+			text: val
+		});
+	}
 	console.log("Editor loaded");
-};
-
-DOM.prototype.updateEditor = function ( e ) {
-	var val = e.getValue();
-	this.renderOut(val, pages.current.type);
-	pages.current.set({
-		text: val
-	});
 };
 
 DOM.prototype.renderOut = function ( text, type ) {
 	this.output.innerHTML = misc.md.render("## " + type + "\n" + text);
 };
+
 
 var dom = new DOM();
 

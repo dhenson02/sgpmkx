@@ -1,12 +1,21 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
-var where = require("lodash/collection/where");
+var map = require("lodash/collection/map");
+var mapValues = require("lodash/object/mapValues");
 var reduce = require("lodash/collection/reduce");
+var assign = require("lodash/object/assign");
+
+var bp = require("body-parser");
+var cors = require("cors");
+
+app.use(bp.json());
+app.use(cors());
+
 var timer = null;
 
-var db = JSON.parse(fs.readFileSync(__dirname + "/db.json", { charset: "utf8" }));
-var db_ = reduce(db, function ( obj, item ) {
+var db = {d: { results: JSON.parse(fs.readFileSync(__dirname + "/db.json", { charset: "utf8" })) } };
+var db_ = reduce(db.d.results, function ( obj, item ) {
 	obj[item.ID] = { d: item };
 	return obj;
 }, {});
@@ -16,8 +25,8 @@ app.get("/items", function ( req, res ) {
 		clearTimeout(timer);
 	}
 	timer = setTimeout(function () {
-		res.send({ "d": { "results": db }});
-	}, 500);
+		res.send(db);
+	}, 200);
 });
 
 app.get("/items(:id)", function ( req, res ) {
@@ -27,15 +36,47 @@ app.get("/items(:id)", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send(db_[id]);
-	}, 500);
+	}, 200);
 });
 
+// Save
 app.post("/items(:id)", function ( req, res ) {
-	res.send('Item POST: ' + req.params.id);
+	var id = req.params.id.slice(1, -1);
+	var data = mapValues(req.body, function ( val, key ) {
+		if ( key === "__metadata" ) {
+			return db_[id].d.__metadata;
+		}
+		if ( Array.isArray(val) ) {
+			return { results: val };
+		}
+	});
+	data.ID = id;
+	data.Id = id;
+	db_[id].d = assign(db_[id].d, data);
+	db.d.results = map(db.d.results, function ( item ) {
+		if ( item.ID === id ) {
+			item = db_[id].d;
+		}
+		return item;
+	});
+	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
+	res.send({ status: "success" });
 });
 
-app.put('/items', function ( req, res ) {
-	res.send('CREATE');
+// Create
+app.post('/items', function ( req, res ) {
+	var id = Object.keys(db_).sort(function ( x, y ) { return x - y; }).pop();
+	var data = mapValues(req.body, function ( val ) {
+		if ( Array.isArray(val) ) {
+			return { results: val };
+		}
+	});
+	data.ID = id;
+	data.Id = id;
+	db.d.results.push(data);
+	db_[id] = { d: data };
+	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
+	res.send({ status: "success" });
 });
 
 var server = app.listen(3000, function () {

@@ -1,7 +1,6 @@
 var h = require("virtual-dom/h"),
-	store = require("./store"),
-	pages = store.pages,
-	events = store.events,
+	pages = require("./store").pages,
+	events = require("./store").events,
 	map = require("lodash/collection/map"),
 	tabs = [
 		{

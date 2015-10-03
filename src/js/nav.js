@@ -1,9 +1,8 @@
 var h = require("virtual-dom/h"),
 	codeMirror = require("./helpers").codeMirror,
 	map = require("lodash/collection/map"),
-	store = require("./store"),
-	pages = store.pages,
-	events = store.events;
+	pages = require("./store").pages,
+	events = require("./store").events;
 
 function renderLink ( link ) {
 	return (
@@ -80,8 +79,7 @@ function renderNav () {
 				}, [
 					h(".logo", [
 						h("img", {
-							"src": "/kj/kx7/PublicHealth/SiteAssets/Images/phLogo64-gs.png",
-							//"src": "img/phLogo64-gs.png",
+							"src": phImages + "/phLogo64.png",
 							"alt": "Public Health Home",
 							"height": "64",
 							"width": "64"
