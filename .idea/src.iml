@@ -29,5 +29,6 @@
     <orderEntry type="library" name="src node_modules" level="project" />
     <orderEntry type="library" name="lodash-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="sgpm node_modules" level="project" />
+    <orderEntry type="library" name="express-DefinitelyTyped" level="application" />
   </component>
 </module>

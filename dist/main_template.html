@@ -15,7 +15,13 @@
 	<div id="wrapper"></div>
 	<script type="text/javascript">
 		//<![CDATA[
+		var _spPageContextInfo = {
+			webAbsoluteUrl: "http://localhost:3000"
+		};
 
+		var	baseURL = _spPageContextInfo.webAbsoluteUrl,
+			sitePath = baseURL,
+			digest = document.getElementById("__REQUESTDIGEST").value;
 		/* Get rid of the ugly nav on the left if it's there */
 		try {
 			var leftNav = document.getElementById("leftnav");
@@ -39,7 +45,7 @@
 				document.body.appendChild(phWrapper);
 			}
 		}
-		//phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+		phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 		//]]>
 	</script>
 	<style type="text/css">

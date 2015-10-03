@@ -1,6 +1,7 @@
 var h = require("virtual-dom/h"),
-	pages = require("./store").pages,
-	events = require("./store").events;
+	store = require("./store"),
+	pages = store.pages,
+	events = store.events;
 
 function render ( navDOM, tabsDOM ) {
 	return (

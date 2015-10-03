@@ -2,18 +2,18 @@ var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
 	reqwest = require("reqwest"),
-	Router = require("director/build/director").Router,
-	console = console || require("console"),
 	sweetAlert = require("sweetalert"),
 	horsey = require("horsey"),
+	Router = require("director/build/director").Router,
 
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
-	pages = require("./store").pages,
-	events = require("./store").events,
+	store = require("./store"),
+	pages = store.pages,
 	current = pages.current,
+	events = store.events,
 
 	DOM = require("./domStore"),
 	router = Router({

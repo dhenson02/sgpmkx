@@ -6,12 +6,6 @@ module.exports = function ( grunt ) {
 				files: {
 					'.tmp/main.js': 'src/js/main.js'
 				}
-			},
-			dev: {
-				files: {
-					'.tmp/dev.js': 'src/js/dev.js',
-					'.tmp/main.js': 'src/js/main.js'
-				}
 			}
 		},
 		uglify: {
@@ -60,7 +54,7 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'dist/js/main.min.js': ['.tmp/dev.js', '.tmp/main.js']
+					'dist/js/main.min.js': ['.tmp/main.js']
 				}
 			}
 		},
@@ -162,7 +156,7 @@ module.exports = function ( grunt ) {
 					'src/js/*.js'
 				],
 				tasks: [
-					'browserify:dev',
+					'browserify:dist',
 					'uglify:dev',
 					'purifycss:dev',
 					'cssmin:dev'

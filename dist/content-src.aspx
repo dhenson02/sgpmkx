@@ -7,6 +7,10 @@
 <script type="text/javascript">
 //<![CDATA[
 
+	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
+		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+		digest = document.getElementById("__REQUESTDIGEST").value;
+
     /* Get rid of the ugly nav on the left if it's there */
     try {
         var leftNav = document.getElementById("leftnav");

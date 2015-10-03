@@ -1,9 +1,4 @@
-var reduce = require("lodash/collection/reduce");
-
-window["__PHDEV__"] = true;
-window["_spPageContextInfo"] = {
-	webAbsoluteUrl: "https://kx.afms.mil/kj/kx7/PublicHealth"
-};
+/*
 window["__PHDATA__"] = {
 	"d": {
 		"results": [
@@ -3174,3 +3169,4 @@ window["__PHDATA___"] = reduce(window.__PHDATA__.d.results, function ( obj, item
 	obj[item.ID] = { d: item };
 	return obj;
 }, {});
+*/

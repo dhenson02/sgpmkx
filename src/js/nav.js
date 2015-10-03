@@ -1,8 +1,9 @@
 var h = require("virtual-dom/h"),
 	codeMirror = require("./helpers").codeMirror,
-	pages = require("./store").pages,
-	events = require("./store").events,
-	map = require("lodash/collection/map");
+	map = require("lodash/collection/map"),
+	store = require("./store"),
+	pages = store.pages,
+	events = store.events;
 
 function renderLink ( link ) {
 	return (
