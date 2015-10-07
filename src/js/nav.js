@@ -82,7 +82,7 @@ function renderNav () {
 							event = event || window.event;
 							if ( event.preventDefault ) event.preventDefault();
 							else event.returnValue = false;
-							pages.create("/");
+							pages.createPage("/");
 						}
 					}, [
 						//h("i.icon.icon-file"),

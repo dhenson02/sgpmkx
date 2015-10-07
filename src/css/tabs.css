@@ -46,7 +46,7 @@
 
 #ph-tabs nav ul li {
 	position: relative;
-	z-index: 1;
+	/*z-index: 1;*/
 	display: block;
 	margin: 0;
 	text-align: center;
@@ -168,7 +168,7 @@
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current {
-	z-index: 1;
+	/*z-index: 1;*/
 }
 
 #ph-tabs-style-iconbox nav ul li.tab-current a {

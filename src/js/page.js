@@ -25,7 +25,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
 				h("label", [
-					"Search:\n",
+					//"Search:\n",
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
@@ -33,26 +33,44 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [navDOM]), h("label.ph-toggle-label", [
-				"Hide editor ",
-				h("input.ph-toggle-editor", {
-					type: "checkbox",
-					name: "ph-toggle",
-					//checked: ( pages.fullPage ) ? "" : "checked",
-					checked: pages.fullPage,
-					onchange: function () {
-						pages.fullPage = this.checked;
-						DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
-						DOM.editor.refresh();
-						return false;
-					}
-					/*style: { display: "none" }*/
-				})
-			]),
+			h("#ph-side-nav", [navDOM]),
+			h("a.ph-toggle-editor", {
+				href: "#",
+				role: "button",
+				/*type: "checkbox",
+				name: "ph-toggle",
+				checked: pages.fullPage,*/
+				onclick: function ( event ) {
+					event = event || window.event;
+					if ( event.preventDefault ) event.preventDefault();
+					else event.returnValue = false;
+
+					pages.fullPage = !pages.fullPage;
+					DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
+					this.innerHTML = pages.fullPage ? "Show editor" : "Hide editor";
+					DOM.editor.refresh();
+				}
+				/*style: { display: "none" }*/
+			}, [pages.fullPage ? "Show editor" : "Hide editor"]),
 			h("#ph-content.fullPage", [
+				h("h1#ph-title", [String(pages.current.title || "")]),
+				tabsDOM,
 				h("#ph-buttons", [
 					//h("div.clearfix"),
-					h("a.ph-cheatsheet", {
+					h("a.ph-edit-btn.ph-save", {
+						href: "#",
+						title: "Save",
+						onclick: function ( event ) {
+							event = event || window.event;
+							if ( event.preventDefault ) event.preventDefault();
+							else event.returnValue = false;
+
+							pages.current.save(this);
+						}
+					}, [
+						h("i.icon.icon-diskette", ["Save"])
+					]),
+					h("a.ph-edit-btn.ph-cheatsheet", {
 						href: "#",
 						onclick: function ( event ) {
 							event = event || window.event;
@@ -68,31 +86,27 @@ function editor ( navDOM, tabsDOM, DOM ) {
 							return false;
 						}
 					}, [
-						"Markdown help"
-						//h("i.icon.icon-pen", ["Markdown help"])
-					]),
-					h("a.ph-save", {
-						href: "#",
-						title: "Save",
-						onclick: function ( event ) {
-							event = event || window.event;
-							if ( event.preventDefault ) event.preventDefault();
-							else event.returnValue = false;
-
-							pages.current.save(this);
-						}
-					}, [
-						h("i.icon.icon-diskette"/*, ["Save"]*/)
+						h("i.icon.icon-pen", ["Markdown help"])
 					])
 				]),
-				tabsDOM,
-				h("h1#ph-title", [String(pages.current.title || "")]),
 				h("#cheatSheet", {
 					style: {
 						display: "none"
 					}
 				}, [
-					"This will be a cheat-sheet for markdown"
+					"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
+					h("p", [
+						h("a", {
+							target: "_blank",
+							href: "http://jbt.github.io/markdown-editor"
+						}, ["http://jbt.github.io/markdown-editor"])
+					]),
+					h("p", [
+						h("a", {
+							target: "_blank",
+							href: "http://stackedit.io"
+						}, ["http://stackedit.io"])
+					])
 				]),
 				h("#ph-contentWrap", [
 					h("#ph-input", [

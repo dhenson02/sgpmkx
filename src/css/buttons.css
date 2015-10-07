@@ -1,6 +1,6 @@
 #ph-buttons {
 	width: 100%;
-	margin: 10px auto 10px;
+	margin: 40px auto 0;
 	text-align: center;
 	position: relative;
 	display: block;
@@ -17,15 +17,37 @@
 	font-style: normal;
 }
 
-.ph-toggle-label {
-	position: relative;
-	left: 50px;
-	top: 20px;
+.ph-toggle-editor {
+	position: absolute;
+	left: 350px;
+	top: 0;
 	cursor: pointer;
+	display: block;
+	padding: 10px 20px;
+	border: 1px solid;
+	width: 160px;
+	text-align: center;
 }
 
-.ph-toggle-label input {
-	visibility: hidden;
+.fullPage .ph-save,
+.fullPage .ph-cheatsheet {
+	display: none;
+}
+
+.ph-save {
+	border: 1px solid;
+	border-radius: 3px;
+}
+
+.ph-edit-btn {
+	margin: 10px;
+	padding: 10px 20px;
+	color: #454545!important;
+}
+
+.ph-edit-btn i {
+	display: inline-block;
+	font-style: normal;
 }
 
 /*

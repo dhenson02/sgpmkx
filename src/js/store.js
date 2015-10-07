@@ -185,7 +185,7 @@ Pages.prototype.set = function ( data ) {
 	return this;
 };
 
-Pages.prototype.create = function ( path ) {
+Pages.prototype.createPage = function ( path ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this;
 
@@ -226,7 +226,7 @@ Pages.prototype.create = function ( path ) {
 			path += "/" + newName.replace(regNormalize, "");
 			var pathArray = path.slice(1).split("/");
 			var keywords = null;
-			
+
 			var data = {
 				'__metadata': {
 					'type': self.current.listItemType
