@@ -16,8 +16,8 @@ function renderLink ( link ) {
 					//h("i.link.icon.icon-" + link.icon, [String(link.title)]),
 				h("span.link-title", [String(link.title)]),
 				h("span.place")
-			]),
-			link.hr
+			])
+			//link.hr
 		])
 	);
 }
@@ -56,7 +56,7 @@ function renderSection ( section ) {
 					h("span.link-title", [String(section.title)])
 				])
 			]),
-			h("hr"),
+			//h("hr"),
 			h("ul", links)
 		])
 	);
@@ -82,7 +82,8 @@ function renderNav () {
 							event = event || window.event;
 							if ( event.preventDefault ) event.preventDefault();
 							else event.returnValue = false;
-							pages.createPage("/");
+							// Soon will not require input at all.
+							pages.createPage("");
 						}
 					}, [
 						//h("i.icon.icon-file"),

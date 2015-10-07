@@ -14,7 +14,7 @@ var h = require("virtual-dom/h"),
 	events = require("./store").events,
 	current = pages.current,
 
-	DOM = require("./domStore"),
+	DOM = require("./dom"),
 	router = Router({
 		'/': {
 			on: function () {

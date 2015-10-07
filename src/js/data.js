@@ -5,7 +5,7 @@ var	pages = require("./store").pages,
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
 	clicked = misc.clicked,
-	DOM = require("./domStore");
+	DOM = require("./dom");
 
 function init () {
 	events.emit("page.loading");
