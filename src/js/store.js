@@ -48,7 +48,7 @@ Content.prototype.save = function ( self ) {
 			'type': this.listItemType
 		},
 		'Title': this.title,
-		'Keywords': this.keywords,
+		//'Keywords': this.keywords,
 		'Overview': this.overview,
 		'Policy': this.policy,
 		'Training': this.training,
@@ -232,14 +232,14 @@ Pages.prototype.createPage = function ( path ) {
 					'type': self.current.listItemType
 				},
 				'Title': title,
-				'Keywords': keywords || [],
+				//'Keywords': keywords || [],
 				'Overview': '### New Page :)\n#### Joy',
 				'Section': pathArray.shift() || "",
 				'Program': pathArray.shift() || "",
 				'Page': pathArray.shift() || "",
 				'rabbitHole': pathArray.shift() || ""
 			};
-
+			console.log(data);
 			sweetAlert({
 				title: "Confirm",
 				text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),
