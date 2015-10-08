@@ -22,11 +22,20 @@ function render ( navDOM, tabsDOM ) {
 				h("#ph-contentWrap", [
 					h("#ph-output", {
 						onclick: function ( event ) {
-							if ( event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false ) {
+							var elements = event.path;
+							var link, tmp;
+							while ( tmp = elements.shift() ) {
+								if ( tmp.tagName === "A" ) {
+									link = tmp;
+									break;
+								}
+							}
+							if ( link && /^(mailto|#)/.test(link.href) === false ) {
 								event = event || window.event;
 								if ( event.preventDefault ) event.preventDefault();
 								else event.returnValue = false;
-								window.open(event.target.href, "_blank");
+								if ( event.stopPropagation ) event.stopPropagation();
+								window.open(link.href, "_blank");
 							}
 						}
 					})
@@ -124,11 +133,20 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					]),
 					h("#ph-output", {
 						onclick: function ( event ) {
-							if ( event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false ) {
+							var elements = event.path;
+							var link, tmp;
+							while ( tmp = elements.shift() ) {
+								if ( tmp.tagName === "A" ) {
+									link = tmp;
+									break;
+								}
+							}
+							if ( link && /^(mailto|#)/.test(link.href) === false ) {
 								event = event || window.event;
 								if ( event.preventDefault ) event.preventDefault();
 								else event.returnValue = false;
-								window.open(event.target.href, "_blank");
+								if ( event.stopPropagation ) event.stopPropagation();
+								window.open(link.href, "_blank");
 							}
 						}
 					})
