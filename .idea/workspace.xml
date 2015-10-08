@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/buttons.css" afterPath="$PROJECT_DIR$/src/css/buttons.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/main.css" afterPath="$PROJECT_DIR$/src/css/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/store.js" afterPath="$PROJECT_DIR$/src/js/store.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/generic.css" afterPath="$PROJECT_DIR$/src/css/generic.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -87,8 +84,8 @@
                   <file leaf-file-name="store.js" pinned="false" current-in-tab="true">
                     <entry file="file://$PROJECT_DIR$/src/js/store.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.15886524">
-                          <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
+                        <state vertical-scroll-proportion="0.12765957">
+                          <caret line="74" column="14" selection-start-line="74" selection-start-column="14" selection-end-line="74" selection-end-column="14" />
                           <folding />
                         </state>
                       </provider>
@@ -123,8 +120,8 @@
               <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="1.187234">
-                      <caret line="101" column="20" selection-start-line="101" selection-start-column="20" selection-end-line="101" selection-end-column="20" />
+                    <state vertical-scroll-proportion="0.50070924">
+                      <caret line="79" column="24" selection-start-line="79" selection-start-column="24" selection-end-line="79" selection-end-column="24" />
                       <folding />
                     </state>
                   </provider>
@@ -166,21 +163,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="buttons.css" pinned="false" current-in-tab="true">
+          <file leaf-file-name="buttons.css" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.54545456">
+                <state vertical-scroll-proportion="0.0">
                   <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="generic.css" pinned="false" current-in-tab="false">
+          <file leaf-file-name="generic.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/generic.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="89" column="0" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.8545455">
+                  <caret line="171" column="20" selection-start-line="171" selection-start-column="20" selection-end-line="171" selection-end-column="20" />
                   <folding />
                 </state>
               </provider>
@@ -361,7 +358,6 @@
         <option value="$PROJECT_DIR$/local-server.js" />
         <option value="$PROJECT_DIR$/src/js/page.js" />
         <option value="$PROJECT_DIR$/src/js/main.js" />
-        <option value="$PROJECT_DIR$/src/css/generic.css" />
         <option value="$PROJECT_DIR$/src/css/search.css" />
         <option value="$PROJECT_DIR$/src/js/nav.js" />
         <option value="$PROJECT_DIR$/src/css/nav.css" />
@@ -372,6 +368,7 @@
         <option value="$PROJECT_DIR$/src/css/main.css" />
         <option value="$PROJECT_DIR$/src/js/data.js" />
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
+        <option value="$PROJECT_DIR$/src/css/generic.css" />
       </list>
     </option>
   </component>
@@ -702,12 +699,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00045" summary="shouldn't run callback if cancel is pressed probably.">
-      <created>1440641212785</created>
-      <option name="number" value="00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1440641212785</updated>
-    </task>
     <task id="LOCAL-00046" summary="continuation of cancel click handler stuff on modal">
       <created>1440641415745</created>
       <option name="number" value="00046" />
@@ -996,7 +987,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444277731912</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="better styling for editor toggle and (this was a couple commits ago but...) external links inside of #ph-output now open in new window/tab">
+      <created>1444278733375</created>
+      <option name="number" value="00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1444278733375</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1078,7 +1075,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="some semblance of functioning code" />
     <MESSAGE value="tab auto-activated with tab-current class upon page load.  moved some of the pageSetup() code to the ASPX file to be done immediately rather than waiting.   sub-parent &amp; parent classes and the children classes (ph-rabbit-hole) setup but no CSS written yet." />
     <MESSAGE value="adding page load (full page) animation, cant get it high enough in the code because of SharePoint so we'll make due with the vdom and just use a timer to make it last longer" />
     <MESSAGE value="caught up more or less to the minor changes that kept adding up in the other branch." />
@@ -1103,7 +1099,8 @@
     <MESSAGE value="better equipped to handle local dev environment." />
     <MESSAGE value="toggle editor &quot;button&quot; is now a basic link almost, active link color adjusted on nav, local dev improved/corrected (data variable accidental insertion in complete())." />
     <MESSAGE value="buttons styled, navbar better styling with padding, alignments, markdown-it settings adjusted (no code highlighting necessary)." />
-    <option name="LAST_COMMIT_MESSAGE" value="buttons styled, navbar better styling with padding, alignments, markdown-it settings adjusted (no code highlighting necessary)." />
+    <MESSAGE value="better styling for editor toggle and (this was a couple commits ago but...) external links inside of #ph-output now open in new window/tab" />
+    <option name="LAST_COMMIT_MESSAGE" value="better styling for editor toggle and (this was a couple commits ago but...) external links inside of #ph-output now open in new window/tab" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1866,14 +1863,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/generic.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="89" column="0" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/css/icons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1902,14 +1891,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="60" selection-start-line="8" selection-start-column="60" selection-end-line="8" selection-end-column="60" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/page.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.187234">
-          <caret line="101" column="20" selection-start-line="101" selection-start-column="20" selection-end-line="101" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -1946,14 +1927,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/store.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15886524">
-          <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1980,7 +1953,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.54545456">
+        <state vertical-scroll-proportion="0.0">
           <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
           <folding />
         </state>
@@ -1995,6 +1968,30 @@
             <element signature="e#2781#3018#0" expanded="false" />
             <element signature="e#3076#3307#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12765957">
+          <caret line="74" column="14" selection-start-line="74" selection-start-column="14" selection-end-line="74" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/generic.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8545455">
+          <caret line="171" column="20" selection-start-line="171" selection-start-column="20" selection-end-line="171" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/page.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50070924">
+          <caret line="79" column="24" selection-start-line="79" selection-start-column="24" selection-end-line="79" selection-end-column="24" />
+          <folding />
         </state>
       </provider>
     </entry>

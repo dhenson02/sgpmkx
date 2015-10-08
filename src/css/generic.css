@@ -167,3 +167,8 @@
 #ph-output tr:nth-child(even) td, #ph-output tr:nth-child(even) th {
 	background: #EEEEEE;
 }
+
+#ph-output table {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
