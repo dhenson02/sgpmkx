@@ -72,6 +72,7 @@ body {
 	position: relative;
 	padding-left: 20px;
 	padding-right: 20px;
+	color: #222;
 }
 
 #ph-content {
@@ -155,13 +156,13 @@ body {
 	height: 100%;
 	overflow: hidden;
 	font-size: 14px;
-	color: #555555;
+	/*color: #555555;*/
 }
 
 #ph-output {
 	/*text-rendering: optimizeLegibility;*/
 	position: absolute;
-	color: #555555;
+	/*color: #555555;*/
 	/* This will hide the scrollbar on most **normal** browsers */
 	right: -17px;
 	left: 48%;

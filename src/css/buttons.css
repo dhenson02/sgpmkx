@@ -15,6 +15,7 @@
 
 .ph-btn {
 	font-style: normal;
+	border-radius: 3px;
 }
 
 .ph-toggle-editor {
@@ -36,7 +37,6 @@
 
 .ph-save {
 	border: 1px solid;
-	border-radius: 3px;
 }
 
 .ph-edit-btn {
@@ -73,6 +73,7 @@
   text-align:center;
   padding:5px 13px
 }*/
+/*
 
 #toggleButton {
 	background-color: #555555;
@@ -92,8 +93,8 @@
 }
 
 #saveButton {
-	/*width:auto;*/
-	/*background-color:#4183D7;*/
+	/!*width:auto;*!/
+	/!*background-color:#4183D7;*!/
 	background-color: #FAFCFE;
 	color: #4183D7;
 	border-color: #4183D7;
@@ -108,17 +109,18 @@
 	background-color: #FAFCFE;
 	color: #1A3557;
 	border-color: #1A3557;
-	/*background-color:#00BA6A;*/
-	/*background-color:#8800BA;*/
-	/*color:#222*/
-	/*width:auto;*/
+	/!*background-color:#00BA6A;*!/
+	/!*background-color:#8800BA;*!/
+	/!*color:#222*!/
+	/!*width:auto;*!/
 }
 
 #createButton:active {
 	color: #FAFCFE;
 	background-color: #3264A4;
-	/*background-color: #0E870E;*/
-	/*background-color:#943494;*/
-	/*color:#FAFCFE*/
+	/!*background-color: #0E870E;*!/
+	/!*background-color:#943494;*!/
+	/!*color:#FAFCFE*!/
 }
+*/
 

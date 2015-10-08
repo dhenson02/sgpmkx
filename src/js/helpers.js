@@ -21,7 +21,10 @@ var md = markdownit({
 			return '';
 		}
 	}),
-	inTransition = {},
+	digest = "",
+	inTransition = {
+		tempSaveText: null
+	},
 	clicked = -1,
 	codeMirror;
 
@@ -35,6 +38,7 @@ module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	md: md,
+	digest: digest,
 	inTransition: inTransition,
 	clicked: clicked,
 	codeMirror: codeMirror

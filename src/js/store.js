@@ -26,6 +26,7 @@ function Content () {
 	this.type = "Overview";
 	this.listItemType = "";
 	this.timestamp = null;
+	this.level = -1;
 }
 
 Content.prototype.set = function ( data ) {
@@ -56,6 +57,7 @@ Content.prototype.savePage = function ( self ) {
 		'Tools': this.tools,
 		'Contributions': this.contributions
 	};
+	self.className += " loading";
 	var el = self.getElementsByTagName("i")[0];
 	events.emit("content.save", data, this.id, el);
 };

@@ -46,12 +46,7 @@ app.post("/items(:id)", function ( req, res ) {
 		if ( key === "__metadata" ) {
 			return db_[id].d.__metadata;
 		}
-		if ( Array.isArray(val) ) {
-			return { results: val };
-		}
-		else {
-			return val;
-		}
+		return ( Array.isArray(val) ) ? { results: val } : val;
 	});
 	data.ID = id;
 	data.Id = id;
@@ -74,26 +69,21 @@ app.post("/items(:id)", function ( req, res ) {
 
 // Create
 app.post('/items', function ( req, res ) {
-	var id = Object.keys(db_).sort(function ( x, y ) { return x - y; }).pop();
+	var id = Number(Object.keys(db_).sort(function ( x, y ) { return x - y; }).pop()) + 1;
 	var data = mapValues(req.body, function ( val ) {
-		if ( Array.isArray(val) ) {
-			return { results: val };
-		}
-		else {
-			return val;
-		}
+		return ( Array.isArray(val) ) ? { results: val } : val;
 	});
 	data.ID = id;
 	data.Id = id;
 	db.d.results.push(data);
 	db_[id] = { d: data };
 	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
-	if ( timer ) {
+	/*if ( timer ) {
 		clearTimeout(timer);
 	}
-	timer = setTimeout(function () {
+	timer = setTimeout(function () {*/
 		res.send({ status: "success" });
-	}, 200);
+	//}, 200);
 });
 
 var server = app.listen(3000, function () {

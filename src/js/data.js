@@ -70,37 +70,56 @@ events.on("content.loading", function ( path ) {
 
 events.on("content.create", function ( data, path, title ) {
 	reqwest({
-		url: sitePath + "/items",
+		url: baseURL + "/Pages/content/_api/contextinfo",
 		method: "POST",
-		data: JSON.stringify(data),
-		type: "json",
-		contentType: "application/json",
+		//type: "json",
 		withCredentials: phLive,
 		headers: {
 			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose",
-			"X-RequestDigest": digest
+			//"text-Type": "application/json;odata=verbose",
+			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
 		},
-		success: function () {
-			sweetAlert({
-				title: "Success!",
-				text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
-				type: "success",
-				showConfirmButton: false,
-				showCancelButton: false,
-				html: true
-			});
+		success: function ( ctx ) {
+			digest = ctx.d.GetContextWebInformation.FormDigestValue;
 		},
 		error: function ( error ) {
-			sweetAlert({
-				title: "Failure",
-				text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
-				type: "fail",
-				showCancelButton: false,
-				html: true
+			console.log("Error getting new digest: ", error);
+		},
+		complete: function ( data ) {
+			reqwest({
+				url: sitePath + "/items",
+				method: "POST",
+				data: JSON.stringify(data),
+				type: "json",
+				contentType: "application/json",
+				withCredentials: phLive,
+				headers: {
+					"Accept": "application/json;odata=verbose",
+					"text-Type": "application/json;odata=verbose",
+					"Content-Type": "application/json;odata=verbose",
+					"X-RequestDigest": digest
+				},
+				success: function () {
+					sweetAlert({
+						title: "Success!",
+						text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
+						type: "success",
+						showConfirmButton: false,
+						showCancelButton: false,
+						html: true
+					});
+				},
+				error: function ( error ) {
+					sweetAlert({
+						title: "Failure",
+						text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
+					console.log(error);
+				}
 			});
-			console.log(error);
 		}
 	});
 });
@@ -112,36 +131,56 @@ events.on("content.save", function ( data, id, self ) {
 		clearTimeout(inTransition.tempSaveText);
 	}
 	reqwest({
-		url: sitePath + "/items(" + id + ")",
+		url: baseURL + "/Pages/content/_api/contextinfo",
 		method: "POST",
-		data: JSON.stringify(data),
-		type: "json",
-		contentType: "application/json",
+		//type: "json",
 		withCredentials: phLive,
 		headers: {
-			"X-HTTP-Method": "MERGE",
 			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose",
-			"X-RequestDigest": digest,
-			"IF-MATCH": "*"
+			//"text-Type": "application/json;odata=verbose",
+			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
 		},
-		success: function () {
-			self.style.fontWeight = "bold";
-			self.innerHTML = "Saved!";
+		success: function ( ctx ) {
+			digest = ctx.d.GetContextWebInformation.FormDigestValue;
 		},
 		error: function ( error ) {
-			self.style.color = "#FF2222";
-			self.style.fontWeight = "bold";
-			self.innerHTML = "Connection error - try again.";
-			console.log("Couldn't save due to error: ", error);
-			if ( console.error ) console.error("Console.error version: ", error);
+			console.log("Error getting new digest: ", error);
 		},
 		complete: function () {
-			inTransition.tempSaveText = setTimeout(function () {
-				self.removeAttribute("style");
-				self.innerHTML = "Save";
-			}, 1500);
+			reqwest({
+				url: sitePath + "/items(" + id + ")",
+				method: "POST",
+				data: JSON.stringify(data),
+				type: "json",
+				withCredentials: phLive,
+				headers: {
+					"X-HTTP-Method": "MERGE",
+					"Accept": "application/json;odata=verbose",
+					"text-Type": "application/json;odata=verbose",
+					"Content-Type": "application/json;odata=verbose",
+					"X-RequestDigest": digest,
+					"IF-MATCH": "*"
+				},
+				success: function () {
+					self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
+					self.style.fontWeight = "bold";
+					self.innerHTML = "Saved!";
+				},
+				error: function ( error ) {
+					self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
+					self.style.color = "#FF2222";
+					self.style.fontWeight = "bold";
+					self.innerHTML = "Connection error (press F12 for Console)";
+					console["error"||"log"]("Couldn't save due to error: ", error.response);
+				},
+				complete: function () {
+					inTransition.tempSaveText = setTimeout(function () {
+						self.removeAttribute("style");
+						self.innerHTML = "Save";
+						inTransition.tempSaveText = null;
+					}, 1500);
+				}
+			});
 		}
 	});
 });

@@ -8,6 +8,11 @@ module.exports = function ( grunt ) {
 				files: {
 					'.tmp/main.js': 'src/js/main.js'
 				}
+			},
+			dev: {
+				files: {
+					'dist/js/main.js': 'src/js/main.js'
+				}
 			}
 		},
 		uglify: {
@@ -56,7 +61,8 @@ module.exports = function ( grunt ) {
 					sourceMap: true
 				},
 				files: {
-					'dist/js/main.min.js': '.tmp/main.js'
+					//'dist/js/main.min.js': '.tmp/main.js'
+					'dist/js/main.js': 'dist/js/main.js'
 				}
 			}
 		},
@@ -83,7 +89,7 @@ module.exports = function ( grunt ) {
 				dest: '.tmp/main.css'
 			},
 			dev: {
-				src: ['dist/main_template.html', 'dist/js/main.min.js'],
+				src: ['dist/main_template.html', 'dist/js/main.js'],
 				css: [
 					'src/css/init-dev.css',
 					'src/css/main.css',
@@ -100,7 +106,7 @@ module.exports = function ( grunt ) {
 					'node_modules/horsey/dist/horsey.css'
 					/*'node_modules/animate.css/animate.min.css'*/
 				],
-				dest: '.tmp/main.css'
+				dest: 'dist/css/main.css'
 			}
 		},
 		cssmin: {
@@ -122,7 +128,7 @@ module.exports = function ( grunt ) {
 					keepSpecialComments: 2
 				},
 				files: {
-					'dist/css/main.min.css': '.tmp/main.css'
+					'dist/css/main.css': 'dist/css/main.css'
 				}
 			}
 		},
@@ -146,7 +152,10 @@ module.exports = function ( grunt ) {
 					'node_modules/horsey/dist/*.css'
 					/*'node_modules/animate.css/!*.min.css'*/
 				],
-				tasks: ['purifycss:dev', 'cssmin:dev']
+				tasks: [
+					'purifycss:dev',
+					'cssmin:dev'
+				]
 			},
 			scripts: {
 				options: {
@@ -158,7 +167,7 @@ module.exports = function ( grunt ) {
 					'src/js/*.js'
 				],
 				tasks: [
-					'browserify:dist',
+					'browserify:dev',
 					'uglify:dev',
 					'purifycss:dev',
 					'cssmin:dev'
@@ -180,7 +189,7 @@ module.exports = function ( grunt ) {
 		'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
-		'browserify:dist',
+		'browserify:dev',
 		'uglify:dev',
 		'purifycss:dev',
 		'cssmin:dev'

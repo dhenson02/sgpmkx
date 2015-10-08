@@ -1,6 +1,7 @@
 var h = require("virtual-dom/h"),
 	pages = require("./store").pages,
-	events = require("./store").events;
+	events = require("./store").events,
+	inTransition = require("./helpers").inTransition;
 
 function render ( navDOM, tabsDOM ) {
 	return (
@@ -70,7 +71,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 							if ( event.preventDefault ) event.preventDefault();
 							else event.returnValue = false;
 
-							pages.current.savePage(this);
+							if ( !inTransition.tempSaveText ) pages.current.savePage(this);
 						}
 					}, [
 						h("i.icon.icon-diskette", ["Save"])
