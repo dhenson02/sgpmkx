@@ -106,6 +106,7 @@ events.on("content.create", function ( data, path, title ) {
 });
 
 events.on("content.save", function ( data, id, self ) {
+	self.removeAttribute("style");
 	self.innerHTML = "...saving...";
 	if ( inTransition.tempSaveText ) {
 		clearTimeout(inTransition.tempSaveText);
