@@ -71,7 +71,6 @@ DOM.prototype.reset = function () {
 };
 
 DOM.prototype.initEditor = function () {
-	//console.log("Loading editor...");
 	var self = this;
 	this.editor = codeMirror.fromTextArea(this.textarea, {
 		mode: 'gfm',
@@ -90,7 +89,6 @@ DOM.prototype.initEditor = function () {
 			text: val
 		});
 	}
-	//console.log("Editor loaded");
 };
 
 DOM.prototype.renderOut = function ( text, type ) {

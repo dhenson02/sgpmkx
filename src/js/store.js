@@ -243,9 +243,6 @@ Pages.prototype.createPage = function ( path ) {
 				'Page': pathArray.shift() || "",
 				'rabbitHole': pathArray.shift() || ""
 			};
-			console.log(data);
-			console.log(path);
-			console.log(pathArray);
 			sweetAlert({
 				title: "Confirm",
 				text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),

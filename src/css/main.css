@@ -130,16 +130,18 @@ body {
 
 #ph-wrapper input[type="text"],
 #ph-wrapper select {
-	background-color: #FAFCFE;
-	color: #333333;
+	/*background-color: #FAFCFE;*/
+	color: #555555;
 	font-size: 1.5em;
 	border: none;
-	border-bottom: 1px solid #AAAAAA;
+	border-bottom: 2px solid #CCCCCC;
 	padding: .5em .33em;
 	outline: 0;
 	float: none;
 	font-family: inherit;
 	display: block;
+	width: 400px;
+	font-weight: 200;
 }
 
 .fullPage #ph-input,
