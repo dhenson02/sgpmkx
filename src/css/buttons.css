@@ -1,19 +1,15 @@
 #ph-buttons {
 	width: 100%;
+	max-width: 960px;
+	max-width: calc(100% - 320px);
 	margin: 40px auto 0;
 	text-align: center;
 	position: relative;
 	display: block;
 }
 
-.fullPage #ph-buttons {
-	max-width: 960px;
-	/*max-width: 800px;*/
-	max-width: calc(100% - 320px);
-	/*display: none;*/
-}
-
-.ph-btn {
+.ph-btn,
+.ph-edit-btn {
 	font-style: normal;
 	border-radius: 3px;
 }
@@ -32,19 +28,9 @@
 	text-decoration: underline!important;
 }
 
-.fullPage .ph-save,
-.fullPage .ph-cheatsheet {
-	display: none;
-}
-
-.ph-save {
-	border: 1px solid;
-}
-
 .ph-edit-btn {
 	margin: 10px;
 	padding: 10px 20px;
-	color: #454545!important;
 }
 
 .ph-edit-btn i {
@@ -56,77 +42,16 @@
 	display: none;
 }
 
-/*
-
-.ph-btn {
-	position: relative;
-	color: #FAFCFE;
-	cursor: pointer;
-	line-height: 1.5;
-	letter-spacing: 1px;
-	float: none;
-	border-radius: 3px;
-	border: 1px dashed transparent;
-	border-bottom: 1px solid #222222;
-	width: auto;
-	margin: 10px;
-}
-*/
-
-/* use if .ph-btn is <a> with a <span> inside */
-/*.ph-btn > span {
-  display:block;
-  text-align:center;
-  padding:5px 13px
-}*/
-/*
-
-#toggleButton {
-	background-color: #555555;
-	color: #FAFCFE;
+.ph-edit-btn.ph-save {
+	/*background-color: #454545;*/
+	color: #00B16A!important;
+	border: 1px solid;
 }
 
-#toggleButton:active {
-	background-color: #FAFCFE;
-	color: #555555;
-	border-color: #555555;
+.ph-edit-btn.ph-save i.icon {
+	/*color: #FFFFFF;*/
 }
 
-#cheatSheetButton {
-	background-color: #FAFCFE;
-	color: #555555;
-	border-color: #555555;
+.ph-edit-btn.ph-cheatsheet i.icon {
+	color: #454545;
 }
-
-#saveButton {
-	/!*width:auto;*!/
-	/!*background-color:#4183D7;*!/
-	background-color: #FAFCFE;
-	color: #4183D7;
-	border-color: #4183D7;
-}
-
-#saveButton:active {
-	background-color: #446CB3;
-	color: #FAFCFE;
-}
-
-#createButton {
-	background-color: #FAFCFE;
-	color: #1A3557;
-	border-color: #1A3557;
-	/!*background-color:#00BA6A;*!/
-	/!*background-color:#8800BA;*!/
-	/!*color:#222*!/
-	/!*width:auto;*!/
-}
-
-#createButton:active {
-	color: #FAFCFE;
-	background-color: #3264A4;
-	/!*background-color: #0E870E;*!/
-	/!*background-color:#943494;*!/
-	/!*color:#FAFCFE*!/
-}
-*/
-

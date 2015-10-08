@@ -73,9 +73,9 @@ function renderNav () {
 	}
 	if ( codeMirror ) {
 		links.unshift(
-			h("li.ph-btn", [
-				h("p", [
-					h("a.ph-create", {
+			//h("li.ph-btn", [
+			//	h("p", [
+					h("a.ph-btn.ph-create", {
 						href: "#",
 						title: "New section",
 						onclick: function ( event ) {
@@ -89,8 +89,8 @@ function renderNav () {
 						//h("i.icon.icon-file"),
 						h("span.btn-title", ["Add content"])
 					])
-				])
-			])
+			//	])
+			//])
 		);
 	}
 	return (

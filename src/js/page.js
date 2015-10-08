@@ -11,7 +11,7 @@ function render ( navDOM, tabsDOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: "Search...!"
+						placeholder: "Search using keywords, AFIs or titles..."
 					})
 				])
 			]),
@@ -20,7 +20,16 @@ function render ( navDOM, tabsDOM ) {
 				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
 				h("#ph-contentWrap", [
-					h("#ph-output")
+					h("#ph-output", {
+						onclick: function ( event ) {
+							if ( event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false ) {
+								event = event || window.event;
+								if ( event.preventDefault ) event.preventDefault();
+								else event.returnValue = false;
+								window.open(event.target.href, "_blank");
+							}
+						}
+					})
 				])
 			])
 		])
@@ -31,11 +40,10 @@ function editor ( navDOM, tabsDOM, DOM ) {
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
 				h("label", [
-					//"Search:\n",
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: "Search...!"
+						placeholder: "Search using keywords, AFIs or titles..."
 					})
 				])
 			]),
@@ -43,9 +51,6 @@ function editor ( navDOM, tabsDOM, DOM ) {
 			h("a.ph-toggle-editor", {
 				href: "#",
 				role: "button",
-				/*type: "checkbox",
-				name: "ph-toggle",
-				checked: pages.fullPage,*/
 				onclick: function ( event ) {
 					event = event || window.event;
 					if ( event.preventDefault ) event.preventDefault();
@@ -62,7 +67,6 @@ function editor ( navDOM, tabsDOM, DOM ) {
 				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
 				h("#ph-buttons", [
-					//h("div.clearfix"),
 					h("a.ph-edit-btn.ph-save", {
 						href: "#",
 						title: "Save",
@@ -118,7 +122,16 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					h("#ph-input", [
 						h("textarea#ph-textarea", [String(pages.current.text || "")])
 					]),
-					h("#ph-output")
+					h("#ph-output", {
+						onclick: function ( event ) {
+							if ( event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false ) {
+								event = event || window.event;
+								if ( event.preventDefault ) event.preventDefault();
+								else event.returnValue = false;
+								window.open(event.target.href, "_blank");
+							}
+						}
+					})
 				])
 			])
 		])

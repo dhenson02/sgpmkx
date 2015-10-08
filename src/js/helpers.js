@@ -7,19 +7,10 @@ function removeEvent ( evt, element, fnc ) {
 }
 
 var md = markdownit({
-		//xhtmlOut: true,
 		typographer: true,
-		quotes: '“”‘’',
-		highlight: function ( code, lang ) {
-			if ( lang && hljs.getLanguage(lang) ) {
-				try {
-					return hljs.highlight(lang, code).value;
-				}
-				catch ( e ) {
-				}
-			}
-			return '';
-		}
+		linkify: true,
+		breaks: true,
+		quotes: '“”‘’'
 	}),
 	digest = "",
 	inTransition = {

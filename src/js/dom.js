@@ -54,6 +54,7 @@ DOM.prototype.update = function  () {
 };
 
 DOM.prototype.reset = function () {
+	this.searchInput = document.getElementById("ph-search");
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
 	//this.buttons = document.getElementById("ph-buttons");

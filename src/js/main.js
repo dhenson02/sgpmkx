@@ -108,9 +108,10 @@ events.on("page.success", function () {
 		 */
 		router.init("/");
 	}
-	horsey(document.getElementById("ph-search"), {
+	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
-		appendTo: document.getElementById("ph-search-wrap"),
+		autoHideOnBlur: false,
+		limit: 8,
 		getValue: function ( item ) {
 			return item.value;
 		},
@@ -119,6 +120,7 @@ events.on("page.success", function () {
 		},
 		set: function ( item ) {
 			router.setRoute(item);
+			DOM.searchInput.value = "";
 			return false;
 		},
 		render: function ( li, item ) {

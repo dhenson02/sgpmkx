@@ -33,7 +33,7 @@
 #ph-side-nav .header {
 	padding-top: 10px;
 	padding-right: 17px;
-	padding-bottom: 30px;
+	padding-bottom: 10px;
 }
 
 #ph-side-nav .text {
@@ -132,19 +132,21 @@
 	position: relative;
 }
 
-#ph-nav .ph-btn a {
+#ph-nav .ph-btn {
+	display: block;
 	position: relative;
 	left: -9px;
 	/*margin-top: 20px;*/
 	margin-left: auto;
 	margin-right: auto;
-	font-size: 15px;
+	/*font-size: 15px;*/
 	border: 1px solid;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	max-width: 160px;
 	text-align: center;
+	padding: 10px 20px;
 }
 
 #ph-nav .ph-btn a:hover {
@@ -187,10 +189,6 @@
 	padding: 5px 20px;
 }
 
-#ph-nav .ph-btn a {
-	padding: 10px;
-}
-
 #ph-nav .ph-page a {
 	color: #FAFCFE;
 	font-size: 15px;
@@ -198,13 +196,13 @@
 }
 
 #ph-nav .ph-rabbit-hole {
-	padding-bottom: 10px;
+	/*padding-bottom: 10px;*/
 	list-style-type: none;
-	/*text-align: right;*/
+	text-align: right;
 }
 
 #ph-nav .ph-rabbit-hole + .ph-sub-parent a {
-	margin-top: -15px;
+	/*margin-top: -15px;*/
 }
 
 #ph-nav .ph-rabbit-hole a {
@@ -218,7 +216,7 @@
 	font-size: 13px;
 	border: 1px solid transparent;
 	margin: 0 auto;
-	padding: 8px 10px;
+	padding: 5px 10px;
 	max-width: 80%;
 }
 
@@ -285,13 +283,15 @@
 }
 
 #ph-nav .ph-sub-parent a {
-	padding: 10px 30px 10px;
-	text-align: center;
+	/*padding: 15px 30px 10px;*/
+	padding: 15px 30px 15px 65px;
+	text-align: left;
 	text-transform: uppercase;
+	font-size: 17px;
 }
 
 #ph-nav .ph-parent + .ph-sub-parent a {
-	padding-top: 15px;
+	padding-top: 10px;
 }
 
 #ph-nav .ph-rabbit-hole:last-of-type {
@@ -303,23 +303,3 @@
 	margin-left: -20px;
 }
 
-#ph-nav .ph-sub-parent a {
-	-webkit-transition: background .15s ease-out, border .15s ease-out;
-	-moz-transition: background .15s ease-out, border .15s ease-out;
-	-ms-transition: background .15s ease-out, border .15s ease-out;
-	-o-transition: background .15s ease-out, border .15s ease-out;
-	transition: background .15s ease-out, border .15s ease-out;
-	border: 1px solid transparent;
-	background-color: #315C91;
-	background-color: rgba(125, 168, 232, 0.28);
-}
-
-#ph-nav .ph-sub-parent .active {
-	-webkit-transition: background .15s ease-out, border .15s ease-out;
-	-moz-transition: background .15s ease-out, border .15s ease-out;
-	-ms-transition: background .15s ease-out, border .15s ease-out;
-	-o-transition: background .15s ease-out, border .15s ease-out;
-	transition: background .15s ease-out, border .15s ease-out;
-	border-color: inherit;
-	font-weight: normal;
-}
