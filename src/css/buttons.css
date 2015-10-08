@@ -43,7 +43,7 @@
 	font-style: normal;
 }
 
-.fullPage .ph-edit-btn {
+.fullPage #ph-buttons {
 	display: none;
 }
 

@@ -5653,7 +5653,7 @@
             var timestamp = Date && Date.now() || new Date();
             clicked = parseInt(timestamp, 10);
             reqwest({
-                url: sitePath + "/items",
+                url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link",
                 method: "GET",
                 type: "json",
                 contentType: "application/json",
@@ -5720,7 +5720,7 @@
                 error: function(error) {
                     console.log("Error getting new digest: ", error);
                 },
-                complete: function(data) {
+                complete: function() {
                     reqwest({
                         url: sitePath + "/items",
                         method: "POST",
@@ -5861,6 +5861,7 @@
             if (codeMirror) this.initEditor();
         };
         DOM.prototype.reset = function() {
+            this.searchInput = document.getElementById("ph-search");
             this.content = document.getElementById("ph-content");
             this.title = document.getElementById("ph-title");
             this.cheatSheet = document.getElementById("cheatSheet");
@@ -5880,7 +5881,7 @@
                 lineNumbers: false,
                 matchBrackets: true,
                 lineWrapping: true,
-                theme: "neo",
+                theme: "base16-light",
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList"
                 }
@@ -5896,7 +5897,7 @@
             }
         };
         DOM.prototype.renderOut = function(text, type) {
-            type = pages.current.level < 2 ? "## " + type + "\n" : "";
+            type = pages.current.level > 1 ? "## " + type + "\n" : "";
             this.output.innerHTML = misc.md.render(type + text);
         };
         var dom = new DOM();
@@ -5921,15 +5922,9 @@
         }
         var md = markdownit({
             typographer: true,
-            quotes: "“”‘’",
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    try {
-                        return hljs.highlight(lang, code).value;
-                    } catch (e) {}
-                }
-                return "";
-            }
+            linkify: true,
+            breaks: true,
+            quotes: "“”‘’"
         }), digest = "", inTransition = {
             tempSaveText: null
         }, clicked = -1, codeMirror;
@@ -6024,8 +6019,10 @@
             } else {
                 router.init("/");
             }
-            horsey(document.getElementById("ph-search"), {
+            horsey(DOM.searchInput, {
                 suggestions: pages.titles,
+                autoHideOnBlur: false,
+                limit: 8,
                 getValue: function(item) {
                     return item.value;
                 },
@@ -6034,6 +6031,7 @@
                 },
                 set: function(item) {
                     router.setRoute(item);
+                    DOM.searchInput.value = "";
                     return false;
                 },
                 render: function(li, item) {
@@ -6103,7 +6101,8 @@
                 rabbitHole: obj.rabbitHole || "",
                 type: "Overview",
                 listItemType: obj.__metadata.type,
-                timestamp: Date && Date.now() || new Date()
+                timestamp: Date && Date.now() || new Date(),
+                level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
             });
             resetPage();
             DOM.renderOut(current.text, current.type);
@@ -6177,7 +6176,7 @@
     112: [ function(require, module, exports) {
         var h = require("virtual-dom/h"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./store").pages, events = require("./store").events;
         function renderLink(link) {
-            return h("li#ph-link-" + link.id + link.level, link.attr, [ h("a", {
+            return h("li#ph-link-" + link.id + link.className, link.attr, [ h("a.ph-level-" + link.level, {
                 href: link.href,
                 target: link.href.charAt(0) !== "#" ? "_blank" : ""
             }, [ !link.icon ? null : h("i.icon.icon-" + link.icon), h("span.link-title", [ String(link.title) ]), h("span.place") ]) ]);
@@ -6199,7 +6198,7 @@
                 }
             }
             if (codeMirror) {
-                links.unshift(h("li.ph-btn", [ h("p", [ h("a.ph-create", {
+                links.unshift(h("a.ph-btn.ph-create", {
                     href: "#",
                     title: "New section",
                     onclick: function(event) {
@@ -6207,7 +6206,7 @@
                         if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
                         pages.createPage("");
                     }
-                }, [ h("span.btn-title", [ "Add content" ]) ]) ]) ]));
+                }, [ h("span.btn-title", [ "Add content" ]) ]));
             }
             return h("#ph-nav", [ h(".header", [ h("a", {
                 href: "#/"
@@ -6237,14 +6236,22 @@
             return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
                 type: "text",
                 name: "ph-search",
-                placeholder: "Search...!"
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]) ]);
+                placeholder: "Search using keywords, AFIs or titles..."
+            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output", {
+                onclick: function(event) {
+                    if (event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false) {
+                        event = event || window.event;
+                        if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
+                        window.open(event.target.href, "_blank");
+                    }
+                }
+            }) ]) ]) ]);
         }
         function editor(navDOM, tabsDOM, DOM) {
             return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
                 type: "text",
                 name: "ph-search",
-                placeholder: "Search...!"
+                placeholder: "Search using keywords, AFIs or titles..."
             }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("a.ph-toggle-editor", {
                 href: "#",
                 role: "button",
@@ -6286,7 +6293,15 @@
             }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
                 target: "_blank",
                 href: "http://stackedit.io"
-            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]) ]) ]);
+            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output", {
+                onclick: function(event) {
+                    if (event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false) {
+                        event = event || window.event;
+                        if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
+                        window.open(event.target.href, "_blank");
+                    }
+                }
+            }) ]) ]) ]);
         }
         module.exports = {
             render: render,
@@ -6372,6 +6387,7 @@
                 result.Page = result.Page ? result.Page.replace(/\s/g, "") : "";
                 result.rabbitHole = result.rabbitHole ? result.rabbitHole.replace(/\s/g, "") : "";
                 result.Path = "/" + (result.Section !== "" ? result.Section + (result.Program !== "" ? "/" + result.Program + (result.Page !== "" ? "/" + result.Page + (result.rabbitHole !== "" ? "/" + result.rabbitHole : "") : "") : "") : "");
+                result.Level = result.Path.split("/").length - 1;
                 this[result.Path] = result;
                 urls[i] = result.Path;
                 if (result.Section !== "" && result.Program === "") {
@@ -6392,20 +6408,20 @@
             i = 0;
             this.titles = [];
             for (;i < count; ++i) {
-                var page = this[urls[i]], isPage = false, level, name = page.rabbitHole || page.Page || page.Program, keywords = page.Keywords && page.Keywords.results || [];
+                var page = this[urls[i]], isPage = false, className, name = page.rabbitHole || page.Page || page.Program, keywords = page.Keywords && page.Keywords.results || [], references = page.References && page.References.results || [];
                 this.titles[i] = {
-                    text: page.Title + " " + pluck(keywords, "Label").join(" "),
+                    text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
                     value: page.Path,
                     renderText: page.Title
                 };
                 if (page.rabbitHole !== "") {
                     isPage = true;
-                    level = ".ph-rabbit-hole.link";
+                    className = ".ph-rabbit-hole.link";
                 } else if (page.Page !== "") {
                     isPage = true;
-                    level = subParents[page.Path] || ".ph-page.link";
+                    className = subParents[page.Path] || ".ph-page.link";
                 } else if (page.Program !== "") {
-                    level = parents[page.Path] || ".ph-program.link";
+                    className = parents[page.Path] || ".ph-program.link";
                 }
                 if (page.Link) {}
                 if (page.Program !== "") {
@@ -6413,7 +6429,8 @@
                         path: page.Path,
                         href: !page.Link ? "#" + page.Path : page.Link,
                         title: page.Title,
-                        level: level,
+                        level: page.Level,
+                        className: className,
                         name: name,
                         id: page.ID,
                         icon: page.Icon || "",
@@ -6421,8 +6438,7 @@
                             style: {
                                 display: "none"
                             }
-                        } : {},
-                        hr: isPage ? null : h("hr")
+                        } : {}
                     });
                 }
             }
@@ -6484,9 +6500,6 @@
                         Page: pathArray.shift() || "",
                         rabbitHole: pathArray.shift() || ""
                     };
-                    console.log(data);
-                    console.log(path);
-                    console.log(pathArray);
                     sweetAlert({
                         title: "Confirm",
                         text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),

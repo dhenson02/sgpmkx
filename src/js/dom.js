@@ -77,7 +77,7 @@ DOM.prototype.initEditor = function () {
 		lineNumbers: false,
 		matchBrackets: true,
 		lineWrapping: true,
-		theme: "neo",
+		theme: "base16-light",
 		extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
 	});
 	this.editor.on("change", updateEditor);
