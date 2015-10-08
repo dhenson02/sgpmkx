@@ -85,7 +85,7 @@ events.on("content.create", function ( data, path, title ) {
 		error: function ( error ) {
 			console.log("Error getting new digest: ", error);
 		},
-		complete: function ( data ) {
+		complete: function () {
 			reqwest({
 				url: sitePath + "/items",
 				method: "POST",

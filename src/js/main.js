@@ -110,6 +110,7 @@ events.on("page.success", function () {
 	}
 	horsey(document.getElementById("ph-search"), {
 		suggestions: pages.titles,
+		appendTo: document.getElementById("ph-search-wrap"),
 		getValue: function ( item ) {
 			return item.value;
 		},

@@ -56,11 +56,11 @@ body {
 }
 
 #ph-wrapper a:active {
-	-webkit-transition: color .15s ease-out;
-	-moz-transition: color .15s ease-out;
-	-ms-transition: color .15s ease-out;
-	-o-transition: color .15s ease-out;
-	transition: color .15s ease-out;
+	-webkit-transition: color .075s ease-out;
+	-moz-transition: color .075s ease-out;
+	-ms-transition: color .075s ease-out;
+	-o-transition: color .075s ease-out;
+	transition: color .075s ease-out;
 }
 
 #ph-wrapper {

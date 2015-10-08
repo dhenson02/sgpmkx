@@ -78,12 +78,12 @@ app.post('/items', function ( req, res ) {
 	db.d.results.push(data);
 	db_[id] = { d: data };
 	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
-	/*if ( timer ) {
+	if ( timer ) {
 		clearTimeout(timer);
 	}
-	timer = setTimeout(function () {*/
+	timer = setTimeout(function () {
 		res.send({ status: "success" });
-	//}, 200);
+	}, 200);
 });
 
 var server = app.listen(3000, function () {
