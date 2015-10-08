@@ -108,7 +108,7 @@ Pages.prototype.init = function ( data ) {
 				"" ) :
 				"" ) :
 				"");
-
+		result.Level = result.Path.split("/").length - 1;
 		// This allows direct access without having to manipulate
 		// anything (aside from whitespace removal) or search/test for a match.
 		this[result.Path] = result;
@@ -138,25 +138,26 @@ Pages.prototype.init = function ( data ) {
 	for ( ; i < count; ++i ) {
 		var page = this[urls[i]],
 			isPage = false,
-			level,
+			className,
 			name = page.rabbitHole || page.Page || page.Program,
-			keywords = (page.Keywords && page.Keywords.results) || [];
+			keywords = (page.Keywords && page.Keywords.results) || [],
+			references = (page.References && page.References.results) || [];
 		this.titles[i] = {
-			text: page.Title + " " + pluck(keywords, "Label").join(" "),
+			text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
 			value: page.Path,
 			renderText: page.Title
 		};
 
 		if ( page.rabbitHole !== "" ) {
 			isPage = true;
-			level = ".ph-rabbit-hole.link";
+			className = ".ph-rabbit-hole.link";
 		}
 		else if ( page.Page !== "" ) {
 			isPage = true;
-			level = subParents[page.Path] || ".ph-page.link";
+			className = subParents[page.Path] || ".ph-page.link";
 		}
 		else if ( page.Program !== "" ) {
-			level = parents[page.Path] || ".ph-program.link";
+			className = parents[page.Path] || ".ph-program.link";
 		}
 
 		if ( page.Link ) {
@@ -168,12 +169,12 @@ Pages.prototype.init = function ( data ) {
 				path: page.Path,
 				href: ( !page.Link ) ? "#" + page.Path : page.Link,
 				title: page.Title,
-				level: level,
+				level: page.Level,
+				className: className,
 				name: name,
 				id: page.ID,
 				icon: page.Icon || "",
-				attr: isPage ? { style: { display: "none" } } : {},
-				hr: isPage ? null : h("hr")
+				attr: isPage ? { style: { display: "none" } } : {}
 			});
 		}
 	}

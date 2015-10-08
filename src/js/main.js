@@ -194,7 +194,8 @@ events.on("content.loaded", function ( data ) {
 		rabbitHole: obj.rabbitHole || "",
 		type: "Overview",
 		listItemType: obj.__metadata.type,
-		timestamp: (Date && Date.now() || new Date())
+		timestamp: (Date && Date.now() || new Date()),
+		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
 
 	resetPage();

@@ -6,18 +6,15 @@ var h = require("virtual-dom/h"),
 
 function renderLink ( link ) {
 	return (
-		h("li#ph-link-" + link.id + link.level, link.attr, [
-			h("a", {
+		h("li#ph-link-" + link.id + link.className, link.attr, [
+			h("a.ph-level-" + link.level, {
 				href: link.href,
 				target: ( link.href.charAt(0) !== "#" ) ? "_blank" : ""
 			}, [
 				( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
-					//h("i.link", [String(link.title)]) :
-					//h("i.link.icon.icon-" + link.icon, [String(link.title)]),
 				h("span.link-title", [String(link.title)]),
 				h("span.place")
 			])
-			//link.hr
 		])
 	);
 }
@@ -29,24 +26,6 @@ function renderSection ( section ) {
 	for ( ; i < count; ++i ) {
 		links[i] = renderLink(section.links[i]);
 	}
-	/*if ( codeMirror ) {
-		links[++i] = (
-			h("li.ph-program.ph-btn", [
-				h("a.ph-create", {
-					href: "#",
-					onclick: function ( event ) {
-						event = event || window.event;
-						if ( event.preventDefault ) event.preventDefault();
-						else event.returnValue = false;
-						pages.create(section.path.slice(1));
-					}
-				}, [
-					h("i.icon.icon-file"),
-					h("span.btn-title", [String("New " + section.title + " program")])
-				])
-			])
-		);
-	}*/
 	return (
 		h("li.ph-section.link", [
 			h("p", [
@@ -56,7 +35,6 @@ function renderSection ( section ) {
 					h("span.link-title", [String(section.title)])
 				])
 			]),
-			//h("hr"),
 			h("ul", links)
 		])
 	);
@@ -73,24 +51,19 @@ function renderNav () {
 	}
 	if ( codeMirror ) {
 		links.unshift(
-			//h("li.ph-btn", [
-			//	h("p", [
-					h("a.ph-btn.ph-create", {
-						href: "#",
-						title: "New section",
-						onclick: function ( event ) {
-							event = event || window.event;
-							if ( event.preventDefault ) event.preventDefault();
-							else event.returnValue = false;
-							// Soon will not require input at all.
-							pages.createPage("");
-						}
-					}, [
-						//h("i.icon.icon-file"),
-						h("span.btn-title", ["Add content"])
-					])
-			//	])
-			//])
+			h("a.ph-btn.ph-create", {
+				href: "#",
+				title: "New section",
+				onclick: function ( event ) {
+					event = event || window.event;
+					if ( event.preventDefault ) event.preventDefault();
+					else event.returnValue = false;
+					// Soon will not require input at all.
+					pages.createPage("");
+				}
+			}, [
+				h("span.btn-title", ["Add content"])
+			])
 		);
 	}
 	return (

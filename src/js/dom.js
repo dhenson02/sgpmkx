@@ -92,10 +92,9 @@ DOM.prototype.initEditor = function () {
 };
 
 DOM.prototype.renderOut = function ( text, type ) {
-	type = ( pages.current.level < 2 ) ? "## " + type + "\n" : "";
+	type = ( pages.current.level > 1 ) ? "## " + type + "\n" : "";
 	this.output.innerHTML = misc.md.render(type + text);
 };
-
 
 var dom = new DOM();
 

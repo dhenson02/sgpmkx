@@ -14,7 +14,7 @@ events.on("page.loading", function () {
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
 	reqwest({
-		url: sitePath + "/items",
+		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link",
 		method: "GET",
 		type: "json",
 		contentType: "application/json",
