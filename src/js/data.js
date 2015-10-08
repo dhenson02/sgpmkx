@@ -107,6 +107,9 @@ events.on("content.create", function ( data, path, title ) {
 
 events.on("content.save", function ( data, id, self ) {
 	self.innerHTML = "...saving...";
+	if ( inTransition.tempSaveText ) {
+		clearTimeout(inTransition.tempSaveText);
+	}
 	reqwest({
 		url: sitePath + "/items(" + id + ")",
 		method: "POST",
@@ -126,18 +129,18 @@ events.on("content.save", function ( data, id, self ) {
 			self.style.fontWeight = "bold";
 			self.innerHTML = "Saved!";
 		},
-		error: function () {
+		error: function ( error ) {
 			self.style.color = "#FF2222";
 			self.style.fontWeight = "bold";
 			self.innerHTML = "Connection error - try again.";
+			console.log("Couldn't save due to error: ", error);
+			if ( console.error ) console.error("Console.error version: ", error);
 		},
 		complete: function () {
-			if ( !inTransition.tempSaveText ) {
-				inTransition.tempSaveText = setTimeout(function () {
-					self.removeAttribute("style");
-					self.innerHTML = "Save";
-				}, 1500);
-			}
+			inTransition.tempSaveText = setTimeout(function () {
+				self.removeAttribute("style");
+				self.innerHTML = "Save";
+			}, 1500);
 		}
 	});
 });

@@ -70,7 +70,7 @@ DOM.prototype.reset = function () {
 };
 
 DOM.prototype.initEditor = function () {
-	console.log("Loading editor...");
+	//console.log("Loading editor...");
 	var self = this;
 	this.editor = codeMirror.fromTextArea(this.textarea, {
 		mode: 'gfm',
@@ -89,11 +89,12 @@ DOM.prototype.initEditor = function () {
 			text: val
 		});
 	}
-	console.log("Editor loaded");
+	//console.log("Editor loaded");
 };
 
 DOM.prototype.renderOut = function ( text, type ) {
-	this.output.innerHTML = misc.md.render("## " + type + "\n" + text);
+	type = ( pages.current.level < 2 ) ? "## " + type + "\n" : "";
+	this.output.innerHTML = misc.md.render(type + text);
 };
 
 

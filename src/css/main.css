@@ -141,21 +141,7 @@ body {
 	display: block;
 }
 
-#titleFieldLabel {
-	text-align: left;
-	display: block;
-	margin-bottom: 5px;
-}
-
-#ph-wrapper #titleField {
-	width: 100%;
-}
-
-.fullPage #saveButton,
-.fullPage #createButton,
-.fullPage #titleFieldLabel,
 .fullPage #ph-input,
-.fullPage #cheatSheetButton,
 .fullPage #cheatSheet {
 	display: none;
 }

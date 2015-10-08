@@ -1,7 +1,9 @@
 module.exports = function ( grunt ) {
 	grunt.initConfig({
 		browserify: {
-			options: {},
+			options: {
+				sourceMap: true
+			},
 			dist: {
 				files: {
 					'.tmp/main.js': 'src/js/main.js'

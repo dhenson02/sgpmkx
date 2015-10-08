@@ -134,7 +134,7 @@
 #ph-nav .ph-btn a {
 	position: relative;
 	left: -9px;
-	margin-top: 20px;
+	/*margin-top: 20px;*/
 	margin-left: auto;
 	margin-right: auto;
 	font-size: 15px;
@@ -158,7 +158,7 @@
 }
 
 #ph-nav .ph-section.link p a {
-	padding: 20px 20px 20px 40px;
+	padding: 15px 20px 15px 40px;
 }
 
 /*#ph-nav .ph-section.ph-btn p a {
@@ -183,7 +183,7 @@
 }
 
 #ph-nav .ph-program a {
-	padding: 10px 20px;
+	padding: 5px 20px;
 }
 
 #ph-nav .ph-btn a {
@@ -193,7 +193,7 @@
 #ph-nav .ph-page a {
 	color: #FAFCFE;
 	font-size: 15px;
-	padding: 10px 30px 10px 50px;
+	padding: 5px 30px 5px 50px;
 }
 
 #ph-nav .ph-rabbit-hole {

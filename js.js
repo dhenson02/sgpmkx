@@ -63,7 +63,13 @@ app.post("/items(:id)", function ( req, res ) {
 		return item;
 	});
 	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
-	res.send({ status: "success" });
+
+	if ( timer ) {
+		clearTimeout(timer);
+	}
+	timer = setTimeout(function () {
+		res.send({ status: "success" });
+	}, 200);
 });
 
 // Create
@@ -82,7 +88,12 @@ app.post('/items', function ( req, res ) {
 	db.d.results.push(data);
 	db_[id] = { d: data };
 	fs.writeFileSync(__dirname + "/db.json", JSON.stringify(db.d.results), { charset: "utf8" });
-	res.send({ status: "success" });
+	if ( timer ) {
+		clearTimeout(timer);
+	}
+	timer = setTimeout(function () {
+		res.send({ status: "success" });
+	}, 200);
 });
 
 var server = app.listen(3000, function () {

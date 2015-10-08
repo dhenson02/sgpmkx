@@ -38,7 +38,7 @@ Content.prototype.set = function ( data ) {
 	return this;
 };
 
-Content.prototype.save = function ( self ) {
+Content.prototype.savePage = function ( self ) {
 	this.set({
 		text: this.text.trim()
 	});
@@ -56,7 +56,8 @@ Content.prototype.save = function ( self ) {
 		'Tools': this.tools,
 		'Contributions': this.contributions
 	};
-	events.emit("content.save", data, this.id, self);
+	var el = self.getElementsByTagName("i")[0];
+	events.emit("content.save", data, this.id, el);
 };
 
 function Pages () {
@@ -136,9 +137,10 @@ Pages.prototype.init = function ( data ) {
 		var page = this[urls[i]],
 			isPage = false,
 			level,
-			name = page.rabbitHole || page.Page || page.Program;
+			name = page.rabbitHole || page.Page || page.Program,
+			keywords = (page.Keywords && page.Keywords.results) || [];
 		this.titles[i] = {
-			text: page.Title + " " + pluck(page.Keywords.results, "Label").join(" "),
+			text: page.Title + " " + pluck(keywords, "Label").join(" "),
 			value: page.Path,
 			renderText: page.Title
 		};

@@ -6,13 +6,18 @@ function render ( navDOM, tabsDOM ) {
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
-				h("label", { htmlFor: "ph-search" }, ["Search (for now use up and down keys to select, then press enter):\n"]),
-				h("input#ph-search", { placeHolder: "Search...!" })
+				h("label", [
+					h("input#ph-search", {
+						type: "text",
+						name: "ph-search",
+						placeholder: "Search...!"
+					})
+				])
 			]),
 			h("#ph-side-nav", [navDOM]),
 			h("#ph-content.fullPage", [
+				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
-				h("h1#ph-title", [String(title || "")]),
 				h("#ph-contentWrap", [
 					h("#ph-output")
 				])
@@ -65,7 +70,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 							if ( event.preventDefault ) event.preventDefault();
 							else event.returnValue = false;
 
-							pages.current.save(this);
+							pages.current.savePage(this);
 						}
 					}, [
 						h("i.icon.icon-diskette", ["Save"])
