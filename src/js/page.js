@@ -20,25 +20,7 @@ function render ( navDOM, tabsDOM ) {
 				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
 				h("#ph-contentWrap", [
-					h("#ph-output", {
-						onclick: function ( event ) {
-							var elements = event.path;
-							var link, tmp;
-							while ( tmp = elements.shift() ) {
-								if ( tmp.tagName === "A" ) {
-									link = tmp;
-									break;
-								}
-							}
-							if ( link && /^(mailto|#)/.test(link.href) === false ) {
-								event = event || window.event;
-								if ( event.preventDefault ) event.preventDefault();
-								else event.returnValue = false;
-								if ( event.stopPropagation ) event.stopPropagation();
-								window.open(link.href, "_blank");
-							}
-						}
-					})
+					h("#ph-output")
 				])
 			])
 		])
@@ -131,25 +113,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					h("#ph-input", [
 						h("textarea#ph-textarea", [String(pages.current.text || "")])
 					]),
-					h("#ph-output", {
-						onclick: function ( event ) {
-							var elements = event.path;
-							var link, tmp;
-							while ( tmp = elements.shift() ) {
-								if ( tmp.tagName === "A" ) {
-									link = tmp;
-									break;
-								}
-							}
-							if ( link && /^(mailto|#)/.test(link.href) === false ) {
-								event = event || window.event;
-								if ( event.preventDefault ) event.preventDefault();
-								else event.returnValue = false;
-								if ( event.stopPropagation ) event.stopPropagation();
-								window.open(link.href, "_blank");
-							}
-						}
-					})
+					h("#ph-output")
 				])
 			])
 		])

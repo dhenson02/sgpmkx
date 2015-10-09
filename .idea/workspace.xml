@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="markdown editor theme change.">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/main.css" afterPath="$PROJECT_DIR$/src/css/main.css" />
+    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/page.js" afterPath="$PROJECT_DIR$/src/js/page.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -29,9 +29,9 @@
   <component name="FileEditorManager">
     <splitter split-orientation="horizontal" split-proportion="0.824936">
       <split-first>
-        <splitter split-orientation="horizontal" split-proportion="0.652648">
+        <splitter split-orientation="horizontal" split-proportion="0.6161955">
           <split-first>
-            <splitter split-orientation="horizontal" split-proportion="0.49344262">
+            <splitter split-orientation="horizontal" split-proportion="0.48555815">
               <split-first>
                 <leaf>
                   <file leaf-file-name="data.js" pinned="false" current-in-tab="false">
@@ -57,21 +57,21 @@
                       </provider>
                     </entry>
                   </file>
-                  <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+                  <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
                     <entry file="file://$PROJECT_DIR$/src/js/main.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.0">
-                          <caret line="177" column="17" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="17" />
+                        <state vertical-scroll-proportion="0.42411348">
+                          <caret line="227" column="17" selection-start-line="227" selection-start-column="17" selection-end-line="227" selection-end-column="17" />
                           <folding />
                         </state>
                       </provider>
                     </entry>
                   </file>
-                  <file leaf-file-name="helpers.js" pinned="false" current-in-tab="true">
+                  <file leaf-file-name="helpers.js" pinned="false" current-in-tab="false">
                     <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.3432624">
-                          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
+                        <state vertical-scroll-proportion="0.0">
+                          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
                           <folding />
                         </state>
                       </provider>
@@ -84,8 +84,8 @@
                   <file leaf-file-name="dom.js" pinned="false" current-in-tab="true">
                     <entry file="file://$PROJECT_DIR$/src/js/dom.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.24680851">
-                          <caret line="77" column="28" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
+                        <state vertical-scroll-proportion="-0.6539007">
+                          <caret line="67" column="55" selection-start-line="67" selection-start-column="55" selection-end-line="67" selection-end-column="55" />
                           <folding />
                         </state>
                       </provider>
@@ -130,8 +130,8 @@
               <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="-3.058156">
-                      <caret line="22" column="37" selection-start-line="22" selection-start-column="37" selection-end-line="22" selection-end-column="37" />
+                    <state vertical-scroll-proportion="0.65673757">
+                      <caret line="25" column="10" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
                       <folding />
                     </state>
                   </provider>
@@ -166,8 +166,8 @@
           <file leaf-file-name="main.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/main.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.43636364">
-                  <caret line="30" column="1" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
+                <state vertical-scroll-proportion="1.3818182">
+                  <caret line="38" column="21" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
                   <folding />
                 </state>
               </provider>
@@ -373,11 +373,11 @@
         <option value="$PROJECT_DIR$/src/js/data.js" />
         <option value="$PROJECT_DIR$/src/js/store.js" />
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
-        <option value="$PROJECT_DIR$/src/js/dom.js" />
         <option value="$PROJECT_DIR$/dist/main_template.html" />
         <option value="$PROJECT_DIR$/src/js/markdown-cheatsheet.js" />
         <option value="$PROJECT_DIR$/src/css/main.css" />
         <option value="$PROJECT_DIR$/src/js/helpers.js" />
+        <option value="$PROJECT_DIR$/src/js/dom.js" />
         <option value="$PROJECT_DIR$/src/js/page.js" />
       </list>
     </option>
@@ -709,12 +709,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00049" summary="sorting of menu list fixed, hide sub links when clicking main category/home">
-      <created>1440815091070</created>
-      <option name="number" value="00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1440815091070</updated>
-    </task>
     <task id="LOCAL-00050" summary="code styling and added css file for tabs">
       <created>1440815869572</created>
       <option name="number" value="00050" />
@@ -1003,7 +997,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444281454449</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <task id="LOCAL-00098" summary="fixed external links opening in new window code.  how dumb was i lol">
+      <created>1444345691283</created>
+      <option name="number" value="00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1444345691283</updated>
+    </task>
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1017,7 +1017,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -1025,10 +1025,10 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.4969325" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14982578" sideWeight="0.5111016" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14982578" sideWeight="0.5128104" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.07686244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14982578" sideWeight="0.48889837" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14982578" sideWeight="0.4871896" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4018583" sideWeight="0.48167127" order="3" side_tool="false" content_ui="tabs" />
@@ -1085,7 +1085,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="it's all working.  many things to polish." />
     <MESSAGE value="local code starting to form" />
     <MESSAGE value="index.html and default data set" />
     <MESSAGE value="Merge branch 'local3' - mainly set up as dev but easily transferable to real" />
@@ -1110,7 +1109,8 @@
     <MESSAGE value="tables in #ph-output have 1em margin top/bottom" />
     <MESSAGE value="hide &quot;Overview&quot; header on top-level pages by storing numeric &quot;level&quot; property and using for comparison.  will also use this later when revising nav links code potentially.  reduced items pulled during initial load (no need to pull all the content texts for all the pages - only need keywords, refs and the other metadata)." />
     <MESSAGE value="markdown editor theme change." />
-    <option name="LAST_COMMIT_MESSAGE" value="markdown editor theme change." />
+    <MESSAGE value="fixed external links opening in new window code.  how dumb was i lol" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed external links opening in new window code.  how dumb was i lol" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1623,13 +1623,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dist/js/editor3.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.056631893">
-          <caret line="2" column="61" selection-start-line="0" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/animate.css/animate-config.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.9291465">
@@ -1929,30 +1922,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/store.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="157" column="9" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="177" column="17" selection-start-line="177" selection-start-column="17" selection-end-line="177" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.43636364">
-          <caret line="30" column="1" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dist/main_template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-17.11111">
@@ -1972,26 +1941,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/dom.js">
+    <entry file="file://$PROJECT_DIR$/src/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24680851">
-          <caret line="77" column="28" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
+        <state vertical-scroll-proportion="1.3818182">
+          <caret line="38" column="21" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/helpers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3432624">
-          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/js/editor3.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6882353">
+          <caret line="284" column="43" selection-start-line="284" selection-start-column="43" selection-end-line="284" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34763312">
+          <caret line="1467" column="24" selection-start-line="1467" selection-start-column="24" selection-end-line="1467" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42411348">
+          <caret line="227" column="17" selection-start-line="227" selection-start-column="17" selection-end-line="227" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/store.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="157" column="9" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/dom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6539007">
+          <caret line="67" column="55" selection-start-line="67" selection-start-column="55" selection-end-line="67" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/page.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.058156">
-          <caret line="22" column="37" selection-start-line="22" selection-start-column="37" selection-end-line="22" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.65673757">
+          <caret line="25" column="10" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
           <folding />
         </state>
       </provider>

@@ -57,10 +57,8 @@ DOM.prototype.reset = function () {
 	this.searchInput = document.getElementById("ph-search");
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
-	//this.buttons = document.getElementById("ph-buttons");
-	//this.contentWrap = document.getElementById("ph-contentWrap");
 	this.cheatSheet = document.getElementById("cheatSheet");
-	this.input = document.getElementById("ph-input");
+	//this.input = document.getElementById("ph-input");
 	this.textarea = document.getElementById("ph-textarea");
 	if ( this.editor ) {
 		var wrap = this.editor.getWrapperElement();
@@ -68,6 +66,21 @@ DOM.prototype.reset = function () {
 	}
 	this.editor = null;
 	this.output = document.getElementById("ph-output");
+	var links = this.output.querySelectorAll("a"),
+		total = links.length,
+		i = 0;
+	for ( ; i < total; ++i ) {
+		misc.addEvent("click", links[i], openExternal);
+	}
+	function openExternal ( event ) {
+		if ( /mailto:|#\//.test(this.href) === false ) {
+			event = event || window.event;
+			if ( event.preventDefault ) event.preventDefault();
+			else event.returnValue = false;
+			if ( event.stopPropagation ) event.stopPropagation();
+			window.open(this.href, "_blank");
+		}
+	}
 };
 
 DOM.prototype.initEditor = function () {
