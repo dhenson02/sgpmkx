@@ -70,22 +70,14 @@ events.on("content.loading", function ( path ) {
 
 events.on("content.create", function ( data, path, title ) {
 	reqwest({
-		url: baseURL + "/Pages/content/_api/contextinfo",
+		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
-		//type: "json",
 		withCredentials: phLive,
 		headers: {
 			"Accept": "application/json;odata=verbose",
-			//"text-Type": "application/json;odata=verbose",
 			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
 		},
 		success: function ( ctx ) {
-			digest = ctx.d.GetContextWebInformation.FormDigestValue;
-		},
-		error: function ( error ) {
-			console.log("Error getting new digest: ", error);
-		},
-		complete: function () {
 			reqwest({
 				url: sitePath + "/items",
 				method: "POST",
@@ -97,7 +89,7 @@ events.on("content.create", function ( data, path, title ) {
 					"Accept": "application/json;odata=verbose",
 					"text-Type": "application/json;odata=verbose",
 					"Content-Type": "application/json;odata=verbose",
-					"X-RequestDigest": digest
+					"X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue
 				},
 				success: function () {
 					sweetAlert({
@@ -120,6 +112,16 @@ events.on("content.create", function ( data, path, title ) {
 					console.log(error);
 				}
 			});
+		},
+		error: function ( error ) {
+			sweetAlert({
+				title: "Failure",
+				text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
+			console.log("Error getting new digest: ", error);
 		}
 	});
 });
@@ -131,22 +133,14 @@ events.on("content.save", function ( data, id, self ) {
 		clearTimeout(inTransition.tempSaveText);
 	}
 	reqwest({
-		url: baseURL + "/Pages/content/_api/contextinfo",
+		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
-		//type: "json",
 		withCredentials: phLive,
 		headers: {
 			"Accept": "application/json;odata=verbose",
-			//"text-Type": "application/json;odata=verbose",
 			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
 		},
 		success: function ( ctx ) {
-			digest = ctx.d.GetContextWebInformation.FormDigestValue;
-		},
-		error: function ( error ) {
-			console.log("Error getting new digest: ", error);
-		},
-		complete: function () {
 			reqwest({
 				url: sitePath + "/items(" + id + ")",
 				method: "POST",
@@ -158,7 +152,7 @@ events.on("content.save", function ( data, id, self ) {
 					"Accept": "application/json;odata=verbose",
 					"text-Type": "application/json;odata=verbose",
 					"Content-Type": "application/json;odata=verbose",
-					"X-RequestDigest": digest,
+					"X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue,
 					"IF-MATCH": "*"
 				},
 				success: function () {
@@ -171,7 +165,7 @@ events.on("content.save", function ( data, id, self ) {
 					self.style.color = "#FF2222";
 					self.style.fontWeight = "bold";
 					self.innerHTML = "Connection error (press F12 for Console)";
-					console["error"||"log"]("Couldn't save due to error: ", error.response);
+					console["error" || "log"]("Couldn't save due to error: ", error.response);
 				},
 				complete: function () {
 					inTransition.tempSaveText = setTimeout(function () {
@@ -181,6 +175,9 @@ events.on("content.save", function ( data, id, self ) {
 					}, 1500);
 				}
 			});
+		},
+		error: function ( error ) {
+			console.log("Error getting new digest: ", error);
 		}
 	});
 });

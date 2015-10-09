@@ -8,12 +8,12 @@ module.exports = function ( grunt ) {
 				files: {
 					'.tmp/main.js': 'src/js/main.js'
 				}
-			},
+			}/*,
 			dev: {
 				files: {
 					'dist/js/main.js': 'src/js/main.js'
 				}
-			}
+			}*/
 		},
 		uglify: {
 			dist: {
@@ -62,7 +62,7 @@ module.exports = function ( grunt ) {
 				},
 				files: {
 					//'dist/js/main.min.js': '.tmp/main.js'
-					'dist/js/main.js': 'dist/js/main.js'
+					'dist/js/main.js': '.tmp/main.js'
 				}
 			}
 		},
@@ -186,7 +186,7 @@ module.exports = function ( grunt ) {
 					'src/js/*.js'
 				],
 				tasks: [
-					'browserify:dev',
+					'browserify:dist',
 					'uglify:dev',
 					'purifycss:dev',
 				    'postcss:dev'
@@ -211,7 +211,7 @@ module.exports = function ( grunt ) {
 		//'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
-		'browserify:dev',
+		'browserify:dist',
 		'uglify:dev',
 		'purifycss:dev',
 	    'postcss:dev'

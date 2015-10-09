@@ -12,7 +12,6 @@ var md = markdownit({
 		breaks: true,
 		quotes: '“”‘’'
 	}),
-	digest = "",
 	inTransition = {
 		tempSaveText: null
 	},
@@ -29,7 +28,6 @@ module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	md: md,
-	digest: digest,
 	inTransition: inTransition,
 	clicked: clicked,
 	codeMirror: codeMirror

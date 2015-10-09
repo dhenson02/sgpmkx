@@ -11,6 +11,7 @@ body { opacity: 1; }
 
 	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+		phContext = "/Pages/" + _spPageContextInfo.serverRequestPath.split(/\//).pop().slice(0,-5),
 		phImages = "/kj/kx7/PublicHealth/SiteAssets/Images",
 		phLive = true,
 		phEditorTheme = "base16-light",
