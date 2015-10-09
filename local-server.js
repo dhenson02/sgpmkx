@@ -29,6 +29,21 @@ app.get("/items", function ( req, res ) {
 	}, 200);
 });
 
+app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
+	if ( timer ) {
+		clearTimeout(timer);
+	}
+	timer = setTimeout(function () {
+		res.send({
+			d: {
+				GetContextWebInformation: {
+					FormDigestValue: "1234"
+				}
+			}
+		});
+	}, 200);
+});
+
 app.get("/items(:id)", function ( req, res ) {
 	var id = req.params.id.slice(1,-1);
 	if ( timer ) {

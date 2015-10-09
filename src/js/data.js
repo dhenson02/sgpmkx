@@ -177,7 +177,19 @@ events.on("content.save", function ( data, id, self ) {
 			});
 		},
 		error: function ( error ) {
+			self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
+			self.style.color = "#FF2222";
+			self.style.fontWeight = "bold";
+			self.innerHTML = "Digest error (press F12 for Console)";
+			console["error" || "log"]("Couldn't save due to error retrieving new digest: ", error.response);
 			console.log("Error getting new digest: ", error);
+		},
+		complete: function () {
+			inTransition.tempSaveText = setTimeout(function () {
+				self.removeAttribute("style");
+				self.innerHTML = "Save";
+				inTransition.tempSaveText = null;
+			}, 1500);
 		}
 	});
 });

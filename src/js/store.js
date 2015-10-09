@@ -1,7 +1,7 @@
-var h = require("virtual-dom/h"),
-	Events = require("eventemitter2").EventEmitter2,
+var Events = require("eventemitter2").EventEmitter2,
 	events = new Events({ wildcard: true }),
 	pluck = require("lodash/collection/pluck"),
+	//h = require("virtual-dom/h"),
 	misc = require("./helpers");
 
 function Content () {
@@ -129,7 +129,6 @@ Pages.prototype.init = function ( data ) {
 		else if ( result.Page !== "" ) {
 			parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program.link";
 		}
-
 	}
 
 	urls.sort();
@@ -190,7 +189,34 @@ Pages.prototype.set = function ( data ) {
 	return this;
 };
 
-Pages.prototype.createPage = function ( path ) {
+Pages.prototype.createContent = function ( path, title, newName ) {
+	var regNormalize = /[^a-zA-Z0-9_-]/g,
+		self = this,
+		title = "Blamo";
+
+	var firstTry = title.replace(regNormalize, "");
+	path += "/" + newName.replace(regNormalize, "");
+	var pathArray = path.slice(1).split("/");
+	var keywords = null;
+
+	var data = {
+		'__metadata': {
+			'type': self.current.listItemType
+		},
+		'Title': title,
+		//'Keywords': keywords || [],
+		'Overview': '### New Page :)\n#### Joy',
+		'Section': pathArray.shift() || "",
+		'Program': pathArray.shift() || "",
+		'Page': pathArray.shift() || "",
+		'rabbitHole': pathArray.shift() || ""
+	};
+	events.emit("content.create", data, path, title);
+};
+
+/*
+
+Pages.prototype.createContent = function ( path ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this;
 
@@ -258,6 +284,7 @@ Pages.prototype.createPage = function ( path ) {
 		});
 	});
 };
+*/
 
 var pages = new Pages();
 

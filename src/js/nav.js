@@ -1,4 +1,5 @@
 var h = require("virtual-dom/h"),
+	createElement = require("virtual-dom/create-element"),
 	codeMirror = require("./helpers").codeMirror,
 	map = require("lodash/collection/map"),
 	pages = require("./store").pages,
@@ -59,7 +60,40 @@ function renderNav () {
 					if ( event.preventDefault ) event.preventDefault();
 					else event.returnValue = false;
 					// Soon will not require input at all.
-					pages.createPage("");
+
+					/**
+					 * All of the below will be re-evaluated when I'm not
+					 * sleepy.  Most of this is just proof-of-concept at the
+					 * very basic level. Replace it all with virtual-dom
+					 * rendering and possibly use Widgets since they will be
+					 * static and only change input values. Also will use
+					 * horsey (new instantiation for each level of path - ie:
+					 * Section, Program, etc).
+					 *
+ 					 * @type {*|{tagName, appendChild}|Element}
+					 */
+
+					var createContent = document.createElement("div");
+					createContent.id = "create-content";
+					var content = document.getElementById("ph-content");
+					content.innerHTML = "";
+					content.appendChild(createContent);
+
+					var inputFields = function ( num ) {
+						return (
+							h("input.ph-title-input", { oninput: function ( e ) {} }, [])
+						);
+					};
+
+					createContent.appendChild(createElement(inputFields));
+
+					pages.createContent("");
+
+
+
+
+
+
 				}
 			}, [
 				h("span.btn-title", ["Add content"])

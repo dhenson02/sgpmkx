@@ -39,22 +39,22 @@ function editor ( navDOM, tabsDOM, DOM ) {
 				])
 			]),
 			h("#ph-side-nav", [navDOM]),
-			h("a.ph-toggle-editor", {
-				href: "#",
-				role: "button",
-				onclick: function ( event ) {
-					event = event || window.event;
-					if ( event.preventDefault ) event.preventDefault();
-					else event.returnValue = false;
-
-					pages.fullPage = !pages.fullPage;
-					DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
-					this.innerHTML = pages.fullPage ? "Show editor" : "Hide editor";
-					DOM.editor.refresh();
-				}
-				/*style: { display: "none" }*/
-			}, [pages.fullPage ? "Show editor" : "Hide editor"]),
 			h("#ph-content.fullPage", [
+				h("a.ph-toggle-editor", {
+					href: "#",
+					role: "button",
+					onclick: function ( event ) {
+						event = event || window.event;
+						if ( event.preventDefault ) event.preventDefault();
+						else event.returnValue = false;
+
+						pages.fullPage = !pages.fullPage;
+						DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
+						this.innerHTML = pages.fullPage ? "Show editor" : "Hide editor";
+						DOM.editor.refresh();
+					}
+					/*style: { display: "none" }*/
+				}, [pages.fullPage ? "Show editor" : "Hide editor"]),
 				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
 				h("#ph-buttons", [
