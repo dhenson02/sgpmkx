@@ -12,14 +12,18 @@
     "virtual-dom": ">=2.0.1"
   },
   "devDependencies": {
+    "autoprefixer": "^6.0.3",
     "body-parser": "^1.14.1",
     "consolidate": "0.13.1",
     "cors": "^2.7.1",
+    "cssnano": "^3.3.0",
     "express": "^4.13.3",
     "grunt-browserify": ">=3.8.0",
     "grunt-contrib-cssmin": "~0.12.3",
     "grunt-contrib-uglify": ">=0.9.1",
     "grunt-contrib-watch": "0.6.1",
-    "grunt-purifycss": ">=0.1.0"
+    "grunt-postcss": "^0.6.0",
+    "grunt-purifycss": ">=0.1.0",
+    "pixrem": "^3.0.0"
   }
 }

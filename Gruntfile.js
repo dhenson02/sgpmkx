@@ -106,10 +106,28 @@ module.exports = function ( grunt ) {
 					'node_modules/horsey/dist/horsey.css'
 					/*'node_modules/animate.css/animate.min.css'*/
 				],
+				dest: 'dist/css/main.pre.css'
+			}
+		},
+		postcss: {
+			options: {
+				map: { inline: false },
+				processors: [
+					require('pixrem')(),
+					require('autoprefixer')({ browsers: 'last 3 versions' }),
+					require('cssnano')()
+				]
+			},
+			dist: {
+				src: '.tmp/main.css',
+				dest: 'dist/css/main.min.css'
+			},
+			dev: {
+				src: 'dist/css/main.pre.css',
 				dest: 'dist/css/main.css'
 			}
 		},
-		cssmin: {
+		/*cssmin: {
 			options: {
 				roundingPrecision: -1,
 				compatibility: 'ie8',
@@ -131,7 +149,7 @@ module.exports = function ( grunt ) {
 					'dist/css/main.css': 'dist/css/main.css'
 				}
 			}
-		},
+		},*/
 		watch: {
 			configFiles: {
 				options: {
@@ -154,7 +172,8 @@ module.exports = function ( grunt ) {
 				],
 				tasks: [
 					'purifycss:dev',
-					'cssmin:dev'
+				    'postcss:dev'
+					//'cssmin:dev'
 				]
 			},
 			scripts: {
@@ -170,7 +189,8 @@ module.exports = function ( grunt ) {
 					'browserify:dev',
 					'uglify:dev',
 					'purifycss:dev',
-					'cssmin:dev'
+				    'postcss:dev'
+					//'cssmin:dev'
 				]
 			}
 		}
@@ -178,7 +198,8 @@ module.exports = function ( grunt ) {
 
 	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-purifycss');
-	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-postcss');
+	//grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -186,12 +207,14 @@ module.exports = function ( grunt ) {
 		'browserify:dist',
 		'uglify:dist',
 		'purifycss:dist',
-		'cssmin:dist'
+	    'postcss:dist'
+		//'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
 		'browserify:dev',
 		'uglify:dev',
 		'purifycss:dev',
-		'cssmin:dev'
+	    'postcss:dev'
+		//'cssmin:dev'
 	]);
 };

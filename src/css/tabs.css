@@ -19,10 +19,10 @@
 
 #ph-tabs nav ul {
 	position: relative;
-	display: -ms-flexbox;
+	/*display: -ms-flexbox;
 	display: -webkit-flex;
 	display: -moz-flex;
-	display: -ms-flex;
+	display: -ms-flex;*/
 	display: flex;
 	margin: 0;
 	padding: 0;
@@ -30,13 +30,13 @@
 	list-style: none;
 	-ms-box-orient: horizontal;
 	-ms-box-pack: center;
-	-webkit-flex-flow: row wrap;
+	/*-webkit-flex-flow: row wrap;
 	-moz-flex-flow: row wrap;
-	-ms-flex-flow: row wrap;
+	-ms-flex-flow: row wrap;*/
 	flex-flow: row wrap;
-	-webkit-justify-content: center;
+	/*-webkit-justify-content: center;
 	-moz-justify-content: center;
-	-ms-justify-content: center;
+	-ms-justify-content: center;*/
 	justify-content: center;
 }
 
@@ -50,9 +50,9 @@
 	display: block;
 	margin: 0;
 	text-align: center;
-	-webkit-flex: 1;
+	/*-webkit-flex: 1;
 	-moz-flex: 1;
-	-ms-flex: 1;
+	-ms-flex: 1;*/
 	flex: 1;
 }
 
@@ -110,46 +110,6 @@
 	}
 }
 
-/*****************************/
-/* Bar */
-/*****************************/
-/*
-#ph-tabs-style-bar nav {
-	background: rgba(40, 44, 42, 0.05);
-}
-
-#ph-tabs-style-bar nav ul {
-	border: 4px solid transparent;
-}
-
-#ph-tabs-style-bar nav ul li a {
-	margin: 0 2px;
-	background-color: #F7F7F7;
-	color: #74777B;
-	transition: background-color 0.2s, color 0.2s;
-}
-
-#ph-tabs-style-bar nav ul li a:hover,
-#ph-tabs-style-bar nav ul li a:focus {
-	color: #2CC185;
-}
-
-#ph-tabs-style-bar nav ul li a span {
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: 500;
-	font-size: 0.6em;
-}
-
-#ph-tabs-style-bar nav ul li.tab-current a {
-	background: #2CC185;
-	color: #FFFFFF;
-}*/
-
-/*****************************/
-/* Icon box */
-/*****************************/
-
 #ph-tabs-style-iconbox nav {
 	background: rgba(255, 255, 255, 0.4);
 }
@@ -158,7 +118,6 @@
 	overflow: visible;
 	padding: 1.5em 0;
 	line-height: 1;
-	-webkit-transition: color 0.2s;
 	transition: color 0.2s;
 }
 

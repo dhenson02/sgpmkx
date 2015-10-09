@@ -36,8 +36,8 @@ body {
 	box-sizing: inherit !important;
 }
 
-.loading, .nochange {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+.loading {
+	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";*/
 	opacity: .35;
 	pointer-events: none;
 }
@@ -51,26 +51,16 @@ body {
 	text-decoration: none;
 }
 
-/*#ph-wrapper a:visited {
-	color: #005591;
-}*/
-
 #ph-wrapper a:active, #ph-wrapper a:hover, #ph-wrapper a:focus {
 	outline: 0;
 }
 
 #ph-wrapper a:active {
-	-webkit-transition: color .075s ease-out;
-	-moz-transition: color .075s ease-out;
-	-ms-transition: color .075s ease-out;
-	-o-transition: color .075s ease-out;
 	transition: color .075s ease-out;
 }
 
 #ph-wrapper {
 	font-size: 20px;
-	/*overflow: hidden;*/
-	/*min-width: 100%;*/
 	max-width: 1440px;
 	margin: 50px auto;
 	position: relative;
@@ -166,9 +156,7 @@ body {
 }
 
 #ph-output {
-	/*text-rendering: optimizeLegibility;*/
 	position: absolute;
-	/*color: #555555;*/
 	/* This will hide the scrollbar on most **normal** browsers */
 	right: -17px;
 	left: 48%;
@@ -213,7 +201,7 @@ body {
 #ph-input.loading,
 #ph-output.loading {
 	border-color: #BBBBBB;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";*/
 	opacity: .35;
 }
 

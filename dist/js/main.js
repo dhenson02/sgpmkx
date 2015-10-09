@@ -5865,7 +5865,6 @@
             this.content = document.getElementById("ph-content");
             this.title = document.getElementById("ph-title");
             this.cheatSheet = document.getElementById("cheatSheet");
-            this.input = document.getElementById("ph-input");
             this.textarea = document.getElementById("ph-textarea");
             if (this.editor) {
                 var wrap = this.editor.getWrapperElement();
@@ -5873,6 +5872,18 @@
             }
             this.editor = null;
             this.output = document.getElementById("ph-output");
+            var links = this.output.querySelectorAll("a"), total = links.length, i = 0;
+            for (;i < total; ++i) {
+                misc.addEvent("click", links[i], openExternal);
+            }
+            function openExternal(event) {
+                if (/mailto:|#\//.test(this.href) === false) {
+                    event = event || window.event;
+                    if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
+                    if (event.stopPropagation) event.stopPropagation();
+                    window.open(this.href, "_blank");
+                }
+            }
         };
         DOM.prototype.initEditor = function() {
             var self = this;
@@ -6237,15 +6248,7 @@
                 type: "text",
                 name: "ph-search",
                 placeholder: "Search using keywords, AFIs or titles..."
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output", {
-                onclick: function(event) {
-                    if (event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false) {
-                        event = event || window.event;
-                        if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                        window.open(event.target.href, "_blank");
-                    }
-                }
-            }) ]) ]) ]);
+            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]) ]);
         }
         function editor(navDOM, tabsDOM, DOM) {
             return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
@@ -6293,15 +6296,7 @@
             }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
                 target: "_blank",
                 href: "http://stackedit.io"
-            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output", {
-                onclick: function(event) {
-                    if (event.target.tagName === "A" && /^(mailto|#)/.test(event.target) === false) {
-                        event = event || window.event;
-                        if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                        window.open(event.target.href, "_blank");
-                    }
-                }
-            }) ]) ]) ]);
+            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]) ]) ]);
         }
         module.exports = {
             render: render,
