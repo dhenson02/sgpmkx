@@ -87,10 +87,11 @@ DOM.prototype.initEditor = function () {
 	var self = this;
 	this.editor = codeMirror.fromTextArea(this.textarea, {
 		mode: 'gfm',
-		lineNumbers: false,
 		matchBrackets: true,
+		lineNumbers: false,
 		lineWrapping: true,
-		theme: "base16-light",
+		lineSeparator: "\n",
+		theme: phEditorTheme,
 		extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
 	});
 	this.editor.on("change", updateEditor);

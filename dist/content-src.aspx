@@ -2,6 +2,8 @@
 <meta charset="UTF-8"/>
 <style type="text/css">
 @charset "UTF-8";
+body { opacity: 0; }
+body { opacity: 1; }
 </style>
 <title>Velocity Raptinators</title>
 <script type="text/javascript">
@@ -9,9 +11,10 @@
 
 	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
-		digest = document.getElementById("__REQUESTDIGEST").value,
 		phImages = "/kj/kx7/PublicHealth/SiteAssets/Images",
-		phLive = true;
+		phLive = true,
+		phEditorTheme = "base16-light",
+		phSearchPlaceholder = "Search using keywords, AFIs or titles...";
 
     /* Get rid of the ugly nav on the left if it's there */
     try {
@@ -36,11 +39,12 @@
 
 	phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
+
 //]]>
 </script>
 <style type="text/css">
 @import url("/kj/kx7/PublicHealth/Pages/Dev/editor.min.css");
-@import url("/kj/kx7/PublicHealth/Pages/Dev/neo.css");
+@import url("/kj/kx7/PublicHealth/Pages/Dev/base16-light.css");
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/main.min.css");
 </style>
 <!--[if lt IE 9]>

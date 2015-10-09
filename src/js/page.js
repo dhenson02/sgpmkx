@@ -11,7 +11,7 @@ function render ( navDOM, tabsDOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: "Search using keywords, AFIs or titles..."
+						placeholder: phSearchPlaceholder
 					})
 				])
 			]),
@@ -34,7 +34,7 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: "Search using keywords, AFIs or titles..."
+						placeholder: phSearchPlaceholder
 					})
 				])
 			]),

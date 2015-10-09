@@ -210,10 +210,6 @@ body {
 }
 
 @media all and (max-width: 1024px) {
-	#ph-content {
-		/*min-width: fit-content;*/
-	}
-
 	#ph-input {
 		display: block;
 		width: auto;
