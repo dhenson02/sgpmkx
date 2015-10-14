@@ -58,7 +58,7 @@ module.exports = function ( grunt ) {
 					beautify: true,
 					mangle: false,
 					wrap: false,
-					sourceMap: true
+					sourceMap: false
 				},
 				files: {
 					//'dist/js/main.min.js': '.tmp/main.js'

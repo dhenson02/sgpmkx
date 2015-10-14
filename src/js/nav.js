@@ -76,7 +76,7 @@ function renderNav () {
 					var createContent = document.createElement("div");
 					createContent.id = "create-content";
 					var content = document.getElementById("ph-content");
-					content.innerHTML = "";
+					content.innerHTML = "Add content (coming to a web browser near you).";
 					content.appendChild(createContent);
 
 					var inputFields = function ( num ) {
