@@ -11,11 +11,9 @@ body { opacity: 1; }
 
 	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
+		phCMCheckURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups(419)/users/getById(" + _spPageContextInfo.userId + ")",
 		phContext = "/Pages/" + _spPageContextInfo.serverRequestPath.split(/\//).pop().slice(0,-5),
-		phImages = "/kj/kx7/PublicHealth/SiteAssets/Images",
-		phLive = true,
-		phEditorTheme = "base16-light",
-		phSearchPlaceholder = "Search using keywords, AFIs or titles...";
+		phLive = true;
 
     /* Get rid of the ugly nav on the left if it's there */
     try {
@@ -44,8 +42,8 @@ body { opacity: 1; }
 //]]>
 </script>
 <style type="text/css">
-@import url("/kj/kx7/PublicHealth/Pages/Dev/editor.min.css");
-@import url("/kj/kx7/PublicHealth/Pages/Dev/base16-light.css");
+@import url("/kj/kx7/PublicHealth/Editor/editor.min.css");
+@import url("/kj/kx7/PublicHealth/Editor/base16-light.css");
 @import url("/kj/kx7/PublicHealth/SiteAssets/Styles/main.min.css");
 </style>
 <!--[if lt IE 9]>
@@ -53,5 +51,5 @@ body { opacity: 1; }
 <![endif]-->
 
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/markdown-it.min.js"></script>
-<script type="text/javascript" src="/kj/kx7/PublicHealth/Pages/Dev/editor3.min.js"></script>
+<script type="text/javascript" src="/kj/kx7/PublicHealth/Editor/editor3.min.js"></script>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/main.min.js"></script>

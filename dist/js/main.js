@@ -2592,10 +2592,10 @@
         }
         module.exports = map;
     }, {
-        "../internal/arrayMap": 27,
-        "../internal/baseCallback": 29,
-        "../internal/baseMap": 37,
-        "../lang/isArray": 63
+        "../internal/arrayMap": 28,
+        "../internal/baseCallback": 31,
+        "../internal/baseMap": 39,
+        "../lang/isArray": 67
     } ],
     26: [ function(require, module, exports) {
         var map = require("./map"), property = require("../utility/property");
@@ -2604,10 +2604,19 @@
         }
         module.exports = pluck;
     }, {
-        "../utility/property": 72,
+        "../utility/property": 76,
         "./map": 25
     } ],
     27: [ function(require, module, exports) {
+        var arrayReduce = require("../internal/arrayReduce"), baseEach = require("../internal/baseEach"), createReduce = require("../internal/createReduce");
+        var reduce = createReduce(arrayReduce, baseEach);
+        module.exports = reduce;
+    }, {
+        "../internal/arrayReduce": 29,
+        "../internal/baseEach": 32,
+        "../internal/createReduce": 50
+    } ],
+    28: [ function(require, module, exports) {
         function arrayMap(array, iteratee) {
             var index = -1, length = array.length, result = Array(length);
             while (++index < length) {
@@ -2617,7 +2626,20 @@
         }
         module.exports = arrayMap;
     }, {} ],
-    28: [ function(require, module, exports) {
+    29: [ function(require, module, exports) {
+        function arrayReduce(array, iteratee, accumulator, initFromArray) {
+            var index = -1, length = array.length;
+            if (initFromArray && length) {
+                accumulator = array[++index];
+            }
+            while (++index < length) {
+                accumulator = iteratee(accumulator, array[index], index, array);
+            }
+            return accumulator;
+        }
+        module.exports = arrayReduce;
+    }, {} ],
+    30: [ function(require, module, exports) {
         function arraySome(array, predicate) {
             var index = -1, length = array.length;
             while (++index < length) {
@@ -2629,7 +2651,7 @@
         }
         module.exports = arraySome;
     }, {} ],
-    29: [ function(require, module, exports) {
+    31: [ function(require, module, exports) {
         var baseMatches = require("./baseMatches"), baseMatchesProperty = require("./baseMatchesProperty"), bindCallback = require("./bindCallback"), identity = require("../utility/identity"), property = require("../utility/property");
         function baseCallback(func, thisArg, argCount) {
             var type = typeof func;
@@ -2646,38 +2668,38 @@
         }
         module.exports = baseCallback;
     }, {
-        "../utility/identity": 71,
-        "../utility/property": 72,
-        "./baseMatches": 38,
-        "./baseMatchesProperty": 39,
-        "./bindCallback": 44
+        "../utility/identity": 75,
+        "../utility/property": 76,
+        "./baseMatches": 40,
+        "./baseMatchesProperty": 41,
+        "./bindCallback": 47
     } ],
-    30: [ function(require, module, exports) {
+    32: [ function(require, module, exports) {
         var baseForOwn = require("./baseForOwn"), createBaseEach = require("./createBaseEach");
         var baseEach = createBaseEach(baseForOwn);
         module.exports = baseEach;
     }, {
-        "./baseForOwn": 32,
-        "./createBaseEach": 45
+        "./baseForOwn": 34,
+        "./createBaseEach": 48
     } ],
-    31: [ function(require, module, exports) {
+    33: [ function(require, module, exports) {
         var createBaseFor = require("./createBaseFor");
         var baseFor = createBaseFor();
         module.exports = baseFor;
     }, {
-        "./createBaseFor": 46
+        "./createBaseFor": 49
     } ],
-    32: [ function(require, module, exports) {
+    34: [ function(require, module, exports) {
         var baseFor = require("./baseFor"), keys = require("../object/keys");
         function baseForOwn(object, iteratee) {
             return baseFor(object, iteratee, keys);
         }
         module.exports = baseForOwn;
     }, {
-        "../object/keys": 68,
-        "./baseFor": 31
+        "../object/keys": 72,
+        "./baseFor": 33
     } ],
-    33: [ function(require, module, exports) {
+    35: [ function(require, module, exports) {
         var toObject = require("./toObject");
         function baseGet(object, path, pathKey) {
             if (object == null) {
@@ -2694,9 +2716,9 @@
         }
         module.exports = baseGet;
     }, {
-        "./toObject": 60
+        "./toObject": 64
     } ],
-    34: [ function(require, module, exports) {
+    36: [ function(require, module, exports) {
         var baseIsEqualDeep = require("./baseIsEqualDeep"), isObject = require("../lang/isObject"), isObjectLike = require("./isObjectLike");
         function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
             if (value === other) {
@@ -2709,11 +2731,11 @@
         }
         module.exports = baseIsEqual;
     }, {
-        "../lang/isObject": 66,
-        "./baseIsEqualDeep": 35,
-        "./isObjectLike": 57
+        "../lang/isObject": 70,
+        "./baseIsEqualDeep": 37,
+        "./isObjectLike": 61
     } ],
-    35: [ function(require, module, exports) {
+    37: [ function(require, module, exports) {
         var equalArrays = require("./equalArrays"), equalByTag = require("./equalByTag"), equalObjects = require("./equalObjects"), isArray = require("../lang/isArray"), isTypedArray = require("../lang/isTypedArray");
         var argsTag = "[object Arguments]", arrayTag = "[object Array]", objectTag = "[object Object]";
         var objectProto = Object.prototype;
@@ -2767,13 +2789,13 @@
         }
         module.exports = baseIsEqualDeep;
     }, {
-        "../lang/isArray": 63,
-        "../lang/isTypedArray": 67,
-        "./equalArrays": 47,
-        "./equalByTag": 48,
-        "./equalObjects": 49
+        "../lang/isArray": 67,
+        "../lang/isTypedArray": 71,
+        "./equalArrays": 51,
+        "./equalByTag": 52,
+        "./equalObjects": 53
     } ],
-    36: [ function(require, module, exports) {
+    38: [ function(require, module, exports) {
         var baseIsEqual = require("./baseIsEqual"), toObject = require("./toObject");
         function baseIsMatch(object, matchData, customizer) {
             var index = matchData.length, length = index, noCustomizer = !customizer;
@@ -2805,10 +2827,10 @@
         }
         module.exports = baseIsMatch;
     }, {
-        "./baseIsEqual": 34,
-        "./toObject": 60
+        "./baseIsEqual": 36,
+        "./toObject": 64
     } ],
-    37: [ function(require, module, exports) {
+    39: [ function(require, module, exports) {
         var baseEach = require("./baseEach"), isArrayLike = require("./isArrayLike");
         function baseMap(collection, iteratee) {
             var index = -1, result = isArrayLike(collection) ? Array(collection.length) : [];
@@ -2819,10 +2841,10 @@
         }
         module.exports = baseMap;
     }, {
-        "./baseEach": 30,
-        "./isArrayLike": 53
+        "./baseEach": 32,
+        "./isArrayLike": 57
     } ],
-    38: [ function(require, module, exports) {
+    40: [ function(require, module, exports) {
         var baseIsMatch = require("./baseIsMatch"), getMatchData = require("./getMatchData"), toObject = require("./toObject");
         function baseMatches(source) {
             var matchData = getMatchData(source);
@@ -2841,11 +2863,11 @@
         }
         module.exports = baseMatches;
     }, {
-        "./baseIsMatch": 36,
-        "./getMatchData": 51,
-        "./toObject": 60
+        "./baseIsMatch": 38,
+        "./getMatchData": 55,
+        "./toObject": 64
     } ],
-    39: [ function(require, module, exports) {
+    41: [ function(require, module, exports) {
         var baseGet = require("./baseGet"), baseIsEqual = require("./baseIsEqual"), baseSlice = require("./baseSlice"), isArray = require("../lang/isArray"), isKey = require("./isKey"), isStrictComparable = require("./isStrictComparable"), last = require("../array/last"), toObject = require("./toObject"), toPath = require("./toPath");
         function baseMatchesProperty(path, srcValue) {
             var isArr = isArray(path), isCommon = isKey(path) && isStrictComparable(srcValue), pathKey = path + "";
@@ -2870,16 +2892,16 @@
         module.exports = baseMatchesProperty;
     }, {
         "../array/last": 24,
-        "../lang/isArray": 63,
-        "./baseGet": 33,
-        "./baseIsEqual": 34,
-        "./baseSlice": 42,
-        "./isKey": 55,
-        "./isStrictComparable": 58,
-        "./toObject": 60,
-        "./toPath": 61
+        "../lang/isArray": 67,
+        "./baseGet": 35,
+        "./baseIsEqual": 36,
+        "./baseSlice": 45,
+        "./isKey": 59,
+        "./isStrictComparable": 62,
+        "./toObject": 64,
+        "./toPath": 65
     } ],
-    40: [ function(require, module, exports) {
+    42: [ function(require, module, exports) {
         function baseProperty(key) {
             return function(object) {
                 return object == null ? undefined : object[key];
@@ -2887,7 +2909,7 @@
         }
         module.exports = baseProperty;
     }, {} ],
-    41: [ function(require, module, exports) {
+    43: [ function(require, module, exports) {
         var baseGet = require("./baseGet"), toPath = require("./toPath");
         function basePropertyDeep(path) {
             var pathKey = path + "";
@@ -2898,10 +2920,19 @@
         }
         module.exports = basePropertyDeep;
     }, {
-        "./baseGet": 33,
-        "./toPath": 61
+        "./baseGet": 35,
+        "./toPath": 65
     } ],
-    42: [ function(require, module, exports) {
+    44: [ function(require, module, exports) {
+        function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
+            eachFunc(collection, function(value, index, collection) {
+                accumulator = initFromCollection ? (initFromCollection = false, value) : iteratee(accumulator, value, index, collection);
+            });
+            return accumulator;
+        }
+        module.exports = baseReduce;
+    }, {} ],
+    45: [ function(require, module, exports) {
         function baseSlice(array, start, end) {
             var index = -1, length = array.length;
             start = start == null ? 0 : +start || 0;
@@ -2922,13 +2953,13 @@
         }
         module.exports = baseSlice;
     }, {} ],
-    43: [ function(require, module, exports) {
+    46: [ function(require, module, exports) {
         function baseToString(value) {
             return value == null ? "" : value + "";
         }
         module.exports = baseToString;
     }, {} ],
-    44: [ function(require, module, exports) {
+    47: [ function(require, module, exports) {
         var identity = require("../utility/identity");
         function bindCallback(func, thisArg, argCount) {
             if (typeof func != "function") {
@@ -2964,9 +2995,9 @@
         }
         module.exports = bindCallback;
     }, {
-        "../utility/identity": 71
+        "../utility/identity": 75
     } ],
-    45: [ function(require, module, exports) {
+    48: [ function(require, module, exports) {
         var getLength = require("./getLength"), isLength = require("./isLength"), toObject = require("./toObject");
         function createBaseEach(eachFunc, fromRight) {
             return function(collection, iteratee) {
@@ -2985,11 +3016,11 @@
         }
         module.exports = createBaseEach;
     }, {
-        "./getLength": 50,
-        "./isLength": 56,
-        "./toObject": 60
+        "./getLength": 54,
+        "./isLength": 60,
+        "./toObject": 64
     } ],
-    46: [ function(require, module, exports) {
+    49: [ function(require, module, exports) {
         var toObject = require("./toObject");
         function createBaseFor(fromRight) {
             return function(object, iteratee, keysFunc) {
@@ -3005,9 +3036,23 @@
         }
         module.exports = createBaseFor;
     }, {
-        "./toObject": 60
+        "./toObject": 64
     } ],
-    47: [ function(require, module, exports) {
+    50: [ function(require, module, exports) {
+        var baseCallback = require("./baseCallback"), baseReduce = require("./baseReduce"), isArray = require("../lang/isArray");
+        function createReduce(arrayFunc, eachFunc) {
+            return function(collection, iteratee, accumulator, thisArg) {
+                var initFromArray = arguments.length < 3;
+                return typeof iteratee == "function" && thisArg === undefined && isArray(collection) ? arrayFunc(collection, iteratee, accumulator, initFromArray) : baseReduce(collection, baseCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
+            };
+        }
+        module.exports = createReduce;
+    }, {
+        "../lang/isArray": 67,
+        "./baseCallback": 31,
+        "./baseReduce": 44
+    } ],
+    51: [ function(require, module, exports) {
         var arraySome = require("./arraySome");
         function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
             var index = -1, arrLength = array.length, othLength = other.length;
@@ -3036,9 +3081,9 @@
         }
         module.exports = equalArrays;
     }, {
-        "./arraySome": 28
+        "./arraySome": 30
     } ],
-    48: [ function(require, module, exports) {
+    52: [ function(require, module, exports) {
         var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", numberTag = "[object Number]", regexpTag = "[object RegExp]", stringTag = "[object String]";
         function equalByTag(object, other, tag) {
             switch (tag) {
@@ -3060,7 +3105,7 @@
         }
         module.exports = equalByTag;
     }, {} ],
-    49: [ function(require, module, exports) {
+    53: [ function(require, module, exports) {
         var keys = require("../object/keys");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3095,16 +3140,16 @@
         }
         module.exports = equalObjects;
     }, {
-        "../object/keys": 68
+        "../object/keys": 72
     } ],
-    50: [ function(require, module, exports) {
+    54: [ function(require, module, exports) {
         var baseProperty = require("./baseProperty");
         var getLength = baseProperty("length");
         module.exports = getLength;
     }, {
-        "./baseProperty": 40
+        "./baseProperty": 42
     } ],
-    51: [ function(require, module, exports) {
+    55: [ function(require, module, exports) {
         var isStrictComparable = require("./isStrictComparable"), pairs = require("../object/pairs");
         function getMatchData(object) {
             var result = pairs(object), length = result.length;
@@ -3115,10 +3160,10 @@
         }
         module.exports = getMatchData;
     }, {
-        "../object/pairs": 70,
-        "./isStrictComparable": 58
+        "../object/pairs": 74,
+        "./isStrictComparable": 62
     } ],
-    52: [ function(require, module, exports) {
+    56: [ function(require, module, exports) {
         var isNative = require("../lang/isNative");
         function getNative(object, key) {
             var value = object == null ? undefined : object[key];
@@ -3126,19 +3171,19 @@
         }
         module.exports = getNative;
     }, {
-        "../lang/isNative": 65
+        "../lang/isNative": 69
     } ],
-    53: [ function(require, module, exports) {
+    57: [ function(require, module, exports) {
         var getLength = require("./getLength"), isLength = require("./isLength");
         function isArrayLike(value) {
             return value != null && isLength(getLength(value));
         }
         module.exports = isArrayLike;
     }, {
-        "./getLength": 50,
-        "./isLength": 56
+        "./getLength": 54,
+        "./isLength": 60
     } ],
-    54: [ function(require, module, exports) {
+    58: [ function(require, module, exports) {
         var reIsUint = /^\d+$/;
         var MAX_SAFE_INTEGER = 9007199254740991;
         function isIndex(value, length) {
@@ -3148,7 +3193,7 @@
         }
         module.exports = isIndex;
     }, {} ],
-    55: [ function(require, module, exports) {
+    59: [ function(require, module, exports) {
         var isArray = require("../lang/isArray"), toObject = require("./toObject");
         var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/;
         function isKey(value, object) {
@@ -3164,32 +3209,32 @@
         }
         module.exports = isKey;
     }, {
-        "../lang/isArray": 63,
-        "./toObject": 60
+        "../lang/isArray": 67,
+        "./toObject": 64
     } ],
-    56: [ function(require, module, exports) {
+    60: [ function(require, module, exports) {
         var MAX_SAFE_INTEGER = 9007199254740991;
         function isLength(value) {
             return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
         }
         module.exports = isLength;
     }, {} ],
-    57: [ function(require, module, exports) {
+    61: [ function(require, module, exports) {
         function isObjectLike(value) {
             return !!value && typeof value == "object";
         }
         module.exports = isObjectLike;
     }, {} ],
-    58: [ function(require, module, exports) {
+    62: [ function(require, module, exports) {
         var isObject = require("../lang/isObject");
         function isStrictComparable(value) {
             return value === value && !isObject(value);
         }
         module.exports = isStrictComparable;
     }, {
-        "../lang/isObject": 66
+        "../lang/isObject": 70
     } ],
-    59: [ function(require, module, exports) {
+    63: [ function(require, module, exports) {
         var isArguments = require("../lang/isArguments"), isArray = require("../lang/isArray"), isIndex = require("./isIndex"), isLength = require("./isLength"), keysIn = require("../object/keysIn");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3207,22 +3252,22 @@
         }
         module.exports = shimKeys;
     }, {
-        "../lang/isArguments": 62,
-        "../lang/isArray": 63,
-        "../object/keysIn": 69,
-        "./isIndex": 54,
-        "./isLength": 56
+        "../lang/isArguments": 66,
+        "../lang/isArray": 67,
+        "../object/keysIn": 73,
+        "./isIndex": 58,
+        "./isLength": 60
     } ],
-    60: [ function(require, module, exports) {
+    64: [ function(require, module, exports) {
         var isObject = require("../lang/isObject");
         function toObject(value) {
             return isObject(value) ? value : Object(value);
         }
         module.exports = toObject;
     }, {
-        "../lang/isObject": 66
+        "../lang/isObject": 70
     } ],
-    61: [ function(require, module, exports) {
+    65: [ function(require, module, exports) {
         var baseToString = require("./baseToString"), isArray = require("../lang/isArray");
         var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
         var reEscapeChar = /\\(\\)?/g;
@@ -3238,10 +3283,10 @@
         }
         module.exports = toPath;
     }, {
-        "../lang/isArray": 63,
-        "./baseToString": 43
+        "../lang/isArray": 67,
+        "./baseToString": 46
     } ],
-    62: [ function(require, module, exports) {
+    66: [ function(require, module, exports) {
         var isArrayLike = require("../internal/isArrayLike"), isObjectLike = require("../internal/isObjectLike");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3251,10 +3296,10 @@
         }
         module.exports = isArguments;
     }, {
-        "../internal/isArrayLike": 53,
-        "../internal/isObjectLike": 57
+        "../internal/isArrayLike": 57,
+        "../internal/isObjectLike": 61
     } ],
-    63: [ function(require, module, exports) {
+    67: [ function(require, module, exports) {
         var getNative = require("../internal/getNative"), isLength = require("../internal/isLength"), isObjectLike = require("../internal/isObjectLike");
         var arrayTag = "[object Array]";
         var objectProto = Object.prototype;
@@ -3265,11 +3310,11 @@
         };
         module.exports = isArray;
     }, {
-        "../internal/getNative": 52,
-        "../internal/isLength": 56,
-        "../internal/isObjectLike": 57
+        "../internal/getNative": 56,
+        "../internal/isLength": 60,
+        "../internal/isObjectLike": 61
     } ],
-    64: [ function(require, module, exports) {
+    68: [ function(require, module, exports) {
         var isObject = require("./isObject");
         var funcTag = "[object Function]";
         var objectProto = Object.prototype;
@@ -3279,9 +3324,9 @@
         }
         module.exports = isFunction;
     }, {
-        "./isObject": 66
+        "./isObject": 70
     } ],
-    65: [ function(require, module, exports) {
+    69: [ function(require, module, exports) {
         var isFunction = require("./isFunction"), isObjectLike = require("../internal/isObjectLike");
         var reIsHostCtor = /^\[object .+?Constructor\]$/;
         var objectProto = Object.prototype;
@@ -3299,17 +3344,17 @@
         }
         module.exports = isNative;
     }, {
-        "../internal/isObjectLike": 57,
-        "./isFunction": 64
+        "../internal/isObjectLike": 61,
+        "./isFunction": 68
     } ],
-    66: [ function(require, module, exports) {
+    70: [ function(require, module, exports) {
         function isObject(value) {
             var type = typeof value;
             return !!value && (type == "object" || type == "function");
         }
         module.exports = isObject;
     }, {} ],
-    67: [ function(require, module, exports) {
+    71: [ function(require, module, exports) {
         var isLength = require("../internal/isLength"), isObjectLike = require("../internal/isObjectLike");
         var argsTag = "[object Arguments]", arrayTag = "[object Array]", boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", funcTag = "[object Function]", mapTag = "[object Map]", numberTag = "[object Number]", objectTag = "[object Object]", regexpTag = "[object RegExp]", setTag = "[object Set]", stringTag = "[object String]", weakMapTag = "[object WeakMap]";
         var arrayBufferTag = "[object ArrayBuffer]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
@@ -3323,10 +3368,10 @@
         }
         module.exports = isTypedArray;
     }, {
-        "../internal/isLength": 56,
-        "../internal/isObjectLike": 57
+        "../internal/isLength": 60,
+        "../internal/isObjectLike": 61
     } ],
-    68: [ function(require, module, exports) {
+    72: [ function(require, module, exports) {
         var getNative = require("../internal/getNative"), isArrayLike = require("../internal/isArrayLike"), isObject = require("../lang/isObject"), shimKeys = require("../internal/shimKeys");
         var nativeKeys = getNative(Object, "keys");
         var keys = !nativeKeys ? shimKeys : function(object) {
@@ -3338,12 +3383,12 @@
         };
         module.exports = keys;
     }, {
-        "../internal/getNative": 52,
-        "../internal/isArrayLike": 53,
-        "../internal/shimKeys": 59,
-        "../lang/isObject": 66
+        "../internal/getNative": 56,
+        "../internal/isArrayLike": 57,
+        "../internal/shimKeys": 63,
+        "../lang/isObject": 70
     } ],
-    69: [ function(require, module, exports) {
+    73: [ function(require, module, exports) {
         var isArguments = require("../lang/isArguments"), isArray = require("../lang/isArray"), isIndex = require("../internal/isIndex"), isLength = require("../internal/isLength"), isObject = require("../lang/isObject");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3369,13 +3414,13 @@
         }
         module.exports = keysIn;
     }, {
-        "../internal/isIndex": 54,
-        "../internal/isLength": 56,
-        "../lang/isArguments": 62,
-        "../lang/isArray": 63,
-        "../lang/isObject": 66
+        "../internal/isIndex": 58,
+        "../internal/isLength": 60,
+        "../lang/isArguments": 66,
+        "../lang/isArray": 67,
+        "../lang/isObject": 70
     } ],
-    70: [ function(require, module, exports) {
+    74: [ function(require, module, exports) {
         var keys = require("./keys"), toObject = require("../internal/toObject");
         function pairs(object) {
             object = toObject(object);
@@ -3388,27 +3433,27 @@
         }
         module.exports = pairs;
     }, {
-        "../internal/toObject": 60,
-        "./keys": 68
+        "../internal/toObject": 64,
+        "./keys": 72
     } ],
-    71: [ function(require, module, exports) {
+    75: [ function(require, module, exports) {
         function identity(value) {
             return value;
         }
         module.exports = identity;
     }, {} ],
-    72: [ function(require, module, exports) {
+    76: [ function(require, module, exports) {
         var baseProperty = require("../internal/baseProperty"), basePropertyDeep = require("../internal/basePropertyDeep"), isKey = require("../internal/isKey");
         function property(path) {
             return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
         }
         module.exports = property;
     }, {
-        "../internal/baseProperty": 40,
-        "../internal/basePropertyDeep": 41,
-        "../internal/isKey": 55
+        "../internal/baseProperty": 42,
+        "../internal/basePropertyDeep": 43,
+        "../internal/isKey": 59
     } ],
-    73: [ function(require, module, exports) {
+    77: [ function(require, module, exports) {
         !function(name, context, definition) {
             if (typeof module != "undefined" && module.exports) module.exports = definition(); else if (typeof define == "function" && define.amd) define(definition); else context[name] = definition();
         }("reqwest", this, function() {
@@ -3846,7 +3891,7 @@
             return reqwest;
         });
     }, {} ],
-    74: [ function(require, module, exports) {
+    78: [ function(require, module, exports) {
         !function(e, t, n) {
             "use strict";
             !function o(e, t, n) {
@@ -4341,25 +4386,25 @@
             }) : "undefined" != typeof module && module.exports && (module.exports = sweetAlert);
         }(window, document);
     }, {} ],
-    75: [ function(require, module, exports) {
+    79: [ function(require, module, exports) {
         var createElement = require("./vdom/create-element.js");
         module.exports = createElement;
     }, {
-        "./vdom/create-element.js": 87
+        "./vdom/create-element.js": 91
     } ],
-    76: [ function(require, module, exports) {
+    80: [ function(require, module, exports) {
         var diff = require("./vtree/diff.js");
         module.exports = diff;
     }, {
-        "./vtree/diff.js": 107
+        "./vtree/diff.js": 111
     } ],
-    77: [ function(require, module, exports) {
+    81: [ function(require, module, exports) {
         var h = require("./virtual-hyperscript/index.js");
         module.exports = h;
     }, {
-        "./virtual-hyperscript/index.js": 94
+        "./virtual-hyperscript/index.js": 98
     } ],
-    78: [ function(require, module, exports) {
+    82: [ function(require, module, exports) {
         module.exports = function split(undef) {
             var nativeSplit = String.prototype.split, compliantExecNpcg = /()??/.exec("")[1] === undef, self;
             self = function(str, separator, limit) {
@@ -4410,7 +4455,7 @@
             return self;
         }();
     }, {} ],
-    79: [ function(require, module, exports) {
+    83: [ function(require, module, exports) {
         "use strict";
         var OneVersionConstraint = require("individual/one-version");
         var MY_VERSION = "7";
@@ -4425,9 +4470,9 @@
             return hash;
         }
     }, {
-        "individual/one-version": 81
+        "individual/one-version": 85
     } ],
-    80: [ function(require, module, exports) {
+    84: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var root = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
@@ -4441,7 +4486,7 @@
             }
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    81: [ function(require, module, exports) {
+    85: [ function(require, module, exports) {
         "use strict";
         var Individual = require("./index.js");
         module.exports = OneVersion;
@@ -4455,9 +4500,9 @@
             return Individual(key, defaultValue);
         }
     }, {
-        "./index.js": 80
+        "./index.js": 84
     } ],
-    82: [ function(require, module, exports) {
+    86: [ function(require, module, exports) {
         (function(global) {
             var topLevel = typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : {};
             var minDoc = require("min-document");
@@ -4474,13 +4519,13 @@
     }, {
         "min-document": 3
     } ],
-    83: [ function(require, module, exports) {
+    87: [ function(require, module, exports) {
         "use strict";
         module.exports = function isObject(x) {
             return typeof x === "object" && x !== null;
         };
     }, {} ],
-    84: [ function(require, module, exports) {
+    88: [ function(require, module, exports) {
         var nativeIsArray = Array.isArray;
         var toString = Object.prototype.toString;
         module.exports = nativeIsArray || isArray;
@@ -4488,13 +4533,13 @@
             return toString.call(obj) === "[object Array]";
         }
     }, {} ],
-    85: [ function(require, module, exports) {
+    89: [ function(require, module, exports) {
         var patch = require("./vdom/patch.js");
         module.exports = patch;
     }, {
-        "./vdom/patch.js": 90
+        "./vdom/patch.js": 94
     } ],
-    86: [ function(require, module, exports) {
+    90: [ function(require, module, exports) {
         var isObject = require("is-object");
         var isHook = require("../vnode/is-vhook.js");
         module.exports = applyProperties;
@@ -4575,10 +4620,10 @@
             }
         }
     }, {
-        "../vnode/is-vhook.js": 98,
-        "is-object": 83
+        "../vnode/is-vhook.js": 102,
+        "is-object": 87
     } ],
-    87: [ function(require, module, exports) {
+    91: [ function(require, module, exports) {
         var document = require("global/document");
         var applyProperties = require("./apply-properties");
         var isVNode = require("../vnode/is-vnode.js");
@@ -4613,14 +4658,14 @@
             return node;
         }
     }, {
-        "../vnode/handle-thunk.js": 96,
-        "../vnode/is-vnode.js": 99,
-        "../vnode/is-vtext.js": 100,
-        "../vnode/is-widget.js": 101,
-        "./apply-properties": 86,
-        "global/document": 82
+        "../vnode/handle-thunk.js": 100,
+        "../vnode/is-vnode.js": 103,
+        "../vnode/is-vtext.js": 104,
+        "../vnode/is-widget.js": 105,
+        "./apply-properties": 90,
+        "global/document": 86
     } ],
-    88: [ function(require, module, exports) {
+    92: [ function(require, module, exports) {
         var noChild = {};
         module.exports = domIndex;
         function domIndex(rootNode, tree, indices, nodes) {
@@ -4680,7 +4725,7 @@
             return a > b ? 1 : -1;
         }
     }, {} ],
-    89: [ function(require, module, exports) {
+    93: [ function(require, module, exports) {
         var applyProperties = require("./apply-properties");
         var isWidget = require("../vnode/is-widget.js");
         var VPatch = require("../vnode/vpatch.js");
@@ -4808,12 +4853,12 @@
             return newRoot;
         }
     }, {
-        "../vnode/is-widget.js": 101,
-        "../vnode/vpatch.js": 104,
-        "./apply-properties": 86,
-        "./update-widget": 91
+        "../vnode/is-widget.js": 105,
+        "../vnode/vpatch.js": 108,
+        "./apply-properties": 90,
+        "./update-widget": 95
     } ],
-    90: [ function(require, module, exports) {
+    94: [ function(require, module, exports) {
         var document = require("global/document");
         var isArray = require("x-is-array");
         var render = require("./create-element");
@@ -4872,13 +4917,13 @@
             return indices;
         }
     }, {
-        "./create-element": 87,
-        "./dom-index": 88,
-        "./patch-op": 89,
-        "global/document": 82,
-        "x-is-array": 84
+        "./create-element": 91,
+        "./dom-index": 92,
+        "./patch-op": 93,
+        "global/document": 86,
+        "x-is-array": 88
     } ],
-    91: [ function(require, module, exports) {
+    95: [ function(require, module, exports) {
         var isWidget = require("../vnode/is-widget.js");
         module.exports = updateWidget;
         function updateWidget(a, b) {
@@ -4892,9 +4937,9 @@
             return false;
         }
     }, {
-        "../vnode/is-widget.js": 101
+        "../vnode/is-widget.js": 105
     } ],
-    92: [ function(require, module, exports) {
+    96: [ function(require, module, exports) {
         "use strict";
         var EvStore = require("ev-store");
         module.exports = EvHook;
@@ -4915,9 +4960,9 @@
             es[propName] = undefined;
         };
     }, {
-        "ev-store": 79
+        "ev-store": 83
     } ],
-    93: [ function(require, module, exports) {
+    97: [ function(require, module, exports) {
         "use strict";
         module.exports = SoftSetHook;
         function SoftSetHook(value) {
@@ -4932,7 +4977,7 @@
             }
         };
     }, {} ],
-    94: [ function(require, module, exports) {
+    98: [ function(require, module, exports) {
         "use strict";
         var isArray = require("x-is-array");
         var VNode = require("../vnode/vnode.js");
@@ -5031,19 +5076,19 @@
             }
         }
     }, {
-        "../vnode/is-thunk": 97,
-        "../vnode/is-vhook": 98,
-        "../vnode/is-vnode": 99,
-        "../vnode/is-vtext": 100,
-        "../vnode/is-widget": 101,
-        "../vnode/vnode.js": 103,
-        "../vnode/vtext.js": 105,
-        "./hooks/ev-hook.js": 92,
-        "./hooks/soft-set-hook.js": 93,
-        "./parse-tag.js": 95,
-        "x-is-array": 84
+        "../vnode/is-thunk": 101,
+        "../vnode/is-vhook": 102,
+        "../vnode/is-vnode": 103,
+        "../vnode/is-vtext": 104,
+        "../vnode/is-widget": 105,
+        "../vnode/vnode.js": 107,
+        "../vnode/vtext.js": 109,
+        "./hooks/ev-hook.js": 96,
+        "./hooks/soft-set-hook.js": 97,
+        "./parse-tag.js": 99,
+        "x-is-array": 88
     } ],
-    95: [ function(require, module, exports) {
+    99: [ function(require, module, exports) {
         "use strict";
         var split = require("browser-split");
         var classIdSplit = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/;
@@ -5084,9 +5129,9 @@
             return props.namespace ? tagName : tagName.toUpperCase();
         }
     }, {
-        "browser-split": 78
+        "browser-split": 82
     } ],
-    96: [ function(require, module, exports) {
+    100: [ function(require, module, exports) {
         var isVNode = require("./is-vnode");
         var isVText = require("./is-vtext");
         var isWidget = require("./is-widget");
@@ -5117,51 +5162,51 @@
             return renderedThunk;
         }
     }, {
-        "./is-thunk": 97,
-        "./is-vnode": 99,
-        "./is-vtext": 100,
-        "./is-widget": 101
+        "./is-thunk": 101,
+        "./is-vnode": 103,
+        "./is-vtext": 104,
+        "./is-widget": 105
     } ],
-    97: [ function(require, module, exports) {
+    101: [ function(require, module, exports) {
         module.exports = isThunk;
         function isThunk(t) {
             return t && t.type === "Thunk";
         }
     }, {} ],
-    98: [ function(require, module, exports) {
+    102: [ function(require, module, exports) {
         module.exports = isHook;
         function isHook(hook) {
             return hook && (typeof hook.hook === "function" && !hook.hasOwnProperty("hook") || typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"));
         }
     }, {} ],
-    99: [ function(require, module, exports) {
+    103: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = isVirtualNode;
         function isVirtualNode(x) {
             return x && x.type === "VirtualNode" && x.version === version;
         }
     }, {
-        "./version": 102
+        "./version": 106
     } ],
-    100: [ function(require, module, exports) {
+    104: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = isVirtualText;
         function isVirtualText(x) {
             return x && x.type === "VirtualText" && x.version === version;
         }
     }, {
-        "./version": 102
+        "./version": 106
     } ],
-    101: [ function(require, module, exports) {
+    105: [ function(require, module, exports) {
         module.exports = isWidget;
         function isWidget(w) {
             return w && w.type === "Widget";
         }
     }, {} ],
-    102: [ function(require, module, exports) {
+    106: [ function(require, module, exports) {
         module.exports = "2";
     }, {} ],
-    103: [ function(require, module, exports) {
+    107: [ function(require, module, exports) {
         var version = require("./version");
         var isVNode = require("./is-vnode");
         var isWidget = require("./is-widget");
@@ -5223,13 +5268,13 @@
         VirtualNode.prototype.version = version;
         VirtualNode.prototype.type = "VirtualNode";
     }, {
-        "./is-thunk": 97,
-        "./is-vhook": 98,
-        "./is-vnode": 99,
-        "./is-widget": 101,
-        "./version": 102
+        "./is-thunk": 101,
+        "./is-vhook": 102,
+        "./is-vnode": 103,
+        "./is-widget": 105,
+        "./version": 106
     } ],
-    104: [ function(require, module, exports) {
+    108: [ function(require, module, exports) {
         var version = require("./version");
         VirtualPatch.NONE = 0;
         VirtualPatch.VTEXT = 1;
@@ -5249,9 +5294,9 @@
         VirtualPatch.prototype.version = version;
         VirtualPatch.prototype.type = "VirtualPatch";
     }, {
-        "./version": 102
+        "./version": 106
     } ],
-    105: [ function(require, module, exports) {
+    109: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = VirtualText;
         function VirtualText(text) {
@@ -5260,9 +5305,9 @@
         VirtualText.prototype.version = version;
         VirtualText.prototype.type = "VirtualText";
     }, {
-        "./version": 102
+        "./version": 106
     } ],
-    106: [ function(require, module, exports) {
+    110: [ function(require, module, exports) {
         var isObject = require("is-object");
         var isHook = require("../vnode/is-vhook");
         module.exports = diffProps;
@@ -5314,10 +5359,10 @@
             }
         }
     }, {
-        "../vnode/is-vhook": 98,
-        "is-object": 83
+        "../vnode/is-vhook": 102,
+        "is-object": 87
     } ],
-    107: [ function(require, module, exports) {
+    111: [ function(require, module, exports) {
         var isArray = require("x-is-array");
         var VPatch = require("../vnode/vpatch");
         var isVNode = require("../vnode/is-vnode");
@@ -5635,20 +5680,112 @@
             }
         }
     }, {
-        "../vnode/handle-thunk": 96,
-        "../vnode/is-thunk": 97,
-        "../vnode/is-vnode": 99,
-        "../vnode/is-vtext": 100,
-        "../vnode/is-widget": 101,
-        "../vnode/vpatch": 104,
-        "./diff-props": 106,
-        "x-is-array": 84
+        "../vnode/handle-thunk": 100,
+        "../vnode/is-thunk": 101,
+        "../vnode/is-vnode": 103,
+        "../vnode/is-vtext": 104,
+        "../vnode/is-widget": 105,
+        "../vnode/vpatch": 108,
+        "./diff-props": 110,
+        "x-is-array": 88
     } ],
-    108: [ function(require, module, exports) {
-        var pages = require("./store").pages, events = require("./store").events, reqwest = require("reqwest"), sweetAlert = require("sweetalert"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked;
-        function init() {
-            events.emit("page.loading");
+    112: [ function(require, module, exports) {
+        var events = require("./events");
+        function Content() {
+            if (!(this instanceof Content)) {
+                return new Content();
+            }
+            this.id = -1;
+            this.title = "";
+            this.keywords = [];
+            this.icon = "";
+            this.text = "";
+            this.overview = "";
+            this.policy = "";
+            this.training = "";
+            this.resources = "";
+            this.tools = "";
+            this.contributions = "";
+            this.section = "";
+            this.program = "";
+            this.page = "";
+            this.rabbitHole = "";
+            this.type = "Overview";
+            this.listItemType = "";
+            this.timestamp = null;
+            this.level = -1;
         }
+        Content.prototype.set = function(data) {
+            var name;
+            for (name in data) {
+                if (this.hasOwnProperty(name)) {
+                    this[name] = data[name];
+                }
+            }
+            return this;
+        };
+        Content.prototype.savePage = function(self) {
+            this.set({
+                text: this.text.trim()
+            });
+            this[this.type.toLowerCase()] = this.text;
+            var data = {
+                __metadata: {
+                    type: this.listItemType
+                },
+                Title: this.title,
+                Overview: this.overview,
+                Policy: this.policy,
+                Training: this.training,
+                Resources: this.resources,
+                Tools: this.tools,
+                Contributions: this.contributions
+            };
+            self.className += " loading";
+            var el = self.getElementsByTagName("i")[0];
+            events.emit("content.save", data, this.id, el);
+        };
+        module.exports = Content;
+    }, {
+        "./events": 115
+    } ],
+    113: [ function(require, module, exports) {
+        var pages = require("./pages"), events = require("./events"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked, reduce = require("lodash/collection/reduce");
+        function init() {
+            events.emit("page.init");
+        }
+        events.on("page.init", function() {
+            reqwest({
+                url: baseURL + "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
+                method: "GET",
+                type: "json",
+                contentType: "application/json",
+                withCredentials: phLive,
+                headers: {
+                    Accept: "application/json;odata=verbose",
+                    "text-Type": "application/json;odata=verbose",
+                    "Content-Type": "application/json;odata=verbose"
+                },
+                success: function(data) {
+                    var options = reduce(data.d.results, function(setup, option) {
+                        setup[option.Variable] = option.Value;
+                        return setup;
+                    }, {});
+                    console.log("options: ", options);
+                    pages.set({
+                        options: options
+                    });
+                    console.log("pages.options: ", pages.options);
+                },
+                error: function(error) {
+                    console.log("Error loading settings, will go with defaults.  Error: ", error);
+                    console.log("pages.options: ", pages.options);
+                },
+                complete: function() {
+                    events.emit("page.loading");
+                }
+            });
+        });
         events.on("page.loading", function() {
             var timestamp = Date && Date.now() || new Date();
             clicked = parseInt(timestamp, 10);
@@ -5670,6 +5807,16 @@
                     pages.init(data);
                     events.emit("page.loaded");
                     events.emit("page.success");
+                    if (pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror) {
+                        sweetAlert({
+                            title: "Tabs missing?",
+                            text: misc.md.render("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
+                            type: "info",
+                            html: true,
+                            showCancelButton: false,
+                            confirmButtonText: "Got it!"
+                        });
+                    }
                 },
                 error: function(error) {
                     console.log("error connecting:", error);
@@ -5707,7 +5854,7 @@
         });
         events.on("content.create", function(data, path, title) {
             reqwest({
-                url: baseURL + "/Pages/content/_api/contextinfo",
+                url: baseURL + phContext + "/_api/contextinfo",
                 method: "POST",
                 withCredentials: phLive,
                 headers: {
@@ -5715,12 +5862,6 @@
                     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
                 },
                 success: function(ctx) {
-                    digest = ctx.d.GetContextWebInformation.FormDigestValue;
-                },
-                error: function(error) {
-                    console.log("Error getting new digest: ", error);
-                },
-                complete: function() {
                     reqwest({
                         url: sitePath + "/items",
                         method: "POST",
@@ -5732,12 +5873,12 @@
                             Accept: "application/json;odata=verbose",
                             "text-Type": "application/json;odata=verbose",
                             "Content-Type": "application/json;odata=verbose",
-                            "X-RequestDigest": digest
+                            "X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue
                         },
                         success: function() {
                             sweetAlert({
                                 title: "Success!",
-                                text: title + " was created at <a href='#" + path + "' target='_blank'>" + path + "</a>",
+                                text: misc.md.render(title + " was created at [" + path + "](#" + path + ")"),
                                 type: "success",
                                 showConfirmButton: false,
                                 showCancelButton: false,
@@ -5747,7 +5888,7 @@
                         error: function(error) {
                             sweetAlert({
                                 title: "Failure",
-                                text: title + " was <strong>not</strong> created at <a href='" + path + "' target='_blank'>" + path.slice(1) + "</a>",
+                                text: misc.md.render(title + " **was not** created at *" + path + "*"),
                                 type: "fail",
                                 showCancelButton: false,
                                 html: true
@@ -5755,6 +5896,16 @@
                             console.log(error);
                         }
                     });
+                },
+                error: function(error) {
+                    sweetAlert({
+                        title: "Failure",
+                        text: misc.md.render(title + " **was not** created at *" + path + "*"),
+                        type: "fail",
+                        showCancelButton: false,
+                        html: true
+                    });
+                    console.log("Error getting new digest: ", error);
                 }
             });
         });
@@ -5765,7 +5916,7 @@
                 clearTimeout(inTransition.tempSaveText);
             }
             reqwest({
-                url: baseURL + "/Pages/content/_api/contextinfo",
+                url: baseURL + phContext + "/_api/contextinfo",
                 method: "POST",
                 withCredentials: phLive,
                 headers: {
@@ -5773,12 +5924,6 @@
                     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
                 },
                 success: function(ctx) {
-                    digest = ctx.d.GetContextWebInformation.FormDigestValue;
-                },
-                error: function(error) {
-                    console.log("Error getting new digest: ", error);
-                },
-                complete: function() {
                     reqwest({
                         url: sitePath + "/items(" + id + ")",
                         method: "POST",
@@ -5790,7 +5935,7 @@
                             Accept: "application/json;odata=verbose",
                             "text-Type": "application/json;odata=verbose",
                             "Content-Type": "application/json;odata=verbose",
-                            "X-RequestDigest": digest,
+                            "X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue,
                             "IF-MATCH": "*"
                         },
                         success: function() {
@@ -5813,22 +5958,40 @@
                             }, 1500);
                         }
                     });
+                },
+                error: function(error) {
+                    self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
+                    self.style.color = "#FF2222";
+                    self.style.fontWeight = "bold";
+                    self.innerHTML = "Digest error (press F12 for Console)";
+                    console["error" || "log"]("Couldn't save due to error retrieving new digest: ", error.response);
+                    console.log("Error getting new digest: ", error);
+                },
+                complete: function() {
+                    inTransition.tempSaveText = setTimeout(function() {
+                        self.removeAttribute("style");
+                        self.innerHTML = "Save";
+                        inTransition.tempSaveText = null;
+                    }, 1500);
                 }
             });
         });
         module.exports = init;
     }, {
-        "./helpers": 110,
-        "./store": 114,
-        reqwest: 73,
-        sweetalert: 74
+        "./events": 115,
+        "./helpers": 116,
+        "./pages": 120,
+        "lodash/collection/reduce": 27,
+        reqwest: 77,
+        sweetalert: 78
     } ],
-    109: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./store").pages, events = require("./store").events, render = require("./page").render, renderEditor = require("./page").editor, renderNav = require("./nav"), renderTabs = require("./tabs");
+    114: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), render = require("./page").render, renderEditor = require("./page").editor, renderNav = require("./nav"), renderTabs = require("./tabs");
         function DOM() {
             if (!(this instanceof DOM)) {
                 return new DOM();
             }
+            this.fullPage = true;
         }
         DOM.prototype.set = function(data) {
             var name;
@@ -5851,12 +6014,14 @@
             wrapper.parentNode.replaceChild(this.rootNode, wrapper);
             this.reset();
         };
-        DOM.prototype.update = function() {
+        DOM.prototype.loadContent = function() {
+            if (this.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim()) {
+                events.emit("tab.change", "Overview");
+            }
             var refreshDOM = this.preRender();
             var patches = diff(this.dirtyDOM, refreshDOM);
             this.rootNode = patch(this.rootNode, patches);
             this.dirtyDOM = refreshDOM;
-            document.title = pages.current.title;
             this.reset();
             if (codeMirror) this.initEditor();
         };
@@ -5889,23 +6054,23 @@
             var self = this;
             this.editor = codeMirror.fromTextArea(this.textarea, {
                 mode: "gfm",
-                lineNumbers: false,
                 matchBrackets: true,
+                lineNumbers: false,
                 lineWrapping: true,
-                theme: "base16-light",
+                lineSeparator: "\n",
+                theme: pages.options.editorTheme,
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList"
                 }
             });
-            this.editor.on("change", updateEditor);
-            this.editor.refresh();
-            function updateEditor(e) {
+            this.editor.on("change", function(e) {
                 var val = e.getValue();
                 self.renderOut(val, pages.current.type);
                 pages.current.set({
                     text: val
                 });
-            }
+            });
+            this.editor.refresh();
         };
         DOM.prototype.renderOut = function(text, type) {
             type = pages.current.level > 1 ? "## " + type + "\n" : "";
@@ -5914,17 +6079,26 @@
         var dom = new DOM();
         module.exports = dom;
     }, {
-        "./helpers": 110,
-        "./nav": 112,
-        "./page": 113,
-        "./store": 114,
-        "./tabs": 115,
-        "virtual-dom/create-element": 75,
-        "virtual-dom/diff": 76,
-        "virtual-dom/h": 77,
-        "virtual-dom/patch": 85
+        "./events": 115,
+        "./helpers": 116,
+        "./nav": 118,
+        "./page": 119,
+        "./pages": 120,
+        "./tabs": 121,
+        "virtual-dom/create-element": 79,
+        "virtual-dom/diff": 80,
+        "virtual-dom/h": 81,
+        "virtual-dom/patch": 89
     } ],
-    110: [ function(require, module, exports) {
+    115: [ function(require, module, exports) {
+        var Events = require("eventemitter2").EventEmitter2, events = new Events({
+            wildcard: true
+        });
+        module.exports = events;
+    }, {
+        eventemitter2: 2
+    } ],
+    116: [ function(require, module, exports) {
         function addEvent(evt, element, fnc) {
             return element.addEventListener ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc);
         }
@@ -5936,9 +6110,9 @@
             linkify: true,
             breaks: true,
             quotes: "“”‘’"
-        }), digest = "", inTransition = {
+        }), inTransition = {
             tempSaveText: null
-        }, clicked = -1, codeMirror;
+        }, clicked = -1, codeMirror, hideEmptyTabs = true;
         try {
             codeMirror = CodeMirror;
         } catch (e) {
@@ -5948,14 +6122,14 @@
             addEvent: addEvent,
             removeEvent: removeEvent,
             md: md,
-            digest: digest,
             inTransition: inTransition,
             clicked: clicked,
-            codeMirror: codeMirror
+            codeMirror: codeMirror,
+            hideEmptyTabs: hideEmptyTabs
         };
     }, {} ],
-    111: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./store").pages, events = require("./store").events, current = pages.current, DOM = require("./dom"), router = Router({
+    117: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), current = pages.current, DOM = require("./dom"), pageInit = require("./data"), router = Router({
             "/": {
                 on: function() {
                     events.emit("content.loading", "/");
@@ -5996,7 +6170,7 @@
                     router.setRoute("/");
                 });
             }
-        }), pageInit = require("./data");
+        });
         sweetAlert.setDefaults({
             allowOutsideClick: true,
             showCancelButton: true,
@@ -6061,6 +6235,14 @@
             }, function() {
                 router.setRoute("/");
             });
+        });
+        events.on("content.loading", function() {
+            if (inTransition.output) {
+                return false;
+            }
+            inTransition.output = DOM.output.innerHTML;
+            DOM.output.className += " loading";
+            DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
         });
         events.on("content.loaded", function(data) {
             var obj = data.d;
@@ -6137,17 +6319,20 @@
                     }
                 }
             }
-            DOM.update();
+            DOM.loadContent();
+            var regLoading = / ?loading/gi;
+            inTransition.output = null;
+            DOM.output.className = DOM.output.className.replace(regLoading, "");
         });
         events.on("tab.change", function(page) {
             var content = {};
-            content[current.type.toLowerCase()] = current.text;
-            content.text = current[page.toLowerCase()];
+            content[current.type.replace(/\s/g, "").toLowerCase()] = current.text;
+            content.text = current[page.replace(/\s/g, "").toLowerCase()];
             content.type = page;
             current.set(content);
             DOM.renderOut(current.text, current.type);
             if (codeMirror) {
-                DOM.update();
+                DOM.loadContent();
             }
         });
         function resetPage() {
@@ -6155,37 +6340,26 @@
             for (;i < total; ++i) {
                 oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
             }
-            DOM.update();
+            document.title = pages.current.title;
+            DOM.loadContent();
         }
-        events.on("content.loading", function() {
-            if (inTransition.output) {
-                return false;
-            }
-            inTransition.output = DOM.output.innerHTML;
-            DOM.output.className += " loading";
-            DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-        });
-        events.on("content.loaded", function() {
-            var regLoading = / ?loading/gi;
-            inTransition.output = null;
-            DOM.output.className = DOM.output.className.replace(regLoading, "");
-        });
         pageInit();
     }, {
-        "./data": 108,
-        "./dom": 109,
-        "./helpers": 110,
-        "./store": 114,
+        "./data": 113,
+        "./dom": 114,
+        "./events": 115,
+        "./helpers": 116,
+        "./pages": 120,
         "director/build/director": 1,
         horsey: 4,
-        reqwest: 73,
-        sweetalert: 74,
-        "virtual-dom/diff": 76,
-        "virtual-dom/h": 77,
-        "virtual-dom/patch": 85
+        reqwest: 77,
+        sweetalert: 78,
+        "virtual-dom/diff": 80,
+        "virtual-dom/h": 81,
+        "virtual-dom/patch": 89
     } ],
-    112: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./store").pages, events = require("./store").events;
+    118: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), createElement = require("virtual-dom/create-element"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./pages"), events = require("./events");
         function renderLink(link) {
             return h("li#ph-link-" + link.id + link.className, link.attr, [ h("a.ph-level-" + link.level, {
                 href: link.href,
@@ -6215,14 +6389,27 @@
                     onclick: function(event) {
                         event = event || window.event;
                         if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                        pages.createPage("");
+                        var createContent = document.createElement("div");
+                        createContent.id = "create-content";
+                        var content = document.getElementById("ph-content");
+                        content.innerHTML = "";
+                        content.appendChild(createContent);
+                        var inputFields = function(num) {
+                            return h("fieldset", [ h("input.ph-title-input", {
+                                oninput: function(e) {
+                                    return e;
+                                }
+                            }) ]);
+                        };
+                        createContent.appendChild(createElement(inputFields));
+                        pages.createContent("");
                     }
                 }, [ h("span.btn-title", [ "Add content" ]) ]));
             }
             return h("#ph-nav", [ h(".header", [ h("a", {
                 href: "#/"
             }, [ h(".logo", [ h("img", {
-                src: phImages + "/phLogo64.png",
+                src: pages.options.images + "/phLogo64.png",
                 alt: "Public Health Home",
                 height: "64",
                 width: "64"
@@ -6236,37 +6423,37 @@
         }
         module.exports = renderNav;
     }, {
-        "./helpers": 110,
-        "./store": 114,
+        "./events": 115,
+        "./helpers": 116,
+        "./pages": 120,
         "lodash/collection/map": 25,
-        "virtual-dom/h": 77
+        "virtual-dom/create-element": 79,
+        "virtual-dom/h": 81
     } ],
-    113: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), pages = require("./store").pages, events = require("./store").events, inTransition = require("./helpers").inTransition;
+    119: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), misc = require("./helpers"), inTransition = misc.inTransition;
         function render(navDOM, tabsDOM) {
             return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
                 type: "text",
                 name: "ph-search",
-                placeholder: "Search using keywords, AFIs or titles..."
+                placeholder: pages.options.searchPlaceholder
             }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]) ]);
         }
         function editor(navDOM, tabsDOM, DOM) {
             return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
                 type: "text",
                 name: "ph-search",
-                placeholder: "Search using keywords, AFIs or titles..."
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("a.ph-toggle-editor", {
+                placeholder: pages.options.searchPlaceholder
+            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("div#ph-content" + (DOM.fullPage ? ".fullPage" : ""), [ h("a.ph-toggle-editor", {
                 href: "#",
                 role: "button",
                 onclick: function(event) {
                     event = event || window.event;
                     if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                    pages.fullPage = !pages.fullPage;
-                    DOM.content.className = pages.fullPage ? "fullPage" : "";
-                    this.innerHTML = pages.fullPage ? "Show editor" : "Hide editor";
-                    DOM.editor.refresh();
+                    DOM.fullPage = !DOM.fullPage;
+                    DOM.loadContent();
                 }
-            }, [ pages.fullPage ? "Show editor" : "Hide editor" ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a.ph-edit-btn.ph-save", {
+            }, [ DOM.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a.ph-edit-btn.ph-save", {
                 href: "#",
                 title: "Save",
                 onclick: function(event) {
@@ -6303,75 +6490,43 @@
             editor: editor
         };
     }, {
-        "./helpers": 110,
-        "./store": 114,
-        "virtual-dom/h": 77
+        "./events": 115,
+        "./helpers": 116,
+        "./pages": 120,
+        "virtual-dom/h": 81
     } ],
-    114: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), Events = require("eventemitter2").EventEmitter2, events = new Events({
-            wildcard: true
-        }), pluck = require("lodash/collection/pluck"), misc = require("./helpers");
-        function Content() {
-            if (!(this instanceof Content)) {
-                return new Content();
-            }
-            this.id = -1;
-            this.title = "";
-            this.keywords = [];
-            this.icon = "";
-            this.text = "";
-            this.overview = "";
-            this.policy = "";
-            this.training = "";
-            this.resources = "";
-            this.tools = "";
-            this.contributions = "";
-            this.section = "";
-            this.program = "";
-            this.page = "";
-            this.rabbitHole = "";
-            this.type = "Overview";
-            this.listItemType = "";
-            this.timestamp = null;
-            this.level = -1;
-        }
-        Content.prototype.set = function(data) {
-            var name;
-            for (name in data) {
-                if (this.hasOwnProperty(name)) {
-                    this[name] = data[name];
-                }
-            }
-            return this;
-        };
-        Content.prototype.savePage = function(self) {
-            this.set({
-                text: this.text.trim()
-            });
-            this[this.type.toLowerCase()] = this.text;
-            var data = {
-                __metadata: {
-                    type: this.listItemType
-                },
-                Title: this.title,
-                Overview: this.overview,
-                Policy: this.policy,
-                Training: this.training,
-                Resources: this.resources,
-                Tools: this.tools,
-                Contributions: this.contributions
-            };
-            self.className += " loading";
-            var el = self.getElementsByTagName("i")[0];
-            events.emit("content.save", data, this.id, el);
-        };
+    120: [ function(require, module, exports) {
+        var events = require("./events"), Content = require("./content"), pluck = require("lodash/collection/pluck");
         function Pages() {
             if (!(this instanceof Pages)) {
                 return new Pages();
             }
             this.current = new Content();
             this.fullPage = true;
+            this.options = {
+                hideEmptyTabs: true,
+                searchPlaceholder: "Search using keywords, AFIs or titles...",
+                emptyTabsNotify: false,
+                editorTheme: "base16-light",
+                images: "/kj/kx7/PublicHealth/SiteAssets/Images"
+            };
         }
+        Pages.prototype.set = function(data) {
+            var name;
+            for (name in data) {
+                if (this.hasOwnProperty(name)) {
+                    if (name !== "options") {
+                        this[name] = data[name];
+                    } else {
+                        var opt;
+                        for (opt in data.options) {
+                            this.options[opt] = data.options[opt] === "yes" ? true : data.options[opt] === "no" ? false : data.options[opt];
+                        }
+                    }
+                }
+            }
+            return this;
+        };
         Pages.prototype.init = function(data) {
             var urls = [], i = 0, count = data.d.results.length, result, parents = {}, subParents = {};
             this.sections = {};
@@ -6438,90 +6593,34 @@
                 }
             }
         };
-        Pages.prototype.set = function(data) {
-            var name;
-            for (name in data) {
-                if (this.hasOwnProperty(name)) {
-                    this[name] = data[name];
-                }
-            }
-            return this;
-        };
-        Pages.prototype.createPage = function(path) {
-            var regNormalize = /[^a-zA-Z0-9_-]/g, self = this;
-            sweetAlert({
-                title: "New page",
-                text: "Give it a name:",
-                type: "input",
-                closeOnConfirm: false,
-                showCancelButton: true
-            }, function(title) {
-                if (title === false) {
-                    return false;
-                }
-                if (title === "" || title.length && title.length < 2) {
-                    sweetAlert.showInputError("Please enter a page title (of at least 2 characters)!");
-                    return false;
-                }
-                var firstTry = title.replace(regNormalize, "");
-                sweetAlert({
-                    title: "Perfect!",
-                    text: "Now let's shorten it to make the URL easier to manage (example provided).",
-                    type: "input",
-                    closeOnConfirm: false,
-                    showCancelButton: true,
-                    inputValue: firstTry,
-                    confirmButtonText: "Continue",
-                    cancelButtonText: "I want off this ride"
-                }, function(newName) {
-                    if (newName === false) {
-                        return false;
-                    }
-                    if (newName === "" || newName.length && newName.length < 2) {
-                        sweetAlert.showInputError("Are you trying to cancel or do you just want me to use what we already have so far?");
-                        return false;
-                    }
-                    path += "/" + newName.replace(regNormalize, "");
-                    var pathArray = path.slice(1).split("/");
-                    var keywords = null;
-                    var data = {
-                        __metadata: {
-                            type: self.current.listItemType
-                        },
-                        Title: title,
-                        Overview: "### New Page :)\n#### Joy",
-                        Section: pathArray.shift() || "",
-                        Program: pathArray.shift() || "",
-                        Page: pathArray.shift() || "",
-                        rabbitHole: pathArray.shift() || ""
-                    };
-                    sweetAlert({
-                        title: "Confirm",
-                        text: misc.md.render("Your page will have the title: **" + title + "**\n > Page location: *`" + path + "`*\n"),
-                        closeOnConfirm: false,
-                        showCancelButton: true,
-                        showLoaderOnConfirm: true,
-                        html: true,
-                        type: "warning"
-                    }, function() {
-                        events.emit("content.create", data, path, title);
-                    });
-                });
-            });
+        Pages.prototype.createContent = function(path, title, newName) {
+            var regNormalize = /[^a-zA-Z0-9_-]/g, self = this, title = "Blamo";
+            var firstTry = title.replace(regNormalize, "");
+            path += "/" + newName.replace(regNormalize, "");
+            var pathArray = path.slice(1).split("/");
+            var keywords = null;
+            var data = {
+                __metadata: {
+                    type: self.current.listItemType
+                },
+                Title: title,
+                Overview: "### New Page :)\n#### Joy",
+                Section: pathArray.shift() || "",
+                Program: pathArray.shift() || "",
+                Page: pathArray.shift() || "",
+                rabbitHole: pathArray.shift() || ""
+            };
+            events.emit("content.create", data, path, title);
         };
         var pages = new Pages();
-        module.exports = {
-            pages: pages,
-            events: events
-        };
+        module.exports = pages;
     }, {
-        "./helpers": 110,
-        eventemitter2: 2,
-        "lodash/collection/pluck": 26,
-        "virtual-dom/h": 77
+        "./content": 112,
+        "./events": 115,
+        "lodash/collection/pluck": 26
     } ],
-    115: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), pages = require("./store").pages, events = require("./store").events, map = require("lodash/collection/map"), tabs = [ {
+    121: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), map = require("lodash/collection/map"), tabs = [ {
             title: "Overview",
             icon: "home"
         }, {
@@ -6546,19 +6645,14 @@
                     display: "none"
                 }
             }, group = map(tabs, function(tab) {
-                return h("li", [ h("a.icon.icon-" + tab.icon, {
+                var tabName = tab.title.replace(/\s/g, "").toLowerCase();
+                var className = ".tab-" + tabName + (pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ? ".tab-empty" : "") + (pages.current.type.replace(/\s/g, "").toLowerCase() === tabName ? ".tab-current" : "");
+                return h("li" + className, [ h("a.icon.icon-" + tab.icon, {
                     href: "#",
                     onclick: function(e) {
                         e = e || window.event;
                         if (e.preventDefault) e.preventDefault(); else e.returnValue = false;
                         events.emit("tab.change", tab.title);
-                        if (/ ?tab\-current/gi.test(this.parentNode.className) === false) {
-                            var tabCurrent = document.querySelector(".tab-current");
-                            if (tabCurrent) {
-                                tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
-                            }
-                            this.parentNode.className += " tab-current";
-                        }
                         return false;
                     }
                 }, [ h("span", [ String(tab.title) ]) ]) ]);
@@ -6567,9 +6661,10 @@
         }
         module.exports = renderTabs;
     }, {
-        "./store": 114,
+        "./events": 115,
+        "./pages": 120,
         "lodash/collection/map": 25,
-        "virtual-dom/h": 77
+        "virtual-dom/h": 81
     } ]
-}, {}, [ 111 ]);
+}, {}, [ 117 ]);
 //# sourceMappingURL=main.js.map

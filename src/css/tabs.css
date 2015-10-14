@@ -72,12 +72,17 @@
 
 #ph-tabs nav li.tab-current a {
 	color: #74777B;
+	/*font-weight: 900;*/
 }
+
+/*#ph-tabs nav li.tab-current .icon::before {
+	font-weight: 900;
+}*/
 
 #ph-tabs nav a:focus,
 #ph-tabs nav a:active {
 	outline: none;
-	color: #7014CC;
+	/*color: #7014CC;*/
 }
 
 #ph-tabs .icon::before {
@@ -169,4 +174,8 @@
 #ph-tabs-style-iconbox .icon::before {
 	display: block;
 	margin: 0 0 .25em;
+}
+
+.fullPage #ph-tabs .tab-empty {
+	display: none;
 }

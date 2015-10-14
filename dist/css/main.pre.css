@@ -441,11 +441,12 @@ body {
 	border-radius: 3px;
 }
 .ph-toggle-editor {
-	position: absolute;
-	left: 385px; /* 390px - 5px padding left */
-	top: 0;
+	/*position: absolute;*/
+	/**** 390px - 5px padding left ****/
+	/*left: 385px;*/
+	/*top: 0;*/
 	cursor: pointer;
-	display: inline-block;
+	/*display: inline-block;*/
 	/*padding-left: 5px;*/
 	border: none;
 	/*width: 160px;*/
@@ -717,7 +718,7 @@ body {
 #ph-nav a.active:hover {
 	text-decoration: none;
 }
-#ph-nav a:active {
+#ph-nav a:not(.active):active {
 	/*color: #FFA319;*/
 	/*color: #DB84E1;*/
 	color: #81B3D7;
@@ -955,11 +956,15 @@ body {
 }
 #ph-tabs nav li.tab-current a {
 	color: #74777B;
+	/*font-weight: 900;*/
 }
-#ph-tabs nav a:focus,
+/*#ph-tabs nav li.tab-current .icon::before {
+	font-weight: 900;
+}
+*/#ph-tabs nav a:focus,
 #ph-tabs nav a:active {
 	outline: none;
-	color: #7014CC;
+	/*color: #7014CC;*/
 }
 #ph-tabs .icon::before {
 	display: block;
@@ -1021,6 +1026,9 @@ body {
 #ph-tabs-style-iconbox .icon::before {
 	display: block;
 	margin: 0 0 .25em;
+}
+.fullPage #ph-tabs .tab-empty {
+	display: none;
 }
  /**
  * Another excellent loading animation courtesy of:

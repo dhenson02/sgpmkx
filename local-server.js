@@ -13,6 +13,7 @@ app.use(bp.json());
 app.use(cors());
 
 var timer = null;
+var cmTimer = null;
 
 var db = {d: { results: JSON.parse(fs.readFileSync(__dirname + "/db.json", { charset: "utf8" })) } };
 var db_ = reduce(db.d.results, function ( obj, item ) {
@@ -42,6 +43,15 @@ app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 			}
 		});
 	}, 200);
+});
+
+app.get("/check/true", function ( req, res ) {
+	if ( cmTimer ) {
+		clearTimeout(cmTimer);
+	}
+	cmTimer = setTimeout(function () {
+		res.send({ status: "success" });
+	}, 100);
 });
 
 app.get("/items(:id)", function ( req, res ) {

@@ -1,66 +1,7 @@
-var Events = require("eventemitter2").EventEmitter2,
-	events = new Events({ wildcard: true }),
-	pluck = require("lodash/collection/pluck"),
-	//h = require("virtual-dom/h"),
-	misc = require("./helpers");
+var events = require("./events"),
+	Content = require("./content"),
+	pluck = require("lodash/collection/pluck");
 
-function Content () {
-	if ( !(this instanceof Content) ) {
-		return new Content();
-	}
-	this.id = -1;
-	this.title = "";
-	this.keywords = [];
-	this.icon = "";
-	this.text = "";
-	this.overview = "";
-	this.policy = "";
-	this.training = "";
-	this.resources = "";
-	this.tools = "";
-	this.contributions = "";
-	this.section = "";
-	this.program = "";
-	this.page = "";
-	this.rabbitHole = "";
-	this.type = "Overview";
-	this.listItemType = "";
-	this.timestamp = null;
-	this.level = -1;
-}
-
-Content.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
-		}
-	}
-	return this;
-};
-
-Content.prototype.savePage = function ( self ) {
-	this.set({
-		text: this.text.trim()
-	});
-	this[this.type.toLowerCase()] = this.text;
-	var data = {
-		'__metadata': {
-			'type': this.listItemType
-		},
-		'Title': this.title,
-		//'Keywords': this.keywords,
-		'Overview': this.overview,
-		'Policy': this.policy,
-		'Training': this.training,
-		'Resources': this.resources,
-		'Tools': this.tools,
-		'Contributions': this.contributions
-	};
-	self.className += " loading";
-	var el = self.getElementsByTagName("i")[0];
-	events.emit("content.save", data, this.id, el);
-};
 
 function Pages () {
 	if ( !(this instanceof Pages) ) {
@@ -68,7 +9,36 @@ function Pages () {
 	}
 	this.current = new Content();
 	this.fullPage = true;
+	this.options = {
+		hideEmptyTabs: true,
+		searchPlaceholder: "Search using keywords, AFIs or titles...",
+		emptyTabsNotify: false,
+		editorTheme: "base16-light",
+		images: "/kj/kx7/PublicHealth/SiteAssets/Images"
+	};
 }
+
+Pages.prototype.set = function ( data ) {
+	var name;
+	for ( name in data ) {
+		if ( this.hasOwnProperty(name) ) {
+			if ( name !== "options" ) {
+				this[name] = data[name];
+			}
+			else {
+				var opt;
+				for ( opt in data.options ) {
+					this.options[opt] = ( data.options[opt] === "yes" ) ?
+						true :
+						( data.options[opt] === "no" ) ?
+							false :
+							data.options[opt];
+				}
+			}
+		}
+	}
+	return this;
+};
 
 Pages.prototype.init = function ( data ) {
 	var urls = [],
@@ -179,16 +149,6 @@ Pages.prototype.init = function ( data ) {
 	}
 };
 
-Pages.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
-		}
-	}
-	return this;
-};
-
 Pages.prototype.createContent = function ( path, title, newName ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this,
@@ -288,10 +248,7 @@ Pages.prototype.createContent = function ( path ) {
 
 var pages = new Pages();
 
-module.exports = {
-	pages: pages,
-	events: events
-};
+module.exports = pages;
 
 /**
  * For Tools:

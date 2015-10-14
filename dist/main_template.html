@@ -13,7 +13,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 </head>
 <body>
-	<input id="__REQUESTDIGEST" type="hidden" value="hey"/>
 	<div id="wrapper"><strong>speak</strong></div>
 	<script type="text/javascript">
 		//<![CDATA[
@@ -23,11 +22,10 @@
 
 		var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 			sitePath = baseURL,
+			phCMCheckURL = baseURL + "/check/true", // Add true or false to the end
 			phContext = "/Pages/content",
-			phLive = false,
-			phImages = "img",
-			phEditorTheme = "base16-light",
-			phSearchPlaceholder = "Search using keywords, AFIs or titles...";
+			phLive = false;
+
 		/* Get rid of the ugly nav on the left if it's there */
 		try {
 			var leftNav = document.getElementById("leftnav");

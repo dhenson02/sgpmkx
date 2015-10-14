@@ -4,8 +4,8 @@ var h = require("virtual-dom/h"),
 	createElement = require("virtual-dom/create-element"),
 	misc = require("./helpers"),
 	codeMirror = misc.codeMirror,
-	pages = require("./store").pages,
-	events = require("./store").events,
+	pages = require("./pages"),
+	events = require("./events"),
 	render = require("./page").render,
 	renderEditor = require("./page").editor,
 	renderNav = require("./nav"),
@@ -15,6 +15,7 @@ function DOM () {
 	if ( !(this instanceof DOM) ) {
 		return new DOM();
 	}
+	this.fullPage = true;
 }
 
 DOM.prototype.set = function ( data ) {
@@ -43,12 +44,14 @@ DOM.prototype.init = function () {
 	this.reset();
 };
 
-DOM.prototype.update = function  () {
+DOM.prototype.loadContent = function  () {
+	if ( this.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim() ) {
+		events.emit("tab.change", "Overview");
+	}
 	var refreshDOM = this.preRender();
 	var patches = diff(this.dirtyDOM, refreshDOM);
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
-	document.title = pages.current.title;
 	this.reset();
 	if ( codeMirror ) this.initEditor();
 };
@@ -91,18 +94,19 @@ DOM.prototype.initEditor = function () {
 		lineNumbers: false,
 		lineWrapping: true,
 		lineSeparator: "\n",
-		theme: phEditorTheme,
-		extraKeys: { "Enter": "newlineAndIndentContinueMarkdownList" }
+		theme: pages.options.editorTheme,
+		extraKeys: {
+			"Enter": "newlineAndIndentContinueMarkdownList"
+		}
 	});
-	this.editor.on("change", updateEditor);
-	this.editor.refresh();
-	function updateEditor ( e ) {
+	this.editor.on("change", function ( e ) {
 		var val = e.getValue();
 		self.renderOut(val, pages.current.type);
 		pages.current.set({
 			text: val
 		});
-	}
+	});
+	this.editor.refresh();
 };
 
 DOM.prototype.renderOut = function ( text, type ) {

@@ -1,14 +1,63 @@
-var	pages = require("./store").pages,
-	events = require("./store").events,
+var	pages = require("./pages"),
+	events = require("./events"),
 	reqwest = require("reqwest"),
 	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
-	clicked = misc.clicked;
+	clicked = misc.clicked,
+	reduce = require("lodash/collection/reduce");
 
 function init () {
-	events.emit("page.loading");
+	events.emit("page.init");
 }
+
+/*events.on("manager.verifying", function () {
+	reqwest({
+		url: phCMCheckURL,
+		method: "GET",
+		headers: {
+			"accept": "application/json; odata=verbose"
+		},
+		success: function () {
+			console.log("Success!  You are a CM.  Toys will now load.");
+			events.emit("page.loading-editor");
+		},
+		error: function ( err ) {
+			console.log("Not a content manager (group 419) or connection error.  See details here: ", err);
+		}
+	});
+});*/
+
+events.on("page.init", function () {
+	reqwest({
+		url: baseURL + "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
+		method: "GET",
+		type: "json",
+		contentType: "application/json",
+		withCredentials: phLive,
+		headers: {
+			"Accept": "application/json;odata=verbose",
+			"text-Type": "application/json;odata=verbose",
+			"Content-Type": "application/json;odata=verbose"
+		},
+		success: function ( data ) {
+			var options = reduce(data.d.results, function ( setup, option ) {
+				setup[option.Variable] = option.Value;
+				return setup;
+			}, {});
+			console.log("options: ", options);
+			pages.set({ options: options });
+			console.log("pages.options: ", pages.options);
+		},
+		error: function ( error ) {
+			console.log("Error loading settings, will go with defaults.  Error: ", error);
+			console.log("pages.options: ", pages.options);
+		},
+		complete: function () {
+			events.emit("page.loading");
+		}
+	});
+});
 
 events.on("page.loading", function () {
 	var timestamp = (Date && Date.now() || new Date());
@@ -31,6 +80,16 @@ events.on("page.loading", function () {
 			pages.init(data);
 			events.emit("page.loaded");
 			events.emit("page.success");
+			if ( pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror ) {
+				sweetAlert({
+					title: "Tabs missing?",
+					text: misc.md.render("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
+					type: "info",
+					html: true,
+					showCancelButton: false,
+					confirmButtonText: "Got it!"
+				});
+			}
 		},
 		error: function ( error ) {
 			console.log("error connecting:", error);
@@ -94,7 +153,7 @@ events.on("content.create", function ( data, path, title ) {
 				success: function () {
 					sweetAlert({
 						title: "Success!",
-						text: title + " was created at <a href=\'#" + path + "\' target=\'_blank\'>" + path + "<\/a>",
+						text: misc.md.render(title + " was created at [" + path + "](#" + path + ")"),
 						type: "success",
 						showConfirmButton: false,
 						showCancelButton: false,
@@ -104,7 +163,7 @@ events.on("content.create", function ( data, path, title ) {
 				error: function ( error ) {
 					sweetAlert({
 						title: "Failure",
-						text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
+						text: misc.md.render(title + " **was not** created at *" + path + "*"),
 						type: "fail",
 						showCancelButton: false,
 						html: true
@@ -116,7 +175,7 @@ events.on("content.create", function ( data, path, title ) {
 		error: function ( error ) {
 			sweetAlert({
 				title: "Failure",
-				text: title + " was <strong>not<\/strong> created at <a href=\'" + path + "\' target=\'_blank\'>" + path.slice(1) + "<\/a>",
+				text: misc.md.render(title + " **was not** created at *" + path + "*"),
 				type: "fail",
 				showCancelButton: false,
 				html: true

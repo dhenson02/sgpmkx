@@ -1,7 +1,8 @@
 var h = require("virtual-dom/h"),
-	pages = require("./store").pages,
-	events = require("./store").events,
-	inTransition = require("./helpers").inTransition;
+	pages = require("./pages"),
+	events = require("./events"),
+	misc = require("./helpers"),
+	inTransition = misc.inTransition;
 
 function render ( navDOM, tabsDOM ) {
 	return (
@@ -11,7 +12,7 @@ function render ( navDOM, tabsDOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: phSearchPlaceholder
+						placeholder: pages.options.searchPlaceholder
 					})
 				])
 			]),
@@ -26,6 +27,7 @@ function render ( navDOM, tabsDOM ) {
 		])
 	);
 }
+
 function editor ( navDOM, tabsDOM, DOM ) {
 	return (
 		h("#ph-wrapper", [
@@ -34,12 +36,12 @@ function editor ( navDOM, tabsDOM, DOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
-						placeholder: phSearchPlaceholder
+						placeholder: pages.options.searchPlaceholder
 					})
 				])
 			]),
 			h("#ph-side-nav", [navDOM]),
-			h("#ph-content.fullPage", [
+			h("div#ph-content" + (( DOM.fullPage ) ? ".fullPage" : ""), [
 				h("a.ph-toggle-editor", {
 					href: "#",
 					role: "button",
@@ -48,13 +50,19 @@ function editor ( navDOM, tabsDOM, DOM ) {
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
-						pages.fullPage = !pages.fullPage;
-						DOM.content.className = ( pages.fullPage ) ? "fullPage" : "";
-						this.innerHTML = pages.fullPage ? "Show editor" : "Hide editor";
-						DOM.editor.refresh();
+						DOM.fullPage = !DOM.fullPage;
+						//pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()] = pages.current.text;
+						//DOM.content.className = ( DOM.fullPage ) ? "fullPage" : "";
+						//this.innerHTML = DOM.fullPage ? "Show editor" : "Hide editor";
+
+						DOM.loadContent();
+
+						/*if ( !DOM.fullPage ) {
+							DOM.editor.refresh();
+						}*/
 					}
 					/*style: { display: "none" }*/
-				}, [pages.fullPage ? "Show editor" : "Hide editor"]),
+				}, [DOM.fullPage ? "Show editor" : "Hide editor"]),
 				h("h1#ph-title", [String(pages.current.title || "")]),
 				tabsDOM,
 				h("#ph-buttons", [

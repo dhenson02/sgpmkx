@@ -16,7 +16,8 @@ var md = markdownit({
 		tempSaveText: null
 	},
 	clicked = -1,
-	codeMirror;
+	codeMirror,
+	hideEmptyTabs = true;
 
 try {
 	codeMirror = CodeMirror;
@@ -30,5 +31,6 @@ module.exports = {
 	md: md,
 	inTransition: inTransition,
 	clicked: clicked,
-	codeMirror: codeMirror
+	codeMirror: codeMirror,
+	hideEmptyTabs: hideEmptyTabs
 };

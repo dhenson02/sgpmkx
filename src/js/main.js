@@ -10,11 +10,13 @@ var h = require("virtual-dom/h"),
 	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
-	pages = require("./store").pages,
-	events = require("./store").events,
+	pages = require("./pages"),
+	events = require("./events"),
 	current = pages.current,
 
 	DOM = require("./dom"),
+	pageInit = require("./data"),
+
 	router = Router({
 		'/': {
 			on: function () {
@@ -56,8 +58,7 @@ var h = require("virtual-dom/h"),
 				router.setRoute("/");
 			});
 		}
-	}),
-	pageInit = require("./data");
+	});
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -69,6 +70,14 @@ sweetAlert.setDefaults({
 events.on("page.success", function () {
 	DOM.init();
 
+	/**
+	 * This is incredibly roundabout but the best way to do it I
+	 * really don't have time for just yet.  Will perfect this and
+	 * other weird areas after main pieces have been incorporated
+	 * (see #/Dev)
+	 *
+	 * @type {Element}
+	 */
 	var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
 	var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
 	if ( activeLink ) {
@@ -140,6 +149,15 @@ events.on("missing", function ( path ) {
 	}, function () {
 		router.setRoute("/");
 	});
+});
+
+events.on("content.loading", function () {
+	if ( inTransition.output ) {
+		return false;
+	}
+	inTransition.output = DOM.output.innerHTML;
+	DOM.output.className += " loading";
+	DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
 });
 
 events.on("content.loaded", function ( data ) {
@@ -225,18 +243,22 @@ events.on("content.loaded", function ( data ) {
 		}
 	}
 
-	DOM.update();
+	DOM.loadContent();
+
+	var regLoading = / ?loading/gi;
+	inTransition.output = null;
+	DOM.output.className = DOM.output.className.replace(regLoading, "");
 });
 
 events.on("tab.change", function ( page ) {
 	var content = {};
-	content[current.type.toLowerCase()] = current.text;
-	content.text = current[page.toLowerCase()];
+	content[current.type.replace(/\s/g, "").toLowerCase()] = current.text;
+	content.text = current[page.replace(/\s/g, "").toLowerCase()];
 	content.type = page;
 	current.set(content);
 	DOM.renderOut(current.text, current.type);
 	if ( codeMirror ) {
-		DOM.update();
+		DOM.loadContent();
 	}
 });
 
@@ -262,22 +284,8 @@ function resetPage () {
 	for ( ; i < total; ++i ) {
 		oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
 	}
-	DOM.update();
+	document.title = pages.current.title;
+	DOM.loadContent();
 }
-
-events.on("content.loading", function () {
-	if ( inTransition.output ) {
-		return false;
-	}
-	inTransition.output = DOM.output.innerHTML;
-	DOM.output.className += " loading";
-	DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-});
-
-events.on("content.loaded", function () {
-	var regLoading = / ?loading/gi;
-	inTransition.output = null;
-	DOM.output.className = DOM.output.className.replace(regLoading, "");
-});
 
 pageInit();

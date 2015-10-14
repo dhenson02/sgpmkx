@@ -1,6 +1,6 @@
 var h = require("virtual-dom/h"),
-	pages = require("./store").pages,
-	events = require("./store").events,
+	pages = require("./pages"),
+	events = require("./events"),
 	map = require("lodash/collection/map"),
 	tabs = [
 		{
@@ -32,8 +32,15 @@ var h = require("virtual-dom/h"),
 function renderTabs () {
 	var style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } },
 		group = map(tabs, function ( tab ) {
+			var tabName = tab.title.replace(/\s/g, "").toLowerCase();
+			var className = ".tab-" + tabName + (
+					( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ) ? ".tab-empty" : ""
+				) + (
+					( pages.current.type.replace(/\s/g, "").toLowerCase() === tabName ) ? ".tab-current" : ""
+				);
+
 			return (
-				h("li", [
+				h("li" + className, [
 					h("a.icon.icon-" + tab.icon, {
 						href: "#",
 						onclick: function ( e ) {
@@ -41,14 +48,6 @@ function renderTabs () {
 							if ( e.preventDefault ) e.preventDefault();
 							else e.returnValue = false;
 							events.emit("tab.change", tab.title);
-
-							if ( / ?tab\-current/gi.test(this.parentNode.className) === false ) {
-								var tabCurrent = document.querySelector(".tab-current");
-								if ( tabCurrent ) {
-									tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
-								}
-								this.parentNode.className += " tab-current";
-							}
 							return false;
 						}
 					}, [

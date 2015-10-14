@@ -2,8 +2,8 @@ var h = require("virtual-dom/h"),
 	createElement = require("virtual-dom/create-element"),
 	codeMirror = require("./helpers").codeMirror,
 	map = require("lodash/collection/map"),
-	pages = require("./store").pages,
-	events = require("./store").events;
+	pages = require("./pages"),
+	events = require("./events");
 
 function renderLink ( link ) {
 	return (
@@ -81,7 +81,13 @@ function renderNav () {
 
 					var inputFields = function ( num ) {
 						return (
-							h("input.ph-title-input", { oninput: function ( e ) {} }, [])
+							h("fieldset", [
+								h("input.ph-title-input", {
+									oninput: function ( e ) {
+										return e;
+									}
+								})
+							])
 						);
 					};
 
@@ -108,7 +114,7 @@ function renderNav () {
 				}, [
 					h(".logo", [
 						h("img", {
-							"src": phImages + "/phLogo64.png",
+							"src": pages.options.images + "/phLogo64.png",
 							"alt": "Public Health Home",
 							"height": "64",
 							"width": "64"

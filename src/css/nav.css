@@ -63,7 +63,7 @@
 	text-decoration: none;
 }
 
-#ph-nav a:active {
+#ph-nav a:not(.active):active {
 	/*color: #FFA319;*/
 	/*color: #DB84E1;*/
 	color: #81B3D7;
