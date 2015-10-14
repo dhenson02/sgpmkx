@@ -8,7 +8,7 @@ function Pages () {
 		return new Pages();
 	}
 	this.current = new Content();
-	this.fullPage = true;
+	//this.addingContent = false;
 	this.options = {
 		hideEmptyTabs: true,
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
@@ -28,11 +28,13 @@ Pages.prototype.set = function ( data ) {
 			else {
 				var opt;
 				for ( opt in data.options ) {
-					this.options[opt] = ( data.options[opt] === "yes" ) ?
-						true :
-						( data.options[opt] === "no" ) ?
-							false :
-							data.options[opt];
+					if ( this.options.hasOwnProperty(opt) ) {
+						this.options[opt] = ( data.options[opt] === "yes" ) ?
+							true :
+							( data.options[opt] === "no" ) ?
+								false :
+								data.options[opt];
+					}
 				}
 			}
 		}

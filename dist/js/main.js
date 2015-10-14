@@ -5986,26 +5986,41 @@
         sweetalert: 78
     } ],
     114: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), render = require("./page").render, renderEditor = require("./page").editor, renderNav = require("./nav"), renderTabs = require("./tabs");
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), render = require("./page"), renderNav = require("./nav"), renderTabs = require("./tabs");
         function DOM() {
             if (!(this instanceof DOM)) {
                 return new DOM();
             }
-            this.fullPage = true;
+            this.state = {
+                fullPage: true,
+                cheatSheet: false,
+                addingContent: false,
+                editorTheme: "base16-light"
+            };
         }
         DOM.prototype.set = function(data) {
             var name;
             for (name in data) {
                 if (this.hasOwnProperty(name)) {
-                    this[name] = data[name];
+                    if (name !== "state") {
+                        this[name] = data[name];
+                    } else {
+                        var opt;
+                        for (opt in data.state) {
+                            if (this.state.hasOwnProperty(opt)) {
+                                this.state[opt] = data.state[opt];
+                            }
+                        }
+                        this.loadContent();
+                    }
                 }
             }
             return this;
         };
         DOM.prototype.preRender = function() {
             this.navDOM = renderNav();
-            this.tabsDOM = renderTabs();
-            return !codeMirror ? render(this.navDOM, this.tabsDOM) : renderEditor(this.navDOM, this.tabsDOM, this);
+            this.tabsDOM = this.state.addingContent === false ? renderTabs() : null;
+            return render(this.navDOM, this.tabsDOM, this);
         };
         DOM.prototype.init = function() {
             var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
@@ -6015,7 +6030,7 @@
             this.reset();
         };
         DOM.prototype.loadContent = function() {
-            if (this.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim()) {
+            if (this.state.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim()) {
                 events.emit("tab.change", "Overview");
             }
             var refreshDOM = this.preRender();
@@ -6037,9 +6052,11 @@
             }
             this.editor = null;
             this.output = document.getElementById("ph-output");
-            var links = this.output.querySelectorAll("a"), total = links.length, i = 0;
-            for (;i < total; ++i) {
-                misc.addEvent("click", links[i], openExternal);
+            if (this.output) {
+                var links = this.output.querySelectorAll("a"), total = links.length, i = 0;
+                for (;i < total; ++i) {
+                    misc.addEvent("click", links[i], openExternal);
+                }
             }
             function openExternal(event) {
                 if (/mailto:|#\//.test(this.href) === false) {
@@ -6058,7 +6075,7 @@
                 lineNumbers: false,
                 lineWrapping: true,
                 lineSeparator: "\n",
-                theme: pages.options.editorTheme,
+                theme: this.state.editorTheme,
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList"
                 }
@@ -6129,7 +6146,7 @@
         };
     }, {} ],
     117: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), current = pages.current, DOM = require("./dom"), pageInit = require("./data"), router = Router({
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, Content = require("./content"), pages = require("./pages"), events = require("./events"), current = pages.current, DOM = require("./dom"), pageInit = require("./data"), router = Router({
             "/": {
                 on: function() {
                     events.emit("content.loading", "/");
@@ -6335,16 +6352,30 @@
                 DOM.loadContent();
             }
         });
+        events.on("content.start", function() {
+            resetPage();
+            DOM.set({
+                state: {
+                    addingContent: true
+                }
+            });
+            document.querySelector(".ph-btn.ph-create").className += " active";
+        });
         function resetPage() {
             var oldActive = document.querySelectorAll("a.active"), i = 0, total = oldActive.length;
             for (;i < total; ++i) {
                 oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
             }
             document.title = pages.current.title;
-            DOM.loadContent();
+            DOM.set({
+                state: {
+                    addingContent: false
+                }
+            });
         }
         pageInit();
     }, {
+        "./content": 112,
         "./data": 113,
         "./dom": 114,
         "./events": 115,
@@ -6359,7 +6390,7 @@
         "virtual-dom/patch": 89
     } ],
     118: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), createElement = require("virtual-dom/create-element"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./pages"), events = require("./events");
+        var h = require("virtual-dom/h"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./pages"), events = require("./events");
         function renderLink(link) {
             return h("li#ph-link-" + link.id + link.className, link.attr, [ h("a.ph-level-" + link.level, {
                 href: link.href,
@@ -6383,26 +6414,13 @@
                 }
             }
             if (codeMirror) {
-                links.unshift(h("a.ph-btn.ph-create", {
+                links.unshift(h("a.ph-btn.ph-create.loading", {
                     href: "#",
                     title: "New section",
                     onclick: function(event) {
                         event = event || window.event;
                         if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                        var createContent = document.createElement("div");
-                        createContent.id = "create-content";
-                        var content = document.getElementById("ph-content");
-                        content.innerHTML = "";
-                        content.appendChild(createContent);
-                        var inputFields = function(num) {
-                            return h("fieldset", [ h("input.ph-title-input", {
-                                oninput: function(e) {
-                                    return e;
-                                }
-                            }) ]);
-                        };
-                        createContent.appendChild(createElement(inputFields));
-                        pages.createContent("");
+                        return false;
                     }
                 }, [ h("span.btn-title", [ "Add content" ]) ]));
             }
@@ -6427,33 +6445,51 @@
         "./helpers": 116,
         "./pages": 120,
         "lodash/collection/map": 25,
-        "virtual-dom/create-element": 79,
         "virtual-dom/h": 81
     } ],
     119: [ function(require, module, exports) {
         var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), misc = require("./helpers"), inTransition = misc.inTransition;
-        function render(navDOM, tabsDOM) {
-            return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
-                type: "text",
-                name: "ph-search",
-                placeholder: pages.options.searchPlaceholder
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]) ]);
+        function renderLoader() {
+            return h("#ph-loader.loader-group", [ h(".bigSqr", [ h(".square.first"), h(".square.second"), h(".square.third"), h(".square.fourth") ]), h(".text", [ "loading..." ]) ]);
         }
-        function editor(navDOM, tabsDOM, DOM) {
-            return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
-                type: "text",
-                name: "ph-search",
-                placeholder: pages.options.searchPlaceholder
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), h("div#ph-content" + (DOM.fullPage ? ".fullPage" : ""), [ h("a.ph-toggle-editor", {
+        function renderAddContent() {
+            return h("#ph-content.fullPage.adding-content", [ h("fieldset", [ h("legend", [ "Many things to be added soon" ]), h("label", [ "Title", h("input.ph-title-input", {
+                oninput: function(e) {
+                    return e;
+                }
+            }) ]), h("label", [ "Name", h("input.ph-name-input", {
+                oninput: function(e) {
+                    return e;
+                }
+            }) ]), h("label", [ "Path", h("input.ph-path-input", {
+                oninput: function(e) {
+                    return e;
+                }
+            }) ]) ]) ]);
+        }
+        function renderCheatSheet() {
+            return h("#cheatSheet", {}, [ "This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:", h("p", [ h("a", {
+                target: "_blank",
+                href: "http://jbt.github.io/markdown-editor"
+            }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
+                target: "_blank",
+                href: "http://stackedit.io"
+            }, [ "http://stackedit.io" ]) ]) ]);
+        }
+        function renderEditor(tabsDOM, DOM) {
+            return h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [ h("a.ph-toggle-editor", {
                 href: "#",
                 role: "button",
                 onclick: function(event) {
                     event = event || window.event;
                     if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                    DOM.fullPage = !DOM.fullPage;
-                    DOM.loadContent();
+                    DOM.set({
+                        state: {
+                            fullPage: !DOM.state.fullPage
+                        }
+                    });
                 }
-            }, [ DOM.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a.ph-edit-btn.ph-save", {
+            }, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a.ph-edit-btn.ph-save", {
                 href: "#",
                 title: "Save",
                 onclick: function(event) {
@@ -6466,29 +6502,26 @@
                 onclick: function(event) {
                     event = event || window.event;
                     if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                    if (DOM.cheatSheet.style.display === "none") {
-                        DOM.cheatSheet.removeAttribute("style");
-                    } else {
-                        DOM.cheatSheet.style.display = "none";
-                    }
+                    DOM.set({
+                        state: {
+                            cheatSheet: !DOM.state.cheatSheet
+                        }
+                    });
                     return false;
                 }
-            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), h("#cheatSheet", {
-                style: {
-                    display: "none"
-                }
-            }, [ "This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:", h("p", [ h("a", {
-                target: "_blank",
-                href: "http://jbt.github.io/markdown-editor"
-            }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
-                target: "_blank",
-                href: "http://stackedit.io"
-            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]) ]) ]);
+            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), DOM.state.cheatSheet ? renderCheatSheet() : null, h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]) ]);
         }
-        module.exports = {
-            render: render,
-            editor: editor
-        };
+        function renderDefault(tabsDOM) {
+            return h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]);
+        }
+        function renderPage(navDOM, tabsDOM, DOM) {
+            return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
+                type: "text",
+                name: "ph-search",
+                placeholder: pages.options.searchPlaceholder
+            }) ]) ]), h("#ph-side-nav", [ navDOM ]), misc.codeMirror ? DOM.state.addingContent ? renderAddContent() : renderEditor(tabsDOM, DOM) : renderDefault(tabsDOM) ]);
+        }
+        module.exports = renderPage;
     }, {
         "./events": 115,
         "./helpers": 116,
@@ -6502,7 +6535,6 @@
                 return new Pages();
             }
             this.current = new Content();
-            this.fullPage = true;
             this.options = {
                 hideEmptyTabs: true,
                 searchPlaceholder: "Search using keywords, AFIs or titles...",
@@ -6520,7 +6552,9 @@
                     } else {
                         var opt;
                         for (opt in data.options) {
-                            this.options[opt] = data.options[opt] === "yes" ? true : data.options[opt] === "no" ? false : data.options[opt];
+                            if (this.options.hasOwnProperty(opt)) {
+                                this.options[opt] = data.options[opt] === "yes" ? true : data.options[opt] === "no" ? false : data.options[opt];
+                            }
                         }
                     }
                 }
@@ -6667,4 +6701,3 @@
         "virtual-dom/h": 81
     } ]
 }, {}, [ 117 ]);
-//# sourceMappingURL=main.js.map

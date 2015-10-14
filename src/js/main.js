@@ -10,6 +10,7 @@ var h = require("virtual-dom/h"),
 	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
+	Content = require("./content"),
 	pages = require("./pages"),
 	events = require("./events"),
 	current = pages.current,
@@ -262,20 +263,22 @@ events.on("tab.change", function ( page ) {
 	}
 });
 
+events.on("content.start", function () {
+	/**
+	 * TODO:
+	 *  This needs to perform a .setRoute() so it changes the URL
+	 *  and thus becomes the "active" page without fiddling around
+	 *  here all ghetto-like.
+	 */
 
-/*function renderLoader() {
- return (
- h("#ph-loader.loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", ["loading..."])
- ])
- );
- }*/
+	resetPage();
+	DOM.set({
+		state: {
+			addingContent: true
+		}
+	});
+	document.querySelector(".ph-btn.ph-create").className += " active";
+});
 
 function resetPage () {
 	var oldActive = document.querySelectorAll("a.active"),
@@ -285,7 +288,11 @@ function resetPage () {
 		oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
 	}
 	document.title = pages.current.title;
-	DOM.loadContent();
+	DOM.set({
+		state: {
+			addingContent: false
+		}
+	});
 }
 
 pageInit();

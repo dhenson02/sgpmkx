@@ -6,8 +6,7 @@ var h = require("virtual-dom/h"),
 	codeMirror = misc.codeMirror,
 	pages = require("./pages"),
 	events = require("./events"),
-	render = require("./page").render,
-	renderEditor = require("./page").editor,
+	render = require("./page"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs");
 
@@ -15,14 +14,30 @@ function DOM () {
 	if ( !(this instanceof DOM) ) {
 		return new DOM();
 	}
-	this.fullPage = true;
+	this.state = {
+		fullPage: true,
+		cheatSheet: false,
+		addingContent: false,
+		editorTheme: "base16-light"
+	};
 }
 
 DOM.prototype.set = function ( data ) {
 	var name;
 	for ( name in data ) {
 		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
+			if ( name !== "state" ) {
+				this[name] = data[name];
+			}
+			else {
+				var opt;
+				for ( opt in data.state ) {
+					if ( this.state.hasOwnProperty(opt) ) {
+						this.state[opt] = data.state[opt];
+					}
+				}
+				this.loadContent();
+			}
 		}
 	}
 	return this;
@@ -30,10 +45,8 @@ DOM.prototype.set = function ( data ) {
 
 DOM.prototype.preRender = function () {
 	this.navDOM = renderNav();
-	this.tabsDOM = renderTabs();
-	return ( !codeMirror ) ?
-		render(this.navDOM, this.tabsDOM) :
-		renderEditor(this.navDOM, this.tabsDOM, this);
+	this.tabsDOM = ( this.state.addingContent === false ) ? renderTabs() : null;
+	return render(this.navDOM, this.tabsDOM, this);
 };
 
 DOM.prototype.init = function () {
@@ -45,7 +58,7 @@ DOM.prototype.init = function () {
 };
 
 DOM.prototype.loadContent = function  () {
-	if ( this.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim() ) {
+	if ( this.state.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim() ) {
 		events.emit("tab.change", "Overview");
 	}
 	var refreshDOM = this.preRender();
@@ -61,7 +74,6 @@ DOM.prototype.reset = function () {
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
 	this.cheatSheet = document.getElementById("cheatSheet");
-	//this.input = document.getElementById("ph-input");
 	this.textarea = document.getElementById("ph-textarea");
 	if ( this.editor ) {
 		var wrap = this.editor.getWrapperElement();
@@ -69,11 +81,13 @@ DOM.prototype.reset = function () {
 	}
 	this.editor = null;
 	this.output = document.getElementById("ph-output");
-	var links = this.output.querySelectorAll("a"),
-		total = links.length,
-		i = 0;
-	for ( ; i < total; ++i ) {
-		misc.addEvent("click", links[i], openExternal);
+	if ( this.output ) {
+		var links = this.output.querySelectorAll("a"),
+			total = links.length,
+			i = 0;
+		for ( ; i < total; ++i ) {
+			misc.addEvent("click", links[i], openExternal);
+		}
 	}
 	function openExternal ( event ) {
 		if ( /mailto:|#\//.test(this.href) === false ) {
@@ -94,7 +108,7 @@ DOM.prototype.initEditor = function () {
 		lineNumbers: false,
 		lineWrapping: true,
 		lineSeparator: "\n",
-		theme: pages.options.editorTheme,
+		theme: this.state.editorTheme,
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList"
 		}

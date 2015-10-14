@@ -1,5 +1,4 @@
 var h = require("virtual-dom/h"),
-	createElement = require("virtual-dom/create-element"),
 	codeMirror = require("./helpers").codeMirror,
 	map = require("lodash/collection/map"),
 	pages = require("./pages"),
@@ -52,53 +51,26 @@ function renderNav () {
 	}
 	if ( codeMirror ) {
 		links.unshift(
-			h("a.ph-btn.ph-create", {
+			h("a.ph-btn.ph-create.loading", {
 				href: "#",
 				title: "New section",
 				onclick: function ( event ) {
 					event = event || window.event;
 					if ( event.preventDefault ) event.preventDefault();
 					else event.returnValue = false;
-					// Soon will not require input at all.
 
 					/**
-					 * All of the below will be re-evaluated when I'm not
-					 * sleepy.  Most of this is just proof-of-concept at the
-					 * very basic level. Replace it all with virtual-dom
-					 * rendering and possibly use Widgets since they will be
-					 * static and only change input values. Also will use
-					 * horsey (new instantiation for each level of path - ie:
-					 * Section, Program, etc).
-					 *
- 					 * @type {*|{tagName, appendChild}|Element}
+					 * TODO:
+					 *  This needs to perform a .setRoute() so it changes the URL
+					 *  and thus becomes the "active" page without fiddling around
+					 *  here all ghetto-like.
 					 */
+					// Until I work on this again, just disable it.
 
-					var createContent = document.createElement("div");
-					createContent.id = "create-content";
-					var content = document.getElementById("ph-content");
-					content.innerHTML = "Add content (coming to a web browser near you).";
-					content.appendChild(createContent);
+					// When ready to use, remove the ".loading" on this element
 
-					var inputFields = function ( num ) {
-						return (
-							h("fieldset", [
-								h("input.ph-title-input", {
-									oninput: function ( e ) {
-										return e;
-									}
-								})
-							])
-						);
-					};
-
-					createContent.appendChild(createElement(inputFields));
-
-					pages.createContent("");
-
-
-
-
-
+					// events.emit("content.start");
+					return false;
 
 				}
 			}, [
