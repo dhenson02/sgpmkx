@@ -13,7 +13,9 @@ body { opacity: 1; }
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
 		phCMCheckURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups(419)/users/getById(" + _spPageContextInfo.userId + ")",
 		phContext = "/Pages/" + _spPageContextInfo.serverRequestPath.split(/\//).pop().slice(0,-5),
-		phLive = true;
+		phLive = true,
+		phEditorTheme = "base16-light",
+		phOptionsURI = "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value";
 
     /* Get rid of the ugly nav on the left if it's there */
     try {

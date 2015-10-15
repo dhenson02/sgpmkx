@@ -30,7 +30,7 @@ function init () {
 
 events.on("page.init", function () {
 	reqwest({
-		url: baseURL + "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
+		url: baseURL + phOptionsURI,
 		method: "GET",
 		type: "json",
 		contentType: "application/json",

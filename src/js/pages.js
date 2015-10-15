@@ -8,12 +8,10 @@ function Pages () {
 		return new Pages();
 	}
 	this.current = new Content();
-	//this.addingContent = false;
 	this.options = {
 		hideEmptyTabs: true,
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
 		emptyTabsNotify: false,
-		editorTheme: "base16-light",
 		images: "/kj/kx7/PublicHealth/SiteAssets/Images"
 	};
 }
@@ -80,9 +78,20 @@ Pages.prototype.init = function ( data ) {
 				"" ) :
 				"" ) :
 				"");
+
+		/**
+		 * Quite obviously the `Level` will be equal to the number of
+		 * segments created by `/Page` there are.  Path will be `/Page/Here`
+		 * which translates to an array of [ "", "Page", "Here" ] because
+		 * of the first `/`.
+		 * @type {number}
+		 */
 		result.Level = result.Path.split("/").length - 1;
-		// This allows direct access without having to manipulate
-		// anything (aside from whitespace removal) or search/test for a match.
+
+		/**
+		 * This allows direct access using the URI without having to manipulate
+		 * anything (aside from whitespace removal) or search/test for a match.
+ 		 */
 		this[result.Path] = result;
 		urls[i] = result.Path;
 
@@ -113,6 +122,12 @@ Pages.prototype.init = function ( data ) {
 			name = page.rabbitHole || page.Page || page.Program,
 			keywords = (page.Keywords && page.Keywords.results) || [],
 			references = (page.References && page.References.results) || [];
+
+		/**
+		 * Used for searching the site quick and easy using Horsey.
+		 * @type {{text: string, value: (string|*), renderText:
+		 *     (string|title|*|b)}}
+		 */
 		this.titles[i] = {
 			text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
 			value: page.Path,
@@ -129,10 +144,6 @@ Pages.prototype.init = function ( data ) {
 		}
 		else if ( page.Program !== "" ) {
 			className = parents[page.Path] || ".ph-program.link";
-		}
-
-		if ( page.Link ) {
-			//attr["data-href"] = "#" + page.Path;
 		}
 
 		if ( page.Program !== "" ) {

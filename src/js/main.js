@@ -24,6 +24,11 @@ var h = require("virtual-dom/h"),
 				events.emit("content.loading", "/");
 			}
 		},
+		'/new': {
+			on: function () {
+				events.emit("content.adding");
+			}
+		},
 		'/(\\w+)': {
 			on: function ( section ) {
 				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
@@ -64,7 +69,7 @@ var h = require("virtual-dom/h"),
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
 	showCancelButton: true,
-	cancelButtonText: "Nope.",
+	cancelButtonText: "No",
 	confirmButtonText: "Yes!"
 });
 

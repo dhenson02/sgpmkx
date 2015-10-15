@@ -45,6 +45,15 @@ app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 	}, 200);
 });
 
+app.get("/opt", function ( req, res ) {
+	if ( cmTimer ) {
+		clearTimeout(cmTimer);
+	}
+	cmTimer = setTimeout(function () {
+		res.send({ d: { results: [{ Variable: "images", Value: "img" }] } });
+	}, 100);
+});
+
 app.get("/check/true", function ( req, res ) {
 	if ( cmTimer ) {
 		clearTimeout(cmTimer);

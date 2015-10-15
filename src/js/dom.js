@@ -17,8 +17,7 @@ function DOM () {
 	this.state = {
 		fullPage: true,
 		cheatSheet: false,
-		addingContent: false,
-		editorTheme: "base16-light"
+		addingContent: false
 	};
 }
 
@@ -108,9 +107,13 @@ DOM.prototype.initEditor = function () {
 		lineNumbers: false,
 		lineWrapping: true,
 		lineSeparator: "\n",
-		theme: this.state.editorTheme,
+		theme: phEditorTheme,
 		extraKeys: {
-			"Enter": "newlineAndIndentContinueMarkdownList"
+			"Enter": "newlineAndIndentContinueMarkdownList",
+			"Ctrl-S": function () {
+				var saveButton = document.getElementById("ph-save");
+				if ( !misc.inTransition.tempSaveText ) pages.current.savePage(saveButton)
+			}
 		}
 	});
 	this.editor.on("change", function ( e ) {

@@ -52,30 +52,6 @@ function renderAddContent () {
 	);
 }
 
-function renderCheatSheet () {
-	return (
-		h("#cheatSheet", {
-			/*style: {
-				display: "none"
-			}*/
-		}, [
-			"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
-			h("p", [
-				h("a", {
-					target: "_blank",
-					href: "http://jbt.github.io/markdown-editor"
-				}, ["http://jbt.github.io/markdown-editor"])
-			]),
-			h("p", [
-				h("a", {
-					target: "_blank",
-					href: "http://stackedit.io"
-				}, ["http://stackedit.io"])
-			])
-		])
-	);
-}
-
 function renderEditor ( tabsDOM, DOM ) {
 	return (
 		h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [
@@ -100,7 +76,7 @@ function renderEditor ( tabsDOM, DOM ) {
 			h("h1#ph-title", [String(pages.current.title || "")]),
 			tabsDOM,
 			h("#ph-buttons", [
-				h("a.ph-edit-btn.ph-save", {
+				h("a#ph-save.ph-edit-btn.ph-save", {
 					href: "#",
 					title: "Save",
 					onclick: function ( event ) {
@@ -125,20 +101,28 @@ function renderEditor ( tabsDOM, DOM ) {
 								cheatSheet: !DOM.state.cheatSheet
 							}
 						});
-
-						/*if ( DOM.cheatSheet.style.display === "none" ) {
-							DOM.cheatSheet.removeAttribute("style");
-						}
-						else {
-							DOM.cheatSheet.style.display = "none";
-						}*/
 						return false;
 					}
 				}, [
 					h("i.icon.icon-pen", ["Markdown help"])
 				])
 			]),
-			( DOM.state.cheatSheet ? renderCheatSheet() : null ),
+			h("div#cheatSheet",
+				( !DOM.state.cheatSheet ? ({ style:{display: "none"} }) : null ), [
+				"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
+				h("p", [
+					h("a", {
+						target: "_blank",
+						href: "http://jbt.github.io/markdown-editor"
+					}, ["http://jbt.github.io/markdown-editor"])
+				]),
+				h("p", [
+					h("a", {
+						target: "_blank",
+						href: "http://stackedit.io"
+					}, ["http://stackedit.io"])
+				])
+			]),
 			h("#ph-contentWrap", [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [String(pages.current.text || "")])

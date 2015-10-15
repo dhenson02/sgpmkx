@@ -52,7 +52,7 @@ function renderNav () {
 	if ( codeMirror ) {
 		links.unshift(
 			h("a.ph-btn.ph-create.loading", {
-				href: "#",
+				href: "#/new",
 				title: "New section",
 				onclick: function ( event ) {
 					event = event || window.event;

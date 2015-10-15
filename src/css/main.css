@@ -26,14 +26,10 @@ body {
 	color: #444444;
 }
 
-#ph-wrapper {
+#ph-wrapper, #ph-wrapper *, #ph-wrapper :after, #ph-wrapper :before {
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
 	box-sizing: border-box !important;
-}
-
-#ph-wrapper *, #ph-wrapper :after, #ph-wrapper :before {
-	-webkit-box-sizing: inherit !important;
-	-moz-box-sizing: inherit !important;
-	box-sizing: inherit !important;
 }
 
 .loading {
