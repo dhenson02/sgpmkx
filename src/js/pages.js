@@ -97,7 +97,7 @@ Pages.prototype.init = function ( data ) {
 
 		if ( result.Section !== "" && result.Program === "" ) {
 			this.sections[result.Section] = {
-				path: ( !result.Link ) ? "#/" + result.Section : result.Link,
+				path: ( !result.Link ) ? "/" + result.Section : result.Link,
 				title: result.Title,
 				id: result.ID,
 				links: []
@@ -155,8 +155,7 @@ Pages.prototype.init = function ( data ) {
 				className: className,
 				name: name,
 				id: page.ID,
-				icon: page.Icon || "",
-				attr: isPage ? { style: { display: "none" } } : {}
+				icon: page.Icon || ""
 			});
 		}
 	}
@@ -170,14 +169,14 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	var firstTry = title.replace(regNormalize, "");
 	path += "/" + newName.replace(regNormalize, "");
 	var pathArray = path.slice(1).split("/");
-	var keywords = null;
+	var keywords = { results: [] };
 
 	var data = {
 		'__metadata': {
 			'type': self.current.listItemType
 		},
 		'Title': title,
-		//'Keywords': keywords || [],
+		'Keywords': keywords,
 		'Overview': '### New Page :)\n#### Joy',
 		'Section': pathArray.shift() || "",
 		'Program': pathArray.shift() || "",

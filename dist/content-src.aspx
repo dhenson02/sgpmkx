@@ -52,6 +52,5 @@ body { opacity: 1; }
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/dependencies.min.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/markdown-it.min.js"></script>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/Editor/editor3.min.js"></script>
 <script type="text/javascript" src="/kj/kx7/PublicHealth/SiteAssets/Scripts/main.min.js"></script>

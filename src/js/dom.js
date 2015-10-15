@@ -6,7 +6,7 @@ var h = require("virtual-dom/h"),
 	codeMirror = misc.codeMirror,
 	pages = require("./pages"),
 	events = require("./events"),
-	render = require("./page"),
+	renderPage = require("./page"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs");
 
@@ -17,7 +17,8 @@ function DOM () {
 	this.state = {
 		fullPage: true,
 		cheatSheet: false,
-		addingContent: false
+		addingContent: false,
+		level: 0
 	};
 }
 
@@ -45,7 +46,7 @@ DOM.prototype.set = function ( data ) {
 DOM.prototype.preRender = function () {
 	this.navDOM = renderNav();
 	this.tabsDOM = ( this.state.addingContent === false ) ? renderTabs() : null;
-	return render(this.navDOM, this.tabsDOM, this);
+	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
 DOM.prototype.init = function () {
@@ -53,6 +54,12 @@ DOM.prototype.init = function () {
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
+	this.searchInput = document.getElementById("ph-search");
+	this.content = document.getElementById("ph-content");
+	this.title = document.getElementById("ph-title");
+	this.cheatSheet = document.getElementById("cheatSheet");
+	this.textarea = document.getElementById("ph-textarea");
+	this.output = document.getElementById("ph-output");
 	this.reset();
 };
 
@@ -69,17 +76,11 @@ DOM.prototype.loadContent = function  () {
 };
 
 DOM.prototype.reset = function () {
-	this.searchInput = document.getElementById("ph-search");
-	this.content = document.getElementById("ph-content");
-	this.title = document.getElementById("ph-title");
-	this.cheatSheet = document.getElementById("cheatSheet");
-	this.textarea = document.getElementById("ph-textarea");
 	if ( this.editor ) {
 		var wrap = this.editor.getWrapperElement();
 		wrap.parentNode.removeChild(wrap);
 	}
 	this.editor = null;
-	this.output = document.getElementById("ph-output");
 	if ( this.output ) {
 		var links = this.output.querySelectorAll("a"),
 			total = links.length,

@@ -70,12 +70,12 @@
 	font-size: 0.675em;
 }
 
-#ph-tabs nav li.tab-current a {
-	color: #74777B;
+#ph-tabs nav .tab-current a {
+	color: #777777; /* #777777;*/
 	/*font-weight: 900;*/
 }
 
-/*#ph-tabs nav li.tab-current .icon::before {
+/*#ph-tabs nav .tab-current .icon::before {
 	font-weight: 900;
 }*/
 
@@ -115,32 +115,42 @@
 	}
 }
 
-#ph-tabs-style-iconbox nav {
+#ph-tabs nav {
 	background: rgba(255, 255, 255, 0.4);
 }
 
-#ph-tabs-style-iconbox nav ul li a {
+#ph-tabs nav ul li a {
 	overflow: visible;
 	padding: 1.5em 0;
 	line-height: 1;
-	transition: color 0.2s;
+	transition: color .1s ease-out;
 }
 
-#ph-tabs-style-iconbox nav ul li a span {
+#ph-tabs nav ul li a span {
 	/*font-weight: 700;*/
 	font-size: 0.6em;
 }
 
-#ph-tabs-style-iconbox nav ul li.tab-current {
-	/*z-index: 1;*/
+/*#ph-tabs nav ul .tab-current {
+	z-index: 1;
+}*/
+
+#ph-tabs nav ul li .ph-tab-box {
+	border: 1px solid transparent;
+	width: 100%;
+	max-width: 120px;
+	border-radius: 12px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-#ph-tabs-style-iconbox nav ul li.tab-current a {
-	background: #FFFFFF;
-	box-shadow: -1px 0 0 #FFFFFF;
+#ph-tabs nav ul .tab-current .ph-tab-box {
+	/*background: #777777;
+	box-shadow: -1px 0 0 #777777;*/
+	border-color: #777777;
 }
 
-#ph-tabs-style-iconbox nav ul li.tab-current a::after {
+#ph-tabs nav ul .tab-current .ph-tab-box::after {
 	position: absolute;
 	top: 100%;
 	left: 50%;
@@ -149,33 +159,42 @@
 	height: 0;
 	border: solid transparent;
 	border-width: 10px;
-	border-top-color: #FFFFFF;
+	border-top-color: #777777;
 	content: '';
 	pointer-events: none;
 }
 
-#ph-tabs-style-iconbox nav ul li:first-child::before,
-#ph-tabs-style-iconbox nav ul li::after {
+/*#ph-tabs nav ul li:first-child::before,
+#ph-tabs nav ul li::after {
 	position: absolute;
 	top: 20%;
 	right: 0;
 	z-index: -1;
 	width: 1px;
 	height: 60%;
-	/*background: rgba(0,0,0,0.07);*/
+	/!*background: rgba(0,0,0,0.07);*!/
 	content: '';
-}
+}*/
 
-#ph-tabs-style-iconbox nav ul li:first-child::before {
+#ph-tabs nav ul li:first-child::before {
 	right: auto;
 	left: 0;
 }
 
-#ph-tabs-style-iconbox .icon::before {
+#ph-tabs .icon::before {
 	display: block;
 	margin: 0 0 .25em;
 }
 
 .fullPage #ph-tabs .tab-empty {
 	display: none;
+}
+
+#ph-tabs .tab-empty a,
+#ph-tabs nav ul .tab-current.tab-empty a {
+	color: #F62459;
+}
+
+#ph-tabs .tab-current.tab-empty .ph-tab-box {
+	border-color: #F62459;
 }

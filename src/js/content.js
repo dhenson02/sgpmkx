@@ -6,6 +6,7 @@ function Content () {
 	}
 	this.id = -1;
 	this.title = "";
+	this._title = "";
 	this.keywords = [];
 	this.icon = "";
 	this.text = "";
@@ -29,7 +30,12 @@ Content.prototype.set = function ( data ) {
 	var name;
 	for ( name in data ) {
 		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
+			if ( typeof data[name] === "string" ) {
+				this[name] = data[name].trim();
+			}
+			else {
+				this[name] = data[name];
+			}
 		}
 	}
 	return this;
@@ -37,7 +43,8 @@ Content.prototype.set = function ( data ) {
 
 Content.prototype.savePage = function ( self ) {
 	this.set({
-		text: this.text.trim()
+		text: this.text.trim(),
+		keywords: this.keywords
 	});
 	this[this.type.toLowerCase()] = this.text;
 	var data = {
@@ -45,7 +52,9 @@ Content.prototype.savePage = function ( self ) {
 			'type': this.listItemType
 		},
 		'Title': this.title,
-		//'Keywords': this.keywords,
+		'Keywords': {
+			results: this.keywords
+		},
 		'Overview': this.overview,
 		'Policy': this.policy,
 		'Training': this.training,

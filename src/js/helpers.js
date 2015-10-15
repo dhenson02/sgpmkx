@@ -6,18 +6,21 @@ function removeEvent ( evt, element, fnc ) {
 	return ((element.removeEventListener) ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc));
 }
 
-var md = markdownit({
+var markdownit = require("markdown-it"),
+	md = markdownit({
 		typographer: true,
 		linkify: true,
 		breaks: true,
+		xhtmlOut: true,
 		quotes: '“”‘’'
 	}),
 	inTransition = {
-		tempSaveText: null
+		output: null,
+		tempSaveText: null,
+		tab: null
 	},
 	clicked = -1,
-	codeMirror,
-	hideEmptyTabs = true;
+	codeMirror;
 
 try {
 	codeMirror = CodeMirror;
@@ -31,6 +34,5 @@ module.exports = {
 	md: md,
 	inTransition: inTransition,
 	clicked: clicked,
-	codeMirror: codeMirror,
-	hideEmptyTabs: hideEmptyTabs
+	codeMirror: codeMirror
 };

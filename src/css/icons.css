@@ -1,5 +1,5 @@
 .icon::before {
-	z-index: 5;
+	/*z-index: 5;*/
 	display: inline-block;
 
 	/* Enable Ligatures ================ */
@@ -12,7 +12,7 @@
 	font-feature-settings: "liga";
 
 	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: subpixel-antialiased;
+	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
 	margin: 0 .5em 0 0;

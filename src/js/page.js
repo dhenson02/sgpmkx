@@ -68,14 +68,31 @@ function renderEditor ( tabsDOM, DOM ) {
 							fullPage: !DOM.state.fullPage
 						}
 					});
-					//DOM.loadContent();
+				}
+			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
+			h("h1#ph-title", {
+				contentEditable: (( misc.codeMirror ) ? true : false ),
+				onblur: function () {
+					var title = this.textContent || this.innerText;
+					title = title.trim();
+					pages.current.set({
+						title: title
+					});
+					if ( title !== pages.current._title ) {
+						this.style.transition = "border .05s ease-out";
+						this.style.borderBottomColor = "#00B16A";
+						// 3px double
+					}
+					else {
+						this.removeAttribute("style");
+					}
 				}
 			}, [
-				DOM.state.fullPage ? "Show editor" : "Hide editor"
+				String(pages.current.title || "")
 			]),
-			h("h1#ph-title", [String(pages.current.title || "")]),
 			tabsDOM,
 			h("#ph-buttons", [
+				//h(".clearfix"),
 				h("a#ph-save.ph-edit-btn.ph-save", {
 					href: "#",
 					title: "Save",

@@ -1,5 +1,5 @@
 #ph-side-nav {
-	z-index: 6;
+	/*z-index: 6;*/
 	color: #FAFCFE;
 	background-color: #0072C6;
 	position: relative;
@@ -136,8 +136,6 @@
 	margin-left: auto;
 	margin-right: auto;
 	border: 1px solid;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
 	border-radius: 3px;
 	max-width: 160px;
 	text-align: center;
@@ -175,7 +173,7 @@
 #ph-nav .ph-page a {
 	color: #FAFCFE;
 	font-size: 15px;
-	padding: 5px 30px 5px 50px;
+	padding: 5px 30px 5px 60px;
 }
 
 #ph-nav .ph-rabbit-hole {
@@ -196,7 +194,7 @@
 }
 
 #ph-nav .active {
-	transition: font-weight .15s ease-out;
+	/*transition: font-weight .05s ease-out;*/
 	font-weight: bold;
 	text-shadow: 0 1px 1px #222222;
 }
@@ -204,9 +202,9 @@
 #ph-nav .ph-rabbit-hole .active {
 	transition: background .15s ease-out, border .15s ease-out;
 	color: #FFFFFF;
-	border-color: #FFFFFF;
+	border-right-color: #FFFFFF;
 	font-weight: 300;
-	background-color: #0C2949;
+	/*background-color: #0C2949;*/
 }
 
 #ph-nav .active > .place {
@@ -266,3 +264,6 @@
 	margin-left: -20px;
 }
 
+#ph-nav .ph-opened {
+	display: initial;
+}

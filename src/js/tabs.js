@@ -41,18 +41,21 @@ function renderTabs () {
 
 			return (
 				h("li" + className, [
-					h("a.icon.icon-" + tab.icon, {
-						href: "#",
-						onclick: function ( e ) {
-							e = e || window.event;
-							if ( e.preventDefault ) e.preventDefault();
-							else e.returnValue = false;
-							events.emit("tab.change", tab.title);
-							return false;
-						}
-					}, [
-						h("span", [
-							String(tab.title)
+					h("div.ph-tab-box", [
+						h("a.icon.icon-" + tab.icon, {
+							href: "#",
+							onclick: function ( e ) {
+								e = e || window.event;
+								if ( e.preventDefault ) e.preventDefault();
+								else e.returnValue = false;
+
+								events.emit("tab.change", tab.title);
+								return false;
+							}
+						}, [
+							h("span", [
+								String(tab.title)
+							])
 						])
 					])
 				])

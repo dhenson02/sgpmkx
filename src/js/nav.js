@@ -2,14 +2,22 @@ var h = require("virtual-dom/h"),
 	codeMirror = require("./helpers").codeMirror,
 	map = require("lodash/collection/map"),
 	pages = require("./pages"),
-	events = require("./events");
+	events = require("./events"),
+	hashArray, level, a;
 
 function renderLink ( link ) {
+	var c = link.href.indexOf(a),
+		attr = { style: {} };
+
+	if ( link.level > 2 && ( c < 0 || level < 2 ) ) {
+		attr.style = { display: "none" };
+	}
 	return (
-		h("li#ph-link-" + link.id + link.className, link.attr, [
-			h("a.ph-level-" + link.level, {
+		h("li#ph-link-" + link.id + link.className,
+			attr, [
+			h("a.ph-level-" + link.level + ( link.href === window.location.hash ? ".active" : "" ), {
 				href: link.href,
-				target: ( link.href.charAt(0) !== "#" ) ? "_blank" : ""
+				target: ( link.href.charAt(0) !== "#" ? "_blank" : "" )
 			}, [
 				( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
 				h("span.link-title", [String(link.title)]),
@@ -29,8 +37,8 @@ function renderSection ( section ) {
 	return (
 		h("li.ph-section.link", [
 			h("p", [
-				h("a", {
-					"href": section.path
+				h("a" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
+					"href": "#" + section.path
 				}, [
 					h("span.link-title", [String(section.title)])
 				])
@@ -43,6 +51,10 @@ function renderSection ( section ) {
 function renderNav () {
 	var links = [],
 		name;
+
+	hashArray = window.location.hash.slice(1).split(/\//g);
+	level = hashArray.length - 1;
+	a = hashArray.slice(0, 3).join("/");
 
 	for ( name in pages.sections ) {
 		if ( pages.sections.hasOwnProperty(name) ) {
@@ -81,7 +93,7 @@ function renderNav () {
 	return (
 		h("#ph-nav", [
 			h(".header", [
-				h("a", {
+				h("a" + ( window.location.hash === "#/" ? ".active" : "" ), {
 					"href": "#/"
 				}, [
 					h(".logo", [

@@ -1,5 +1,6 @@
 var	pages = require("./pages"),
 	events = require("./events"),
+	DOM = require("./dom"),
 	reqwest = require("reqwest"),
 	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
@@ -45,9 +46,7 @@ events.on("page.init", function () {
 				setup[option.Variable] = option.Value;
 				return setup;
 			}, {});
-			console.log("options: ", options);
 			pages.set({ options: options });
-			console.log("pages.options: ", pages.options);
 		},
 		error: function ( error ) {
 			console.log("Error loading settings, will go with defaults.  Error: ", error);
@@ -102,6 +101,12 @@ events.on("content.loading", function ( path ) {
 		events.emit("missing", path);
 		return false;
 	}
+	if ( inTransition.output ) {
+		return false;
+	}
+	inTransition.output = DOM.output.innerHTML;
+	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
 	reqwest({
