@@ -98,6 +98,10 @@ body {
 	border-bottom-color: #F62459;
 }
 
+#ph-title.ph-cm:focus {
+	color: #000;
+}
+
 #ph-contentWrap {
 	opacity: 1;
 	position: relative;

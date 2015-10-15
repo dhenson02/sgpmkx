@@ -209,7 +209,7 @@
 
 #ph-nav .active > .place {
 	position: absolute;
-	right: 17px;
+	right: 0; /*17px;*/
 	display: inline-block;
 	width: 0;
 	height: 0;
@@ -240,7 +240,7 @@
 	/*content: "\002B";*/
 	top: 50%;
 	right: 1em;
-	margin-right: 1em;
+	/*margin-right: 1em;*/
 	text-shadow: 0 1px 0 #133E6F;
 }
 
