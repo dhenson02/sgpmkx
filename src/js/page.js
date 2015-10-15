@@ -70,7 +70,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					});
 				}
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
-			h("h1#ph-title", {
+			h("h1#ph-title" + ( misc.codeMirror ? ".ph-cm" : "" ), {
 				contentEditable: (( misc.codeMirror ) ? true : false ),
 				onblur: function () {
 					var title = this.textContent || this.innerText;

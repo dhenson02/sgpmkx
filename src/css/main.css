@@ -27,8 +27,6 @@ body {
 }
 
 #ph-wrapper, #ph-wrapper *, #ph-wrapper :after, #ph-wrapper :before {
-	-webkit-box-sizing: border-box !important;
-	-moz-box-sizing: border-box !important;
 	box-sizing: border-box !important;
 }
 
@@ -94,6 +92,10 @@ body {
 	padding: 10px;
 	transition: border .05s ease-out;
 	/*margin: 20px;*/
+}
+
+#ph-title.ph-cm:hover {
+	border-bottom-color: #F62459;
 }
 
 #ph-contentWrap {
