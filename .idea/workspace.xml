@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="title element is now contenteditable and saves with rest when saving, much better performance (almost too good) clicking nav links since switching from DOM manipulation to virtual-dom manipulation">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/buttons.css" afterPath="$PROJECT_DIR$/src/css/buttons.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/content-src.aspx" afterPath="$PROJECT_DIR$/dist/content-src.aspx" />
+    <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/content.js" afterPath="$PROJECT_DIR$/src/js/content.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/data.js" afterPath="$PROJECT_DIR$/src/js/data.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/helpers.js" afterPath="$PROJECT_DIR$/src/js/helpers.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/icons.css" afterPath="$PROJECT_DIR$/src/css/icons.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/main.css" afterPath="$PROJECT_DIR$/src/css/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/main.js" afterPath="$PROJECT_DIR$/src/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/main_template.html" afterPath="$PROJECT_DIR$/dist/main_template.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/nav.css" afterPath="$PROJECT_DIR$/src/css/nav.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/nav.js" afterPath="$PROJECT_DIR$/src/js/nav.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/page.js" afterPath="$PROJECT_DIR$/src/js/page.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/pages.js" afterPath="$PROJECT_DIR$/src/js/pages.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/tabs.css" afterPath="$PROJECT_DIR$/src/css/tabs.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/tabs.js" afterPath="$PROJECT_DIR$/src/js/tabs.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -90,8 +76,8 @@
                       <file leaf-file-name="dom.js" pinned="false" current-in-tab="true">
                         <entry file="file://$PROJECT_DIR$/src/js/dom.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="-3.0237467">
-                              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+                            <state vertical-scroll-proportion="0.8680739">
+                              <caret line="123" column="21" selection-start-line="123" selection-start-column="21" selection-end-line="123" selection-end-column="21" />
                               <folding />
                             </state>
                           </provider>
@@ -104,8 +90,8 @@
                       <file leaf-file-name="pages.js" pinned="false" current-in-tab="true">
                         <entry file="file://$PROJECT_DIR$/src/js/pages.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="2.8175676">
-                              <caret line="129" column="11" selection-start-line="129" selection-start-column="11" selection-end-line="129" selection-end-column="11" />
+                            <state vertical-scroll-proportion="0.5371622">
+                              <caret line="171" column="37" selection-start-line="171" selection-start-column="37" selection-end-line="171" selection-end-column="37" />
                               <folding>
                                 <element signature="e#1126#1313#0" expanded="true" />
                                 <element signature="e#1637#1839#0" expanded="true" />
@@ -119,7 +105,7 @@
                         <entry file="file://$PROJECT_DIR$/src/js/content.js">
                           <provider selected="true" editor-type-id="text-editor">
                             <state vertical-scroll-proportion="0.0">
-                              <caret line="62" column="43" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
+                              <caret line="52" column="10" selection-start-line="52" selection-start-column="10" selection-end-line="52" selection-end-column="10" />
                               <folding />
                             </state>
                           </provider>
@@ -158,8 +144,8 @@
               <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="1.7746478">
-                      <caret line="150" column="1" selection-start-line="150" selection-start-column="1" selection-end-line="150" selection-end-column="1" />
+                    <state vertical-scroll-proportion="0.3309859">
+                      <caret line="109" column="30" selection-start-line="109" selection-start-column="30" selection-end-line="109" selection-end-column="30" />
                       <folding />
                     </state>
                   </provider>
@@ -231,11 +217,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="nav.css" pinned="false" current-in-tab="false">
+          <file leaf-file-name="nav.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/nav.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="203" column="19" selection-start-line="203" selection-start-column="19" selection-end-line="203" selection-end-column="19" />
+                <state vertical-scroll-proportion="-0.32786885">
+                  <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
                   <folding />
                 </state>
               </provider>
@@ -251,11 +237,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="tabs.css" pinned="false" current-in-tab="true">
+          <file leaf-file-name="tabs.css" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-6.0442624">
-                  <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="165" column="0" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -392,7 +378,6 @@
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/local-server.js" />
         <option value="$PROJECT_DIR$/dist/content-src.aspx" />
-        <option value="$PROJECT_DIR$/src/js/content.js" />
         <option value="$PROJECT_DIR$/src/js/tabs.js" />
         <option value="$PROJECT_DIR$/src/css/icons.css" />
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
@@ -406,6 +391,7 @@
         <option value="$PROJECT_DIR$/src/js/page.js" />
         <option value="$PROJECT_DIR$/src/js/data.js" />
         <option value="$PROJECT_DIR$/src/js/dom.js" />
+        <option value="$PROJECT_DIR$/src/js/content.js" />
         <option value="$PROJECT_DIR$/src/js/pages.js" />
       </list>
     </option>
@@ -756,12 +742,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00059" summary="FINALLY FIXED THE DAMN NAV BAR (mini one with overview n shit)">
-      <created>1440898026426</created>
-      <option name="number" value="00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1440898026427</updated>
-    </task>
     <task id="LOCAL-00060" summary="tabs are &quot;working&quot; but def need some CSS tuning.  Too tired.">
       <created>1440911969652</created>
       <option name="number" value="00060" />
@@ -1050,7 +1030,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444867264648</updated>
     </task>
-    <option name="localTasksCounter" value="108" />
+    <task id="LOCAL-00108" summary="title element is now contenteditable and saves with rest when saving, much better performance (almost too good) clicking nav links since switching from DOM manipulation to virtual-dom manipulation, border around current tab, colored empty tabs pink">
+      <created>1444882125881</created>
+      <option name="number" value="00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1444882125881</updated>
+    </task>
+    <option name="localTasksCounter" value="109" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1064,7 +1050,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.07686244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
@@ -1075,7 +1061,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868758" sideWeight="0.4954671" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.08632243" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14401859" sideWeight="0.50453293" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14401859" sideWeight="0.50453293" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4018583" sideWeight="0.48167127" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1132,7 +1118,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="dev setup very well off, saving and creating now save to file as well" />
     <MESSAGE value="icons and nav links aligned, new page button added to nav menu, editor hide/show moved to left." />
     <MESSAGE value="buttons and markdown cheatsheet improvements" />
     <MESSAGE value="commented out keyword section for edit/create content since no input available yet." />
@@ -1157,7 +1142,8 @@
     <MESSAGE value="add a teaser so people don't just think I left a blank page on accident." />
     <MESSAGE value="The teaser broke stuff so I had to go fix.  Oddly enough much more came from this than expected.  More v-dom integration and getting closer and closer to the finish line (well, for the adding content fiasco that is)." />
     <MESSAGE value="fixed action on cheatsheet button click, fixed box-sizing issue on navbar, added keymap in editor for Ctrl-S to save, started adding more detailed comments, options and state for pages and DOM respectively adjusted/cleaned." />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed action on cheatsheet button click, fixed box-sizing issue on navbar, added keymap in editor for Ctrl-S to save, started adding more detailed comments, options and state for pages and DOM respectively adjusted/cleaned." />
+    <MESSAGE value="title element is now contenteditable and saves with rest when saving, much better performance (almost too good) clicking nav links since switching from DOM manipulation to virtual-dom manipulation, border around current tab, colored empty tabs pink" />
+    <option name="LAST_COMMIT_MESSAGE" value="title element is now contenteditable and saves with rest when saving, much better performance (almost too good) clicking nav links since switching from DOM manipulation to virtual-dom manipulation, border around current tab, colored empty tabs pink" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1990,22 +1976,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="16" selection-start-line="77" selection-start-column="16" selection-end-line="77" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="203" column="19" selection-start-line="203" selection-start-column="19" selection-end-line="203" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/js/nav.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2040,14 +2010,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/content.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="62" column="43" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dist/main_template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-2.2222223">
@@ -2064,46 +2026,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/page.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.7746478">
-          <caret line="150" column="1" selection-start-line="150" selection-start-column="1" selection-end-line="150" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/css/buttons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.0442624">
-          <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/pages.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.8175676">
-          <caret line="129" column="11" selection-start-line="129" selection-start-column="11" selection-end-line="129" selection-end-column="11" />
-          <folding>
-            <element signature="e#1126#1313#0" expanded="true" />
-            <element signature="e#1637#1839#0" expanded="true" />
-            <element signature="e#3478#3637#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/dom.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.0237467">
-          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -2115,6 +2041,66 @@
           <folding>
             <element signature="e#343#778#0" expanded="false" />
             <element signature="e#5600#7846#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/dom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8680739">
+          <caret line="123" column="21" selection-start-line="123" selection-start-column="21" selection-end-line="123" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/page.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3309859">
+          <caret line="109" column="30" selection-start-line="109" selection-start-column="30" selection-end-line="109" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="165" column="0" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="77" column="16" selection-start-line="77" selection-start-column="16" selection-end-line="77" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.32786885">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="10" selection-start-line="52" selection-start-column="10" selection-end-line="52" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/pages.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5371622">
+          <caret line="171" column="37" selection-start-line="171" selection-start-column="37" selection-end-line="171" selection-end-column="37" />
+          <folding>
+            <element signature="e#1126#1313#0" expanded="true" />
+            <element signature="e#1637#1839#0" expanded="true" />
+            <element signature="e#3478#3637#0" expanded="true" />
           </folding>
         </state>
       </provider>

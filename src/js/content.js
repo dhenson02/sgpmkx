@@ -52,9 +52,9 @@ Content.prototype.savePage = function ( self ) {
 			'type': this.listItemType
 		},
 		'Title': this.title,
-		'Keywords': {
+		/*'Keywords': {
 			results: this.keywords
-		},
+		},*/
 		'Overview': this.overview,
 		'Policy': this.policy,
 		'Training': this.training,

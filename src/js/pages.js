@@ -169,14 +169,14 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	var firstTry = title.replace(regNormalize, "");
 	path += "/" + newName.replace(regNormalize, "");
 	var pathArray = path.slice(1).split("/");
-	var keywords = { results: [] };
+	//var keywords = { results: [] };
 
 	var data = {
 		'__metadata': {
 			'type': self.current.listItemType
 		},
 		'Title': title,
-		'Keywords': keywords,
+		//'Keywords': keywords,
 		'Overview': '### New Page :)\n#### Joy',
 		'Section': pathArray.shift() || "",
 		'Program': pathArray.shift() || "",
