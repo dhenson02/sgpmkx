@@ -156,6 +156,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					h("i.icon.icon-pen", ["Markdown help"])
 				])
 			]),
+
 			h("#cheatSheet", ( !DOM.state.cheatSheet ? { style: { display: "none" } } : null ), [
 				"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
 				h("p", [
@@ -171,12 +172,14 @@ function renderEditor ( tabsDOM, DOM ) {
 					}, ["http://stackedit.io"])
 				])
 			]),
+
 			h("#ph-contentWrap", [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [String(pages.current.text || "")])
 				]),
 				h("#ph-output")
 			]),
+
 			h(".clearfix"),
 			h("small.ph-modified-date", [
 				"Last updated: " + pages.current.modified.toLocaleDateString()
@@ -198,11 +201,10 @@ function renderDefault ( tabsDOM ) {
 }
 
 function renderPage ( navDOM, tabsDOM, DOM ) {
-	console.log(DOM.state.addingContent);
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", {
-				style: ( DOM.state.fullPage ? {} : {display:"none"} )
+				style: ( pages.options.hideSearchWhileEditing && !DOM.state.fullPage ? { display: "none" } : {} )
 			}, [
 				h("label", [
 					h("input#ph-search", {

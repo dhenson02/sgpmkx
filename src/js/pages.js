@@ -14,7 +14,9 @@ function Pages () {
 		emptyTabsNotify: false,
 		images: "/kj/kx7/PublicHealth/SiteAssets/Images",
 		contribPOCName: "",
-		contribPOCEmail: ""
+		contribPOCEmail: "",
+		hideSearchWhileEditing: true,
+		hideNavWhileEditing: true
 	};
 }
 

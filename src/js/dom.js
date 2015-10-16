@@ -44,8 +44,8 @@ DOM.prototype.set = function ( data ) {
 };
 
 DOM.prototype.preRender = function () {
-	this.navDOM =  this.state.fullPage ? renderNav() : null;
-	this.tabsDOM =  /*this.state.addingContent ? null : */renderTabs();
+	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav() : null;
+	this.tabsDOM = renderTabs();
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
