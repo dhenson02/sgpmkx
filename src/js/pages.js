@@ -13,8 +13,10 @@ function Pages () {
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
 		emptyTabsNotify: false,
 		images: "/kj/kx7/PublicHealth/SiteAssets/Images",
-		contribPOCName: "",
-		contribPOCEmail: "",
+		contribPOCName: "Jane Dizoe",
+		contribPOCEmail: "joe.dirt@example.com",
+		contribEmailSubject: "Contribution to PH Kx",
+		contribEmailBody: "I thought this amazing tool I made could benefit others.  Here's why:\n\n",
 		hideSearchWhileEditing: true,
 		hideNavWhileEditing: true
 	};
@@ -31,9 +33,9 @@ Pages.prototype.set = function ( data ) {
 				var opt;
 				for ( opt in data.options ) {
 					if ( this.options.hasOwnProperty(opt) ) {
-						this.options[opt] = ( data.options[opt] === "yes" ) ?
+						this.options[opt] = ( data.options[opt] === "yes" || data.options[opt] === "true" ) ?
 							true :
-							( data.options[opt] === "no" ) ?
+							( data.options[opt] === "no" || data.options[opt] === "false" ) ?
 								false :
 								data.options[opt];
 					}
@@ -71,7 +73,6 @@ Pages.prototype.init = function ( data ) {
 		 *
 		 *     PS - `rabbitHole` can be seen on the List as `SubPage` ;)
 		 *
-		 * @type {string}
 		 */
 		result.Path = "/" + (( result.Section !== "" ) ?
 			result.Section + (( result.Program !== "" ) ?
@@ -129,8 +130,6 @@ Pages.prototype.init = function ( data ) {
 
 		/**
 		 * Used for searching the site quick and easy using Horsey.
-		 * @type {{text: string, value: (string|*), renderText:
-		 *     (string|title|*|b)}}
 		 */
 		this.titles[i] = {
 			text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),

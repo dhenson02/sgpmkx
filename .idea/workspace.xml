@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local-server.js" afterPath="$PROJECT_DIR$/local-server.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/nav.css" afterPath="$PROJECT_DIR$/src/css/nav.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/page.js" afterPath="$PROJECT_DIR$/src/js/page.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/pages.js" afterPath="$PROJECT_DIR$/src/js/pages.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/tabs.css" afterPath="$PROJECT_DIR$/src/css/tabs.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/tabs.js" afterPath="$PROJECT_DIR$/src/js/tabs.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -44,11 +49,11 @@
                       </provider>
                     </entry>
                   </file>
-                  <file leaf-file-name="data.js" pinned="false" current-in-tab="false">
+                  <file leaf-file-name="data.js" pinned="false" current-in-tab="true">
                     <entry file="file://$PROJECT_DIR$/src/js/data.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.0">
-                          <caret line="222" column="18" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
+                        <state vertical-scroll-proportion="0.60761344">
+                          <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
                           <folding>
                             <element signature="n#!!block;n#init#0" expanded="false" />
                             <element signature="e#343#778#0" expanded="false" />
@@ -59,14 +64,6 @@
                             <element signature="e#1219#1286#0" expanded="false" />
                             <element signature="e#1362#1499#0" expanded="false" />
                             <element signature="e#1525#1562#0" expanded="false" />
-                            <element signature="e#1611#2853#0" expanded="false" />
-                            <element signature="e#1711#2849#0" expanded="false" />
-                            <element signature="e#1944#2098#0" expanded="false" />
-                            <element signature="e#2129#2767#0" expanded="false" />
-                            <element signature="e#2177#2201#0" expanded="false" />
-                            <element signature="e#2394#2763#0" expanded="false" />
-                            <element signature="e#2411#2756#0" expanded="false" />
-                            <element signature="e#2797#2846#0" expanded="false" />
                             <element signature="e#4132#5655#0" expanded="false" />
                             <element signature="e#4143#5651#0" expanded="false" />
                             <element signature="e#4251#4373#0" expanded="false" />
@@ -84,11 +81,11 @@
                       </provider>
                     </entry>
                   </file>
-                  <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
+                  <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
                     <entry file="file://$PROJECT_DIR$/src/js/main.js">
                       <provider selected="true" editor-type-id="text-editor">
-                        <state vertical-scroll-proportion="0.56619716">
-                          <caret line="185" column="0" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
+                        <state vertical-scroll-proportion="0.0">
+                          <caret line="179" column="26" selection-start-line="179" selection-start-column="26" selection-end-line="179" selection-end-column="26" />
                           <folding />
                         </state>
                       </provider>
@@ -103,8 +100,8 @@
                       <file leaf-file-name="dom.js" pinned="false" current-in-tab="true">
                         <entry file="file://$PROJECT_DIR$/src/js/dom.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="0.5194805">
-                              <caret line="48" column="55" selection-start-line="48" selection-start-column="55" selection-end-line="48" selection-end-column="55" />
+                            <state vertical-scroll-proportion="1.8130082">
+                              <caret line="71" column="5" selection-start-line="71" selection-start-column="5" selection-end-line="71" selection-end-column="5" />
                               <folding />
                             </state>
                           </provider>
@@ -114,25 +111,25 @@
                   </split-first>
                   <split-second>
                     <leaf>
-                      <file leaf-file-name="pages.js" pinned="false" current-in-tab="true">
+                      <file leaf-file-name="pages.js" pinned="false" current-in-tab="false">
                         <entry file="file://$PROJECT_DIR$/src/js/pages.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="0.41724136">
-                              <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+                            <state vertical-scroll-proportion="0.0">
+                              <caret line="145" column="51" selection-start-line="145" selection-start-column="51" selection-end-line="145" selection-end-column="51" />
                               <folding>
-                                <element signature="e#1232#1419#0" expanded="true" />
-                                <element signature="e#1743#1945#0" expanded="true" />
-                                <element signature="e#3584#3743#0" expanded="true" />
+                                <element signature="e#1472#1659#0" expanded="true" />
+                                <element signature="e#1983#2165#0" expanded="true" />
+                                <element signature="e#3804#3875#0" expanded="true" />
                               </folding>
                             </state>
                           </provider>
                         </entry>
                       </file>
-                      <file leaf-file-name="content.js" pinned="false" current-in-tab="false">
+                      <file leaf-file-name="content.js" pinned="false" current-in-tab="true">
                         <entry file="file://$PROJECT_DIR$/src/js/content.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="0.0">
-                              <caret line="48" column="31" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
+                            <state vertical-scroll-proportion="4.1971326">
+                              <caret line="61" column="34" selection-start-line="61" selection-start-column="34" selection-end-line="61" selection-end-column="34" />
                               <folding />
                             </state>
                           </provider>
@@ -146,11 +143,11 @@
           </split-first>
           <split-second>
             <leaf>
-              <file leaf-file-name="tabs.js" pinned="false" current-in-tab="false">
+              <file leaf-file-name="tabs.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.0">
-                      <caret line="60" column="77" selection-start-line="60" selection-start-column="77" selection-end-line="60" selection-end-column="77" />
+                    <state vertical-scroll-proportion="0.3660322">
+                      <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
                       <folding />
                     </state>
                   </provider>
@@ -160,23 +157,23 @@
                 <entry file="file://$PROJECT_DIR$/src/js/nav.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state vertical-scroll-proportion="0.0">
-                      <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
+                      <caret line="24" column="14" selection-start-line="24" selection-start-column="14" selection-end-line="24" selection-end-column="14" />
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
+              <file leaf-file-name="page.js" pinned="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.5070422">
-                      <caret line="119" column="41" selection-start-line="119" selection-start-column="41" selection-end-line="119" selection-end-column="41" />
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="57" column="12" selection-start-line="57" selection-start-column="12" selection-end-line="57" selection-end-column="12" />
                       <folding>
                         <element signature="e#505#634#0" expanded="true" />
-                        <element signature="e#1318#1686#0" expanded="false" />
-                        <element signature="e#1794#2090#0" expanded="false" />
-                        <element signature="e#2174#2735#0" expanded="false" />
-                        <element signature="e#3756#4144#0" expanded="false" />
+                        <element signature="e#1312#1680#0" expanded="false" />
+                        <element signature="e#1788#2084#0" expanded="false" />
+                        <element signature="e#2168#2729#0" expanded="false" />
+                        <element signature="e#3750#4138#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -262,7 +259,7 @@
             <entry file="file://$PROJECT_DIR$/src/css/nav.css">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
+                  <caret line="206" column="0" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -281,8 +278,8 @@
           <file leaf-file-name="tabs.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.25826773">
-                  <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.21875">
+                  <caret line="205" column="16" selection-start-line="205" selection-start-column="16" selection-end-line="205" selection-end-column="16" />
                   <folding />
                 </state>
               </provider>
@@ -415,24 +412,24 @@
         <option value="$PROJECT_DIR$/src/css/loader.css" />
         <option value="$PROJECT_DIR$/src/js/store.js" />
         <option value="$PROJECT_DIR$/src/js/events.js" />
-        <option value="$PROJECT_DIR$/local-server.js" />
         <option value="$PROJECT_DIR$/src/css/icons.css" />
         <option value="$PROJECT_DIR$/src/js/helpers.js" />
         <option value="$PROJECT_DIR$/src/js/content.js" />
         <option value="$PROJECT_DIR$/src/js/data.js" />
         <option value="$PROJECT_DIR$/dist/content-src.aspx" />
-        <option value="$PROJECT_DIR$/src/js/nav.js" />
         <option value="$PROJECT_DIR$/src/js/main.js" />
         <option value="$PROJECT_DIR$/src/css/main.css" />
         <option value="$PROJECT_DIR$/dist/main_template.html" />
-        <option value="$PROJECT_DIR$/src/js/tabs.js" />
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/src/css/create.css" />
-        <option value="$PROJECT_DIR$/src/css/nav.css" />
-        <option value="$PROJECT_DIR$/src/js/pages.js" />
-        <option value="$PROJECT_DIR$/src/js/dom.js" />
+        <option value="$PROJECT_DIR$/local-server.js" />
         <option value="$PROJECT_DIR$/src/js/page.js" />
+        <option value="$PROJECT_DIR$/src/js/dom.js" />
+        <option value="$PROJECT_DIR$/src/js/tabs.js" />
+        <option value="$PROJECT_DIR$/src/js/pages.js" />
+        <option value="$PROJECT_DIR$/src/js/nav.js" />
+        <option value="$PROJECT_DIR$/src/css/nav.css" />
         <option value="$PROJECT_DIR$/src/css/tabs.css" />
       </list>
     </option>
@@ -769,12 +766,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00068" summary="tab auto-activated with tab-current class upon page load.  moved some of the pageSetup() code to the ASPX file to be done immediately rather than waiting.   sub-parent &amp; parent classes and the children classes (ph-rabbit-hole) setup but no CSS written yet.">
-      <created>1442062126564</created>
-      <option name="number" value="00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1442062126564</updated>
-    </task>
     <task id="LOCAL-00069" summary="adding page load (full page) animation, cant get it high enough in the code because of SharePoint so we'll make due with the vdom and just use a timer to make it last longer">
       <created>1442066082594</created>
       <option name="number" value="00069" />
@@ -1063,7 +1054,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444968164236</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="current tab does not react to an :active state.">
+      <created>1444968728974</created>
+      <option name="number" value="00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1444968728974</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1079,16 +1076,17 @@
     <frame x="-1" y="27" width="2562" height="1024" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.07686244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49389043" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18350755" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868758" sideWeight="0.4954671" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.49862042" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17537747" sideWeight="0.5061096" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.07686244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3437863" sideWeight="0.48548248" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.08632243" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14401859" sideWeight="0.50453293" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991722" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4018583" sideWeight="0.48167127" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1100,7 +1098,6 @@
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3437863" sideWeight="0.48548248" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -1145,7 +1142,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="toggle editor &quot;button&quot; is now a basic link almost, active link color adjusted on nav, local dev improved/corrected (data variable accidental insertion in complete())." />
     <MESSAGE value="buttons styled, navbar better styling with padding, alignments, markdown-it settings adjusted (no code highlighting necessary)." />
     <MESSAGE value="better styling for editor toggle and (this was a couple commits ago but...) external links inside of #ph-output now open in new window/tab" />
     <MESSAGE value="tables in #ph-output have 1em margin top/bottom" />
@@ -1170,7 +1166,8 @@
     <MESSAGE value="re-worked virtual-dom rendering to include a bit more, more responsive feel, full screen view while editing (may have done in previous commit actually), better event handling (title input takes ENTER now to blur), content add button and wrapper added to #ph-content and open/close functionality added." />
     <MESSAGE value="better styling for navbar (font sizes and padding mainly), hide search if viewing content editor" />
     <MESSAGE value="new site-provided options added - hideNav/SearchWhileEditing.  self-explanatory." />
-    <option name="LAST_COMMIT_MESSAGE" value="new site-provided options added - hideNav/SearchWhileEditing.  self-explanatory." />
+    <MESSAGE value="current tab does not react to an :active state." />
+    <option name="LAST_COMMIT_MESSAGE" value="current tab does not react to an :active state." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1285,9 +1282,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="25" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1407,9 +1404,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1435,9 +1432,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="1" column="7" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1481,9 +1478,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1527,9 +1524,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1573,9 +1570,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1611,9 +1608,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1649,9 +1646,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1908,14 +1905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/local-server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3536068">
@@ -1964,52 +1953,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/data.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="222" column="18" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
-          <folding>
-            <element signature="n#!!block;n#init#0" expanded="false" />
-            <element signature="e#343#778#0" expanded="false" />
-            <element signature="e#815#1569#0" expanded="false" />
-            <element signature="e#826#1565#0" expanded="false" />
-            <element signature="e#965#1119#0" expanded="false" />
-            <element signature="e#1150#1332#0" expanded="false" />
-            <element signature="e#1219#1286#0" expanded="false" />
-            <element signature="e#1362#1499#0" expanded="false" />
-            <element signature="e#1525#1562#0" expanded="false" />
-            <element signature="e#1611#2853#0" expanded="false" />
-            <element signature="e#1711#2849#0" expanded="false" />
-            <element signature="e#1944#2098#0" expanded="false" />
-            <element signature="e#2129#2767#0" expanded="false" />
-            <element signature="e#2177#2201#0" expanded="false" />
-            <element signature="e#2394#2763#0" expanded="false" />
-            <element signature="e#2411#2756#0" expanded="false" />
-            <element signature="e#2797#2846#0" expanded="false" />
-            <element signature="e#4132#5655#0" expanded="false" />
-            <element signature="e#4143#5651#0" expanded="false" />
-            <element signature="e#4251#4373#0" expanded="false" />
-            <element signature="e#4403#5377#0" expanded="false" />
-            <element signature="e#4416#5371#0" expanded="false" />
-            <element signature="e#4597#4831#0" expanded="false" />
-            <element signature="e#4858#5105#0" expanded="false" />
-            <element signature="e#4876#5097#0" expanded="false" />
-            <element signature="e#5137#5366#0" expanded="false" />
-            <element signature="e#5155#5333#0" expanded="false" />
-            <element signature="e#5407#5648#0" expanded="false" />
-            <element signature="e#5423#5589#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/content.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="31" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dist/main_template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.43338212">
@@ -2030,30 +1973,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56619716">
-          <caret line="185" column="0" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="60" column="77" selection-start-line="60" selection-start-column="77" selection-end-line="60" selection-end-column="77" />
           <folding />
         </state>
       </provider>
@@ -2100,52 +2019,122 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
+    <entry file="file://$PROJECT_DIR$/src/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
+          <caret line="179" column="26" selection-start-line="179" selection-start-column="26" selection-end-line="179" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/pages.js">
+    <entry file="file://$PROJECT_DIR$/local-server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41724136">
-          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
-          <folding>
-            <element signature="e#1232#1419#0" expanded="true" />
-            <element signature="e#1743#1945#0" expanded="true" />
-            <element signature="e#3584#3743#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.35211268">
+          <caret line="52" column="34" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/page.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5070422">
-          <caret line="119" column="41" selection-start-line="119" selection-start-column="41" selection-end-line="119" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="57" column="12" selection-start-line="57" selection-start-column="12" selection-end-line="57" selection-end-column="12" />
           <folding>
             <element signature="e#505#634#0" expanded="true" />
-            <element signature="e#1318#1686#0" expanded="false" />
-            <element signature="e#1794#2090#0" expanded="false" />
-            <element signature="e#2174#2735#0" expanded="false" />
-            <element signature="e#3756#4144#0" expanded="false" />
+            <element signature="e#1312#1680#0" expanded="false" />
+            <element signature="e#1788#2084#0" expanded="false" />
+            <element signature="e#2168#2729#0" expanded="false" />
+            <element signature="e#3750#4138#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/pages.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="145" column="51" selection-start-line="145" selection-start-column="51" selection-end-line="145" selection-end-column="51" />
+          <folding>
+            <element signature="e#1472#1659#0" expanded="true" />
+            <element signature="e#1983#2165#0" expanded="true" />
+            <element signature="e#3804#3875#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/dom.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5194805">
-          <caret line="48" column="55" selection-start-line="48" selection-start-column="55" selection-end-line="48" selection-end-column="55" />
+        <state vertical-scroll-proportion="1.8130082">
+          <caret line="71" column="5" selection-start-line="71" selection-start-column="5" selection-end-line="71" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/data.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.60761344">
+          <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
+          <folding>
+            <element signature="n#!!block;n#init#0" expanded="false" />
+            <element signature="e#343#778#0" expanded="false" />
+            <element signature="e#815#1569#0" expanded="false" />
+            <element signature="e#826#1565#0" expanded="false" />
+            <element signature="e#965#1119#0" expanded="false" />
+            <element signature="e#1150#1332#0" expanded="false" />
+            <element signature="e#1219#1286#0" expanded="false" />
+            <element signature="e#1362#1499#0" expanded="false" />
+            <element signature="e#1525#1562#0" expanded="false" />
+            <element signature="e#4132#5655#0" expanded="false" />
+            <element signature="e#4143#5651#0" expanded="false" />
+            <element signature="e#4251#4373#0" expanded="false" />
+            <element signature="e#4403#5377#0" expanded="false" />
+            <element signature="e#4416#5371#0" expanded="false" />
+            <element signature="e#4597#4831#0" expanded="false" />
+            <element signature="e#4858#5105#0" expanded="false" />
+            <element signature="e#4876#5097#0" expanded="false" />
+            <element signature="e#5137#5366#0" expanded="false" />
+            <element signature="e#5155#5333#0" expanded="false" />
+            <element signature="e#5407#5648#0" expanded="false" />
+            <element signature="e#5423#5589#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/content.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.1971326">
+          <caret line="61" column="34" selection-start-line="61" selection-start-column="34" selection-end-line="61" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="206" column="0" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/nav.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="14" selection-start-line="24" selection-start-column="14" selection-end-line="24" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/tabs.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3660322">
+          <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.25826773">
-          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.21875">
+          <caret line="205" column="16" selection-start-line="205" selection-start-column="16" selection-end-line="205" selection-end-column="16" />
           <folding />
         </state>
       </provider>

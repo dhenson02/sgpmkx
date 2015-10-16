@@ -57,7 +57,7 @@ function renderAddContent () {
 function renderEditor ( tabsDOM, DOM ) {
 	return (
 		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ) /*+ ( DOM.state.addingContent ? ".adding-content" : "" )*/, [
-			h("#ph-create-wrap", [ ( DOM.state.addingContent ? renderAddContent() : null ) ]),
+			h("#ph-create-wrap", [DOM.state.addingContent ? renderAddContent() : null]),
 
 			h("a.ph-btn.ph-create", {
 				href: "#",

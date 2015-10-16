@@ -67,7 +67,7 @@ DOM.prototype.init = function () {
 };
 
 DOM.prototype.loadContent = function  () {
-	if ( this.state.fullPage && !pages.current[pages.current._type] ) {
+	if ( this.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions" ) {
 		events.emit("tab.change", "Overview");
 	}
 	var refreshDOM = this.preRender();

@@ -202,20 +202,15 @@
 	padding: 15px 30px 15px 65px;
 	text-align: left;
 	text-transform: uppercase;
-	font-size: 17px;
+	font-size: 15px;
 }
 
 #ph-nav .ph-parent + .ph-sub-parent a {
 	padding-top: 10px;
 }
 
-#ph-nav .ph-rabbit-hole:last-of-type {
-	margin-bottom: 15px;
-}
-
-#ph-nav .ph-sub-parent,
-#ph-nav .ph-rabbit-hole {
-	margin-left: -20px;
+#ph-nav .ph-rabbit-hole  {
+	padding-bottom: 10px;
 }
 
 #ph-nav .ph-opened {

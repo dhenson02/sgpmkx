@@ -128,7 +128,7 @@
 
 #ph-tabs nav ul li a {
 	overflow: visible;
-	padding: 1.5em 0;
+	padding: 1em 0;
 	line-height: 1;
 	transition: color .05s ease-out;
 }
@@ -206,6 +206,24 @@
 	border-color: #F62459;
 }
 
-.ph-contrib-poc {
-	display: none;
+#ph-tabs .ph-tab-contributions {
+
+}
+
+ #ph-tabs .ph-tab-contributions .ph-contrib-poc {
+	opacity: 0;
+	transition: opacity .075s ease-out;
+	padding: 5px;
+	font-size: .6em;
+	color: #F62459;
+}
+
+/*#ph-tabs .ph-tab-contributions .ph-tab-box:hover + .ph-contrib-poc,*/
+#ph-tabs .ph-tab-contributions.tab-current .ph-contrib-poc {
+	opacity: 1;
+	transition: opacity .075s ease-out;
+}
+
+#ph-tabs .ph-contrib-poc:hover {
+	color: #000;
 }

@@ -50,7 +50,8 @@ app.get("/opt", function ( req, res ) {
 		clearTimeout(cmTimer);
 	}
 	cmTimer = setTimeout(function () {
-		res.send({ d: { results: [{ Variable: "images", Value: "img" }] } });
+		res.send({ d: { results: [
+			{Variable: "hideSearchWhileEditing", Value: "false"}, { Variable: "images", Value: "img" }] } });
 	}, 100);
 });
 
