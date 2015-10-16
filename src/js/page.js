@@ -20,33 +20,35 @@ function renderLoader () {
 
 function renderAddContent () {
 	return (
-		h("#ph-content.fullPage.adding-content", [
-			h("fieldset", [
-				h("legend", ["Many things to be added soon"]),
-				h("label", [
-					"Title",
-					h("input.ph-title-input", {
-						oninput: function ( e ) {
-							return e;
-						}
-					})
-				]),
-				h("label", [
-					"Name",
-					h("input.ph-name-input", {
-						oninput: function ( e ) {
-							return e;
-						}
-					})
-				]),
-				h("label", [
-					"Path",
-					h("input.ph-path-input", {
-						oninput: function ( e ) {
-							return e;
-						}
-					})
-				])
+		h("fieldset", [
+			h("legend", ["Many things to be added soon"]),
+		/**
+		 * Iterate path into X number of horsey instances (use div)
+		 * Underneath show live view of what URI is going to be
+		 */
+			h("label", [
+				"Title",
+				h("input.ph-title-input", {
+					oninput: function ( e ) {
+						return e;
+					}
+				})
+			]),
+			h("label", [
+				"Name",
+				h("input.ph-name-input", {
+					oninput: function ( e ) {
+						return e;
+					}
+				})
+			]),
+			h("label", [
+				"Path",
+				h("input.ph-path-input", {
+					oninput: function ( e ) {
+						return e;
+					}
+				})
 			])
 		])
 	);
@@ -54,7 +56,28 @@ function renderAddContent () {
 
 function renderEditor ( tabsDOM, DOM ) {
 	return (
-		h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [
+		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ) /*+ ( DOM.state.addingContent ? ".adding-content" : "" )*/, [
+			h("#ph-create-wrap", [ ( DOM.state.addingContent ? renderAddContent() : null ) ]),
+
+			h("a.ph-btn.ph-create", {
+				href: "#",
+				title: "New section",
+				style: (( phAddClass ) ? { display: "none" } : {}),
+				onclick: function ( event ) {
+					event = event || window.event;
+					if ( event.preventDefault ) event.preventDefault();
+					else event.returnValue = false;
+
+					DOM.set({
+						state: {
+							addingContent: !DOM.state.addingContent
+						}
+					});
+				}
+			}, [h("span.btn-title", [DOM.state.addingContent ? "Cancel" : "Add content"])]),
+
+			h(".clearfix"),
+
 			h("a.ph-toggle-editor", {
 				href: "#",
 				role: "button",
@@ -70,10 +93,11 @@ function renderEditor ( tabsDOM, DOM ) {
 					});
 				}
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
-			h("h1#ph-title" + ( misc.codeMirror ? ".ph-cm" : "" ), {
-				contentEditable: (( misc.codeMirror ) ? true : false ),
-				oninput: function ( e ) {
-					if ( e.keyCode === 13 || e.keyCode === 27 ) {
+
+			h("h1#ph-title.ph-cm", {
+				contentEditable: true,
+				onkeypress: function ( e ) {
+					if ( e.which == 13 || e.keyCode == 13 ) {
 						this.blur();
 						return false;
 					}
@@ -93,10 +117,10 @@ function renderEditor ( tabsDOM, DOM ) {
 						this.removeAttribute("style");
 					}
 				}
-			}, [
-				String(pages.current.title || "")
-			]),
-			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [tabsDOM]),
+			}, [String(pages.current.title || "")]),
+
+			h("#ph-tabs.ph-tabs", [tabsDOM]),
+
 			h("#ph-buttons", [
 				//h(".clearfix"),
 				h("a#ph-save.ph-edit-btn.ph-save", {
@@ -107,7 +131,9 @@ function renderEditor ( tabsDOM, DOM ) {
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
-						if ( !inTransition.tempSaveText ) pages.current.savePage(this);
+						if ( !inTransition.tempSaveText ) {
+							pages.current.savePage(this);
+						}
 					}
 				}, [
 					h("i.icon.icon-diskette", ["Save"])
@@ -130,8 +156,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					h("i.icon.icon-pen", ["Markdown help"])
 				])
 			]),
-			h("div#cheatSheet",
-				( !DOM.state.cheatSheet ? ({ style:{display: "none"} }) : null ), [
+			h("#cheatSheet", ( !DOM.state.cheatSheet ? { style: { display: "none" } } : null ), [
 				"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
 				h("p", [
 					h("a", {
@@ -150,11 +175,11 @@ function renderEditor ( tabsDOM, DOM ) {
 				h("#ph-input", [
 					h("textarea#ph-textarea", [String(pages.current.text || "")])
 				]),
-				h("#ph-output"),
-			    h(".clearfix"),
-				h("small.ph-modified-date", [
-					"Last updated: " + pages.current.modified.toLocaleDateString()
-				])
+				h("#ph-output")
+			]),
+			h(".clearfix"),
+			h("small.ph-modified-date", [
+				"Last updated: " + pages.current.modified.toLocaleDateString()
 			])
 		])
 	);
@@ -164,7 +189,7 @@ function renderDefault ( tabsDOM ) {
 	return (
 		h("#ph-content.fullPage", [
 			h("h1#ph-title", [String(pages.current.title || "")]),
-			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [tabsDOM]),
+			h("#ph-tabs.ph-tabs", [tabsDOM]),
 			h("#ph-contentWrap", [
 				h("#ph-output")
 			])
@@ -173,6 +198,7 @@ function renderDefault ( tabsDOM ) {
 }
 
 function renderPage ( navDOM, tabsDOM, DOM ) {
+	console.log(DOM.state.addingContent);
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", [
@@ -185,13 +211,7 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 				])
 			]),
 			h("#ph-side-nav", [navDOM]),
-			(
-				( misc.codeMirror ) ?
-					(
-						DOM.state.addingContent ? renderAddContent() : renderEditor(tabsDOM, DOM)
-					) :
-					renderDefault(tabsDOM)
-			)
+			( ( misc.codeMirror ) ? renderEditor(tabsDOM, DOM) : renderDefault(tabsDOM) )
 		])
 	);
 }

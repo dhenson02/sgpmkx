@@ -5,9 +5,6 @@
 	position: relative;
 	float: left;
 	clear: none;
-	/*left: 0;
-	  bottom: 0;
-	  top: 0;*/
 	width: 320px;
 	height: 100%;
 	overflow: hidden;
@@ -29,7 +26,6 @@
 
 #ph-nav .header {
 	padding-top: 10px;
-	padding-right: 17px;
 	padding-bottom: 10px;
 }
 
@@ -40,15 +36,6 @@
 #ph-nav .text small {
 	font-size: .65em;
 }
-
-/*#ph-nav {
-  position: relative;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 337px;
-  overflow: auto;
-}*/
 
 #ph-nav a,
 #ph-nav a:hover {
@@ -64,20 +51,15 @@
 }
 
 #ph-nav a:not(.active):active {
-	/*color: #FFA319;*/
-	/*color: #DB84E1;*/
 	color: #81B3D7;
 }
 
 .link .icon::before,
 .ph-btn .icon::before {
 	margin: 0;
-	/*width: 24px;*/
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	/*left: 0;*/
-	/*right: 100%;*/
 }
 
 .ph-section .btn-title,
@@ -102,20 +84,6 @@
 	display: none;
 }
 
-/*
-#ph-nav hr {
-  display: block;
-  color: #FFFFFF;
-  height: 1px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-top: 1px solid;
-  /!*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";*!/
-  opacity: .2;
-}
-*/
-
 #ph-nav ul {
 	margin: 0;
 }
@@ -131,10 +99,9 @@
 	position: relative;
 }
 
-#ph-nav .ph-btn {
+/*#ph-nav .ph-btn {
 	display: block;
 	position: relative;
-	left: -9px;
 	margin-left: auto;
 	margin-right: auto;
 	border: 1px solid;
@@ -142,7 +109,7 @@
 	max-width: 160px;
 	text-align: center;
 	padding: 10px 20px;
-}
+}*/
 
 #ph-nav .ph-btn a:hover {
 	text-decoration: none;

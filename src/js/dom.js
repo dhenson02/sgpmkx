@@ -44,23 +44,26 @@ DOM.prototype.set = function ( data ) {
 };
 
 DOM.prototype.preRender = function () {
-	this.navDOM = ( this.state.fullPage ) ? renderNav() : null;
-	this.tabsDOM = ( this.state.addingContent === false && misc.inTransition.output === false ) ? renderTabs() : null;
+	this.navDOM =  this.state.fullPage ? renderNav() : null;
+	this.tabsDOM =  /*this.state.addingContent ? null : */renderTabs();
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
 DOM.prototype.init = function () {
 	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
+
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
+
 	this.searchInput = document.getElementById("ph-search");
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
 	this.cheatSheet = document.getElementById("cheatSheet");
 	this.textarea = document.getElementById("ph-textarea");
 	this.output = document.getElementById("ph-output");
-	this.reset();
+
+	if ( codeMirror ) this.resetEditor();
 };
 
 DOM.prototype.loadContent = function  () {
@@ -72,19 +75,11 @@ DOM.prototype.loadContent = function  () {
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 	if ( codeMirror ) {
-		this.reset();
+		this.resetEditor();
 		if ( !this.state.fullPage ) {
 			this.initEditor();
 		}
 	}
-};
-
-DOM.prototype.reset = function () {
-	if ( this.editor ) {
-		var wrap = this.editor.getWrapperElement();
-		wrap.parentNode.removeChild(wrap);
-	}
-	this.editor = null;
 };
 
 DOM.prototype.initEditor = function () {
@@ -112,6 +107,14 @@ DOM.prototype.initEditor = function () {
 		});
 	});
 	this.editor.refresh();
+};
+
+DOM.prototype.resetEditor = function () {
+	if ( this.editor ) {
+		var wrap = this.editor.getWrapperElement();
+		wrap.parentNode.removeChild(wrap);
+	}
+	this.editor = null;
 };
 
 DOM.prototype.renderOut = function ( text, type ) {

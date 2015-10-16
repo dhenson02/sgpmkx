@@ -61,35 +61,20 @@ function renderNav () {
 			links.push(renderSection(pages.sections[name]));
 		}
 	}
-	if ( codeMirror ) {
+/*	if ( codeMirror ) {
 		links.unshift(
-			h("a.ph-btn.ph-create.loading", {
-				href: "#/new",
-				title: "New section",
-				onclick: function ( event ) {
-					event = event || window.event;
-					if ( event.preventDefault ) event.preventDefault();
-					else event.returnValue = false;
-
-					/**
-					 * TODO:
-					 *  This needs to perform a .setRoute() so it changes the URL
-					 *  and thus becomes the "active" page without fiddling around
-					 *  here all ghetto-like.
-					 *
-					 *  Until I work on this again, just disable it.  When ready
-					 *  to use, remove the ".loading" on this element
-					 */
-
-					events.emit("content.adding");
-					return false;
-
-				}
-			}, [
-				h("span.btn-title", ["Add content"])
-			])
+			( phAddClass ) ?
+				null :
+				(
+					h("a.ph-btn.ph-create" + ( window.location.hash === "#/new" ? ".active" : "" ), {
+						href: "#/new",
+						title: "New section"
+					}, [
+						h("span.btn-title", ["Add content"])
+					])
+				)
 		);
-	}
+	}*/
 	return (
 		h("#ph-nav", [
 			h(".header", [

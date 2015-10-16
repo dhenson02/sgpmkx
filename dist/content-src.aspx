@@ -15,7 +15,8 @@ body { opacity: 1; }
 		phContext = "/Pages/" + _spPageContextInfo.serverRequestPath.split(/\//).pop().slice(0,-5),
 		phLive = true,
 		phEditorTheme = "base16-light",
-		phOptionsURI = "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value";
+		phOptionsURI = "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
+		phAddClass = ".loading";
 
     /* Get rid of the ugly nav on the left if it's there */
     try {

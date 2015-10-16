@@ -53,10 +53,14 @@ function renderTabs () {
 								return false;
 							}
 						}, [
-							h("span", [
-								String(tab.title)
-							])
-						])
+							h("span", [ String(tab.title) ])
+						]),
+						( pages.options.contribPOCEmail && tab.title === "Contributions" ) ?
+							h("a.ph-contrib-poc", {
+								href: "mailto:" + pages.options.contribPOCEmail,
+								title: "POC: " + pages.options.contribPOCName
+							}, [String(pages.options.contribPOCName)]) :
+							null
 					])
 				])
 			);

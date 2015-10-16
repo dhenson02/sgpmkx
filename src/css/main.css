@@ -89,16 +89,15 @@ body {
 	overflow: visible;
 	max-width: 770px;
 	max-width: calc(100% - 350px);
-	/*max-width: 640px;*/
 }
 
 #ph-title {
 	opacity: 1;
 	font-size: 3.5em;
-	border: 4px dashed transparent;
-	padding: 10px;
+	border: none;
+	border-bottom: 4px dashed transparent;
+	padding: 10px 0;
 	transition: border .05s ease-out;
-	/*margin: 20px;*/
 	outline: 0;
 }
 
@@ -199,6 +198,13 @@ body {
 	/*padding-left: 20px;*/
 	/*max-width: 900px;*/
 	max-width: 100%;
+	padding-left: 0;
+}
+
+.ph-modified-date {
+	float: right;
+	font-style: italic;
+	color: #777777;
 }
 
 .fullPage #ph-contentWrap {

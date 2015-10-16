@@ -12,7 +12,9 @@ function Pages () {
 		hideEmptyTabs: true,
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
 		emptyTabsNotify: false,
-		images: "/kj/kx7/PublicHealth/SiteAssets/Images"
+		images: "/kj/kx7/PublicHealth/SiteAssets/Images",
+		contribPOCName: "",
+		contribPOCEmail: ""
 	};
 }
 

@@ -81,6 +81,7 @@ module.exports = function ( grunt ) {
 					'src/css/tabs.css',
 					'src/css/loader.css',
 					'src/css/search.css',
+					'src/css/create.css',
 					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.min.css'
@@ -101,6 +102,7 @@ module.exports = function ( grunt ) {
 					'src/css/tabs.css',
 					'src/css/loader.css',
 					'src/css/search.css',
+					'src/css/create.css',
 					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.css'

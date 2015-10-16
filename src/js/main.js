@@ -21,11 +21,6 @@ var h = require("virtual-dom/h"),
 				events.emit("content.loading", "/");
 			}
 		},
-		'/new': {
-			on: function () {
-				events.emit("content.adding");
-			}
-		},
 		'/(\\w+)': {
 			on: function ( section ) {
 				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
@@ -188,12 +183,7 @@ events.on("tab.change", function ( page ) {
 });
 
 events.on("content.adding", function () {
-	DOM.set({
-		state: {
-			addingContent: true
-		}
-	});
-	document.querySelector(".ph-btn.ph-create").className += " active";
+
 });
 
 function resetPage () {

@@ -54,6 +54,7 @@
 	-moz-flex: 1;
 	-ms-flex: 1;*/
 	flex: 1;
+	transform: translate3d(0, 0, 0);
 }
 
 #ph-tabs nav a {
@@ -203,4 +204,8 @@
 
 #ph-tabs .tab-current.tab-empty .ph-tab-box {
 	border-color: #F62459;
+}
+
+.ph-contrib-poc {
+	display: none;
 }

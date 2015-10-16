@@ -1,0 +1,11 @@
+#ph-create-wrap {
+	transform: translate3d(0,0,0);
+}
+
+#ph-create-wrap fieldset {
+	padding: 60px;
+}
+
+#ph-create-wrap label {
+	display: block;
+}
