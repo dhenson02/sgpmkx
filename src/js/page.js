@@ -201,7 +201,9 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 	console.log(DOM.state.addingContent);
 	return (
 		h("#ph-wrapper", [
-			h("#ph-search-wrap", [
+			h("#ph-search-wrap", {
+				style: ( DOM.state.fullPage ? {} : {display:"none"} )
+			}, [
 				h("label", [
 					h("input#ph-search", {
 						type: "text",

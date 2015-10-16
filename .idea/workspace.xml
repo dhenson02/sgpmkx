@@ -2,20 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/css/create.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/buttons.css" afterPath="$PROJECT_DIR$/src/css/buttons.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/content-src.aspx" afterPath="$PROJECT_DIR$/dist/content-src.aspx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/main.css" afterPath="$PROJECT_DIR$/src/css/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/main.js" afterPath="$PROJECT_DIR$/src/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/main_template.html" afterPath="$PROJECT_DIR$/dist/main_template.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/nav.css" afterPath="$PROJECT_DIR$/src/css/nav.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/nav.js" afterPath="$PROJECT_DIR$/src/js/nav.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/page.js" afterPath="$PROJECT_DIR$/src/js/page.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/pages.js" afterPath="$PROJECT_DIR$/src/js/pages.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/tabs.css" afterPath="$PROJECT_DIR$/src/css/tabs.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/tabs.js" afterPath="$PROJECT_DIR$/src/js/tabs.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -32,7 +20,7 @@
     <option name="initialCount" value="5000" />
   </component>
   <component name="CreatePatchCommitExecutor">
-    <option name="PATCH_PATH" value="" />
+    <option name="PATCH_PATH" value="$PROJECT_DIR$/../src" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -181,8 +169,8 @@
               <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.26056337">
-                      <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+                    <state vertical-scroll-proportion="0.43661973">
+                      <caret line="200" column="41" selection-start-line="200" selection-start-column="41" selection-end-line="200" selection-end-column="41" />
                       <folding>
                         <element signature="e#505#634#0" expanded="true" />
                         <element signature="e#1318#1686#0" expanded="false" />
@@ -273,8 +261,8 @@
           <file leaf-file-name="nav.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/nav.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.23622048">
-                  <caret line="99" column="1" selection-start-line="99" selection-start-column="1" selection-end-line="99" selection-end-column="1" />
+                <state vertical-scroll-proportion="0.62992126">
+                  <caret line="160" column="23" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="23" />
                   <folding />
                 </state>
               </provider>
@@ -440,12 +428,12 @@
         <option value="$PROJECT_DIR$/dist/main_template.html" />
         <option value="$PROJECT_DIR$/src/js/dom.js" />
         <option value="$PROJECT_DIR$/src/js/tabs.js" />
-        <option value="$PROJECT_DIR$/src/css/nav.css" />
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
-        <option value="$PROJECT_DIR$/src/js/page.js" />
         <option value="$PROJECT_DIR$/src/css/create.css" />
         <option value="$PROJECT_DIR$/src/css/tabs.css" />
+        <option value="$PROJECT_DIR$/src/js/page.js" />
+        <option value="$PROJECT_DIR$/src/css/nav.css" />
       </list>
     </option>
   </component>
@@ -781,12 +769,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00065" summary="autoformat with TABS .........">
-      <created>1442017202075</created>
-      <option name="number" value="00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1442017202075</updated>
-    </task>
     <task id="LOCAL-00066" summary="just need a good checkpoint.  not everything works still but lots of re-arranged stuff i dont wanna lose.">
       <created>1442040941798</created>
       <option name="number" value="00066" />
@@ -1075,7 +1057,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444955960349</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <task id="LOCAL-00114" summary="re-worked virtual-dom rendering to include a bit more, more responsive feel, full screen view while editing (may have done in previous commit actually), better event handling (title input takes ENTER now to blur), content add button and wrapper added to #ph-content and open/close functionality added.">
+      <created>1444967410781</created>
+      <option name="number" value="00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1444967410781</updated>
+    </task>
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1157,7 +1145,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="saving and creating more realistic with delay in local mode, save button changes affect inner element instead of overwriting with just text now, Content.prototype.save is now .savePage" />
     <MESSAGE value="save button styles removed/reset when clicked" />
     <MESSAGE value="better equipped to handle local dev environment." />
     <MESSAGE value="toggle editor &quot;button&quot; is now a basic link almost, active link color adjusted on nav, local dev improved/corrected (data variable accidental insertion in complete())." />
@@ -1182,7 +1169,8 @@
     <MESSAGE value="for some stupid reason IE 11/10 refuse to abide by my 17px to the right on the navbar.  probly something to do with overflows or something but for now it's fixed (for IE - chrome doesn't render properly now)." />
     <MESSAGE value="rendering and models optimized a little more, external links in output open in new window/tab again, &quot;Last modified: ...&quot; now displays at bottom of pages" />
     <MESSAGE value="nav menu css and HTML cleaned up, set editor toggle to take over page (remove navbar) for more room" />
-    <option name="LAST_COMMIT_MESSAGE" value="nav menu css and HTML cleaned up, set editor toggle to take over page (remove navbar) for more room" />
+    <MESSAGE value="re-worked virtual-dom rendering to include a bit more, more responsive feel, full screen view while editing (may have done in previous commit actually), better event handling (title input takes ENTER now to blur), content add button and wrapper added to #ph-content and open/close functionality added." />
+    <option name="LAST_COMMIT_MESSAGE" value="re-worked virtual-dom rendering to include a bit more, more responsive feel, full screen view while editing (may have done in previous commit actually), better event handling (title input takes ENTER now to blur), content add button and wrapper added to #ph-content and open/close functionality added." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2116,20 +2104,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/js/page.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.26056337">
-          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding>
-            <element signature="e#505#634#0" expanded="true" />
-            <element signature="e#1318#1686#0" expanded="false" />
-            <element signature="e#1814#2110#0" expanded="false" />
-            <element signature="e#2194#2755#0" expanded="false" />
-            <element signature="e#3775#4163#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2148,9 +2122,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/css/nav.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23622048">
-          <caret line="99" column="1" selection-start-line="99" selection-start-column="1" selection-end-line="99" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.62992126">
+          <caret line="160" column="23" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="23" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/js/page.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43661973">
+          <caret line="200" column="41" selection-start-line="200" selection-start-column="41" selection-end-line="200" selection-end-column="41" />
+          <folding>
+            <element signature="e#505#634#0" expanded="true" />
+            <element signature="e#1318#1686#0" expanded="false" />
+            <element signature="e#1814#2110#0" expanded="false" />
+            <element signature="e#2194#2755#0" expanded="false" />
+            <element signature="e#3775#4163#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
