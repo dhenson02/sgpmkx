@@ -108,7 +108,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					});
 					if ( title !== pages.current._title ) {
 						this.style.transition = "border .05s ease-out";
-						this.style.borderBottomColor = "#00B16A";
+						this.style.borderBottomColor = "#F62459";
 						// 3px double
 					}
 					else {

@@ -58,7 +58,8 @@ function renderTabs () {
 						h("a.ph-contrib-poc", {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName
-						}, [String("POC: " + pages.options.contribPOCName)]) :
+						}, ["Submit your own!"]) :
+						//}, [String("POC: " + pages.options.contribPOCName)]) :
 						null
 				])
 			);

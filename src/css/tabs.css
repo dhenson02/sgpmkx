@@ -207,12 +207,12 @@
 }
 
 #ph-tabs .ph-tab-contributions {
-
 }
 
 #ph-tabs .ph-tab-contributions .ph-contrib-poc {
 	opacity: 0;
 	transition: opacity .075s ease-out;
+	visibility: hidden;
 	padding: 5px;
 	font-size: .6em;
 	color: #F62459;
@@ -222,7 +222,9 @@
 /*#ph-tabs .ph-tab-contributions .ph-tab-box:hover + .ph-contrib-poc,*/
 #ph-tabs .ph-tab-contributions.tab-current .ph-contrib-poc {
 	opacity: 1;
+	visibility: visible;
 	transition: opacity .075s ease-out;
+	pointer-events: auto;
 }
 
 #ph-tabs .ph-contrib-poc:hover {

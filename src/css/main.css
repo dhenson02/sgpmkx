@@ -102,11 +102,12 @@ body {
 }
 
 #ph-title.ph-cm:hover {
-	border-bottom-color: #F62459;
+	border-bottom-color: #777777;
 }
 
 #ph-title.ph-cm:focus {
 	color: #777777;
+	border-bottom-color: #00B16A;
 }
 
 #ph-contentWrap {
