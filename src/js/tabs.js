@@ -32,11 +32,11 @@ var h = require("virtual-dom/h"),
 function renderTabs () {
 	var style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } },
 		group = map(tabs, function ( tab ) {
-			var tabName = tab.title.replace(/\s/g, "").toLowerCase();
+			var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
 			var className = ".tab-" + tabName + (
 					( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ) ? ".tab-empty" : ""
 				) + (
-					( pages.current.type.replace(/\s/g, "").toLowerCase() === tabName ) ? ".tab-current" : ""
+					( pages.current._type === tabName ) ? ".tab-current" : ""
 				);
 
 			return (

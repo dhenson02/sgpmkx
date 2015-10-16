@@ -120,9 +120,6 @@ events.on("missing", function ( path ) {
 	});
 });
 
-/*events.on("content.loading", function () {
-});*/
-
 events.on("content.loaded", function ( data ) {
 	var obj = data.d;
 	if ( !obj ) {
@@ -151,6 +148,7 @@ events.on("content.loaded", function ( data ) {
 		title: obj.Title || "",
 		_title: obj.Title || "",
 		keywords: (obj.Keywords && obj.Keywords.results) || [],
+		references: (obj.References && obj.References.results) || [],
 		icon: obj.Icon || "",
 		text: obj.Overview || "",
 		overview: obj.Overview || "",
@@ -164,6 +162,8 @@ events.on("content.loaded", function ( data ) {
 		page: obj.Page || "",
 		rabbitHole: obj.rabbitHole || "",
 		type: "Overview",
+		_type: "overview",
+		modified: new Date(obj.Modified || obj.Created),
 		listItemType: obj.__metadata.type,
 		timestamp: (Date && Date.now() || new Date()),
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
@@ -171,20 +171,20 @@ events.on("content.loaded", function ( data ) {
 	DOM.loadContent();
 	DOM.renderOut(pages.current.text, pages.current.type);
 	inTransition.output = null;
-
-	//DOM.output.className = DOM.output.className.replace(/ ?loading/gi, "");
+	document.title = pages.current.title;
 });
 
 events.on("tab.change", function ( page ) {
-	//inTransition.tab = page;
 	var content = {};
-	content[pages.current.type.replace(/\s/g, "").toLowerCase()] = pages.current.text;
-	content.text = pages.current[page.replace(/\s/g, "").toLowerCase()];
+	content[pages.current._type] = pages.current.text;
 	content.type = page;
+	content._type = page.replace(/\s/g, "").toLowerCase().trim();
+	content.text = pages.current[content._type];
 	pages.current.set(content);
-	if ( codeMirror ) 	DOM.loadContent();
-	DOM.renderOut(pages.current.text, pages.current.type);
-	//inTransition.tab = null;
+	if ( codeMirror ) {
+		DOM.loadContent();
+	}
+	DOM.renderOut(content.text, content.type);
 });
 
 events.on("content.adding", function () {
@@ -197,7 +197,6 @@ events.on("content.adding", function () {
 });
 
 function resetPage () {
-	document.title = pages.current.title;
 	DOM.set({
 		state: {
 			addingContent: false

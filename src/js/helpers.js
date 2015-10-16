@@ -15,9 +15,9 @@ var markdownit = require("markdown-it"),
 		quotes: '“”‘’'
 	}),
 	inTransition = {
-		output: null,
+		output: false,
 		tempSaveText: null,
-		tab: null
+		tab: false
 	},
 	clicked = -1,
 	codeMirror;

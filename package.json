@@ -7,6 +7,7 @@
     "eventemitter2": "^0.4.14",
     "horsey": "^2.6.1",
     "lodash": "^3.10.1",
+    "markdown-it": "^5.0.0",
     "reqwest": "^2.0.1",
     "sweetalert": "^1.1.0",
     "virtual-dom": ">=2.0.1"

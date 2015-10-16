@@ -72,6 +72,12 @@ function renderEditor ( tabsDOM, DOM ) {
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
 			h("h1#ph-title" + ( misc.codeMirror ? ".ph-cm" : "" ), {
 				contentEditable: (( misc.codeMirror ) ? true : false ),
+				oninput: function ( e ) {
+					if ( e.keyCode === 13 || e.keyCode === 27 ) {
+						this.blur();
+						return false;
+					}
+				},
 				onblur: function () {
 					var title = this.textContent || this.innerText;
 					title = title.trim();
@@ -144,7 +150,11 @@ function renderEditor ( tabsDOM, DOM ) {
 				h("#ph-input", [
 					h("textarea#ph-textarea", [String(pages.current.text || "")])
 				]),
-				h("#ph-output")
+				h("#ph-output"),
+			    h(".clearfix"),
+				h("small.ph-modified-date", [
+					"Last updated: " + pages.current.modified.toLocaleDateString()
+				])
 			])
 		])
 	);

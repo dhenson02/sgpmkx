@@ -76,12 +76,12 @@ function renderNav () {
 					 *  This needs to perform a .setRoute() so it changes the URL
 					 *  and thus becomes the "active" page without fiddling around
 					 *  here all ghetto-like.
+					 *
+					 *  Until I work on this again, just disable it.  When ready
+					 *  to use, remove the ".loading" on this element
 					 */
-					// Until I work on this again, just disable it.
 
-					// When ready to use, remove the ".loading" on this element
-
-					// events.emit("content.start");
+					events.emit("content.adding");
 					return false;
 
 				}

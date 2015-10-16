@@ -1047,6 +1047,236 @@
     }, {} ],
     3: [ function(require, module, exports) {}, {} ],
     4: [ function(require, module, exports) {
+        (function(global) {
+            (function(root) {
+                var freeExports = typeof exports == "object" && exports && !exports.nodeType && exports;
+                var freeModule = typeof module == "object" && module && !module.nodeType && module;
+                var freeGlobal = typeof global == "object" && global;
+                if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal) {
+                    root = freeGlobal;
+                }
+                var punycode, maxInt = 2147483647, base = 36, tMin = 1, tMax = 26, skew = 38, damp = 700, initialBias = 72, initialN = 128, delimiter = "-", regexPunycode = /^xn--/, regexNonASCII = /[^\x20-\x7E]/, regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, errors = {
+                    overflow: "Overflow: input needs wider integers to process",
+                    "not-basic": "Illegal input >= 0x80 (not a basic code point)",
+                    "invalid-input": "Invalid input"
+                }, baseMinusTMin = base - tMin, floor = Math.floor, stringFromCharCode = String.fromCharCode, key;
+                function error(type) {
+                    throw RangeError(errors[type]);
+                }
+                function map(array, fn) {
+                    var length = array.length;
+                    var result = [];
+                    while (length--) {
+                        result[length] = fn(array[length]);
+                    }
+                    return result;
+                }
+                function mapDomain(string, fn) {
+                    var parts = string.split("@");
+                    var result = "";
+                    if (parts.length > 1) {
+                        result = parts[0] + "@";
+                        string = parts[1];
+                    }
+                    string = string.replace(regexSeparators, ".");
+                    var labels = string.split(".");
+                    var encoded = map(labels, fn).join(".");
+                    return result + encoded;
+                }
+                function ucs2decode(string) {
+                    var output = [], counter = 0, length = string.length, value, extra;
+                    while (counter < length) {
+                        value = string.charCodeAt(counter++);
+                        if (value >= 55296 && value <= 56319 && counter < length) {
+                            extra = string.charCodeAt(counter++);
+                            if ((extra & 64512) == 56320) {
+                                output.push(((value & 1023) << 10) + (extra & 1023) + 65536);
+                            } else {
+                                output.push(value);
+                                counter--;
+                            }
+                        } else {
+                            output.push(value);
+                        }
+                    }
+                    return output;
+                }
+                function ucs2encode(array) {
+                    return map(array, function(value) {
+                        var output = "";
+                        if (value > 65535) {
+                            value -= 65536;
+                            output += stringFromCharCode(value >>> 10 & 1023 | 55296);
+                            value = 56320 | value & 1023;
+                        }
+                        output += stringFromCharCode(value);
+                        return output;
+                    }).join("");
+                }
+                function basicToDigit(codePoint) {
+                    if (codePoint - 48 < 10) {
+                        return codePoint - 22;
+                    }
+                    if (codePoint - 65 < 26) {
+                        return codePoint - 65;
+                    }
+                    if (codePoint - 97 < 26) {
+                        return codePoint - 97;
+                    }
+                    return base;
+                }
+                function digitToBasic(digit, flag) {
+                    return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+                }
+                function adapt(delta, numPoints, firstTime) {
+                    var k = 0;
+                    delta = firstTime ? floor(delta / damp) : delta >> 1;
+                    delta += floor(delta / numPoints);
+                    for (;delta > baseMinusTMin * tMax >> 1; k += base) {
+                        delta = floor(delta / baseMinusTMin);
+                    }
+                    return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+                }
+                function decode(input) {
+                    var output = [], inputLength = input.length, out, i = 0, n = initialN, bias = initialBias, basic, j, index, oldi, w, k, digit, t, baseMinusT;
+                    basic = input.lastIndexOf(delimiter);
+                    if (basic < 0) {
+                        basic = 0;
+                    }
+                    for (j = 0; j < basic; ++j) {
+                        if (input.charCodeAt(j) >= 128) {
+                            error("not-basic");
+                        }
+                        output.push(input.charCodeAt(j));
+                    }
+                    for (index = basic > 0 ? basic + 1 : 0; index < inputLength; ) {
+                        for (oldi = i, w = 1, k = base; ;k += base) {
+                            if (index >= inputLength) {
+                                error("invalid-input");
+                            }
+                            digit = basicToDigit(input.charCodeAt(index++));
+                            if (digit >= base || digit > floor((maxInt - i) / w)) {
+                                error("overflow");
+                            }
+                            i += digit * w;
+                            t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+                            if (digit < t) {
+                                break;
+                            }
+                            baseMinusT = base - t;
+                            if (w > floor(maxInt / baseMinusT)) {
+                                error("overflow");
+                            }
+                            w *= baseMinusT;
+                        }
+                        out = output.length + 1;
+                        bias = adapt(i - oldi, out, oldi == 0);
+                        if (floor(i / out) > maxInt - n) {
+                            error("overflow");
+                        }
+                        n += floor(i / out);
+                        i %= out;
+                        output.splice(i++, 0, n);
+                    }
+                    return ucs2encode(output);
+                }
+                function encode(input) {
+                    var n, delta, handledCPCount, basicLength, bias, j, m, q, k, t, currentValue, output = [], inputLength, handledCPCountPlusOne, baseMinusT, qMinusT;
+                    input = ucs2decode(input);
+                    inputLength = input.length;
+                    n = initialN;
+                    delta = 0;
+                    bias = initialBias;
+                    for (j = 0; j < inputLength; ++j) {
+                        currentValue = input[j];
+                        if (currentValue < 128) {
+                            output.push(stringFromCharCode(currentValue));
+                        }
+                    }
+                    handledCPCount = basicLength = output.length;
+                    if (basicLength) {
+                        output.push(delimiter);
+                    }
+                    while (handledCPCount < inputLength) {
+                        for (m = maxInt, j = 0; j < inputLength; ++j) {
+                            currentValue = input[j];
+                            if (currentValue >= n && currentValue < m) {
+                                m = currentValue;
+                            }
+                        }
+                        handledCPCountPlusOne = handledCPCount + 1;
+                        if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+                            error("overflow");
+                        }
+                        delta += (m - n) * handledCPCountPlusOne;
+                        n = m;
+                        for (j = 0; j < inputLength; ++j) {
+                            currentValue = input[j];
+                            if (currentValue < n && ++delta > maxInt) {
+                                error("overflow");
+                            }
+                            if (currentValue == n) {
+                                for (q = delta, k = base; ;k += base) {
+                                    t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+                                    if (q < t) {
+                                        break;
+                                    }
+                                    qMinusT = q - t;
+                                    baseMinusT = base - t;
+                                    output.push(stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0)));
+                                    q = floor(qMinusT / baseMinusT);
+                                }
+                                output.push(stringFromCharCode(digitToBasic(q, 0)));
+                                bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+                                delta = 0;
+                                ++handledCPCount;
+                            }
+                        }
+                        ++delta;
+                        ++n;
+                    }
+                    return output.join("");
+                }
+                function toUnicode(input) {
+                    return mapDomain(input, function(string) {
+                        return regexPunycode.test(string) ? decode(string.slice(4).toLowerCase()) : string;
+                    });
+                }
+                function toASCII(input) {
+                    return mapDomain(input, function(string) {
+                        return regexNonASCII.test(string) ? "xn--" + encode(string) : string;
+                    });
+                }
+                punycode = {
+                    version: "1.3.2",
+                    ucs2: {
+                        decode: ucs2decode,
+                        encode: ucs2encode
+                    },
+                    decode: decode,
+                    encode: encode,
+                    toASCII: toASCII,
+                    toUnicode: toUnicode
+                };
+                if (typeof define == "function" && typeof define.amd == "object" && define.amd) {
+                    define("punycode", function() {
+                        return punycode;
+                    });
+                } else if (freeExports && freeModule) {
+                    if (module.exports == freeExports) {
+                        freeModule.exports = punycode;
+                    } else {
+                        for (key in punycode) {
+                            punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+                        }
+                    }
+                } else {
+                    root.punycode = punycode;
+                }
+            })(this);
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
+    }, {} ],
+    5: [ function(require, module, exports) {
         "use strict";
         var sell = require("sell");
         var crossvent = require("crossvent");
@@ -1540,12 +1770,12 @@
         horsey.find = find;
         module.exports = horsey;
     }, {
-        bullseye: 5,
-        crossvent: 20,
-        fuzzysearch: 22,
-        sell: 23
+        bullseye: 6,
+        crossvent: 21,
+        fuzzysearch: 23,
+        sell: 24
     } ],
-    5: [ function(require, module, exports) {
+    6: [ function(require, module, exports) {
         "use strict";
         var crossvent = require("crossvent");
         var throttle = require("./throttle");
@@ -1628,11 +1858,11 @@
         }
         module.exports = bullseye;
     }, {
-        "./tailormade": 17,
-        "./throttle": 18,
-        crossvent: 7
+        "./tailormade": 18,
+        "./throttle": 19,
+        crossvent: 8
     } ],
-    6: [ function(require, module, exports) {
+    7: [ function(require, module, exports) {
         (function(global) {
             var NativeCustomEvent = global.CustomEvent;
             function useNative() {
@@ -1670,7 +1900,7 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    7: [ function(require, module, exports) {
+    8: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var customEvent = require("custom-event");
@@ -1769,10 +1999,10 @@
             }
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./eventmap": 8,
-        "custom-event": 6
+        "./eventmap": 9,
+        "custom-event": 7
     } ],
-    8: [ function(require, module, exports) {
+    9: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var eventmap = [];
@@ -1786,7 +2016,7 @@
             module.exports = eventmap;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    9: [ function(require, module, exports) {
+    10: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var getSelection;
@@ -1805,12 +2035,12 @@
             module.exports = getSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./getSelectionNullOp": 10,
-        "./getSelectionRaw": 11,
-        "./getSelectionSynthetic": 12,
-        "./isHost": 13
+        "./getSelectionNullOp": 11,
+        "./getSelectionRaw": 12,
+        "./getSelectionSynthetic": 13,
+        "./isHost": 14
     } ],
-    10: [ function(require, module, exports) {
+    11: [ function(require, module, exports) {
         "use strict";
         function noop() {}
         function getSelectionNullOp() {
@@ -1821,7 +2051,7 @@
         }
         module.exports = getSelectionNullOp;
     }, {} ],
-    11: [ function(require, module, exports) {
+    12: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function getSelectionRaw() {
@@ -1830,7 +2060,7 @@
             module.exports = getSelectionRaw;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    12: [ function(require, module, exports) {
+    13: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var rangeToTextRange = require("./rangeToTextRange");
@@ -2052,9 +2282,9 @@
             module.exports = getSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./rangeToTextRange": 14
+        "./rangeToTextRange": 15
     } ],
-    13: [ function(require, module, exports) {
+    14: [ function(require, module, exports) {
         "use strict";
         function isHostMethod(host, prop) {
             var type = typeof host[prop];
@@ -2081,7 +2311,7 @@
             properties: many(isHostProperty)
         };
     }, {} ],
-    14: [ function(require, module, exports) {
+    15: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var doc = global.document;
@@ -2144,7 +2374,7 @@
             module.exports = rangeToTextRange;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    15: [ function(require, module, exports) {
+    16: [ function(require, module, exports) {
         "use strict";
         var getSelection = require("./getSelection");
         var setSelection = require("./setSelection");
@@ -2153,10 +2383,10 @@
             set: setSelection
         };
     }, {
-        "./getSelection": 9,
-        "./setSelection": 16
+        "./getSelection": 10,
+        "./setSelection": 17
     } ],
-    16: [ function(require, module, exports) {
+    17: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var getSelection = require("./getSelection");
@@ -2190,10 +2420,10 @@
             module.exports = setSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./getSelection": 9,
-        "./rangeToTextRange": 14
+        "./getSelection": 10,
+        "./rangeToTextRange": 15
     } ],
-    17: [ function(require, module, exports) {
+    18: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var sell = require("sell");
@@ -2328,12 +2558,12 @@
             module.exports = tailormade;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./throttle": 18,
-        crossvent: 7,
-        seleccion: 15,
-        sell: 23
+        "./throttle": 19,
+        crossvent: 8,
+        seleccion: 16,
+        sell: 24
     } ],
-    18: [ function(require, module, exports) {
+    19: [ function(require, module, exports) {
         "use strict";
         function throttle(fn, boundary) {
             var last = -Infinity;
@@ -2359,12 +2589,12 @@
         }
         module.exports = throttle;
     }, {} ],
-    19: [ function(require, module, exports) {
-        arguments[4][6][0].apply(exports, arguments);
-    }, {
-        dup: 6
-    } ],
     20: [ function(require, module, exports) {
+        arguments[4][7][0].apply(exports, arguments);
+    }, {
+        dup: 7
+    } ],
+    21: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var customEvent = require("custom-event");
@@ -2460,15 +2690,15 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./eventmap": 21,
-        "custom-event": 19
-    } ],
-    21: [ function(require, module, exports) {
-        arguments[4][8][0].apply(exports, arguments);
-    }, {
-        dup: 8
+        "./eventmap": 22,
+        "custom-event": 20
     } ],
     22: [ function(require, module, exports) {
+        arguments[4][9][0].apply(exports, arguments);
+    }, {
+        dup: 9
+    } ],
+    23: [ function(require, module, exports) {
         "use strict";
         function fuzzysearch(needle, haystack) {
             var tlen = haystack.length;
@@ -2492,7 +2722,7 @@
         }
         module.exports = fuzzysearch;
     }, {} ],
-    23: [ function(require, module, exports) {
+    24: [ function(require, module, exports) {
         "use strict";
         var get = easyGet;
         var set = easySet;
@@ -2576,14 +2806,14 @@
         }
         module.exports = sell;
     }, {} ],
-    24: [ function(require, module, exports) {
+    25: [ function(require, module, exports) {
         function last(array) {
             var length = array ? array.length : 0;
             return length ? array[length - 1] : undefined;
         }
         module.exports = last;
     }, {} ],
-    25: [ function(require, module, exports) {
+    26: [ function(require, module, exports) {
         var arrayMap = require("../internal/arrayMap"), baseCallback = require("../internal/baseCallback"), baseMap = require("../internal/baseMap"), isArray = require("../lang/isArray");
         function map(collection, iteratee, thisArg) {
             var func = isArray(collection) ? arrayMap : baseMap;
@@ -2592,31 +2822,31 @@
         }
         module.exports = map;
     }, {
-        "../internal/arrayMap": 28,
-        "../internal/baseCallback": 31,
-        "../internal/baseMap": 39,
-        "../lang/isArray": 67
+        "../internal/arrayMap": 29,
+        "../internal/baseCallback": 32,
+        "../internal/baseMap": 40,
+        "../lang/isArray": 68
     } ],
-    26: [ function(require, module, exports) {
+    27: [ function(require, module, exports) {
         var map = require("./map"), property = require("../utility/property");
         function pluck(collection, path) {
             return map(collection, property(path));
         }
         module.exports = pluck;
     }, {
-        "../utility/property": 76,
-        "./map": 25
+        "../utility/property": 77,
+        "./map": 26
     } ],
-    27: [ function(require, module, exports) {
+    28: [ function(require, module, exports) {
         var arrayReduce = require("../internal/arrayReduce"), baseEach = require("../internal/baseEach"), createReduce = require("../internal/createReduce");
         var reduce = createReduce(arrayReduce, baseEach);
         module.exports = reduce;
     }, {
-        "../internal/arrayReduce": 29,
-        "../internal/baseEach": 32,
-        "../internal/createReduce": 50
+        "../internal/arrayReduce": 30,
+        "../internal/baseEach": 33,
+        "../internal/createReduce": 51
     } ],
-    28: [ function(require, module, exports) {
+    29: [ function(require, module, exports) {
         function arrayMap(array, iteratee) {
             var index = -1, length = array.length, result = Array(length);
             while (++index < length) {
@@ -2626,7 +2856,7 @@
         }
         module.exports = arrayMap;
     }, {} ],
-    29: [ function(require, module, exports) {
+    30: [ function(require, module, exports) {
         function arrayReduce(array, iteratee, accumulator, initFromArray) {
             var index = -1, length = array.length;
             if (initFromArray && length) {
@@ -2639,7 +2869,7 @@
         }
         module.exports = arrayReduce;
     }, {} ],
-    30: [ function(require, module, exports) {
+    31: [ function(require, module, exports) {
         function arraySome(array, predicate) {
             var index = -1, length = array.length;
             while (++index < length) {
@@ -2651,7 +2881,7 @@
         }
         module.exports = arraySome;
     }, {} ],
-    31: [ function(require, module, exports) {
+    32: [ function(require, module, exports) {
         var baseMatches = require("./baseMatches"), baseMatchesProperty = require("./baseMatchesProperty"), bindCallback = require("./bindCallback"), identity = require("../utility/identity"), property = require("../utility/property");
         function baseCallback(func, thisArg, argCount) {
             var type = typeof func;
@@ -2668,38 +2898,38 @@
         }
         module.exports = baseCallback;
     }, {
-        "../utility/identity": 75,
-        "../utility/property": 76,
-        "./baseMatches": 40,
-        "./baseMatchesProperty": 41,
-        "./bindCallback": 47
+        "../utility/identity": 76,
+        "../utility/property": 77,
+        "./baseMatches": 41,
+        "./baseMatchesProperty": 42,
+        "./bindCallback": 48
     } ],
-    32: [ function(require, module, exports) {
+    33: [ function(require, module, exports) {
         var baseForOwn = require("./baseForOwn"), createBaseEach = require("./createBaseEach");
         var baseEach = createBaseEach(baseForOwn);
         module.exports = baseEach;
     }, {
-        "./baseForOwn": 34,
-        "./createBaseEach": 48
+        "./baseForOwn": 35,
+        "./createBaseEach": 49
     } ],
-    33: [ function(require, module, exports) {
+    34: [ function(require, module, exports) {
         var createBaseFor = require("./createBaseFor");
         var baseFor = createBaseFor();
         module.exports = baseFor;
     }, {
-        "./createBaseFor": 49
+        "./createBaseFor": 50
     } ],
-    34: [ function(require, module, exports) {
+    35: [ function(require, module, exports) {
         var baseFor = require("./baseFor"), keys = require("../object/keys");
         function baseForOwn(object, iteratee) {
             return baseFor(object, iteratee, keys);
         }
         module.exports = baseForOwn;
     }, {
-        "../object/keys": 72,
-        "./baseFor": 33
+        "../object/keys": 73,
+        "./baseFor": 34
     } ],
-    35: [ function(require, module, exports) {
+    36: [ function(require, module, exports) {
         var toObject = require("./toObject");
         function baseGet(object, path, pathKey) {
             if (object == null) {
@@ -2716,9 +2946,9 @@
         }
         module.exports = baseGet;
     }, {
-        "./toObject": 64
+        "./toObject": 65
     } ],
-    36: [ function(require, module, exports) {
+    37: [ function(require, module, exports) {
         var baseIsEqualDeep = require("./baseIsEqualDeep"), isObject = require("../lang/isObject"), isObjectLike = require("./isObjectLike");
         function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
             if (value === other) {
@@ -2731,11 +2961,11 @@
         }
         module.exports = baseIsEqual;
     }, {
-        "../lang/isObject": 70,
-        "./baseIsEqualDeep": 37,
-        "./isObjectLike": 61
+        "../lang/isObject": 71,
+        "./baseIsEqualDeep": 38,
+        "./isObjectLike": 62
     } ],
-    37: [ function(require, module, exports) {
+    38: [ function(require, module, exports) {
         var equalArrays = require("./equalArrays"), equalByTag = require("./equalByTag"), equalObjects = require("./equalObjects"), isArray = require("../lang/isArray"), isTypedArray = require("../lang/isTypedArray");
         var argsTag = "[object Arguments]", arrayTag = "[object Array]", objectTag = "[object Object]";
         var objectProto = Object.prototype;
@@ -2789,13 +3019,13 @@
         }
         module.exports = baseIsEqualDeep;
     }, {
-        "../lang/isArray": 67,
-        "../lang/isTypedArray": 71,
-        "./equalArrays": 51,
-        "./equalByTag": 52,
-        "./equalObjects": 53
+        "../lang/isArray": 68,
+        "../lang/isTypedArray": 72,
+        "./equalArrays": 52,
+        "./equalByTag": 53,
+        "./equalObjects": 54
     } ],
-    38: [ function(require, module, exports) {
+    39: [ function(require, module, exports) {
         var baseIsEqual = require("./baseIsEqual"), toObject = require("./toObject");
         function baseIsMatch(object, matchData, customizer) {
             var index = matchData.length, length = index, noCustomizer = !customizer;
@@ -2827,10 +3057,10 @@
         }
         module.exports = baseIsMatch;
     }, {
-        "./baseIsEqual": 36,
-        "./toObject": 64
+        "./baseIsEqual": 37,
+        "./toObject": 65
     } ],
-    39: [ function(require, module, exports) {
+    40: [ function(require, module, exports) {
         var baseEach = require("./baseEach"), isArrayLike = require("./isArrayLike");
         function baseMap(collection, iteratee) {
             var index = -1, result = isArrayLike(collection) ? Array(collection.length) : [];
@@ -2841,10 +3071,10 @@
         }
         module.exports = baseMap;
     }, {
-        "./baseEach": 32,
-        "./isArrayLike": 57
+        "./baseEach": 33,
+        "./isArrayLike": 58
     } ],
-    40: [ function(require, module, exports) {
+    41: [ function(require, module, exports) {
         var baseIsMatch = require("./baseIsMatch"), getMatchData = require("./getMatchData"), toObject = require("./toObject");
         function baseMatches(source) {
             var matchData = getMatchData(source);
@@ -2863,11 +3093,11 @@
         }
         module.exports = baseMatches;
     }, {
-        "./baseIsMatch": 38,
-        "./getMatchData": 55,
-        "./toObject": 64
+        "./baseIsMatch": 39,
+        "./getMatchData": 56,
+        "./toObject": 65
     } ],
-    41: [ function(require, module, exports) {
+    42: [ function(require, module, exports) {
         var baseGet = require("./baseGet"), baseIsEqual = require("./baseIsEqual"), baseSlice = require("./baseSlice"), isArray = require("../lang/isArray"), isKey = require("./isKey"), isStrictComparable = require("./isStrictComparable"), last = require("../array/last"), toObject = require("./toObject"), toPath = require("./toPath");
         function baseMatchesProperty(path, srcValue) {
             var isArr = isArray(path), isCommon = isKey(path) && isStrictComparable(srcValue), pathKey = path + "";
@@ -2891,17 +3121,17 @@
         }
         module.exports = baseMatchesProperty;
     }, {
-        "../array/last": 24,
-        "../lang/isArray": 67,
-        "./baseGet": 35,
-        "./baseIsEqual": 36,
-        "./baseSlice": 45,
-        "./isKey": 59,
-        "./isStrictComparable": 62,
-        "./toObject": 64,
-        "./toPath": 65
+        "../array/last": 25,
+        "../lang/isArray": 68,
+        "./baseGet": 36,
+        "./baseIsEqual": 37,
+        "./baseSlice": 46,
+        "./isKey": 60,
+        "./isStrictComparable": 63,
+        "./toObject": 65,
+        "./toPath": 66
     } ],
-    42: [ function(require, module, exports) {
+    43: [ function(require, module, exports) {
         function baseProperty(key) {
             return function(object) {
                 return object == null ? undefined : object[key];
@@ -2909,7 +3139,7 @@
         }
         module.exports = baseProperty;
     }, {} ],
-    43: [ function(require, module, exports) {
+    44: [ function(require, module, exports) {
         var baseGet = require("./baseGet"), toPath = require("./toPath");
         function basePropertyDeep(path) {
             var pathKey = path + "";
@@ -2920,10 +3150,10 @@
         }
         module.exports = basePropertyDeep;
     }, {
-        "./baseGet": 35,
-        "./toPath": 65
+        "./baseGet": 36,
+        "./toPath": 66
     } ],
-    44: [ function(require, module, exports) {
+    45: [ function(require, module, exports) {
         function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
             eachFunc(collection, function(value, index, collection) {
                 accumulator = initFromCollection ? (initFromCollection = false, value) : iteratee(accumulator, value, index, collection);
@@ -2932,7 +3162,7 @@
         }
         module.exports = baseReduce;
     }, {} ],
-    45: [ function(require, module, exports) {
+    46: [ function(require, module, exports) {
         function baseSlice(array, start, end) {
             var index = -1, length = array.length;
             start = start == null ? 0 : +start || 0;
@@ -2953,13 +3183,13 @@
         }
         module.exports = baseSlice;
     }, {} ],
-    46: [ function(require, module, exports) {
+    47: [ function(require, module, exports) {
         function baseToString(value) {
             return value == null ? "" : value + "";
         }
         module.exports = baseToString;
     }, {} ],
-    47: [ function(require, module, exports) {
+    48: [ function(require, module, exports) {
         var identity = require("../utility/identity");
         function bindCallback(func, thisArg, argCount) {
             if (typeof func != "function") {
@@ -2995,9 +3225,9 @@
         }
         module.exports = bindCallback;
     }, {
-        "../utility/identity": 75
+        "../utility/identity": 76
     } ],
-    48: [ function(require, module, exports) {
+    49: [ function(require, module, exports) {
         var getLength = require("./getLength"), isLength = require("./isLength"), toObject = require("./toObject");
         function createBaseEach(eachFunc, fromRight) {
             return function(collection, iteratee) {
@@ -3016,11 +3246,11 @@
         }
         module.exports = createBaseEach;
     }, {
-        "./getLength": 54,
-        "./isLength": 60,
-        "./toObject": 64
+        "./getLength": 55,
+        "./isLength": 61,
+        "./toObject": 65
     } ],
-    49: [ function(require, module, exports) {
+    50: [ function(require, module, exports) {
         var toObject = require("./toObject");
         function createBaseFor(fromRight) {
             return function(object, iteratee, keysFunc) {
@@ -3036,9 +3266,9 @@
         }
         module.exports = createBaseFor;
     }, {
-        "./toObject": 64
+        "./toObject": 65
     } ],
-    50: [ function(require, module, exports) {
+    51: [ function(require, module, exports) {
         var baseCallback = require("./baseCallback"), baseReduce = require("./baseReduce"), isArray = require("../lang/isArray");
         function createReduce(arrayFunc, eachFunc) {
             return function(collection, iteratee, accumulator, thisArg) {
@@ -3048,11 +3278,11 @@
         }
         module.exports = createReduce;
     }, {
-        "../lang/isArray": 67,
-        "./baseCallback": 31,
-        "./baseReduce": 44
+        "../lang/isArray": 68,
+        "./baseCallback": 32,
+        "./baseReduce": 45
     } ],
-    51: [ function(require, module, exports) {
+    52: [ function(require, module, exports) {
         var arraySome = require("./arraySome");
         function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
             var index = -1, arrLength = array.length, othLength = other.length;
@@ -3081,9 +3311,9 @@
         }
         module.exports = equalArrays;
     }, {
-        "./arraySome": 30
+        "./arraySome": 31
     } ],
-    52: [ function(require, module, exports) {
+    53: [ function(require, module, exports) {
         var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", numberTag = "[object Number]", regexpTag = "[object RegExp]", stringTag = "[object String]";
         function equalByTag(object, other, tag) {
             switch (tag) {
@@ -3105,7 +3335,7 @@
         }
         module.exports = equalByTag;
     }, {} ],
-    53: [ function(require, module, exports) {
+    54: [ function(require, module, exports) {
         var keys = require("../object/keys");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3140,16 +3370,16 @@
         }
         module.exports = equalObjects;
     }, {
-        "../object/keys": 72
+        "../object/keys": 73
     } ],
-    54: [ function(require, module, exports) {
+    55: [ function(require, module, exports) {
         var baseProperty = require("./baseProperty");
         var getLength = baseProperty("length");
         module.exports = getLength;
     }, {
-        "./baseProperty": 42
+        "./baseProperty": 43
     } ],
-    55: [ function(require, module, exports) {
+    56: [ function(require, module, exports) {
         var isStrictComparable = require("./isStrictComparable"), pairs = require("../object/pairs");
         function getMatchData(object) {
             var result = pairs(object), length = result.length;
@@ -3160,10 +3390,10 @@
         }
         module.exports = getMatchData;
     }, {
-        "../object/pairs": 74,
-        "./isStrictComparable": 62
+        "../object/pairs": 75,
+        "./isStrictComparable": 63
     } ],
-    56: [ function(require, module, exports) {
+    57: [ function(require, module, exports) {
         var isNative = require("../lang/isNative");
         function getNative(object, key) {
             var value = object == null ? undefined : object[key];
@@ -3171,19 +3401,19 @@
         }
         module.exports = getNative;
     }, {
-        "../lang/isNative": 69
+        "../lang/isNative": 70
     } ],
-    57: [ function(require, module, exports) {
+    58: [ function(require, module, exports) {
         var getLength = require("./getLength"), isLength = require("./isLength");
         function isArrayLike(value) {
             return value != null && isLength(getLength(value));
         }
         module.exports = isArrayLike;
     }, {
-        "./getLength": 54,
-        "./isLength": 60
+        "./getLength": 55,
+        "./isLength": 61
     } ],
-    58: [ function(require, module, exports) {
+    59: [ function(require, module, exports) {
         var reIsUint = /^\d+$/;
         var MAX_SAFE_INTEGER = 9007199254740991;
         function isIndex(value, length) {
@@ -3193,7 +3423,7 @@
         }
         module.exports = isIndex;
     }, {} ],
-    59: [ function(require, module, exports) {
+    60: [ function(require, module, exports) {
         var isArray = require("../lang/isArray"), toObject = require("./toObject");
         var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/;
         function isKey(value, object) {
@@ -3209,32 +3439,32 @@
         }
         module.exports = isKey;
     }, {
-        "../lang/isArray": 67,
-        "./toObject": 64
+        "../lang/isArray": 68,
+        "./toObject": 65
     } ],
-    60: [ function(require, module, exports) {
+    61: [ function(require, module, exports) {
         var MAX_SAFE_INTEGER = 9007199254740991;
         function isLength(value) {
             return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
         }
         module.exports = isLength;
     }, {} ],
-    61: [ function(require, module, exports) {
+    62: [ function(require, module, exports) {
         function isObjectLike(value) {
             return !!value && typeof value == "object";
         }
         module.exports = isObjectLike;
     }, {} ],
-    62: [ function(require, module, exports) {
+    63: [ function(require, module, exports) {
         var isObject = require("../lang/isObject");
         function isStrictComparable(value) {
             return value === value && !isObject(value);
         }
         module.exports = isStrictComparable;
     }, {
-        "../lang/isObject": 70
+        "../lang/isObject": 71
     } ],
-    63: [ function(require, module, exports) {
+    64: [ function(require, module, exports) {
         var isArguments = require("../lang/isArguments"), isArray = require("../lang/isArray"), isIndex = require("./isIndex"), isLength = require("./isLength"), keysIn = require("../object/keysIn");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3252,22 +3482,22 @@
         }
         module.exports = shimKeys;
     }, {
-        "../lang/isArguments": 66,
-        "../lang/isArray": 67,
-        "../object/keysIn": 73,
-        "./isIndex": 58,
-        "./isLength": 60
+        "../lang/isArguments": 67,
+        "../lang/isArray": 68,
+        "../object/keysIn": 74,
+        "./isIndex": 59,
+        "./isLength": 61
     } ],
-    64: [ function(require, module, exports) {
+    65: [ function(require, module, exports) {
         var isObject = require("../lang/isObject");
         function toObject(value) {
             return isObject(value) ? value : Object(value);
         }
         module.exports = toObject;
     }, {
-        "../lang/isObject": 70
+        "../lang/isObject": 71
     } ],
-    65: [ function(require, module, exports) {
+    66: [ function(require, module, exports) {
         var baseToString = require("./baseToString"), isArray = require("../lang/isArray");
         var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
         var reEscapeChar = /\\(\\)?/g;
@@ -3283,10 +3513,10 @@
         }
         module.exports = toPath;
     }, {
-        "../lang/isArray": 67,
-        "./baseToString": 46
+        "../lang/isArray": 68,
+        "./baseToString": 47
     } ],
-    66: [ function(require, module, exports) {
+    67: [ function(require, module, exports) {
         var isArrayLike = require("../internal/isArrayLike"), isObjectLike = require("../internal/isObjectLike");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3296,10 +3526,10 @@
         }
         module.exports = isArguments;
     }, {
-        "../internal/isArrayLike": 57,
-        "../internal/isObjectLike": 61
+        "../internal/isArrayLike": 58,
+        "../internal/isObjectLike": 62
     } ],
-    67: [ function(require, module, exports) {
+    68: [ function(require, module, exports) {
         var getNative = require("../internal/getNative"), isLength = require("../internal/isLength"), isObjectLike = require("../internal/isObjectLike");
         var arrayTag = "[object Array]";
         var objectProto = Object.prototype;
@@ -3310,11 +3540,11 @@
         };
         module.exports = isArray;
     }, {
-        "../internal/getNative": 56,
-        "../internal/isLength": 60,
-        "../internal/isObjectLike": 61
+        "../internal/getNative": 57,
+        "../internal/isLength": 61,
+        "../internal/isObjectLike": 62
     } ],
-    68: [ function(require, module, exports) {
+    69: [ function(require, module, exports) {
         var isObject = require("./isObject");
         var funcTag = "[object Function]";
         var objectProto = Object.prototype;
@@ -3324,9 +3554,9 @@
         }
         module.exports = isFunction;
     }, {
-        "./isObject": 70
+        "./isObject": 71
     } ],
-    69: [ function(require, module, exports) {
+    70: [ function(require, module, exports) {
         var isFunction = require("./isFunction"), isObjectLike = require("../internal/isObjectLike");
         var reIsHostCtor = /^\[object .+?Constructor\]$/;
         var objectProto = Object.prototype;
@@ -3344,17 +3574,17 @@
         }
         module.exports = isNative;
     }, {
-        "../internal/isObjectLike": 61,
-        "./isFunction": 68
+        "../internal/isObjectLike": 62,
+        "./isFunction": 69
     } ],
-    70: [ function(require, module, exports) {
+    71: [ function(require, module, exports) {
         function isObject(value) {
             var type = typeof value;
             return !!value && (type == "object" || type == "function");
         }
         module.exports = isObject;
     }, {} ],
-    71: [ function(require, module, exports) {
+    72: [ function(require, module, exports) {
         var isLength = require("../internal/isLength"), isObjectLike = require("../internal/isObjectLike");
         var argsTag = "[object Arguments]", arrayTag = "[object Array]", boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", funcTag = "[object Function]", mapTag = "[object Map]", numberTag = "[object Number]", objectTag = "[object Object]", regexpTag = "[object RegExp]", setTag = "[object Set]", stringTag = "[object String]", weakMapTag = "[object WeakMap]";
         var arrayBufferTag = "[object ArrayBuffer]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
@@ -3368,10 +3598,10 @@
         }
         module.exports = isTypedArray;
     }, {
-        "../internal/isLength": 60,
-        "../internal/isObjectLike": 61
+        "../internal/isLength": 61,
+        "../internal/isObjectLike": 62
     } ],
-    72: [ function(require, module, exports) {
+    73: [ function(require, module, exports) {
         var getNative = require("../internal/getNative"), isArrayLike = require("../internal/isArrayLike"), isObject = require("../lang/isObject"), shimKeys = require("../internal/shimKeys");
         var nativeKeys = getNative(Object, "keys");
         var keys = !nativeKeys ? shimKeys : function(object) {
@@ -3383,12 +3613,12 @@
         };
         module.exports = keys;
     }, {
-        "../internal/getNative": 56,
-        "../internal/isArrayLike": 57,
-        "../internal/shimKeys": 63,
-        "../lang/isObject": 70
+        "../internal/getNative": 57,
+        "../internal/isArrayLike": 58,
+        "../internal/shimKeys": 64,
+        "../lang/isObject": 71
     } ],
-    73: [ function(require, module, exports) {
+    74: [ function(require, module, exports) {
         var isArguments = require("../lang/isArguments"), isArray = require("../lang/isArray"), isIndex = require("../internal/isIndex"), isLength = require("../internal/isLength"), isObject = require("../lang/isObject");
         var objectProto = Object.prototype;
         var hasOwnProperty = objectProto.hasOwnProperty;
@@ -3414,13 +3644,13 @@
         }
         module.exports = keysIn;
     }, {
-        "../internal/isIndex": 58,
-        "../internal/isLength": 60,
-        "../lang/isArguments": 66,
-        "../lang/isArray": 67,
-        "../lang/isObject": 70
+        "../internal/isIndex": 59,
+        "../internal/isLength": 61,
+        "../lang/isArguments": 67,
+        "../lang/isArray": 68,
+        "../lang/isObject": 71
     } ],
-    74: [ function(require, module, exports) {
+    75: [ function(require, module, exports) {
         var keys = require("./keys"), toObject = require("../internal/toObject");
         function pairs(object) {
             object = toObject(object);
@@ -3433,27 +3663,6265 @@
         }
         module.exports = pairs;
     }, {
-        "../internal/toObject": 64,
-        "./keys": 72
+        "../internal/toObject": 65,
+        "./keys": 73
     } ],
-    75: [ function(require, module, exports) {
+    76: [ function(require, module, exports) {
         function identity(value) {
             return value;
         }
         module.exports = identity;
     }, {} ],
-    76: [ function(require, module, exports) {
+    77: [ function(require, module, exports) {
         var baseProperty = require("../internal/baseProperty"), basePropertyDeep = require("../internal/basePropertyDeep"), isKey = require("../internal/isKey");
         function property(path) {
             return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
         }
         module.exports = property;
     }, {
-        "../internal/baseProperty": 42,
-        "../internal/basePropertyDeep": 43,
-        "../internal/isKey": 59
+        "../internal/baseProperty": 43,
+        "../internal/basePropertyDeep": 44,
+        "../internal/isKey": 60
     } ],
-    77: [ function(require, module, exports) {
+    78: [ function(require, module, exports) {
+        "use strict";
+        module.exports = require("./lib/");
+    }, {
+        "./lib/": 88
+    } ],
+    79: [ function(require, module, exports) {
+        "use strict";
+        module.exports = require("entities/maps/entities.json");
+    }, {
+        "entities/maps/entities.json": 131
+    } ],
+    80: [ function(require, module, exports) {
+        "use strict";
+        module.exports = [ "address", "article", "aside", "base", "basefont", "blockquote", "body", "caption", "center", "col", "colgroup", "dd", "details", "dialog", "dir", "div", "dl", "dt", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "head", "header", "hr", "html", "iframe", "legend", "li", "link", "main", "menu", "menuitem", "meta", "nav", "noframes", "ol", "optgroup", "option", "p", "param", "pre", "section", "source", "title", "summary", "table", "tbody", "td", "tfoot", "th", "thead", "title", "tr", "track", "ul" ];
+    }, {} ],
+    81: [ function(require, module, exports) {
+        "use strict";
+        var attr_name = "[a-zA-Z_:][a-zA-Z0-9:._-]*";
+        var unquoted = "[^\"'=<>`\\x00-\\x20]+";
+        var single_quoted = "'[^']*'";
+        var double_quoted = '"[^"]*"';
+        var attr_value = "(?:" + unquoted + "|" + single_quoted + "|" + double_quoted + ")";
+        var attribute = "(?:\\s+" + attr_name + "(?:\\s*=\\s*" + attr_value + ")?)";
+        var open_tag = "<[A-Za-z][A-Za-z0-9\\-]*" + attribute + "*\\s*\\/?>";
+        var close_tag = "<\\/[A-Za-z][A-Za-z0-9\\-]*\\s*>";
+        var comment = "<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->";
+        var processing = "<[?].*?[?]>";
+        var declaration = "<![A-Z]+\\s+[^>]*>";
+        var cdata = "<!\\[CDATA\\[[\\s\\S]*?\\]\\]>";
+        var HTML_TAG_RE = new RegExp("^(?:" + open_tag + "|" + close_tag + "|" + comment + "|" + processing + "|" + declaration + "|" + cdata + ")");
+        var HTML_OPEN_CLOSE_TAG_RE = new RegExp("^(?:" + open_tag + "|" + close_tag + ")");
+        module.exports.HTML_TAG_RE = HTML_TAG_RE;
+        module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
+    }, {} ],
+    82: [ function(require, module, exports) {
+        "use strict";
+        module.exports = [ "coap", "doi", "javascript", "aaa", "aaas", "about", "acap", "cap", "cid", "crid", "data", "dav", "dict", "dns", "file", "ftp", "geo", "go", "gopher", "h323", "http", "https", "iax", "icap", "im", "imap", "info", "ipp", "iris", "iris.beep", "iris.xpc", "iris.xpcs", "iris.lwz", "ldap", "mailto", "mid", "msrp", "msrps", "mtqp", "mupdate", "news", "nfs", "ni", "nih", "nntp", "opaquelocktoken", "pop", "pres", "rtsp", "service", "session", "shttp", "sieve", "sip", "sips", "sms", "snmp", "soap.beep", "soap.beeps", "tag", "tel", "telnet", "tftp", "thismessage", "tn3270", "tip", "tv", "urn", "vemmi", "ws", "wss", "xcon", "xcon-userid", "xmlrpc.beep", "xmlrpc.beeps", "xmpp", "z39.50r", "z39.50s", "adiumxtra", "afp", "afs", "aim", "apt", "attachment", "aw", "beshare", "bitcoin", "bolo", "callto", "chrome", "chrome-extension", "com-eventbrite-attendee", "content", "cvs", "dlna-playsingle", "dlna-playcontainer", "dtn", "dvb", "ed2k", "facetime", "feed", "finger", "fish", "gg", "git", "gizmoproject", "gtalk", "hcp", "icon", "ipn", "irc", "irc6", "ircs", "itms", "jar", "jms", "keyparc", "lastfm", "ldaps", "magnet", "maps", "market", "message", "mms", "ms-help", "msnim", "mumble", "mvn", "notes", "oid", "palm", "paparazzi", "platform", "proxy", "psyc", "query", "res", "resource", "rmi", "rsync", "rtmp", "secondlife", "sftp", "sgn", "skype", "smb", "soldat", "spotify", "ssh", "steam", "svn", "teamspeak", "things", "udp", "unreal", "ut2004", "ventrilo", "view-source", "webcal", "wtai", "wyciwyg", "xfire", "xri", "ymsgr" ];
+    }, {} ],
+    83: [ function(require, module, exports) {
+        "use strict";
+        function _class(obj) {
+            return Object.prototype.toString.call(obj);
+        }
+        function isString(obj) {
+            return _class(obj) === "[object String]";
+        }
+        var _hasOwnProperty = Object.prototype.hasOwnProperty;
+        function has(object, key) {
+            return _hasOwnProperty.call(object, key);
+        }
+        function assign(obj) {
+            var sources = Array.prototype.slice.call(arguments, 1);
+            sources.forEach(function(source) {
+                if (!source) {
+                    return;
+                }
+                if (typeof source !== "object") {
+                    throw new TypeError(source + "must be object");
+                }
+                Object.keys(source).forEach(function(key) {
+                    obj[key] = source[key];
+                });
+            });
+            return obj;
+        }
+        function arrayReplaceAt(src, pos, newElements) {
+            return [].concat(src.slice(0, pos), newElements, src.slice(pos + 1));
+        }
+        function isValidEntityCode(c) {
+            if (c >= 55296 && c <= 57343) {
+                return false;
+            }
+            if (c >= 64976 && c <= 65007) {
+                return false;
+            }
+            if ((c & 65535) === 65535 || (c & 65535) === 65534) {
+                return false;
+            }
+            if (c >= 0 && c <= 8) {
+                return false;
+            }
+            if (c === 11) {
+                return false;
+            }
+            if (c >= 14 && c <= 31) {
+                return false;
+            }
+            if (c >= 127 && c <= 159) {
+                return false;
+            }
+            if (c > 1114111) {
+                return false;
+            }
+            return true;
+        }
+        function fromCodePoint(c) {
+            if (c > 65535) {
+                c -= 65536;
+                var surrogate1 = 55296 + (c >> 10), surrogate2 = 56320 + (c & 1023);
+                return String.fromCharCode(surrogate1, surrogate2);
+            }
+            return String.fromCharCode(c);
+        }
+        var UNESCAPE_MD_RE = /\\([!"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`{|}~])/g;
+        var ENTITY_RE = /&([a-z#][a-z0-9]{1,31});/gi;
+        var UNESCAPE_ALL_RE = new RegExp(UNESCAPE_MD_RE.source + "|" + ENTITY_RE.source, "gi");
+        var DIGITAL_ENTITY_TEST_RE = /^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))/i;
+        var entities = require("./entities");
+        function replaceEntityPattern(match, name) {
+            var code = 0;
+            if (has(entities, name)) {
+                return entities[name];
+            }
+            if (name.charCodeAt(0) === 35 && DIGITAL_ENTITY_TEST_RE.test(name)) {
+                code = name[1].toLowerCase() === "x" ? parseInt(name.slice(2), 16) : parseInt(name.slice(1), 10);
+                if (isValidEntityCode(code)) {
+                    return fromCodePoint(code);
+                }
+            }
+            return match;
+        }
+        function unescapeMd(str) {
+            if (str.indexOf("\\") < 0) {
+                return str;
+            }
+            return str.replace(UNESCAPE_MD_RE, "$1");
+        }
+        function unescapeAll(str) {
+            if (str.indexOf("\\") < 0 && str.indexOf("&") < 0) {
+                return str;
+            }
+            return str.replace(UNESCAPE_ALL_RE, function(match, escaped, entity) {
+                if (escaped) {
+                    return escaped;
+                }
+                return replaceEntityPattern(match, entity);
+            });
+        }
+        var HTML_ESCAPE_TEST_RE = /[&<>"]/;
+        var HTML_ESCAPE_REPLACE_RE = /[&<>"]/g;
+        var HTML_REPLACEMENTS = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;"
+        };
+        function replaceUnsafeChar(ch) {
+            return HTML_REPLACEMENTS[ch];
+        }
+        function escapeHtml(str) {
+            if (HTML_ESCAPE_TEST_RE.test(str)) {
+                return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar);
+            }
+            return str;
+        }
+        var REGEXP_ESCAPE_RE = /[.?*+^$[\]\\(){}|-]/g;
+        function escapeRE(str) {
+            return str.replace(REGEXP_ESCAPE_RE, "\\$&");
+        }
+        function isSpace(code) {
+            switch (code) {
+              case 9:
+              case 32:
+                return true;
+            }
+            return false;
+        }
+        function isWhiteSpace(code) {
+            if (code >= 8192 && code <= 8202) {
+                return true;
+            }
+            switch (code) {
+              case 9:
+              case 10:
+              case 11:
+              case 12:
+              case 13:
+              case 32:
+              case 160:
+              case 5760:
+              case 8239:
+              case 8287:
+              case 12288:
+                return true;
+            }
+            return false;
+        }
+        var UNICODE_PUNCT_RE = require("uc.micro/categories/P/regex");
+        function isPunctChar(ch) {
+            return UNICODE_PUNCT_RE.test(ch);
+        }
+        function isMdAsciiPunct(ch) {
+            switch (ch) {
+              case 33:
+              case 34:
+              case 35:
+              case 36:
+              case 37:
+              case 38:
+              case 39:
+              case 40:
+              case 41:
+              case 42:
+              case 43:
+              case 44:
+              case 45:
+              case 46:
+              case 47:
+              case 58:
+              case 59:
+              case 60:
+              case 61:
+              case 62:
+              case 63:
+              case 64:
+              case 91:
+              case 92:
+              case 93:
+              case 94:
+              case 95:
+              case 96:
+              case 123:
+              case 124:
+              case 125:
+              case 126:
+                return true;
+
+              default:
+                return false;
+            }
+        }
+        function normalizeReference(str) {
+            return str.trim().replace(/\s+/g, " ").toUpperCase();
+        }
+        exports.lib = {};
+        exports.lib.mdurl = require("mdurl");
+        exports.lib.ucmicro = require("uc.micro");
+        exports.assign = assign;
+        exports.isString = isString;
+        exports.has = has;
+        exports.unescapeMd = unescapeMd;
+        exports.unescapeAll = unescapeAll;
+        exports.isValidEntityCode = isValidEntityCode;
+        exports.fromCodePoint = fromCodePoint;
+        exports.escapeHtml = escapeHtml;
+        exports.arrayReplaceAt = arrayReplaceAt;
+        exports.isSpace = isSpace;
+        exports.isWhiteSpace = isWhiteSpace;
+        exports.isMdAsciiPunct = isMdAsciiPunct;
+        exports.isPunctChar = isPunctChar;
+        exports.escapeRE = escapeRE;
+        exports.normalizeReference = normalizeReference;
+    }, {
+        "./entities": 79,
+        mdurl: 137,
+        "uc.micro": 143,
+        "uc.micro/categories/P/regex": 141
+    } ],
+    84: [ function(require, module, exports) {
+        "use strict";
+        exports.parseLinkLabel = require("./parse_link_label");
+        exports.parseLinkDestination = require("./parse_link_destination");
+        exports.parseLinkTitle = require("./parse_link_title");
+    }, {
+        "./parse_link_destination": 85,
+        "./parse_link_label": 86,
+        "./parse_link_title": 87
+    } ],
+    85: [ function(require, module, exports) {
+        "use strict";
+        var unescapeAll = require("../common/utils").unescapeAll;
+        module.exports = function parseLinkDestination(str, pos, max) {
+            var code, level, lines = 0, start = pos, result = {
+                ok: false,
+                pos: 0,
+                lines: 0,
+                str: ""
+            };
+            if (str.charCodeAt(pos) === 60) {
+                pos++;
+                while (pos < max) {
+                    code = str.charCodeAt(pos);
+                    if (code === 10) {
+                        return result;
+                    }
+                    if (code === 62) {
+                        result.pos = pos + 1;
+                        result.str = unescapeAll(str.slice(start + 1, pos));
+                        result.ok = true;
+                        return result;
+                    }
+                    if (code === 92 && pos + 1 < max) {
+                        pos += 2;
+                        continue;
+                    }
+                    pos++;
+                }
+                return result;
+            }
+            level = 0;
+            while (pos < max) {
+                code = str.charCodeAt(pos);
+                if (code === 32) {
+                    break;
+                }
+                if (code < 32 || code === 127) {
+                    break;
+                }
+                if (code === 92 && pos + 1 < max) {
+                    pos += 2;
+                    continue;
+                }
+                if (code === 40) {
+                    level++;
+                    if (level > 1) {
+                        break;
+                    }
+                }
+                if (code === 41) {
+                    level--;
+                    if (level < 0) {
+                        break;
+                    }
+                }
+                pos++;
+            }
+            if (start === pos) {
+                return result;
+            }
+            result.str = unescapeAll(str.slice(start, pos));
+            result.lines = lines;
+            result.pos = pos;
+            result.ok = true;
+            return result;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    86: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function parseLinkLabel(state, start, disableNested) {
+            var level, found, marker, prevPos, labelEnd = -1, max = state.posMax, oldPos = state.pos;
+            state.pos = start + 1;
+            level = 1;
+            while (state.pos < max) {
+                marker = state.src.charCodeAt(state.pos);
+                if (marker === 93) {
+                    level--;
+                    if (level === 0) {
+                        found = true;
+                        break;
+                    }
+                }
+                prevPos = state.pos;
+                state.md.inline.skipToken(state);
+                if (marker === 91) {
+                    if (prevPos === state.pos - 1) {
+                        level++;
+                    } else if (disableNested) {
+                        state.pos = oldPos;
+                        return -1;
+                    }
+                }
+            }
+            if (found) {
+                labelEnd = state.pos;
+            }
+            state.pos = oldPos;
+            return labelEnd;
+        };
+    }, {} ],
+    87: [ function(require, module, exports) {
+        "use strict";
+        var unescapeAll = require("../common/utils").unescapeAll;
+        module.exports = function parseLinkTitle(str, pos, max) {
+            var code, marker, lines = 0, start = pos, result = {
+                ok: false,
+                pos: 0,
+                lines: 0,
+                str: ""
+            };
+            if (pos >= max) {
+                return result;
+            }
+            marker = str.charCodeAt(pos);
+            if (marker !== 34 && marker !== 39 && marker !== 40) {
+                return result;
+            }
+            pos++;
+            if (marker === 40) {
+                marker = 41;
+            }
+            while (pos < max) {
+                code = str.charCodeAt(pos);
+                if (code === marker) {
+                    result.pos = pos + 1;
+                    result.lines = lines;
+                    result.str = unescapeAll(str.slice(start + 1, pos));
+                    result.ok = true;
+                    return result;
+                } else if (code === 10) {
+                    lines++;
+                } else if (code === 92 && pos + 1 < max) {
+                    pos++;
+                    if (str.charCodeAt(pos) === 10) {
+                        lines++;
+                    }
+                }
+                pos++;
+            }
+            return result;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    88: [ function(require, module, exports) {
+        "use strict";
+        var utils = require("./common/utils");
+        var helpers = require("./helpers");
+        var Renderer = require("./renderer");
+        var ParserCore = require("./parser_core");
+        var ParserBlock = require("./parser_block");
+        var ParserInline = require("./parser_inline");
+        var LinkifyIt = require("linkify-it");
+        var mdurl = require("mdurl");
+        var punycode = require("punycode");
+        var config = {
+            "default": require("./presets/default"),
+            zero: require("./presets/zero"),
+            commonmark: require("./presets/commonmark")
+        };
+        var BAD_PROTO_RE = /^(vbscript|javascript|file|data):/;
+        var GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/;
+        function validateLink(url) {
+            var str = url.trim().toLowerCase();
+            return BAD_PROTO_RE.test(str) ? GOOD_DATA_RE.test(str) ? true : false : true;
+        }
+        var RECODE_HOSTNAME_FOR = [ "http:", "https:", "mailto:" ];
+        function normalizeLink(url) {
+            var parsed = mdurl.parse(url, true);
+            if (parsed.hostname) {
+                if (!parsed.protocol || RECODE_HOSTNAME_FOR.indexOf(parsed.protocol) >= 0) {
+                    try {
+                        parsed.hostname = punycode.toASCII(parsed.hostname);
+                    } catch (er) {}
+                }
+            }
+            return mdurl.encode(mdurl.format(parsed));
+        }
+        function normalizeLinkText(url) {
+            var parsed = mdurl.parse(url, true);
+            if (parsed.hostname) {
+                if (!parsed.protocol || RECODE_HOSTNAME_FOR.indexOf(parsed.protocol) >= 0) {
+                    try {
+                        parsed.hostname = punycode.toUnicode(parsed.hostname);
+                    } catch (er) {}
+                }
+            }
+            return mdurl.decode(mdurl.format(parsed));
+        }
+        function MarkdownIt(presetName, options) {
+            if (!(this instanceof MarkdownIt)) {
+                return new MarkdownIt(presetName, options);
+            }
+            if (!options) {
+                if (!utils.isString(presetName)) {
+                    options = presetName || {};
+                    presetName = "default";
+                }
+            }
+            this.inline = new ParserInline();
+            this.block = new ParserBlock();
+            this.core = new ParserCore();
+            this.renderer = new Renderer();
+            this.linkify = new LinkifyIt();
+            this.validateLink = validateLink;
+            this.normalizeLink = normalizeLink;
+            this.normalizeLinkText = normalizeLinkText;
+            this.utils = utils;
+            this.helpers = helpers;
+            this.options = {};
+            this.configure(presetName);
+            if (options) {
+                this.set(options);
+            }
+        }
+        MarkdownIt.prototype.set = function(options) {
+            utils.assign(this.options, options);
+            return this;
+        };
+        MarkdownIt.prototype.configure = function(presets) {
+            var self = this, presetName;
+            if (utils.isString(presets)) {
+                presetName = presets;
+                presets = config[presetName];
+                if (!presets) {
+                    throw new Error('Wrong `markdown-it` preset "' + presetName + '", check name');
+                }
+            }
+            if (!presets) {
+                throw new Error("Wrong `markdown-it` preset, can't be empty");
+            }
+            if (presets.options) {
+                self.set(presets.options);
+            }
+            if (presets.components) {
+                Object.keys(presets.components).forEach(function(name) {
+                    if (presets.components[name].rules) {
+                        self[name].ruler.enableOnly(presets.components[name].rules);
+                    }
+                    if (presets.components[name].rules2) {
+                        self[name].ruler2.enableOnly(presets.components[name].rules2);
+                    }
+                });
+            }
+            return this;
+        };
+        MarkdownIt.prototype.enable = function(list, ignoreInvalid) {
+            var result = [];
+            if (!Array.isArray(list)) {
+                list = [ list ];
+            }
+            [ "core", "block", "inline" ].forEach(function(chain) {
+                result = result.concat(this[chain].ruler.enable(list, true));
+            }, this);
+            result = result.concat(this.inline.ruler2.enable(list, true));
+            var missed = list.filter(function(name) {
+                return result.indexOf(name) < 0;
+            });
+            if (missed.length && !ignoreInvalid) {
+                throw new Error("MarkdownIt. Failed to enable unknown rule(s): " + missed);
+            }
+            return this;
+        };
+        MarkdownIt.prototype.disable = function(list, ignoreInvalid) {
+            var result = [];
+            if (!Array.isArray(list)) {
+                list = [ list ];
+            }
+            [ "core", "block", "inline" ].forEach(function(chain) {
+                result = result.concat(this[chain].ruler.disable(list, true));
+            }, this);
+            result = result.concat(this.inline.ruler2.disable(list, true));
+            var missed = list.filter(function(name) {
+                return result.indexOf(name) < 0;
+            });
+            if (missed.length && !ignoreInvalid) {
+                throw new Error("MarkdownIt. Failed to disable unknown rule(s): " + missed);
+            }
+            return this;
+        };
+        MarkdownIt.prototype.use = function(plugin) {
+            var args = [ this ].concat(Array.prototype.slice.call(arguments, 1));
+            plugin.apply(plugin, args);
+            return this;
+        };
+        MarkdownIt.prototype.parse = function(src, env) {
+            var state = new this.core.State(src, this, env);
+            this.core.process(state);
+            return state.tokens;
+        };
+        MarkdownIt.prototype.render = function(src, env) {
+            env = env || {};
+            return this.renderer.render(this.parse(src, env), this.options, env);
+        };
+        MarkdownIt.prototype.parseInline = function(src, env) {
+            var state = new this.core.State(src, this, env);
+            state.inlineMode = true;
+            this.core.process(state);
+            return state.tokens;
+        };
+        MarkdownIt.prototype.renderInline = function(src, env) {
+            env = env || {};
+            return this.renderer.render(this.parseInline(src, env), this.options, env);
+        };
+        module.exports = MarkdownIt;
+    }, {
+        "./common/utils": 83,
+        "./helpers": 84,
+        "./parser_block": 89,
+        "./parser_core": 90,
+        "./parser_inline": 91,
+        "./presets/commonmark": 92,
+        "./presets/default": 93,
+        "./presets/zero": 94,
+        "./renderer": 95,
+        "linkify-it": 132,
+        mdurl: 137,
+        punycode: 4
+    } ],
+    89: [ function(require, module, exports) {
+        "use strict";
+        var Ruler = require("./ruler");
+        var _rules = [ [ "code", require("./rules_block/code") ], [ "fence", require("./rules_block/fence"), [ "paragraph", "reference", "blockquote", "list" ] ], [ "blockquote", require("./rules_block/blockquote"), [ "paragraph", "reference", "list" ] ], [ "hr", require("./rules_block/hr"), [ "paragraph", "reference", "blockquote", "list" ] ], [ "list", require("./rules_block/list"), [ "paragraph", "reference", "blockquote" ] ], [ "reference", require("./rules_block/reference") ], [ "heading", require("./rules_block/heading"), [ "paragraph", "reference", "blockquote" ] ], [ "lheading", require("./rules_block/lheading") ], [ "html_block", require("./rules_block/html_block"), [ "paragraph", "reference", "blockquote" ] ], [ "table", require("./rules_block/table"), [ "paragraph", "reference" ] ], [ "paragraph", require("./rules_block/paragraph") ] ];
+        function ParserBlock() {
+            this.ruler = new Ruler();
+            for (var i = 0; i < _rules.length; i++) {
+                this.ruler.push(_rules[i][0], _rules[i][1], {
+                    alt: (_rules[i][2] || []).slice()
+                });
+            }
+        }
+        ParserBlock.prototype.tokenize = function(state, startLine, endLine) {
+            var ok, i, rules = this.ruler.getRules(""), len = rules.length, line = startLine, hasEmptyLines = false, maxNesting = state.md.options.maxNesting;
+            while (line < endLine) {
+                state.line = line = state.skipEmptyLines(line);
+                if (line >= endLine) {
+                    break;
+                }
+                if (state.sCount[line] < state.blkIndent) {
+                    break;
+                }
+                if (state.level >= maxNesting) {
+                    state.line = endLine;
+                    break;
+                }
+                for (i = 0; i < len; i++) {
+                    ok = rules[i](state, line, endLine, false);
+                    if (ok) {
+                        break;
+                    }
+                }
+                state.tight = !hasEmptyLines;
+                if (state.isEmpty(state.line - 1)) {
+                    hasEmptyLines = true;
+                }
+                line = state.line;
+                if (line < endLine && state.isEmpty(line)) {
+                    hasEmptyLines = true;
+                    line++;
+                    if (line < endLine && state.parentType === "list" && state.isEmpty(line)) {
+                        break;
+                    }
+                    state.line = line;
+                }
+            }
+        };
+        ParserBlock.prototype.parse = function(src, md, env, outTokens) {
+            var state;
+            if (!src) {
+                return [];
+            }
+            state = new this.State(src, md, env, outTokens);
+            this.tokenize(state, state.line, state.lineMax);
+        };
+        ParserBlock.prototype.State = require("./rules_block/state_block");
+        module.exports = ParserBlock;
+    }, {
+        "./ruler": 96,
+        "./rules_block/blockquote": 97,
+        "./rules_block/code": 98,
+        "./rules_block/fence": 99,
+        "./rules_block/heading": 100,
+        "./rules_block/hr": 101,
+        "./rules_block/html_block": 102,
+        "./rules_block/lheading": 103,
+        "./rules_block/list": 104,
+        "./rules_block/paragraph": 105,
+        "./rules_block/reference": 106,
+        "./rules_block/state_block": 107,
+        "./rules_block/table": 108
+    } ],
+    90: [ function(require, module, exports) {
+        "use strict";
+        var Ruler = require("./ruler");
+        var _rules = [ [ "normalize", require("./rules_core/normalize") ], [ "block", require("./rules_core/block") ], [ "inline", require("./rules_core/inline") ], [ "linkify", require("./rules_core/linkify") ], [ "replacements", require("./rules_core/replacements") ], [ "smartquotes", require("./rules_core/smartquotes") ] ];
+        function Core() {
+            this.ruler = new Ruler();
+            for (var i = 0; i < _rules.length; i++) {
+                this.ruler.push(_rules[i][0], _rules[i][1]);
+            }
+        }
+        Core.prototype.process = function(state) {
+            var i, l, rules;
+            rules = this.ruler.getRules("");
+            for (i = 0, l = rules.length; i < l; i++) {
+                rules[i](state);
+            }
+        };
+        Core.prototype.State = require("./rules_core/state_core");
+        module.exports = Core;
+    }, {
+        "./ruler": 96,
+        "./rules_core/block": 109,
+        "./rules_core/inline": 110,
+        "./rules_core/linkify": 111,
+        "./rules_core/normalize": 112,
+        "./rules_core/replacements": 113,
+        "./rules_core/smartquotes": 114,
+        "./rules_core/state_core": 115
+    } ],
+    91: [ function(require, module, exports) {
+        "use strict";
+        var Ruler = require("./ruler");
+        var _rules = [ [ "text", require("./rules_inline/text") ], [ "newline", require("./rules_inline/newline") ], [ "escape", require("./rules_inline/escape") ], [ "backticks", require("./rules_inline/backticks") ], [ "strikethrough", require("./rules_inline/strikethrough").tokenize ], [ "emphasis", require("./rules_inline/emphasis").tokenize ], [ "link", require("./rules_inline/link") ], [ "image", require("./rules_inline/image") ], [ "autolink", require("./rules_inline/autolink") ], [ "html_inline", require("./rules_inline/html_inline") ], [ "entity", require("./rules_inline/entity") ] ];
+        var _rules2 = [ [ "balance_pairs", require("./rules_inline/balance_pairs") ], [ "strikethrough", require("./rules_inline/strikethrough").postProcess ], [ "emphasis", require("./rules_inline/emphasis").postProcess ], [ "text_collapse", require("./rules_inline/text_collapse") ] ];
+        function ParserInline() {
+            var i;
+            this.ruler = new Ruler();
+            for (i = 0; i < _rules.length; i++) {
+                this.ruler.push(_rules[i][0], _rules[i][1]);
+            }
+            this.ruler2 = new Ruler();
+            for (i = 0; i < _rules2.length; i++) {
+                this.ruler2.push(_rules2[i][0], _rules2[i][1]);
+            }
+        }
+        ParserInline.prototype.skipToken = function(state) {
+            var i, pos = state.pos, rules = this.ruler.getRules(""), len = rules.length, maxNesting = state.md.options.maxNesting, cache = state.cache;
+            if (typeof cache[pos] !== "undefined") {
+                state.pos = cache[pos];
+                return;
+            }
+            if (state.level < maxNesting) {
+                for (i = 0; i < len; i++) {
+                    if (rules[i](state, true)) {
+                        cache[pos] = state.pos;
+                        return;
+                    }
+                }
+            }
+            state.pos++;
+            cache[pos] = state.pos;
+        };
+        ParserInline.prototype.tokenize = function(state) {
+            var ok, i, rules = this.ruler.getRules(""), len = rules.length, end = state.posMax, maxNesting = state.md.options.maxNesting;
+            while (state.pos < end) {
+                if (state.level < maxNesting) {
+                    for (i = 0; i < len; i++) {
+                        ok = rules[i](state, false);
+                        if (ok) {
+                            break;
+                        }
+                    }
+                }
+                if (ok) {
+                    if (state.pos >= end) {
+                        break;
+                    }
+                    continue;
+                }
+                state.pending += state.src[state.pos++];
+            }
+            if (state.pending) {
+                state.pushPending();
+            }
+        };
+        ParserInline.prototype.parse = function(str, md, env, outTokens) {
+            var i, rules, len;
+            var state = new this.State(str, md, env, outTokens);
+            this.tokenize(state);
+            rules = this.ruler2.getRules("");
+            len = rules.length;
+            for (i = 0; i < len; i++) {
+                rules[i](state);
+            }
+        };
+        ParserInline.prototype.State = require("./rules_inline/state_inline");
+        module.exports = ParserInline;
+    }, {
+        "./ruler": 96,
+        "./rules_inline/autolink": 116,
+        "./rules_inline/backticks": 117,
+        "./rules_inline/balance_pairs": 118,
+        "./rules_inline/emphasis": 119,
+        "./rules_inline/entity": 120,
+        "./rules_inline/escape": 121,
+        "./rules_inline/html_inline": 122,
+        "./rules_inline/image": 123,
+        "./rules_inline/link": 124,
+        "./rules_inline/newline": 125,
+        "./rules_inline/state_inline": 126,
+        "./rules_inline/strikethrough": 127,
+        "./rules_inline/text": 128,
+        "./rules_inline/text_collapse": 129
+    } ],
+    92: [ function(require, module, exports) {
+        "use strict";
+        module.exports = {
+            options: {
+                html: true,
+                xhtmlOut: true,
+                breaks: false,
+                langPrefix: "language-",
+                linkify: false,
+                typographer: false,
+                quotes: "“”‘’",
+                highlight: null,
+                maxNesting: 20
+            },
+            components: {
+                core: {
+                    rules: [ "normalize", "block", "inline" ]
+                },
+                block: {
+                    rules: [ "blockquote", "code", "fence", "heading", "hr", "html_block", "lheading", "list", "reference", "paragraph" ]
+                },
+                inline: {
+                    rules: [ "autolink", "backticks", "emphasis", "entity", "escape", "html_inline", "image", "link", "newline", "text" ],
+                    rules2: [ "balance_pairs", "emphasis", "text_collapse" ]
+                }
+            }
+        };
+    }, {} ],
+    93: [ function(require, module, exports) {
+        "use strict";
+        module.exports = {
+            options: {
+                html: false,
+                xhtmlOut: false,
+                breaks: false,
+                langPrefix: "language-",
+                linkify: false,
+                typographer: false,
+                quotes: "“”‘’",
+                highlight: null,
+                maxNesting: 20
+            },
+            components: {
+                core: {},
+                block: {},
+                inline: {}
+            }
+        };
+    }, {} ],
+    94: [ function(require, module, exports) {
+        "use strict";
+        module.exports = {
+            options: {
+                html: false,
+                xhtmlOut: false,
+                breaks: false,
+                langPrefix: "language-",
+                linkify: false,
+                typographer: false,
+                quotes: "“”‘’",
+                highlight: null,
+                maxNesting: 20
+            },
+            components: {
+                core: {
+                    rules: [ "normalize", "block", "inline" ]
+                },
+                block: {
+                    rules: [ "paragraph" ]
+                },
+                inline: {
+                    rules: [ "text" ],
+                    rules2: [ "balance_pairs", "text_collapse" ]
+                }
+            }
+        };
+    }, {} ],
+    95: [ function(require, module, exports) {
+        "use strict";
+        var assign = require("./common/utils").assign;
+        var unescapeAll = require("./common/utils").unescapeAll;
+        var escapeHtml = require("./common/utils").escapeHtml;
+        var default_rules = {};
+        default_rules.code_inline = function(tokens, idx) {
+            return "<code>" + escapeHtml(tokens[idx].content) + "</code>";
+        };
+        default_rules.code_block = function(tokens, idx) {
+            return "<pre><code>" + escapeHtml(tokens[idx].content) + "</code></pre>\n";
+        };
+        default_rules.fence = function(tokens, idx, options, env, slf) {
+            var token = tokens[idx], info = token.info ? unescapeAll(token.info).trim() : "", langName = "", highlighted;
+            if (info) {
+                langName = info.split(/\s+/g)[0];
+                token.attrPush([ "class", options.langPrefix + langName ]);
+            }
+            if (options.highlight) {
+                highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
+            } else {
+                highlighted = escapeHtml(token.content);
+            }
+            return "<pre><code" + slf.renderAttrs(token) + ">" + highlighted + "</code></pre>\n";
+        };
+        default_rules.image = function(tokens, idx, options, env, slf) {
+            var token = tokens[idx];
+            token.attrs[token.attrIndex("alt")][1] = slf.renderInlineAsText(token.children, options, env);
+            return slf.renderToken(tokens, idx, options);
+        };
+        default_rules.hardbreak = function(tokens, idx, options) {
+            return options.xhtmlOut ? "<br />\n" : "<br>\n";
+        };
+        default_rules.softbreak = function(tokens, idx, options) {
+            return options.breaks ? options.xhtmlOut ? "<br />\n" : "<br>\n" : "\n";
+        };
+        default_rules.text = function(tokens, idx) {
+            return escapeHtml(tokens[idx].content);
+        };
+        default_rules.html_block = function(tokens, idx) {
+            return tokens[idx].content;
+        };
+        default_rules.html_inline = function(tokens, idx) {
+            return tokens[idx].content;
+        };
+        function Renderer() {
+            this.rules = assign({}, default_rules);
+        }
+        Renderer.prototype.renderAttrs = function renderAttrs(token) {
+            var i, l, result;
+            if (!token.attrs) {
+                return "";
+            }
+            result = "";
+            for (i = 0, l = token.attrs.length; i < l; i++) {
+                result += " " + escapeHtml(token.attrs[i][0]) + '="' + escapeHtml(token.attrs[i][1]) + '"';
+            }
+            return result;
+        };
+        Renderer.prototype.renderToken = function renderToken(tokens, idx, options) {
+            var nextToken, result = "", needLf = false, token = tokens[idx];
+            if (token.hidden) {
+                return "";
+            }
+            if (token.block && token.nesting !== -1 && idx && tokens[idx - 1].hidden) {
+                result += "\n";
+            }
+            result += (token.nesting === -1 ? "</" : "<") + token.tag;
+            result += this.renderAttrs(token);
+            if (token.nesting === 0 && options.xhtmlOut) {
+                result += " /";
+            }
+            if (token.block) {
+                needLf = true;
+                if (token.nesting === 1) {
+                    if (idx + 1 < tokens.length) {
+                        nextToken = tokens[idx + 1];
+                        if (nextToken.type === "inline" || nextToken.hidden) {
+                            needLf = false;
+                        } else if (nextToken.nesting === -1 && nextToken.tag === token.tag) {
+                            needLf = false;
+                        }
+                    }
+                }
+            }
+            result += needLf ? ">\n" : ">";
+            return result;
+        };
+        Renderer.prototype.renderInline = function(tokens, options, env) {
+            var type, result = "", rules = this.rules;
+            for (var i = 0, len = tokens.length; i < len; i++) {
+                type = tokens[i].type;
+                if (typeof rules[type] !== "undefined") {
+                    result += rules[type](tokens, i, options, env, this);
+                } else {
+                    result += this.renderToken(tokens, i, options);
+                }
+            }
+            return result;
+        };
+        Renderer.prototype.renderInlineAsText = function(tokens, options, env) {
+            var result = "", rules = this.rules;
+            for (var i = 0, len = tokens.length; i < len; i++) {
+                if (tokens[i].type === "text") {
+                    result += rules.text(tokens, i, options, env, this);
+                } else if (tokens[i].type === "image") {
+                    result += this.renderInlineAsText(tokens[i].children, options, env);
+                }
+            }
+            return result;
+        };
+        Renderer.prototype.render = function(tokens, options, env) {
+            var i, len, type, result = "", rules = this.rules;
+            for (i = 0, len = tokens.length; i < len; i++) {
+                type = tokens[i].type;
+                if (type === "inline") {
+                    result += this.renderInline(tokens[i].children, options, env);
+                } else if (typeof rules[type] !== "undefined") {
+                    result += rules[tokens[i].type](tokens, i, options, env, this);
+                } else {
+                    result += this.renderToken(tokens, i, options, env);
+                }
+            }
+            return result;
+        };
+        module.exports = Renderer;
+    }, {
+        "./common/utils": 83
+    } ],
+    96: [ function(require, module, exports) {
+        "use strict";
+        function Ruler() {
+            this.__rules__ = [];
+            this.__cache__ = null;
+        }
+        Ruler.prototype.__find__ = function(name) {
+            for (var i = 0; i < this.__rules__.length; i++) {
+                if (this.__rules__[i].name === name) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        Ruler.prototype.__compile__ = function() {
+            var self = this;
+            var chains = [ "" ];
+            self.__rules__.forEach(function(rule) {
+                if (!rule.enabled) {
+                    return;
+                }
+                rule.alt.forEach(function(altName) {
+                    if (chains.indexOf(altName) < 0) {
+                        chains.push(altName);
+                    }
+                });
+            });
+            self.__cache__ = {};
+            chains.forEach(function(chain) {
+                self.__cache__[chain] = [];
+                self.__rules__.forEach(function(rule) {
+                    if (!rule.enabled) {
+                        return;
+                    }
+                    if (chain && rule.alt.indexOf(chain) < 0) {
+                        return;
+                    }
+                    self.__cache__[chain].push(rule.fn);
+                });
+            });
+        };
+        Ruler.prototype.at = function(name, fn, options) {
+            var index = this.__find__(name);
+            var opt = options || {};
+            if (index === -1) {
+                throw new Error("Parser rule not found: " + name);
+            }
+            this.__rules__[index].fn = fn;
+            this.__rules__[index].alt = opt.alt || [];
+            this.__cache__ = null;
+        };
+        Ruler.prototype.before = function(beforeName, ruleName, fn, options) {
+            var index = this.__find__(beforeName);
+            var opt = options || {};
+            if (index === -1) {
+                throw new Error("Parser rule not found: " + beforeName);
+            }
+            this.__rules__.splice(index, 0, {
+                name: ruleName,
+                enabled: true,
+                fn: fn,
+                alt: opt.alt || []
+            });
+            this.__cache__ = null;
+        };
+        Ruler.prototype.after = function(afterName, ruleName, fn, options) {
+            var index = this.__find__(afterName);
+            var opt = options || {};
+            if (index === -1) {
+                throw new Error("Parser rule not found: " + afterName);
+            }
+            this.__rules__.splice(index + 1, 0, {
+                name: ruleName,
+                enabled: true,
+                fn: fn,
+                alt: opt.alt || []
+            });
+            this.__cache__ = null;
+        };
+        Ruler.prototype.push = function(ruleName, fn, options) {
+            var opt = options || {};
+            this.__rules__.push({
+                name: ruleName,
+                enabled: true,
+                fn: fn,
+                alt: opt.alt || []
+            });
+            this.__cache__ = null;
+        };
+        Ruler.prototype.enable = function(list, ignoreInvalid) {
+            if (!Array.isArray(list)) {
+                list = [ list ];
+            }
+            var result = [];
+            list.forEach(function(name) {
+                var idx = this.__find__(name);
+                if (idx < 0) {
+                    if (ignoreInvalid) {
+                        return;
+                    }
+                    throw new Error("Rules manager: invalid rule name " + name);
+                }
+                this.__rules__[idx].enabled = true;
+                result.push(name);
+            }, this);
+            this.__cache__ = null;
+            return result;
+        };
+        Ruler.prototype.enableOnly = function(list, ignoreInvalid) {
+            if (!Array.isArray(list)) {
+                list = [ list ];
+            }
+            this.__rules__.forEach(function(rule) {
+                rule.enabled = false;
+            });
+            this.enable(list, ignoreInvalid);
+        };
+        Ruler.prototype.disable = function(list, ignoreInvalid) {
+            if (!Array.isArray(list)) {
+                list = [ list ];
+            }
+            var result = [];
+            list.forEach(function(name) {
+                var idx = this.__find__(name);
+                if (idx < 0) {
+                    if (ignoreInvalid) {
+                        return;
+                    }
+                    throw new Error("Rules manager: invalid rule name " + name);
+                }
+                this.__rules__[idx].enabled = false;
+                result.push(name);
+            }, this);
+            this.__cache__ = null;
+            return result;
+        };
+        Ruler.prototype.getRules = function(chainName) {
+            if (this.__cache__ === null) {
+                this.__compile__();
+            }
+            return this.__cache__[chainName] || [];
+        };
+        module.exports = Ruler;
+    }, {} ],
+    97: [ function(require, module, exports) {
+        "use strict";
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function blockquote(state, startLine, endLine, silent) {
+            var nextLine, lastLineEmpty, oldTShift, oldSCount, oldBMarks, oldIndent, oldParentType, lines, initial, offset, ch, terminatorRules, token, i, l, terminate, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
+            if (state.src.charCodeAt(pos++) !== 62) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            if (state.src.charCodeAt(pos) === 32) {
+                pos++;
+            }
+            oldIndent = state.blkIndent;
+            state.blkIndent = 0;
+            initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+            oldBMarks = [ state.bMarks[startLine] ];
+            state.bMarks[startLine] = pos;
+            while (pos < max) {
+                ch = state.src.charCodeAt(pos);
+                if (isSpace(ch)) {
+                    if (ch === 9) {
+                        offset += 4 - offset % 4;
+                    } else {
+                        offset++;
+                    }
+                } else {
+                    break;
+                }
+                pos++;
+            }
+            lastLineEmpty = pos >= max;
+            oldSCount = [ state.sCount[startLine] ];
+            state.sCount[startLine] = offset - initial;
+            oldTShift = [ state.tShift[startLine] ];
+            state.tShift[startLine] = pos - state.bMarks[startLine];
+            terminatorRules = state.md.block.ruler.getRules("blockquote");
+            for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
+                if (state.sCount[nextLine] < oldIndent) {
+                    break;
+                }
+                pos = state.bMarks[nextLine] + state.tShift[nextLine];
+                max = state.eMarks[nextLine];
+                if (pos >= max) {
+                    break;
+                }
+                if (state.src.charCodeAt(pos++) === 62) {
+                    if (state.src.charCodeAt(pos) === 32) {
+                        pos++;
+                    }
+                    initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
+                    oldBMarks.push(state.bMarks[nextLine]);
+                    state.bMarks[nextLine] = pos;
+                    while (pos < max) {
+                        ch = state.src.charCodeAt(pos);
+                        if (isSpace(ch)) {
+                            if (ch === 9) {
+                                offset += 4 - offset % 4;
+                            } else {
+                                offset++;
+                            }
+                        } else {
+                            break;
+                        }
+                        pos++;
+                    }
+                    lastLineEmpty = pos >= max;
+                    oldSCount.push(state.sCount[nextLine]);
+                    state.sCount[nextLine] = offset - initial;
+                    oldTShift.push(state.tShift[nextLine]);
+                    state.tShift[nextLine] = pos - state.bMarks[nextLine];
+                    continue;
+                }
+                if (lastLineEmpty) {
+                    break;
+                }
+                terminate = false;
+                for (i = 0, l = terminatorRules.length; i < l; i++) {
+                    if (terminatorRules[i](state, nextLine, endLine, true)) {
+                        terminate = true;
+                        break;
+                    }
+                }
+                if (terminate) {
+                    break;
+                }
+                oldBMarks.push(state.bMarks[nextLine]);
+                oldTShift.push(state.tShift[nextLine]);
+                oldSCount.push(state.sCount[nextLine]);
+                state.sCount[nextLine] = -1;
+            }
+            oldParentType = state.parentType;
+            state.parentType = "blockquote";
+            token = state.push("blockquote_open", "blockquote", 1);
+            token.markup = ">";
+            token.map = lines = [ startLine, 0 ];
+            state.md.block.tokenize(state, startLine, nextLine);
+            token = state.push("blockquote_close", "blockquote", -1);
+            token.markup = ">";
+            state.parentType = oldParentType;
+            lines[1] = state.line;
+            for (i = 0; i < oldTShift.length; i++) {
+                state.bMarks[i + startLine] = oldBMarks[i];
+                state.tShift[i + startLine] = oldTShift[i];
+                state.sCount[i + startLine] = oldSCount[i];
+            }
+            state.blkIndent = oldIndent;
+            return true;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    98: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function code(state, startLine, endLine) {
+            var nextLine, last, token;
+            if (state.sCount[startLine] - state.blkIndent < 4) {
+                return false;
+            }
+            last = nextLine = startLine + 1;
+            while (nextLine < endLine) {
+                if (state.isEmpty(nextLine)) {
+                    nextLine++;
+                    continue;
+                }
+                if (state.sCount[nextLine] - state.blkIndent >= 4) {
+                    nextLine++;
+                    last = nextLine;
+                    continue;
+                }
+                break;
+            }
+            state.line = nextLine;
+            token = state.push("code_block", "code", 0);
+            token.content = state.getLines(startLine, last, 4 + state.blkIndent, true);
+            token.map = [ startLine, state.line ];
+            return true;
+        };
+    }, {} ],
+    99: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function fence(state, startLine, endLine, silent) {
+            var marker, len, params, nextLine, mem, token, markup, haveEndMarker = false, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
+            if (pos + 3 > max) {
+                return false;
+            }
+            marker = state.src.charCodeAt(pos);
+            if (marker !== 126 && marker !== 96) {
+                return false;
+            }
+            mem = pos;
+            pos = state.skipChars(pos, marker);
+            len = pos - mem;
+            if (len < 3) {
+                return false;
+            }
+            markup = state.src.slice(mem, pos);
+            params = state.src.slice(pos, max);
+            if (params.indexOf("`") >= 0) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            nextLine = startLine;
+            for (;;) {
+                nextLine++;
+                if (nextLine >= endLine) {
+                    break;
+                }
+                pos = mem = state.bMarks[nextLine] + state.tShift[nextLine];
+                max = state.eMarks[nextLine];
+                if (pos < max && state.sCount[nextLine] < state.blkIndent) {
+                    break;
+                }
+                if (state.src.charCodeAt(pos) !== marker) {
+                    continue;
+                }
+                if (state.sCount[nextLine] - state.blkIndent >= 4) {
+                    continue;
+                }
+                pos = state.skipChars(pos, marker);
+                if (pos - mem < len) {
+                    continue;
+                }
+                pos = state.skipSpaces(pos);
+                if (pos < max) {
+                    continue;
+                }
+                haveEndMarker = true;
+                break;
+            }
+            len = state.sCount[startLine];
+            state.line = nextLine + (haveEndMarker ? 1 : 0);
+            token = state.push("fence", "code", 0);
+            token.info = params;
+            token.content = state.getLines(startLine + 1, nextLine, len, true);
+            token.markup = markup;
+            token.map = [ startLine, state.line ];
+            return true;
+        };
+    }, {} ],
+    100: [ function(require, module, exports) {
+        "use strict";
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function heading(state, startLine, endLine, silent) {
+            var ch, level, tmp, token, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
+            ch = state.src.charCodeAt(pos);
+            if (ch !== 35 || pos >= max) {
+                return false;
+            }
+            level = 1;
+            ch = state.src.charCodeAt(++pos);
+            while (ch === 35 && pos < max && level <= 6) {
+                level++;
+                ch = state.src.charCodeAt(++pos);
+            }
+            if (level > 6 || pos < max && ch !== 32) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            max = state.skipSpacesBack(max, pos);
+            tmp = state.skipCharsBack(max, 35, pos);
+            if (tmp > pos && isSpace(state.src.charCodeAt(tmp - 1))) {
+                max = tmp;
+            }
+            state.line = startLine + 1;
+            token = state.push("heading_open", "h" + String(level), 1);
+            token.markup = "########".slice(0, level);
+            token.map = [ startLine, state.line ];
+            token = state.push("inline", "", 0);
+            token.content = state.src.slice(pos, max).trim();
+            token.map = [ startLine, state.line ];
+            token.children = [];
+            token = state.push("heading_close", "h" + String(level), -1);
+            token.markup = "########".slice(0, level);
+            return true;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    101: [ function(require, module, exports) {
+        "use strict";
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function hr(state, startLine, endLine, silent) {
+            var marker, cnt, ch, token, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
+            marker = state.src.charCodeAt(pos++);
+            if (marker !== 42 && marker !== 45 && marker !== 95) {
+                return false;
+            }
+            cnt = 1;
+            while (pos < max) {
+                ch = state.src.charCodeAt(pos++);
+                if (ch !== marker && !isSpace(ch)) {
+                    return false;
+                }
+                if (ch === marker) {
+                    cnt++;
+                }
+            }
+            if (cnt < 3) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            state.line = startLine + 1;
+            token = state.push("hr", "hr", 0);
+            token.map = [ startLine, state.line ];
+            token.markup = Array(cnt + 1).join(String.fromCharCode(marker));
+            return true;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    102: [ function(require, module, exports) {
+        "use strict";
+        var block_names = require("../common/html_blocks");
+        var HTML_OPEN_CLOSE_TAG_RE = require("../common/html_re").HTML_OPEN_CLOSE_TAG_RE;
+        var HTML_SEQUENCES = [ [ /^<(script|pre|style)(?=(\s|>|$))/i, /<\/(script|pre|style)>/i, true ], [ /^<!--/, /-->/, true ], [ /^<\?/, /\?>/, true ], [ /^<![A-Z]/, />/, true ], [ /^<!\[CDATA\[/, /\]\]>/, true ], [ new RegExp("^</?(" + block_names.join("|") + ")(?=(\\s|/?>|$))", "i"), /^$/, true ], [ new RegExp(HTML_OPEN_CLOSE_TAG_RE.source + "\\s*$"), /^$/, false ] ];
+        module.exports = function html_block(state, startLine, endLine, silent) {
+            var i, nextLine, token, lineText, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
+            if (!state.md.options.html) {
+                return false;
+            }
+            if (state.src.charCodeAt(pos) !== 60) {
+                return false;
+            }
+            lineText = state.src.slice(pos, max);
+            for (i = 0; i < HTML_SEQUENCES.length; i++) {
+                if (HTML_SEQUENCES[i][0].test(lineText)) {
+                    break;
+                }
+            }
+            if (i === HTML_SEQUENCES.length) {
+                return false;
+            }
+            if (silent) {
+                return HTML_SEQUENCES[i][2];
+            }
+            nextLine = startLine + 1;
+            if (!HTML_SEQUENCES[i][1].test(lineText)) {
+                for (;nextLine < endLine; nextLine++) {
+                    if (state.sCount[nextLine] < state.blkIndent) {
+                        break;
+                    }
+                    pos = state.bMarks[nextLine] + state.tShift[nextLine];
+                    max = state.eMarks[nextLine];
+                    lineText = state.src.slice(pos, max);
+                    if (HTML_SEQUENCES[i][1].test(lineText)) {
+                        if (lineText.length !== 0) {
+                            nextLine++;
+                        }
+                        break;
+                    }
+                }
+            }
+            state.line = nextLine;
+            token = state.push("html_block", "", 0);
+            token.map = [ startLine, nextLine ];
+            token.content = state.getLines(startLine, nextLine, state.blkIndent, true);
+            return true;
+        };
+    }, {
+        "../common/html_blocks": 80,
+        "../common/html_re": 81
+    } ],
+    103: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function lheading(state, startLine, endLine) {
+            var marker, pos, max, token, level, next = startLine + 1;
+            if (next >= endLine) {
+                return false;
+            }
+            if (state.sCount[next] < state.blkIndent) {
+                return false;
+            }
+            if (state.sCount[next] - state.blkIndent > 3) {
+                return false;
+            }
+            pos = state.bMarks[next] + state.tShift[next];
+            max = state.eMarks[next];
+            if (pos >= max) {
+                return false;
+            }
+            marker = state.src.charCodeAt(pos);
+            if (marker !== 45 && marker !== 61) {
+                return false;
+            }
+            pos = state.skipChars(pos, marker);
+            pos = state.skipSpaces(pos);
+            if (pos < max) {
+                return false;
+            }
+            pos = state.bMarks[startLine] + state.tShift[startLine];
+            state.line = next + 1;
+            level = marker === 61 ? 1 : 2;
+            token = state.push("heading_open", "h" + String(level), 1);
+            token.markup = String.fromCharCode(marker);
+            token.map = [ startLine, state.line ];
+            token = state.push("inline", "", 0);
+            token.content = state.src.slice(pos, state.eMarks[startLine]).trim();
+            token.map = [ startLine, state.line - 1 ];
+            token.children = [];
+            token = state.push("heading_close", "h" + String(level), -1);
+            token.markup = String.fromCharCode(marker);
+            return true;
+        };
+    }, {} ],
+    104: [ function(require, module, exports) {
+        "use strict";
+        var isSpace = require("../common/utils").isSpace;
+        function skipBulletListMarker(state, startLine) {
+            var marker, pos, max, ch;
+            pos = state.bMarks[startLine] + state.tShift[startLine];
+            max = state.eMarks[startLine];
+            marker = state.src.charCodeAt(pos++);
+            if (marker !== 42 && marker !== 45 && marker !== 43) {
+                return -1;
+            }
+            if (pos < max) {
+                ch = state.src.charCodeAt(pos);
+                if (!isSpace(ch)) {
+                    return -1;
+                }
+            }
+            return pos;
+        }
+        function skipOrderedListMarker(state, startLine) {
+            var ch, start = state.bMarks[startLine] + state.tShift[startLine], pos = start, max = state.eMarks[startLine];
+            if (pos + 1 >= max) {
+                return -1;
+            }
+            ch = state.src.charCodeAt(pos++);
+            if (ch < 48 || ch > 57) {
+                return -1;
+            }
+            for (;;) {
+                if (pos >= max) {
+                    return -1;
+                }
+                ch = state.src.charCodeAt(pos++);
+                if (ch >= 48 && ch <= 57) {
+                    if (pos - start >= 10) {
+                        return -1;
+                    }
+                    continue;
+                }
+                if (ch === 41 || ch === 46) {
+                    break;
+                }
+                return -1;
+            }
+            if (pos < max) {
+                ch = state.src.charCodeAt(pos);
+                if (!isSpace(ch)) {
+                    return -1;
+                }
+            }
+            return pos;
+        }
+        function markTightParagraphs(state, idx) {
+            var i, l, level = state.level + 2;
+            for (i = idx + 2, l = state.tokens.length - 2; i < l; i++) {
+                if (state.tokens[i].level === level && state.tokens[i].type === "paragraph_open") {
+                    state.tokens[i + 2].hidden = true;
+                    state.tokens[i].hidden = true;
+                    i += 2;
+                }
+            }
+        }
+        module.exports = function list(state, startLine, endLine, silent) {
+            var nextLine, initial, offset, indent, oldTShift, oldIndent, oldLIndent, oldTight, oldParentType, start, posAfterMarker, ch, pos, max, indentAfterMarker, markerValue, markerCharCode, isOrdered, contentStart, listTokIdx, prevEmptyEnd, listLines, itemLines, tight = true, terminatorRules, token, i, l, terminate;
+            if ((posAfterMarker = skipOrderedListMarker(state, startLine)) >= 0) {
+                isOrdered = true;
+            } else if ((posAfterMarker = skipBulletListMarker(state, startLine)) >= 0) {
+                isOrdered = false;
+            } else {
+                return false;
+            }
+            markerCharCode = state.src.charCodeAt(posAfterMarker - 1);
+            if (silent) {
+                return true;
+            }
+            listTokIdx = state.tokens.length;
+            if (isOrdered) {
+                start = state.bMarks[startLine] + state.tShift[startLine];
+                markerValue = Number(state.src.substr(start, posAfterMarker - start - 1));
+                token = state.push("ordered_list_open", "ol", 1);
+                if (markerValue !== 1) {
+                    token.attrs = [ [ "start", markerValue ] ];
+                }
+            } else {
+                token = state.push("bullet_list_open", "ul", 1);
+            }
+            token.map = listLines = [ startLine, 0 ];
+            token.markup = String.fromCharCode(markerCharCode);
+            nextLine = startLine;
+            prevEmptyEnd = false;
+            terminatorRules = state.md.block.ruler.getRules("list");
+            while (nextLine < endLine) {
+                pos = posAfterMarker;
+                max = state.eMarks[nextLine];
+                initial = offset = state.sCount[nextLine] + posAfterMarker - (state.bMarks[startLine] + state.tShift[startLine]);
+                while (pos < max) {
+                    ch = state.src.charCodeAt(pos);
+                    if (isSpace(ch)) {
+                        if (ch === 9) {
+                            offset += 4 - offset % 4;
+                        } else {
+                            offset++;
+                        }
+                    } else {
+                        break;
+                    }
+                    pos++;
+                }
+                contentStart = pos;
+                if (contentStart >= max) {
+                    indentAfterMarker = 1;
+                } else {
+                    indentAfterMarker = offset - initial;
+                }
+                if (indentAfterMarker > 4) {
+                    indentAfterMarker = 1;
+                }
+                indent = initial + indentAfterMarker;
+                token = state.push("list_item_open", "li", 1);
+                token.markup = String.fromCharCode(markerCharCode);
+                token.map = itemLines = [ startLine, 0 ];
+                oldIndent = state.blkIndent;
+                oldTight = state.tight;
+                oldTShift = state.tShift[startLine];
+                oldLIndent = state.sCount[startLine];
+                oldParentType = state.parentType;
+                state.blkIndent = indent;
+                state.tight = true;
+                state.parentType = "list";
+                state.tShift[startLine] = contentStart - state.bMarks[startLine];
+                state.sCount[startLine] = offset;
+                state.md.block.tokenize(state, startLine, endLine, true);
+                if (!state.tight || prevEmptyEnd) {
+                    tight = false;
+                }
+                prevEmptyEnd = state.line - startLine > 1 && state.isEmpty(state.line - 1);
+                state.blkIndent = oldIndent;
+                state.tShift[startLine] = oldTShift;
+                state.sCount[startLine] = oldLIndent;
+                state.tight = oldTight;
+                state.parentType = oldParentType;
+                token = state.push("list_item_close", "li", -1);
+                token.markup = String.fromCharCode(markerCharCode);
+                nextLine = startLine = state.line;
+                itemLines[1] = nextLine;
+                contentStart = state.bMarks[startLine];
+                if (nextLine >= endLine) {
+                    break;
+                }
+                if (state.isEmpty(nextLine)) {
+                    break;
+                }
+                if (state.sCount[nextLine] < state.blkIndent) {
+                    break;
+                }
+                terminate = false;
+                for (i = 0, l = terminatorRules.length; i < l; i++) {
+                    if (terminatorRules[i](state, nextLine, endLine, true)) {
+                        terminate = true;
+                        break;
+                    }
+                }
+                if (terminate) {
+                    break;
+                }
+                if (isOrdered) {
+                    posAfterMarker = skipOrderedListMarker(state, nextLine);
+                    if (posAfterMarker < 0) {
+                        break;
+                    }
+                } else {
+                    posAfterMarker = skipBulletListMarker(state, nextLine);
+                    if (posAfterMarker < 0) {
+                        break;
+                    }
+                }
+                if (markerCharCode !== state.src.charCodeAt(posAfterMarker - 1)) {
+                    break;
+                }
+            }
+            if (isOrdered) {
+                token = state.push("ordered_list_close", "ol", -1);
+            } else {
+                token = state.push("bullet_list_close", "ul", -1);
+            }
+            token.markup = String.fromCharCode(markerCharCode);
+            listLines[1] = nextLine;
+            state.line = nextLine;
+            if (tight) {
+                markTightParagraphs(state, listTokIdx);
+            }
+            return true;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    105: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function paragraph(state, startLine) {
+            var content, terminate, i, l, token, nextLine = startLine + 1, terminatorRules = state.md.block.ruler.getRules("paragraph"), endLine = state.lineMax;
+            for (;nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
+                if (state.sCount[nextLine] - state.blkIndent > 3) {
+                    continue;
+                }
+                if (state.sCount[nextLine] < 0) {
+                    continue;
+                }
+                terminate = false;
+                for (i = 0, l = terminatorRules.length; i < l; i++) {
+                    if (terminatorRules[i](state, nextLine, endLine, true)) {
+                        terminate = true;
+                        break;
+                    }
+                }
+                if (terminate) {
+                    break;
+                }
+            }
+            content = state.getLines(startLine, nextLine, state.blkIndent, false).trim();
+            state.line = nextLine;
+            token = state.push("paragraph_open", "p", 1);
+            token.map = [ startLine, state.line ];
+            token = state.push("inline", "", 0);
+            token.content = content;
+            token.map = [ startLine, state.line ];
+            token.children = [];
+            token = state.push("paragraph_close", "p", -1);
+            return true;
+        };
+    }, {} ],
+    106: [ function(require, module, exports) {
+        "use strict";
+        var parseLinkDestination = require("../helpers/parse_link_destination");
+        var parseLinkTitle = require("../helpers/parse_link_title");
+        var normalizeReference = require("../common/utils").normalizeReference;
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function reference(state, startLine, _endLine, silent) {
+            var ch, destEndPos, destEndLineNo, endLine, href, i, l, label, labelEnd, res, start, str, terminate, terminatorRules, title, lines = 0, pos = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine], nextLine = startLine + 1;
+            if (state.src.charCodeAt(pos) !== 91) {
+                return false;
+            }
+            while (++pos < max) {
+                if (state.src.charCodeAt(pos) === 93 && state.src.charCodeAt(pos - 1) !== 92) {
+                    if (pos + 1 === max) {
+                        return false;
+                    }
+                    if (state.src.charCodeAt(pos + 1) !== 58) {
+                        return false;
+                    }
+                    break;
+                }
+            }
+            endLine = state.lineMax;
+            terminatorRules = state.md.block.ruler.getRules("reference");
+            for (;nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
+                if (state.sCount[nextLine] - state.blkIndent > 3) {
+                    continue;
+                }
+                if (state.sCount[nextLine] < 0) {
+                    continue;
+                }
+                terminate = false;
+                for (i = 0, l = terminatorRules.length; i < l; i++) {
+                    if (terminatorRules[i](state, nextLine, endLine, true)) {
+                        terminate = true;
+                        break;
+                    }
+                }
+                if (terminate) {
+                    break;
+                }
+            }
+            str = state.getLines(startLine, nextLine, state.blkIndent, false).trim();
+            max = str.length;
+            for (pos = 1; pos < max; pos++) {
+                ch = str.charCodeAt(pos);
+                if (ch === 91) {
+                    return false;
+                } else if (ch === 93) {
+                    labelEnd = pos;
+                    break;
+                } else if (ch === 10) {
+                    lines++;
+                } else if (ch === 92) {
+                    pos++;
+                    if (pos < max && str.charCodeAt(pos) === 10) {
+                        lines++;
+                    }
+                }
+            }
+            if (labelEnd < 0 || str.charCodeAt(labelEnd + 1) !== 58) {
+                return false;
+            }
+            for (pos = labelEnd + 2; pos < max; pos++) {
+                ch = str.charCodeAt(pos);
+                if (ch === 10) {
+                    lines++;
+                } else if (isSpace(ch)) {} else {
+                    break;
+                }
+            }
+            res = parseLinkDestination(str, pos, max);
+            if (!res.ok) {
+                return false;
+            }
+            href = state.md.normalizeLink(res.str);
+            if (!state.md.validateLink(href)) {
+                return false;
+            }
+            pos = res.pos;
+            lines += res.lines;
+            destEndPos = pos;
+            destEndLineNo = lines;
+            start = pos;
+            for (;pos < max; pos++) {
+                ch = str.charCodeAt(pos);
+                if (ch === 10) {
+                    lines++;
+                } else if (isSpace(ch)) {} else {
+                    break;
+                }
+            }
+            res = parseLinkTitle(str, pos, max);
+            if (pos < max && start !== pos && res.ok) {
+                title = res.str;
+                pos = res.pos;
+                lines += res.lines;
+            } else {
+                title = "";
+                pos = destEndPos;
+                lines = destEndLineNo;
+            }
+            while (pos < max) {
+                ch = str.charCodeAt(pos);
+                if (!isSpace(ch)) {
+                    break;
+                }
+                pos++;
+            }
+            if (pos < max && str.charCodeAt(pos) !== 10) {
+                if (title) {
+                    title = "";
+                    pos = destEndPos;
+                    lines = destEndLineNo;
+                    while (pos < max) {
+                        ch = str.charCodeAt(pos);
+                        if (!isSpace(ch)) {
+                            break;
+                        }
+                        pos++;
+                    }
+                }
+            }
+            if (pos < max && str.charCodeAt(pos) !== 10) {
+                return false;
+            }
+            label = normalizeReference(str.slice(1, labelEnd));
+            if (!label) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            if (typeof state.env.references === "undefined") {
+                state.env.references = {};
+            }
+            if (typeof state.env.references[label] === "undefined") {
+                state.env.references[label] = {
+                    title: title,
+                    href: href
+                };
+            }
+            state.line = startLine + lines + 1;
+            return true;
+        };
+    }, {
+        "../common/utils": 83,
+        "../helpers/parse_link_destination": 85,
+        "../helpers/parse_link_title": 87
+    } ],
+    107: [ function(require, module, exports) {
+        "use strict";
+        var Token = require("../token");
+        var isSpace = require("../common/utils").isSpace;
+        function StateBlock(src, md, env, tokens) {
+            var ch, s, start, pos, len, indent, offset, indent_found;
+            this.src = src;
+            this.md = md;
+            this.env = env;
+            this.tokens = tokens;
+            this.bMarks = [];
+            this.eMarks = [];
+            this.tShift = [];
+            this.sCount = [];
+            this.blkIndent = 0;
+            this.line = 0;
+            this.lineMax = 0;
+            this.tight = false;
+            this.parentType = "root";
+            this.ddIndent = -1;
+            this.level = 0;
+            this.result = "";
+            s = this.src;
+            indent_found = false;
+            for (start = pos = indent = offset = 0, len = s.length; pos < len; pos++) {
+                ch = s.charCodeAt(pos);
+                if (!indent_found) {
+                    if (isSpace(ch)) {
+                        indent++;
+                        if (ch === 9) {
+                            offset += 4 - offset % 4;
+                        } else {
+                            offset++;
+                        }
+                        continue;
+                    } else {
+                        indent_found = true;
+                    }
+                }
+                if (ch === 10 || pos === len - 1) {
+                    if (ch !== 10) {
+                        pos++;
+                    }
+                    this.bMarks.push(start);
+                    this.eMarks.push(pos);
+                    this.tShift.push(indent);
+                    this.sCount.push(offset);
+                    indent_found = false;
+                    indent = 0;
+                    offset = 0;
+                    start = pos + 1;
+                }
+            }
+            this.bMarks.push(s.length);
+            this.eMarks.push(s.length);
+            this.tShift.push(0);
+            this.sCount.push(0);
+            this.lineMax = this.bMarks.length - 1;
+        }
+        StateBlock.prototype.push = function(type, tag, nesting) {
+            var token = new Token(type, tag, nesting);
+            token.block = true;
+            if (nesting < 0) {
+                this.level--;
+            }
+            token.level = this.level;
+            if (nesting > 0) {
+                this.level++;
+            }
+            this.tokens.push(token);
+            return token;
+        };
+        StateBlock.prototype.isEmpty = function isEmpty(line) {
+            return this.bMarks[line] + this.tShift[line] >= this.eMarks[line];
+        };
+        StateBlock.prototype.skipEmptyLines = function skipEmptyLines(from) {
+            for (var max = this.lineMax; from < max; from++) {
+                if (this.bMarks[from] + this.tShift[from] < this.eMarks[from]) {
+                    break;
+                }
+            }
+            return from;
+        };
+        StateBlock.prototype.skipSpaces = function skipSpaces(pos) {
+            var ch;
+            for (var max = this.src.length; pos < max; pos++) {
+                ch = this.src.charCodeAt(pos);
+                if (!isSpace(ch)) {
+                    break;
+                }
+            }
+            return pos;
+        };
+        StateBlock.prototype.skipSpacesBack = function skipSpacesBack(pos, min) {
+            if (pos <= min) {
+                return pos;
+            }
+            while (pos > min) {
+                if (!isSpace(this.src.charCodeAt(--pos))) {
+                    return pos + 1;
+                }
+            }
+            return pos;
+        };
+        StateBlock.prototype.skipChars = function skipChars(pos, code) {
+            for (var max = this.src.length; pos < max; pos++) {
+                if (this.src.charCodeAt(pos) !== code) {
+                    break;
+                }
+            }
+            return pos;
+        };
+        StateBlock.prototype.skipCharsBack = function skipCharsBack(pos, code, min) {
+            if (pos <= min) {
+                return pos;
+            }
+            while (pos > min) {
+                if (code !== this.src.charCodeAt(--pos)) {
+                    return pos + 1;
+                }
+            }
+            return pos;
+        };
+        StateBlock.prototype.getLines = function getLines(begin, end, indent, keepLastLF) {
+            var i, lineIndent, ch, first, last, queue, lineStart, line = begin;
+            if (begin >= end) {
+                return "";
+            }
+            queue = new Array(end - begin);
+            for (i = 0; line < end; line++, i++) {
+                lineIndent = 0;
+                lineStart = first = this.bMarks[line];
+                if (line + 1 < end || keepLastLF) {
+                    last = this.eMarks[line] + 1;
+                } else {
+                    last = this.eMarks[line];
+                }
+                while (first < last && lineIndent < indent) {
+                    ch = this.src.charCodeAt(first);
+                    if (isSpace(ch)) {
+                        if (ch === 9) {
+                            lineIndent += 4 - lineIndent % 4;
+                        } else {
+                            lineIndent++;
+                        }
+                    } else if (first - lineStart < this.tShift[line]) {
+                        lineIndent++;
+                    } else {
+                        break;
+                    }
+                    first++;
+                }
+                queue[i] = this.src.slice(first, last);
+            }
+            return queue.join("");
+        };
+        StateBlock.prototype.Token = Token;
+        module.exports = StateBlock;
+    }, {
+        "../common/utils": 83,
+        "../token": 130
+    } ],
+    108: [ function(require, module, exports) {
+        "use strict";
+        function getLine(state, line) {
+            var pos = state.bMarks[line] + state.blkIndent, max = state.eMarks[line];
+            return state.src.substr(pos, max - pos);
+        }
+        function escapedSplit(str) {
+            var result = [], pos = 0, max = str.length, ch, escapes = 0, lastPos = 0, backTicked = false, lastBackTick = 0;
+            ch = str.charCodeAt(pos);
+            while (pos < max) {
+                if (ch === 96 && escapes % 2 === 0) {
+                    backTicked = !backTicked;
+                    lastBackTick = pos;
+                } else if (ch === 124 && escapes % 2 === 0 && !backTicked) {
+                    result.push(str.substring(lastPos, pos));
+                    lastPos = pos + 1;
+                } else if (ch === 92) {
+                    escapes++;
+                } else {
+                    escapes = 0;
+                }
+                pos++;
+                if (pos === max && backTicked) {
+                    backTicked = false;
+                    pos = lastBackTick + 1;
+                }
+                ch = str.charCodeAt(pos);
+            }
+            result.push(str.substring(lastPos));
+            return result;
+        }
+        module.exports = function table(state, startLine, endLine, silent) {
+            var ch, lineText, pos, i, nextLine, rows, token, aligns, t, tableLines, tbodyLines;
+            if (startLine + 2 > endLine) {
+                return false;
+            }
+            nextLine = startLine + 1;
+            if (state.sCount[nextLine] < state.blkIndent) {
+                return false;
+            }
+            pos = state.bMarks[nextLine] + state.tShift[nextLine];
+            if (pos >= state.eMarks[nextLine]) {
+                return false;
+            }
+            ch = state.src.charCodeAt(pos);
+            if (ch !== 124 && ch !== 45 && ch !== 58) {
+                return false;
+            }
+            lineText = getLine(state, startLine + 1);
+            if (!/^[-:| ]+$/.test(lineText)) {
+                return false;
+            }
+            rows = lineText.split("|");
+            if (rows.length < 2) {
+                return false;
+            }
+            aligns = [];
+            for (i = 0; i < rows.length; i++) {
+                t = rows[i].trim();
+                if (!t) {
+                    if (i === 0 || i === rows.length - 1) {
+                        continue;
+                    } else {
+                        return false;
+                    }
+                }
+                if (!/^:?-+:?$/.test(t)) {
+                    return false;
+                }
+                if (t.charCodeAt(t.length - 1) === 58) {
+                    aligns.push(t.charCodeAt(0) === 58 ? "center" : "right");
+                } else if (t.charCodeAt(0) === 58) {
+                    aligns.push("left");
+                } else {
+                    aligns.push("");
+                }
+            }
+            lineText = getLine(state, startLine).trim();
+            if (lineText.indexOf("|") === -1) {
+                return false;
+            }
+            rows = escapedSplit(lineText.replace(/^\||\|$/g, ""));
+            if (aligns.length !== rows.length) {
+                return false;
+            }
+            if (silent) {
+                return true;
+            }
+            token = state.push("table_open", "table", 1);
+            token.map = tableLines = [ startLine, 0 ];
+            token = state.push("thead_open", "thead", 1);
+            token.map = [ startLine, startLine + 1 ];
+            token = state.push("tr_open", "tr", 1);
+            token.map = [ startLine, startLine + 1 ];
+            for (i = 0; i < rows.length; i++) {
+                token = state.push("th_open", "th", 1);
+                token.map = [ startLine, startLine + 1 ];
+                if (aligns[i]) {
+                    token.attrs = [ [ "style", "text-align:" + aligns[i] ] ];
+                }
+                token = state.push("inline", "", 0);
+                token.content = rows[i].trim();
+                token.map = [ startLine, startLine + 1 ];
+                token.children = [];
+                token = state.push("th_close", "th", -1);
+            }
+            token = state.push("tr_close", "tr", -1);
+            token = state.push("thead_close", "thead", -1);
+            token = state.push("tbody_open", "tbody", 1);
+            token.map = tbodyLines = [ startLine + 2, 0 ];
+            for (nextLine = startLine + 2; nextLine < endLine; nextLine++) {
+                if (state.sCount[nextLine] < state.blkIndent) {
+                    break;
+                }
+                lineText = getLine(state, nextLine).trim();
+                if (lineText.indexOf("|") === -1) {
+                    break;
+                }
+                rows = escapedSplit(lineText.replace(/^\||\|$/g, ""));
+                rows.length = aligns.length;
+                token = state.push("tr_open", "tr", 1);
+                for (i = 0; i < rows.length; i++) {
+                    token = state.push("td_open", "td", 1);
+                    if (aligns[i]) {
+                        token.attrs = [ [ "style", "text-align:" + aligns[i] ] ];
+                    }
+                    token = state.push("inline", "", 0);
+                    token.content = rows[i] ? rows[i].trim() : "";
+                    token.children = [];
+                    token = state.push("td_close", "td", -1);
+                }
+                token = state.push("tr_close", "tr", -1);
+            }
+            token = state.push("tbody_close", "tbody", -1);
+            token = state.push("table_close", "table", -1);
+            tableLines[1] = tbodyLines[1] = nextLine;
+            state.line = nextLine;
+            return true;
+        };
+    }, {} ],
+    109: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function block(state) {
+            var token;
+            if (state.inlineMode) {
+                token = new state.Token("inline", "", 0);
+                token.content = state.src;
+                token.map = [ 0, 1 ];
+                token.children = [];
+                state.tokens.push(token);
+            } else {
+                state.md.block.parse(state.src, state.md, state.env, state.tokens);
+            }
+        };
+    }, {} ],
+    110: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function inline(state) {
+            var tokens = state.tokens, tok, i, l;
+            for (i = 0, l = tokens.length; i < l; i++) {
+                tok = tokens[i];
+                if (tok.type === "inline") {
+                    state.md.inline.parse(tok.content, state.md, state.env, tok.children);
+                }
+            }
+        };
+    }, {} ],
+    111: [ function(require, module, exports) {
+        "use strict";
+        var arrayReplaceAt = require("../common/utils").arrayReplaceAt;
+        function isLinkOpen(str) {
+            return /^<a[>\s]/i.test(str);
+        }
+        function isLinkClose(str) {
+            return /^<\/a\s*>/i.test(str);
+        }
+        module.exports = function linkify(state) {
+            var i, j, l, tokens, token, currentToken, nodes, ln, text, pos, lastPos, level, htmlLinkLevel, url, fullUrl, urlText, blockTokens = state.tokens, links;
+            if (!state.md.options.linkify) {
+                return;
+            }
+            for (j = 0, l = blockTokens.length; j < l; j++) {
+                if (blockTokens[j].type !== "inline" || !state.md.linkify.pretest(blockTokens[j].content)) {
+                    continue;
+                }
+                tokens = blockTokens[j].children;
+                htmlLinkLevel = 0;
+                for (i = tokens.length - 1; i >= 0; i--) {
+                    currentToken = tokens[i];
+                    if (currentToken.type === "link_close") {
+                        i--;
+                        while (tokens[i].level !== currentToken.level && tokens[i].type !== "link_open") {
+                            i--;
+                        }
+                        continue;
+                    }
+                    if (currentToken.type === "html_inline") {
+                        if (isLinkOpen(currentToken.content) && htmlLinkLevel > 0) {
+                            htmlLinkLevel--;
+                        }
+                        if (isLinkClose(currentToken.content)) {
+                            htmlLinkLevel++;
+                        }
+                    }
+                    if (htmlLinkLevel > 0) {
+                        continue;
+                    }
+                    if (currentToken.type === "text" && state.md.linkify.test(currentToken.content)) {
+                        text = currentToken.content;
+                        links = state.md.linkify.match(text);
+                        nodes = [];
+                        level = currentToken.level;
+                        lastPos = 0;
+                        for (ln = 0; ln < links.length; ln++) {
+                            url = links[ln].url;
+                            fullUrl = state.md.normalizeLink(url);
+                            if (!state.md.validateLink(fullUrl)) {
+                                continue;
+                            }
+                            urlText = links[ln].text;
+                            if (!links[ln].schema) {
+                                urlText = state.md.normalizeLinkText("http://" + urlText).replace(/^http:\/\//, "");
+                            } else if (links[ln].schema === "mailto:" && !/^mailto:/i.test(urlText)) {
+                                urlText = state.md.normalizeLinkText("mailto:" + urlText).replace(/^mailto:/, "");
+                            } else {
+                                urlText = state.md.normalizeLinkText(urlText);
+                            }
+                            pos = links[ln].index;
+                            if (pos > lastPos) {
+                                token = new state.Token("text", "", 0);
+                                token.content = text.slice(lastPos, pos);
+                                token.level = level;
+                                nodes.push(token);
+                            }
+                            token = new state.Token("link_open", "a", 1);
+                            token.attrs = [ [ "href", fullUrl ] ];
+                            token.level = level++;
+                            token.markup = "linkify";
+                            token.info = "auto";
+                            nodes.push(token);
+                            token = new state.Token("text", "", 0);
+                            token.content = urlText;
+                            token.level = level;
+                            nodes.push(token);
+                            token = new state.Token("link_close", "a", -1);
+                            token.level = --level;
+                            token.markup = "linkify";
+                            token.info = "auto";
+                            nodes.push(token);
+                            lastPos = links[ln].lastIndex;
+                        }
+                        if (lastPos < text.length) {
+                            token = new state.Token("text", "", 0);
+                            token.content = text.slice(lastPos);
+                            token.level = level;
+                            nodes.push(token);
+                        }
+                        blockTokens[j].children = tokens = arrayReplaceAt(tokens, i, nodes);
+                    }
+                }
+            }
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    112: [ function(require, module, exports) {
+        "use strict";
+        var NEWLINES_RE = /\r[\n\u0085]|[\u2424\u2028\u0085]/g;
+        var NULL_RE = /\u0000/g;
+        module.exports = function inline(state) {
+            var str;
+            str = state.src.replace(NEWLINES_RE, "\n");
+            str = str.replace(NULL_RE, "�");
+            state.src = str;
+        };
+    }, {} ],
+    113: [ function(require, module, exports) {
+        "use strict";
+        var RARE_RE = /\+-|\.\.|\?\?\?\?|!!!!|,,|--/;
+        var SCOPED_ABBR_TEST_RE = /\((c|tm|r|p)\)/i;
+        var SCOPED_ABBR_RE = /\((c|tm|r|p)\)/gi;
+        var SCOPED_ABBR = {
+            c: "©",
+            r: "®",
+            p: "§",
+            tm: "™"
+        };
+        function replaceFn(match, name) {
+            return SCOPED_ABBR[name.toLowerCase()];
+        }
+        function replace_scoped(inlineTokens) {
+            var i, token;
+            for (i = inlineTokens.length - 1; i >= 0; i--) {
+                token = inlineTokens[i];
+                if (token.type === "text") {
+                    token.content = token.content.replace(SCOPED_ABBR_RE, replaceFn);
+                }
+            }
+        }
+        function replace_rare(inlineTokens) {
+            var i, token;
+            for (i = inlineTokens.length - 1; i >= 0; i--) {
+                token = inlineTokens[i];
+                if (token.type === "text") {
+                    if (RARE_RE.test(token.content)) {
+                        token.content = token.content.replace(/\+-/g, "±").replace(/\.{2,}/g, "…").replace(/([?!])…/g, "$1..").replace(/([?!]){4,}/g, "$1$1$1").replace(/,{2,}/g, ",").replace(/(^|[^-])---([^-]|$)/gm, "$1—$2").replace(/(^|\s)--(\s|$)/gm, "$1–$2").replace(/(^|[^-\s])--([^-\s]|$)/gm, "$1–$2");
+                    }
+                }
+            }
+        }
+        module.exports = function replace(state) {
+            var blkIdx;
+            if (!state.md.options.typographer) {
+                return;
+            }
+            for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+                if (state.tokens[blkIdx].type !== "inline") {
+                    continue;
+                }
+                if (SCOPED_ABBR_TEST_RE.test(state.tokens[blkIdx].content)) {
+                    replace_scoped(state.tokens[blkIdx].children);
+                }
+                if (RARE_RE.test(state.tokens[blkIdx].content)) {
+                    replace_rare(state.tokens[blkIdx].children);
+                }
+            }
+        };
+    }, {} ],
+    114: [ function(require, module, exports) {
+        "use strict";
+        var isWhiteSpace = require("../common/utils").isWhiteSpace;
+        var isPunctChar = require("../common/utils").isPunctChar;
+        var isMdAsciiPunct = require("../common/utils").isMdAsciiPunct;
+        var QUOTE_TEST_RE = /['"]/;
+        var QUOTE_RE = /['"]/g;
+        var APOSTROPHE = "’";
+        function replaceAt(str, index, ch) {
+            return str.substr(0, index) + ch + str.substr(index + 1);
+        }
+        function process_inlines(tokens, state) {
+            var i, token, text, t, pos, max, thisLevel, item, lastChar, nextChar, isLastPunctChar, isNextPunctChar, isLastWhiteSpace, isNextWhiteSpace, canOpen, canClose, j, isSingle, stack, openQuote, closeQuote;
+            stack = [];
+            for (i = 0; i < tokens.length; i++) {
+                token = tokens[i];
+                thisLevel = tokens[i].level;
+                for (j = stack.length - 1; j >= 0; j--) {
+                    if (stack[j].level <= thisLevel) {
+                        break;
+                    }
+                }
+                stack.length = j + 1;
+                if (token.type !== "text") {
+                    continue;
+                }
+                text = token.content;
+                pos = 0;
+                max = text.length;
+                OUTER: while (pos < max) {
+                    QUOTE_RE.lastIndex = pos;
+                    t = QUOTE_RE.exec(text);
+                    if (!t) {
+                        break;
+                    }
+                    canOpen = canClose = true;
+                    pos = t.index + 1;
+                    isSingle = t[0] === "'";
+                    lastChar = t.index - 1 >= 0 ? text.charCodeAt(t.index - 1) : 32;
+                    nextChar = pos < max ? text.charCodeAt(pos) : 32;
+                    isLastPunctChar = isMdAsciiPunct(lastChar) || isPunctChar(String.fromCharCode(lastChar));
+                    isNextPunctChar = isMdAsciiPunct(nextChar) || isPunctChar(String.fromCharCode(nextChar));
+                    isLastWhiteSpace = isWhiteSpace(lastChar);
+                    isNextWhiteSpace = isWhiteSpace(nextChar);
+                    if (isNextWhiteSpace) {
+                        canOpen = false;
+                    } else if (isNextPunctChar) {
+                        if (!(isLastWhiteSpace || isLastPunctChar)) {
+                            canOpen = false;
+                        }
+                    }
+                    if (isLastWhiteSpace) {
+                        canClose = false;
+                    } else if (isLastPunctChar) {
+                        if (!(isNextWhiteSpace || isNextPunctChar)) {
+                            canClose = false;
+                        }
+                    }
+                    if (nextChar === 34 && t[0] === '"') {
+                        if (lastChar >= 48 && lastChar <= 57) {
+                            canClose = canOpen = false;
+                        }
+                    }
+                    if (canOpen && canClose) {
+                        canOpen = false;
+                        canClose = isNextPunctChar;
+                    }
+                    if (!canOpen && !canClose) {
+                        if (isSingle) {
+                            token.content = replaceAt(token.content, t.index, APOSTROPHE);
+                        }
+                        continue;
+                    }
+                    if (canClose) {
+                        for (j = stack.length - 1; j >= 0; j--) {
+                            item = stack[j];
+                            if (stack[j].level < thisLevel) {
+                                break;
+                            }
+                            if (item.single === isSingle && stack[j].level === thisLevel) {
+                                item = stack[j];
+                                if (isSingle) {
+                                    openQuote = state.md.options.quotes[2];
+                                    closeQuote = state.md.options.quotes[3];
+                                } else {
+                                    openQuote = state.md.options.quotes[0];
+                                    closeQuote = state.md.options.quotes[1];
+                                }
+                                token.content = replaceAt(token.content, t.index, closeQuote);
+                                tokens[item.token].content = replaceAt(tokens[item.token].content, item.pos, openQuote);
+                                pos += closeQuote.length - 1;
+                                if (item.token === i) {
+                                    pos += openQuote.length - 1;
+                                }
+                                text = token.content;
+                                max = text.length;
+                                stack.length = j;
+                                continue OUTER;
+                            }
+                        }
+                    }
+                    if (canOpen) {
+                        stack.push({
+                            token: i,
+                            pos: t.index,
+                            single: isSingle,
+                            level: thisLevel
+                        });
+                    } else if (canClose && isSingle) {
+                        token.content = replaceAt(token.content, t.index, APOSTROPHE);
+                    }
+                }
+            }
+        }
+        module.exports = function smartquotes(state) {
+            var blkIdx;
+            if (!state.md.options.typographer) {
+                return;
+            }
+            for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+                if (state.tokens[blkIdx].type !== "inline" || !QUOTE_TEST_RE.test(state.tokens[blkIdx].content)) {
+                    continue;
+                }
+                process_inlines(state.tokens[blkIdx].children, state);
+            }
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    115: [ function(require, module, exports) {
+        "use strict";
+        var Token = require("../token");
+        function StateCore(src, md, env) {
+            this.src = src;
+            this.env = env;
+            this.tokens = [];
+            this.inlineMode = false;
+            this.md = md;
+        }
+        StateCore.prototype.Token = Token;
+        module.exports = StateCore;
+    }, {
+        "../token": 130
+    } ],
+    116: [ function(require, module, exports) {
+        "use strict";
+        var url_schemas = require("../common/url_schemas");
+        var EMAIL_RE = /^<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/;
+        var AUTOLINK_RE = /^<([a-zA-Z.\-]{1,25}):([^<>\x00-\x20]*)>/;
+        module.exports = function autolink(state, silent) {
+            var tail, linkMatch, emailMatch, url, fullUrl, token, pos = state.pos;
+            if (state.src.charCodeAt(pos) !== 60) {
+                return false;
+            }
+            tail = state.src.slice(pos);
+            if (tail.indexOf(">") < 0) {
+                return false;
+            }
+            if (AUTOLINK_RE.test(tail)) {
+                linkMatch = tail.match(AUTOLINK_RE);
+                if (url_schemas.indexOf(linkMatch[1].toLowerCase()) < 0) {
+                    return false;
+                }
+                url = linkMatch[0].slice(1, -1);
+                fullUrl = state.md.normalizeLink(url);
+                if (!state.md.validateLink(fullUrl)) {
+                    return false;
+                }
+                if (!silent) {
+                    token = state.push("link_open", "a", 1);
+                    token.attrs = [ [ "href", fullUrl ] ];
+                    token = state.push("text", "", 0);
+                    token.content = state.md.normalizeLinkText(url);
+                    token = state.push("link_close", "a", -1);
+                }
+                state.pos += linkMatch[0].length;
+                return true;
+            }
+            if (EMAIL_RE.test(tail)) {
+                emailMatch = tail.match(EMAIL_RE);
+                url = emailMatch[0].slice(1, -1);
+                fullUrl = state.md.normalizeLink("mailto:" + url);
+                if (!state.md.validateLink(fullUrl)) {
+                    return false;
+                }
+                if (!silent) {
+                    token = state.push("link_open", "a", 1);
+                    token.attrs = [ [ "href", fullUrl ] ];
+                    token.markup = "autolink";
+                    token.info = "auto";
+                    token = state.push("text", "", 0);
+                    token.content = state.md.normalizeLinkText(url);
+                    token = state.push("link_close", "a", -1);
+                    token.markup = "autolink";
+                    token.info = "auto";
+                }
+                state.pos += emailMatch[0].length;
+                return true;
+            }
+            return false;
+        };
+    }, {
+        "../common/url_schemas": 82
+    } ],
+    117: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function backtick(state, silent) {
+            var start, max, marker, matchStart, matchEnd, token, pos = state.pos, ch = state.src.charCodeAt(pos);
+            if (ch !== 96) {
+                return false;
+            }
+            start = pos;
+            pos++;
+            max = state.posMax;
+            while (pos < max && state.src.charCodeAt(pos) === 96) {
+                pos++;
+            }
+            marker = state.src.slice(start, pos);
+            matchStart = matchEnd = pos;
+            while ((matchStart = state.src.indexOf("`", matchEnd)) !== -1) {
+                matchEnd = matchStart + 1;
+                while (matchEnd < max && state.src.charCodeAt(matchEnd) === 96) {
+                    matchEnd++;
+                }
+                if (matchEnd - matchStart === marker.length) {
+                    if (!silent) {
+                        token = state.push("code_inline", "code", 0);
+                        token.markup = marker;
+                        token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, " ").trim();
+                    }
+                    state.pos = matchEnd;
+                    return true;
+                }
+            }
+            if (!silent) {
+                state.pending += marker;
+            }
+            state.pos += marker.length;
+            return true;
+        };
+    }, {} ],
+    118: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function link_pairs(state) {
+            var i, j, lastDelim, currDelim, delimiters = state.delimiters, max = state.delimiters.length;
+            for (i = 0; i < max; i++) {
+                lastDelim = delimiters[i];
+                if (!lastDelim.close) {
+                    continue;
+                }
+                j = i - lastDelim.jump - 1;
+                while (j >= 0) {
+                    currDelim = delimiters[j];
+                    if (currDelim.open && currDelim.marker === lastDelim.marker && currDelim.end < 0 && currDelim.level === lastDelim.level) {
+                        lastDelim.jump = i - j;
+                        lastDelim.open = false;
+                        currDelim.end = i;
+                        currDelim.jump = 0;
+                        break;
+                    }
+                    j -= currDelim.jump + 1;
+                }
+            }
+        };
+    }, {} ],
+    119: [ function(require, module, exports) {
+        "use strict";
+        module.exports.tokenize = function emphasis(state, silent) {
+            var i, scanned, token, start = state.pos, marker = state.src.charCodeAt(start);
+            if (silent) {
+                return false;
+            }
+            if (marker !== 95 && marker !== 42) {
+                return false;
+            }
+            scanned = state.scanDelims(state.pos, marker === 42);
+            for (i = 0; i < scanned.length; i++) {
+                token = state.push("text", "", 0);
+                token.content = String.fromCharCode(marker);
+                state.delimiters.push({
+                    marker: marker,
+                    jump: i,
+                    token: state.tokens.length - 1,
+                    level: state.level,
+                    end: -1,
+                    open: scanned.can_open,
+                    close: scanned.can_close
+                });
+            }
+            state.pos += scanned.length;
+            return true;
+        };
+        module.exports.postProcess = function emphasis(state) {
+            var i, startDelim, endDelim, token, ch, isStrong, delimiters = state.delimiters, max = state.delimiters.length;
+            for (i = 0; i < max; i++) {
+                startDelim = delimiters[i];
+                if (startDelim.marker !== 95 && startDelim.marker !== 42) {
+                    continue;
+                }
+                if (startDelim.end === -1) {
+                    continue;
+                }
+                endDelim = delimiters[startDelim.end];
+                isStrong = i + 1 < max && delimiters[i + 1].end === startDelim.end - 1 && delimiters[i + 1].token === startDelim.token + 1 && delimiters[startDelim.end - 1].token === endDelim.token - 1 && delimiters[i + 1].marker === startDelim.marker;
+                ch = String.fromCharCode(startDelim.marker);
+                token = state.tokens[startDelim.token];
+                token.type = isStrong ? "strong_open" : "em_open";
+                token.tag = isStrong ? "strong" : "em";
+                token.nesting = 1;
+                token.markup = isStrong ? ch + ch : ch;
+                token.content = "";
+                token = state.tokens[endDelim.token];
+                token.type = isStrong ? "strong_close" : "em_close";
+                token.tag = isStrong ? "strong" : "em";
+                token.nesting = -1;
+                token.markup = isStrong ? ch + ch : ch;
+                token.content = "";
+                if (isStrong) {
+                    state.tokens[delimiters[i + 1].token].content = "";
+                    state.tokens[delimiters[startDelim.end - 1].token].content = "";
+                    i++;
+                }
+            }
+        };
+    }, {} ],
+    120: [ function(require, module, exports) {
+        "use strict";
+        var entities = require("../common/entities");
+        var has = require("../common/utils").has;
+        var isValidEntityCode = require("../common/utils").isValidEntityCode;
+        var fromCodePoint = require("../common/utils").fromCodePoint;
+        var DIGITAL_RE = /^&#((?:x[a-f0-9]{1,8}|[0-9]{1,8}));/i;
+        var NAMED_RE = /^&([a-z][a-z0-9]{1,31});/i;
+        module.exports = function entity(state, silent) {
+            var ch, code, match, pos = state.pos, max = state.posMax;
+            if (state.src.charCodeAt(pos) !== 38) {
+                return false;
+            }
+            if (pos + 1 < max) {
+                ch = state.src.charCodeAt(pos + 1);
+                if (ch === 35) {
+                    match = state.src.slice(pos).match(DIGITAL_RE);
+                    if (match) {
+                        if (!silent) {
+                            code = match[1][0].toLowerCase() === "x" ? parseInt(match[1].slice(1), 16) : parseInt(match[1], 10);
+                            state.pending += isValidEntityCode(code) ? fromCodePoint(code) : fromCodePoint(65533);
+                        }
+                        state.pos += match[0].length;
+                        return true;
+                    }
+                } else {
+                    match = state.src.slice(pos).match(NAMED_RE);
+                    if (match) {
+                        if (has(entities, match[1])) {
+                            if (!silent) {
+                                state.pending += entities[match[1]];
+                            }
+                            state.pos += match[0].length;
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (!silent) {
+                state.pending += "&";
+            }
+            state.pos++;
+            return true;
+        };
+    }, {
+        "../common/entities": 79,
+        "../common/utils": 83
+    } ],
+    121: [ function(require, module, exports) {
+        "use strict";
+        var isSpace = require("../common/utils").isSpace;
+        var ESCAPED = [];
+        for (var i = 0; i < 256; i++) {
+            ESCAPED.push(0);
+        }
+        "\\!\"#$%&'()*+,./:;<=>?@[]^_`{|}~-".split("").forEach(function(ch) {
+            ESCAPED[ch.charCodeAt(0)] = 1;
+        });
+        module.exports = function escape(state, silent) {
+            var ch, pos = state.pos, max = state.posMax;
+            if (state.src.charCodeAt(pos) !== 92) {
+                return false;
+            }
+            pos++;
+            if (pos < max) {
+                ch = state.src.charCodeAt(pos);
+                if (ch < 256 && ESCAPED[ch] !== 0) {
+                    if (!silent) {
+                        state.pending += state.src[pos];
+                    }
+                    state.pos += 2;
+                    return true;
+                }
+                if (ch === 10) {
+                    if (!silent) {
+                        state.push("hardbreak", "br", 0);
+                    }
+                    pos++;
+                    while (pos < max) {
+                        ch = state.src.charCodeAt(pos);
+                        if (!isSpace(ch)) {
+                            break;
+                        }
+                        pos++;
+                    }
+                    state.pos = pos;
+                    return true;
+                }
+            }
+            if (!silent) {
+                state.pending += "\\";
+            }
+            state.pos++;
+            return true;
+        };
+    }, {
+        "../common/utils": 83
+    } ],
+    122: [ function(require, module, exports) {
+        "use strict";
+        var HTML_TAG_RE = require("../common/html_re").HTML_TAG_RE;
+        function isLetter(ch) {
+            var lc = ch | 32;
+            return lc >= 97 && lc <= 122;
+        }
+        module.exports = function html_inline(state, silent) {
+            var ch, match, max, token, pos = state.pos;
+            if (!state.md.options.html) {
+                return false;
+            }
+            max = state.posMax;
+            if (state.src.charCodeAt(pos) !== 60 || pos + 2 >= max) {
+                return false;
+            }
+            ch = state.src.charCodeAt(pos + 1);
+            if (ch !== 33 && ch !== 63 && ch !== 47 && !isLetter(ch)) {
+                return false;
+            }
+            match = state.src.slice(pos).match(HTML_TAG_RE);
+            if (!match) {
+                return false;
+            }
+            if (!silent) {
+                token = state.push("html_inline", "", 0);
+                token.content = state.src.slice(pos, pos + match[0].length);
+            }
+            state.pos += match[0].length;
+            return true;
+        };
+    }, {
+        "../common/html_re": 81
+    } ],
+    123: [ function(require, module, exports) {
+        "use strict";
+        var parseLinkLabel = require("../helpers/parse_link_label");
+        var parseLinkDestination = require("../helpers/parse_link_destination");
+        var parseLinkTitle = require("../helpers/parse_link_title");
+        var normalizeReference = require("../common/utils").normalizeReference;
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function image(state, silent) {
+            var attrs, code, label, labelEnd, labelStart, pos, ref, res, title, token, tokens, start, href = "", oldPos = state.pos, max = state.posMax;
+            if (state.src.charCodeAt(state.pos) !== 33) {
+                return false;
+            }
+            if (state.src.charCodeAt(state.pos + 1) !== 91) {
+                return false;
+            }
+            labelStart = state.pos + 2;
+            labelEnd = parseLinkLabel(state, state.pos + 1, false);
+            if (labelEnd < 0) {
+                return false;
+            }
+            pos = labelEnd + 1;
+            if (pos < max && state.src.charCodeAt(pos) === 40) {
+                pos++;
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                if (pos >= max) {
+                    return false;
+                }
+                start = pos;
+                res = parseLinkDestination(state.src, pos, state.posMax);
+                if (res.ok) {
+                    href = state.md.normalizeLink(res.str);
+                    if (state.md.validateLink(href)) {
+                        pos = res.pos;
+                    } else {
+                        href = "";
+                    }
+                }
+                start = pos;
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                res = parseLinkTitle(state.src, pos, state.posMax);
+                if (pos < max && start !== pos && res.ok) {
+                    title = res.str;
+                    pos = res.pos;
+                    for (;pos < max; pos++) {
+                        code = state.src.charCodeAt(pos);
+                        if (!isSpace(code) && code !== 10) {
+                            break;
+                        }
+                    }
+                } else {
+                    title = "";
+                }
+                if (pos >= max || state.src.charCodeAt(pos) !== 41) {
+                    state.pos = oldPos;
+                    return false;
+                }
+                pos++;
+            } else {
+                if (typeof state.env.references === "undefined") {
+                    return false;
+                }
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                if (pos < max && state.src.charCodeAt(pos) === 91) {
+                    start = pos + 1;
+                    pos = parseLinkLabel(state, pos);
+                    if (pos >= 0) {
+                        label = state.src.slice(start, pos++);
+                    } else {
+                        pos = labelEnd + 1;
+                    }
+                } else {
+                    pos = labelEnd + 1;
+                }
+                if (!label) {
+                    label = state.src.slice(labelStart, labelEnd);
+                }
+                ref = state.env.references[normalizeReference(label)];
+                if (!ref) {
+                    state.pos = oldPos;
+                    return false;
+                }
+                href = ref.href;
+                title = ref.title;
+            }
+            if (!silent) {
+                state.md.inline.parse(state.src.slice(labelStart, labelEnd), state.md, state.env, tokens = []);
+                token = state.push("image", "img", 0);
+                token.attrs = attrs = [ [ "src", href ], [ "alt", "" ] ];
+                token.children = tokens;
+                if (title) {
+                    attrs.push([ "title", title ]);
+                }
+            }
+            state.pos = pos;
+            state.posMax = max;
+            return true;
+        };
+    }, {
+        "../common/utils": 83,
+        "../helpers/parse_link_destination": 85,
+        "../helpers/parse_link_label": 86,
+        "../helpers/parse_link_title": 87
+    } ],
+    124: [ function(require, module, exports) {
+        "use strict";
+        var parseLinkLabel = require("../helpers/parse_link_label");
+        var parseLinkDestination = require("../helpers/parse_link_destination");
+        var parseLinkTitle = require("../helpers/parse_link_title");
+        var normalizeReference = require("../common/utils").normalizeReference;
+        var isSpace = require("../common/utils").isSpace;
+        module.exports = function link(state, silent) {
+            var attrs, code, label, labelEnd, labelStart, pos, res, ref, title, token, href = "", oldPos = state.pos, max = state.posMax, start = state.pos;
+            if (state.src.charCodeAt(state.pos) !== 91) {
+                return false;
+            }
+            labelStart = state.pos + 1;
+            labelEnd = parseLinkLabel(state, state.pos, true);
+            if (labelEnd < 0) {
+                return false;
+            }
+            pos = labelEnd + 1;
+            if (pos < max && state.src.charCodeAt(pos) === 40) {
+                pos++;
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                if (pos >= max) {
+                    return false;
+                }
+                start = pos;
+                res = parseLinkDestination(state.src, pos, state.posMax);
+                if (res.ok) {
+                    href = state.md.normalizeLink(res.str);
+                    if (state.md.validateLink(href)) {
+                        pos = res.pos;
+                    } else {
+                        href = "";
+                    }
+                }
+                start = pos;
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                res = parseLinkTitle(state.src, pos, state.posMax);
+                if (pos < max && start !== pos && res.ok) {
+                    title = res.str;
+                    pos = res.pos;
+                    for (;pos < max; pos++) {
+                        code = state.src.charCodeAt(pos);
+                        if (!isSpace(code) && code !== 10) {
+                            break;
+                        }
+                    }
+                } else {
+                    title = "";
+                }
+                if (pos >= max || state.src.charCodeAt(pos) !== 41) {
+                    state.pos = oldPos;
+                    return false;
+                }
+                pos++;
+            } else {
+                if (typeof state.env.references === "undefined") {
+                    return false;
+                }
+                for (;pos < max; pos++) {
+                    code = state.src.charCodeAt(pos);
+                    if (!isSpace(code) && code !== 10) {
+                        break;
+                    }
+                }
+                if (pos < max && state.src.charCodeAt(pos) === 91) {
+                    start = pos + 1;
+                    pos = parseLinkLabel(state, pos);
+                    if (pos >= 0) {
+                        label = state.src.slice(start, pos++);
+                    } else {
+                        pos = labelEnd + 1;
+                    }
+                } else {
+                    pos = labelEnd + 1;
+                }
+                if (!label) {
+                    label = state.src.slice(labelStart, labelEnd);
+                }
+                ref = state.env.references[normalizeReference(label)];
+                if (!ref) {
+                    state.pos = oldPos;
+                    return false;
+                }
+                href = ref.href;
+                title = ref.title;
+            }
+            if (!silent) {
+                state.pos = labelStart;
+                state.posMax = labelEnd;
+                token = state.push("link_open", "a", 1);
+                token.attrs = attrs = [ [ "href", href ] ];
+                if (title) {
+                    attrs.push([ "title", title ]);
+                }
+                state.md.inline.tokenize(state);
+                token = state.push("link_close", "a", -1);
+            }
+            state.pos = pos;
+            state.posMax = max;
+            return true;
+        };
+    }, {
+        "../common/utils": 83,
+        "../helpers/parse_link_destination": 85,
+        "../helpers/parse_link_label": 86,
+        "../helpers/parse_link_title": 87
+    } ],
+    125: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function newline(state, silent) {
+            var pmax, max, pos = state.pos;
+            if (state.src.charCodeAt(pos) !== 10) {
+                return false;
+            }
+            pmax = state.pending.length - 1;
+            max = state.posMax;
+            if (!silent) {
+                if (pmax >= 0 && state.pending.charCodeAt(pmax) === 32) {
+                    if (pmax >= 1 && state.pending.charCodeAt(pmax - 1) === 32) {
+                        state.pending = state.pending.replace(/ +$/, "");
+                        state.push("hardbreak", "br", 0);
+                    } else {
+                        state.pending = state.pending.slice(0, -1);
+                        state.push("softbreak", "br", 0);
+                    }
+                } else {
+                    state.push("softbreak", "br", 0);
+                }
+            }
+            pos++;
+            while (pos < max && state.src.charCodeAt(pos) === 32) {
+                pos++;
+            }
+            state.pos = pos;
+            return true;
+        };
+    }, {} ],
+    126: [ function(require, module, exports) {
+        "use strict";
+        var Token = require("../token");
+        var isWhiteSpace = require("../common/utils").isWhiteSpace;
+        var isPunctChar = require("../common/utils").isPunctChar;
+        var isMdAsciiPunct = require("../common/utils").isMdAsciiPunct;
+        function StateInline(src, md, env, outTokens) {
+            this.src = src;
+            this.env = env;
+            this.md = md;
+            this.tokens = outTokens;
+            this.pos = 0;
+            this.posMax = this.src.length;
+            this.level = 0;
+            this.pending = "";
+            this.pendingLevel = 0;
+            this.cache = {};
+            this.delimiters = [];
+        }
+        StateInline.prototype.pushPending = function() {
+            var token = new Token("text", "", 0);
+            token.content = this.pending;
+            token.level = this.pendingLevel;
+            this.tokens.push(token);
+            this.pending = "";
+            return token;
+        };
+        StateInline.prototype.push = function(type, tag, nesting) {
+            if (this.pending) {
+                this.pushPending();
+            }
+            var token = new Token(type, tag, nesting);
+            if (nesting < 0) {
+                this.level--;
+            }
+            token.level = this.level;
+            if (nesting > 0) {
+                this.level++;
+            }
+            this.pendingLevel = this.level;
+            this.tokens.push(token);
+            return token;
+        };
+        StateInline.prototype.scanDelims = function(start, canSplitWord) {
+            var pos = start, lastChar, nextChar, count, can_open, can_close, isLastWhiteSpace, isLastPunctChar, isNextWhiteSpace, isNextPunctChar, left_flanking = true, right_flanking = true, max = this.posMax, marker = this.src.charCodeAt(start);
+            lastChar = start > 0 ? this.src.charCodeAt(start - 1) : 32;
+            while (pos < max && this.src.charCodeAt(pos) === marker) {
+                pos++;
+            }
+            count = pos - start;
+            nextChar = pos < max ? this.src.charCodeAt(pos) : 32;
+            isLastPunctChar = isMdAsciiPunct(lastChar) || isPunctChar(String.fromCharCode(lastChar));
+            isNextPunctChar = isMdAsciiPunct(nextChar) || isPunctChar(String.fromCharCode(nextChar));
+            isLastWhiteSpace = isWhiteSpace(lastChar);
+            isNextWhiteSpace = isWhiteSpace(nextChar);
+            if (isNextWhiteSpace) {
+                left_flanking = false;
+            } else if (isNextPunctChar) {
+                if (!(isLastWhiteSpace || isLastPunctChar)) {
+                    left_flanking = false;
+                }
+            }
+            if (isLastWhiteSpace) {
+                right_flanking = false;
+            } else if (isLastPunctChar) {
+                if (!(isNextWhiteSpace || isNextPunctChar)) {
+                    right_flanking = false;
+                }
+            }
+            if (!canSplitWord) {
+                can_open = left_flanking && (!right_flanking || isLastPunctChar);
+                can_close = right_flanking && (!left_flanking || isNextPunctChar);
+            } else {
+                can_open = left_flanking;
+                can_close = right_flanking;
+            }
+            return {
+                can_open: can_open,
+                can_close: can_close,
+                length: count
+            };
+        };
+        StateInline.prototype.Token = Token;
+        module.exports = StateInline;
+    }, {
+        "../common/utils": 83,
+        "../token": 130
+    } ],
+    127: [ function(require, module, exports) {
+        "use strict";
+        module.exports.tokenize = function strikethrough(state, silent) {
+            var i, scanned, token, len, ch, start = state.pos, marker = state.src.charCodeAt(start);
+            if (silent) {
+                return false;
+            }
+            if (marker !== 126) {
+                return false;
+            }
+            scanned = state.scanDelims(state.pos, true);
+            len = scanned.length;
+            ch = String.fromCharCode(marker);
+            if (len < 2) {
+                return false;
+            }
+            if (len % 2) {
+                token = state.push("text", "", 0);
+                token.content = ch;
+                len--;
+            }
+            for (i = 0; i < len; i += 2) {
+                token = state.push("text", "", 0);
+                token.content = ch + ch;
+                state.delimiters.push({
+                    marker: marker,
+                    jump: i,
+                    token: state.tokens.length - 1,
+                    level: state.level,
+                    end: -1,
+                    open: scanned.can_open,
+                    close: scanned.can_close
+                });
+            }
+            state.pos += scanned.length;
+            return true;
+        };
+        module.exports.postProcess = function strikethrough(state) {
+            var i, j, startDelim, endDelim, token, loneMarkers = [], delimiters = state.delimiters, max = state.delimiters.length;
+            for (i = 0; i < max; i++) {
+                startDelim = delimiters[i];
+                if (startDelim.marker !== 126) {
+                    continue;
+                }
+                if (startDelim.end === -1) {
+                    continue;
+                }
+                endDelim = delimiters[startDelim.end];
+                token = state.tokens[startDelim.token];
+                token.type = "s_open";
+                token.tag = "s";
+                token.nesting = 1;
+                token.markup = "~~";
+                token.content = "";
+                token = state.tokens[endDelim.token];
+                token.type = "s_close";
+                token.tag = "s";
+                token.nesting = -1;
+                token.markup = "~~";
+                token.content = "";
+                if (state.tokens[endDelim.token - 1].type === "text" && state.tokens[endDelim.token - 1].content === "~") {
+                    loneMarkers.push(endDelim.token - 1);
+                }
+            }
+            while (loneMarkers.length) {
+                i = loneMarkers.pop();
+                j = i + 1;
+                while (j < state.tokens.length && state.tokens[j].type === "s_close") {
+                    j++;
+                }
+                j--;
+                if (i !== j) {
+                    token = state.tokens[j];
+                    state.tokens[j] = state.tokens[i];
+                    state.tokens[i] = token;
+                }
+            }
+        };
+    }, {} ],
+    128: [ function(require, module, exports) {
+        "use strict";
+        function isTerminatorChar(ch) {
+            switch (ch) {
+              case 10:
+              case 33:
+              case 35:
+              case 36:
+              case 37:
+              case 38:
+              case 42:
+              case 43:
+              case 45:
+              case 58:
+              case 60:
+              case 61:
+              case 62:
+              case 64:
+              case 91:
+              case 92:
+              case 93:
+              case 94:
+              case 95:
+              case 96:
+              case 123:
+              case 125:
+              case 126:
+                return true;
+
+              default:
+                return false;
+            }
+        }
+        module.exports = function text(state, silent) {
+            var pos = state.pos;
+            while (pos < state.posMax && !isTerminatorChar(state.src.charCodeAt(pos))) {
+                pos++;
+            }
+            if (pos === state.pos) {
+                return false;
+            }
+            if (!silent) {
+                state.pending += state.src.slice(state.pos, pos);
+            }
+            state.pos = pos;
+            return true;
+        };
+    }, {} ],
+    129: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function text_collapse(state) {
+            var curr, last, level = 0, tokens = state.tokens, max = state.tokens.length;
+            for (curr = last = 0; curr < max; curr++) {
+                level += tokens[curr].nesting;
+                tokens[curr].level = level;
+                if (tokens[curr].type === "text" && curr + 1 < max && tokens[curr + 1].type === "text") {
+                    tokens[curr + 1].content = tokens[curr].content + tokens[curr + 1].content;
+                } else {
+                    if (curr !== last) {
+                        tokens[last] = tokens[curr];
+                    }
+                    last++;
+                }
+            }
+            if (curr !== last) {
+                tokens.length = last;
+            }
+        };
+    }, {} ],
+    130: [ function(require, module, exports) {
+        "use strict";
+        function Token(type, tag, nesting) {
+            this.type = type;
+            this.tag = tag;
+            this.attrs = null;
+            this.map = null;
+            this.nesting = nesting;
+            this.level = 0;
+            this.children = null;
+            this.content = "";
+            this.markup = "";
+            this.info = "";
+            this.meta = null;
+            this.block = false;
+            this.hidden = false;
+        }
+        Token.prototype.attrIndex = function attrIndex(name) {
+            var attrs, i, len;
+            if (!this.attrs) {
+                return -1;
+            }
+            attrs = this.attrs;
+            for (i = 0, len = attrs.length; i < len; i++) {
+                if (attrs[i][0] === name) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        Token.prototype.attrPush = function attrPush(attrData) {
+            if (this.attrs) {
+                this.attrs.push(attrData);
+            } else {
+                this.attrs = [ attrData ];
+            }
+        };
+        module.exports = Token;
+    }, {} ],
+    131: [ function(require, module, exports) {
+        module.exports = {
+            Aacute: "Á",
+            aacute: "á",
+            Abreve: "Ă",
+            abreve: "ă",
+            ac: "∾",
+            acd: "∿",
+            acE: "∾̳",
+            Acirc: "Â",
+            acirc: "â",
+            acute: "´",
+            Acy: "А",
+            acy: "а",
+            AElig: "Æ",
+            aelig: "æ",
+            af: "⁡",
+            Afr: "𝔄",
+            afr: "𝔞",
+            Agrave: "À",
+            agrave: "à",
+            alefsym: "ℵ",
+            aleph: "ℵ",
+            Alpha: "Α",
+            alpha: "α",
+            Amacr: "Ā",
+            amacr: "ā",
+            amalg: "⨿",
+            amp: "&",
+            AMP: "&",
+            andand: "⩕",
+            And: "⩓",
+            and: "∧",
+            andd: "⩜",
+            andslope: "⩘",
+            andv: "⩚",
+            ang: "∠",
+            ange: "⦤",
+            angle: "∠",
+            angmsdaa: "⦨",
+            angmsdab: "⦩",
+            angmsdac: "⦪",
+            angmsdad: "⦫",
+            angmsdae: "⦬",
+            angmsdaf: "⦭",
+            angmsdag: "⦮",
+            angmsdah: "⦯",
+            angmsd: "∡",
+            angrt: "∟",
+            angrtvb: "⊾",
+            angrtvbd: "⦝",
+            angsph: "∢",
+            angst: "Å",
+            angzarr: "⍼",
+            Aogon: "Ą",
+            aogon: "ą",
+            Aopf: "𝔸",
+            aopf: "𝕒",
+            apacir: "⩯",
+            ap: "≈",
+            apE: "⩰",
+            ape: "≊",
+            apid: "≋",
+            apos: "'",
+            ApplyFunction: "⁡",
+            approx: "≈",
+            approxeq: "≊",
+            Aring: "Å",
+            aring: "å",
+            Ascr: "𝒜",
+            ascr: "𝒶",
+            Assign: "≔",
+            ast: "*",
+            asymp: "≈",
+            asympeq: "≍",
+            Atilde: "Ã",
+            atilde: "ã",
+            Auml: "Ä",
+            auml: "ä",
+            awconint: "∳",
+            awint: "⨑",
+            backcong: "≌",
+            backepsilon: "϶",
+            backprime: "‵",
+            backsim: "∽",
+            backsimeq: "⋍",
+            Backslash: "∖",
+            Barv: "⫧",
+            barvee: "⊽",
+            barwed: "⌅",
+            Barwed: "⌆",
+            barwedge: "⌅",
+            bbrk: "⎵",
+            bbrktbrk: "⎶",
+            bcong: "≌",
+            Bcy: "Б",
+            bcy: "б",
+            bdquo: "„",
+            becaus: "∵",
+            because: "∵",
+            Because: "∵",
+            bemptyv: "⦰",
+            bepsi: "϶",
+            bernou: "ℬ",
+            Bernoullis: "ℬ",
+            Beta: "Β",
+            beta: "β",
+            beth: "ℶ",
+            between: "≬",
+            Bfr: "𝔅",
+            bfr: "𝔟",
+            bigcap: "⋂",
+            bigcirc: "◯",
+            bigcup: "⋃",
+            bigodot: "⨀",
+            bigoplus: "⨁",
+            bigotimes: "⨂",
+            bigsqcup: "⨆",
+            bigstar: "★",
+            bigtriangledown: "▽",
+            bigtriangleup: "△",
+            biguplus: "⨄",
+            bigvee: "⋁",
+            bigwedge: "⋀",
+            bkarow: "⤍",
+            blacklozenge: "⧫",
+            blacksquare: "▪",
+            blacktriangle: "▴",
+            blacktriangledown: "▾",
+            blacktriangleleft: "◂",
+            blacktriangleright: "▸",
+            blank: "␣",
+            blk12: "▒",
+            blk14: "░",
+            blk34: "▓",
+            block: "█",
+            bne: "=⃥",
+            bnequiv: "≡⃥",
+            bNot: "⫭",
+            bnot: "⌐",
+            Bopf: "𝔹",
+            bopf: "𝕓",
+            bot: "⊥",
+            bottom: "⊥",
+            bowtie: "⋈",
+            boxbox: "⧉",
+            boxdl: "┐",
+            boxdL: "╕",
+            boxDl: "╖",
+            boxDL: "╗",
+            boxdr: "┌",
+            boxdR: "╒",
+            boxDr: "╓",
+            boxDR: "╔",
+            boxh: "─",
+            boxH: "═",
+            boxhd: "┬",
+            boxHd: "╤",
+            boxhD: "╥",
+            boxHD: "╦",
+            boxhu: "┴",
+            boxHu: "╧",
+            boxhU: "╨",
+            boxHU: "╩",
+            boxminus: "⊟",
+            boxplus: "⊞",
+            boxtimes: "⊠",
+            boxul: "┘",
+            boxuL: "╛",
+            boxUl: "╜",
+            boxUL: "╝",
+            boxur: "└",
+            boxuR: "╘",
+            boxUr: "╙",
+            boxUR: "╚",
+            boxv: "│",
+            boxV: "║",
+            boxvh: "┼",
+            boxvH: "╪",
+            boxVh: "╫",
+            boxVH: "╬",
+            boxvl: "┤",
+            boxvL: "╡",
+            boxVl: "╢",
+            boxVL: "╣",
+            boxvr: "├",
+            boxvR: "╞",
+            boxVr: "╟",
+            boxVR: "╠",
+            bprime: "‵",
+            breve: "˘",
+            Breve: "˘",
+            brvbar: "¦",
+            bscr: "𝒷",
+            Bscr: "ℬ",
+            bsemi: "⁏",
+            bsim: "∽",
+            bsime: "⋍",
+            bsolb: "⧅",
+            bsol: "\\",
+            bsolhsub: "⟈",
+            bull: "•",
+            bullet: "•",
+            bump: "≎",
+            bumpE: "⪮",
+            bumpe: "≏",
+            Bumpeq: "≎",
+            bumpeq: "≏",
+            Cacute: "Ć",
+            cacute: "ć",
+            capand: "⩄",
+            capbrcup: "⩉",
+            capcap: "⩋",
+            cap: "∩",
+            Cap: "⋒",
+            capcup: "⩇",
+            capdot: "⩀",
+            CapitalDifferentialD: "ⅅ",
+            caps: "∩︀",
+            caret: "⁁",
+            caron: "ˇ",
+            Cayleys: "ℭ",
+            ccaps: "⩍",
+            Ccaron: "Č",
+            ccaron: "č",
+            Ccedil: "Ç",
+            ccedil: "ç",
+            Ccirc: "Ĉ",
+            ccirc: "ĉ",
+            Cconint: "∰",
+            ccups: "⩌",
+            ccupssm: "⩐",
+            Cdot: "Ċ",
+            cdot: "ċ",
+            cedil: "¸",
+            Cedilla: "¸",
+            cemptyv: "⦲",
+            cent: "¢",
+            centerdot: "·",
+            CenterDot: "·",
+            cfr: "𝔠",
+            Cfr: "ℭ",
+            CHcy: "Ч",
+            chcy: "ч",
+            check: "✓",
+            checkmark: "✓",
+            Chi: "Χ",
+            chi: "χ",
+            circ: "ˆ",
+            circeq: "≗",
+            circlearrowleft: "↺",
+            circlearrowright: "↻",
+            circledast: "⊛",
+            circledcirc: "⊚",
+            circleddash: "⊝",
+            CircleDot: "⊙",
+            circledR: "®",
+            circledS: "Ⓢ",
+            CircleMinus: "⊖",
+            CirclePlus: "⊕",
+            CircleTimes: "⊗",
+            cir: "○",
+            cirE: "⧃",
+            cire: "≗",
+            cirfnint: "⨐",
+            cirmid: "⫯",
+            cirscir: "⧂",
+            ClockwiseContourIntegral: "∲",
+            CloseCurlyDoubleQuote: "”",
+            CloseCurlyQuote: "’",
+            clubs: "♣",
+            clubsuit: "♣",
+            colon: ":",
+            Colon: "∷",
+            Colone: "⩴",
+            colone: "≔",
+            coloneq: "≔",
+            comma: ",",
+            commat: "@",
+            comp: "∁",
+            compfn: "∘",
+            complement: "∁",
+            complexes: "ℂ",
+            cong: "≅",
+            congdot: "⩭",
+            Congruent: "≡",
+            conint: "∮",
+            Conint: "∯",
+            ContourIntegral: "∮",
+            copf: "𝕔",
+            Copf: "ℂ",
+            coprod: "∐",
+            Coproduct: "∐",
+            copy: "©",
+            COPY: "©",
+            copysr: "℗",
+            CounterClockwiseContourIntegral: "∳",
+            crarr: "↵",
+            cross: "✗",
+            Cross: "⨯",
+            Cscr: "𝒞",
+            cscr: "𝒸",
+            csub: "⫏",
+            csube: "⫑",
+            csup: "⫐",
+            csupe: "⫒",
+            ctdot: "⋯",
+            cudarrl: "⤸",
+            cudarrr: "⤵",
+            cuepr: "⋞",
+            cuesc: "⋟",
+            cularr: "↶",
+            cularrp: "⤽",
+            cupbrcap: "⩈",
+            cupcap: "⩆",
+            CupCap: "≍",
+            cup: "∪",
+            Cup: "⋓",
+            cupcup: "⩊",
+            cupdot: "⊍",
+            cupor: "⩅",
+            cups: "∪︀",
+            curarr: "↷",
+            curarrm: "⤼",
+            curlyeqprec: "⋞",
+            curlyeqsucc: "⋟",
+            curlyvee: "⋎",
+            curlywedge: "⋏",
+            curren: "¤",
+            curvearrowleft: "↶",
+            curvearrowright: "↷",
+            cuvee: "⋎",
+            cuwed: "⋏",
+            cwconint: "∲",
+            cwint: "∱",
+            cylcty: "⌭",
+            dagger: "†",
+            Dagger: "‡",
+            daleth: "ℸ",
+            darr: "↓",
+            Darr: "↡",
+            dArr: "⇓",
+            dash: "‐",
+            Dashv: "⫤",
+            dashv: "⊣",
+            dbkarow: "⤏",
+            dblac: "˝",
+            Dcaron: "Ď",
+            dcaron: "ď",
+            Dcy: "Д",
+            dcy: "д",
+            ddagger: "‡",
+            ddarr: "⇊",
+            DD: "ⅅ",
+            dd: "ⅆ",
+            DDotrahd: "⤑",
+            ddotseq: "⩷",
+            deg: "°",
+            Del: "∇",
+            Delta: "Δ",
+            delta: "δ",
+            demptyv: "⦱",
+            dfisht: "⥿",
+            Dfr: "𝔇",
+            dfr: "𝔡",
+            dHar: "⥥",
+            dharl: "⇃",
+            dharr: "⇂",
+            DiacriticalAcute: "´",
+            DiacriticalDot: "˙",
+            DiacriticalDoubleAcute: "˝",
+            DiacriticalGrave: "`",
+            DiacriticalTilde: "˜",
+            diam: "⋄",
+            diamond: "⋄",
+            Diamond: "⋄",
+            diamondsuit: "♦",
+            diams: "♦",
+            die: "¨",
+            DifferentialD: "ⅆ",
+            digamma: "ϝ",
+            disin: "⋲",
+            div: "÷",
+            divide: "÷",
+            divideontimes: "⋇",
+            divonx: "⋇",
+            DJcy: "Ђ",
+            djcy: "ђ",
+            dlcorn: "⌞",
+            dlcrop: "⌍",
+            dollar: "$",
+            Dopf: "𝔻",
+            dopf: "𝕕",
+            Dot: "¨",
+            dot: "˙",
+            DotDot: "⃜",
+            doteq: "≐",
+            doteqdot: "≑",
+            DotEqual: "≐",
+            dotminus: "∸",
+            dotplus: "∔",
+            dotsquare: "⊡",
+            doublebarwedge: "⌆",
+            DoubleContourIntegral: "∯",
+            DoubleDot: "¨",
+            DoubleDownArrow: "⇓",
+            DoubleLeftArrow: "⇐",
+            DoubleLeftRightArrow: "⇔",
+            DoubleLeftTee: "⫤",
+            DoubleLongLeftArrow: "⟸",
+            DoubleLongLeftRightArrow: "⟺",
+            DoubleLongRightArrow: "⟹",
+            DoubleRightArrow: "⇒",
+            DoubleRightTee: "⊨",
+            DoubleUpArrow: "⇑",
+            DoubleUpDownArrow: "⇕",
+            DoubleVerticalBar: "∥",
+            DownArrowBar: "⤓",
+            downarrow: "↓",
+            DownArrow: "↓",
+            Downarrow: "⇓",
+            DownArrowUpArrow: "⇵",
+            DownBreve: "̑",
+            downdownarrows: "⇊",
+            downharpoonleft: "⇃",
+            downharpoonright: "⇂",
+            DownLeftRightVector: "⥐",
+            DownLeftTeeVector: "⥞",
+            DownLeftVectorBar: "⥖",
+            DownLeftVector: "↽",
+            DownRightTeeVector: "⥟",
+            DownRightVectorBar: "⥗",
+            DownRightVector: "⇁",
+            DownTeeArrow: "↧",
+            DownTee: "⊤",
+            drbkarow: "⤐",
+            drcorn: "⌟",
+            drcrop: "⌌",
+            Dscr: "𝒟",
+            dscr: "𝒹",
+            DScy: "Ѕ",
+            dscy: "ѕ",
+            dsol: "⧶",
+            Dstrok: "Đ",
+            dstrok: "đ",
+            dtdot: "⋱",
+            dtri: "▿",
+            dtrif: "▾",
+            duarr: "⇵",
+            duhar: "⥯",
+            dwangle: "⦦",
+            DZcy: "Џ",
+            dzcy: "џ",
+            dzigrarr: "⟿",
+            Eacute: "É",
+            eacute: "é",
+            easter: "⩮",
+            Ecaron: "Ě",
+            ecaron: "ě",
+            Ecirc: "Ê",
+            ecirc: "ê",
+            ecir: "≖",
+            ecolon: "≕",
+            Ecy: "Э",
+            ecy: "э",
+            eDDot: "⩷",
+            Edot: "Ė",
+            edot: "ė",
+            eDot: "≑",
+            ee: "ⅇ",
+            efDot: "≒",
+            Efr: "𝔈",
+            efr: "𝔢",
+            eg: "⪚",
+            Egrave: "È",
+            egrave: "è",
+            egs: "⪖",
+            egsdot: "⪘",
+            el: "⪙",
+            Element: "∈",
+            elinters: "⏧",
+            ell: "ℓ",
+            els: "⪕",
+            elsdot: "⪗",
+            Emacr: "Ē",
+            emacr: "ē",
+            empty: "∅",
+            emptyset: "∅",
+            EmptySmallSquare: "◻",
+            emptyv: "∅",
+            EmptyVerySmallSquare: "▫",
+            emsp13: " ",
+            emsp14: " ",
+            emsp: " ",
+            ENG: "Ŋ",
+            eng: "ŋ",
+            ensp: " ",
+            Eogon: "Ę",
+            eogon: "ę",
+            Eopf: "𝔼",
+            eopf: "𝕖",
+            epar: "⋕",
+            eparsl: "⧣",
+            eplus: "⩱",
+            epsi: "ε",
+            Epsilon: "Ε",
+            epsilon: "ε",
+            epsiv: "ϵ",
+            eqcirc: "≖",
+            eqcolon: "≕",
+            eqsim: "≂",
+            eqslantgtr: "⪖",
+            eqslantless: "⪕",
+            Equal: "⩵",
+            equals: "=",
+            EqualTilde: "≂",
+            equest: "≟",
+            Equilibrium: "⇌",
+            equiv: "≡",
+            equivDD: "⩸",
+            eqvparsl: "⧥",
+            erarr: "⥱",
+            erDot: "≓",
+            escr: "ℯ",
+            Escr: "ℰ",
+            esdot: "≐",
+            Esim: "⩳",
+            esim: "≂",
+            Eta: "Η",
+            eta: "η",
+            ETH: "Ð",
+            eth: "ð",
+            Euml: "Ë",
+            euml: "ë",
+            euro: "€",
+            excl: "!",
+            exist: "∃",
+            Exists: "∃",
+            expectation: "ℰ",
+            exponentiale: "ⅇ",
+            ExponentialE: "ⅇ",
+            fallingdotseq: "≒",
+            Fcy: "Ф",
+            fcy: "ф",
+            female: "♀",
+            ffilig: "ﬃ",
+            fflig: "ﬀ",
+            ffllig: "ﬄ",
+            Ffr: "𝔉",
+            ffr: "𝔣",
+            filig: "ﬁ",
+            FilledSmallSquare: "◼",
+            FilledVerySmallSquare: "▪",
+            fjlig: "fj",
+            flat: "♭",
+            fllig: "ﬂ",
+            fltns: "▱",
+            fnof: "ƒ",
+            Fopf: "𝔽",
+            fopf: "𝕗",
+            forall: "∀",
+            ForAll: "∀",
+            fork: "⋔",
+            forkv: "⫙",
+            Fouriertrf: "ℱ",
+            fpartint: "⨍",
+            frac12: "½",
+            frac13: "⅓",
+            frac14: "¼",
+            frac15: "⅕",
+            frac16: "⅙",
+            frac18: "⅛",
+            frac23: "⅔",
+            frac25: "⅖",
+            frac34: "¾",
+            frac35: "⅗",
+            frac38: "⅜",
+            frac45: "⅘",
+            frac56: "⅚",
+            frac58: "⅝",
+            frac78: "⅞",
+            frasl: "⁄",
+            frown: "⌢",
+            fscr: "𝒻",
+            Fscr: "ℱ",
+            gacute: "ǵ",
+            Gamma: "Γ",
+            gamma: "γ",
+            Gammad: "Ϝ",
+            gammad: "ϝ",
+            gap: "⪆",
+            Gbreve: "Ğ",
+            gbreve: "ğ",
+            Gcedil: "Ģ",
+            Gcirc: "Ĝ",
+            gcirc: "ĝ",
+            Gcy: "Г",
+            gcy: "г",
+            Gdot: "Ġ",
+            gdot: "ġ",
+            ge: "≥",
+            gE: "≧",
+            gEl: "⪌",
+            gel: "⋛",
+            geq: "≥",
+            geqq: "≧",
+            geqslant: "⩾",
+            gescc: "⪩",
+            ges: "⩾",
+            gesdot: "⪀",
+            gesdoto: "⪂",
+            gesdotol: "⪄",
+            gesl: "⋛︀",
+            gesles: "⪔",
+            Gfr: "𝔊",
+            gfr: "𝔤",
+            gg: "≫",
+            Gg: "⋙",
+            ggg: "⋙",
+            gimel: "ℷ",
+            GJcy: "Ѓ",
+            gjcy: "ѓ",
+            gla: "⪥",
+            gl: "≷",
+            glE: "⪒",
+            glj: "⪤",
+            gnap: "⪊",
+            gnapprox: "⪊",
+            gne: "⪈",
+            gnE: "≩",
+            gneq: "⪈",
+            gneqq: "≩",
+            gnsim: "⋧",
+            Gopf: "𝔾",
+            gopf: "𝕘",
+            grave: "`",
+            GreaterEqual: "≥",
+            GreaterEqualLess: "⋛",
+            GreaterFullEqual: "≧",
+            GreaterGreater: "⪢",
+            GreaterLess: "≷",
+            GreaterSlantEqual: "⩾",
+            GreaterTilde: "≳",
+            Gscr: "𝒢",
+            gscr: "ℊ",
+            gsim: "≳",
+            gsime: "⪎",
+            gsiml: "⪐",
+            gtcc: "⪧",
+            gtcir: "⩺",
+            gt: ">",
+            GT: ">",
+            Gt: "≫",
+            gtdot: "⋗",
+            gtlPar: "⦕",
+            gtquest: "⩼",
+            gtrapprox: "⪆",
+            gtrarr: "⥸",
+            gtrdot: "⋗",
+            gtreqless: "⋛",
+            gtreqqless: "⪌",
+            gtrless: "≷",
+            gtrsim: "≳",
+            gvertneqq: "≩︀",
+            gvnE: "≩︀",
+            Hacek: "ˇ",
+            hairsp: " ",
+            half: "½",
+            hamilt: "ℋ",
+            HARDcy: "Ъ",
+            hardcy: "ъ",
+            harrcir: "⥈",
+            harr: "↔",
+            hArr: "⇔",
+            harrw: "↭",
+            Hat: "^",
+            hbar: "ℏ",
+            Hcirc: "Ĥ",
+            hcirc: "ĥ",
+            hearts: "♥",
+            heartsuit: "♥",
+            hellip: "…",
+            hercon: "⊹",
+            hfr: "𝔥",
+            Hfr: "ℌ",
+            HilbertSpace: "ℋ",
+            hksearow: "⤥",
+            hkswarow: "⤦",
+            hoarr: "⇿",
+            homtht: "∻",
+            hookleftarrow: "↩",
+            hookrightarrow: "↪",
+            hopf: "𝕙",
+            Hopf: "ℍ",
+            horbar: "―",
+            HorizontalLine: "─",
+            hscr: "𝒽",
+            Hscr: "ℋ",
+            hslash: "ℏ",
+            Hstrok: "Ħ",
+            hstrok: "ħ",
+            HumpDownHump: "≎",
+            HumpEqual: "≏",
+            hybull: "⁃",
+            hyphen: "‐",
+            Iacute: "Í",
+            iacute: "í",
+            ic: "⁣",
+            Icirc: "Î",
+            icirc: "î",
+            Icy: "И",
+            icy: "и",
+            Idot: "İ",
+            IEcy: "Е",
+            iecy: "е",
+            iexcl: "¡",
+            iff: "⇔",
+            ifr: "𝔦",
+            Ifr: "ℑ",
+            Igrave: "Ì",
+            igrave: "ì",
+            ii: "ⅈ",
+            iiiint: "⨌",
+            iiint: "∭",
+            iinfin: "⧜",
+            iiota: "℩",
+            IJlig: "Ĳ",
+            ijlig: "ĳ",
+            Imacr: "Ī",
+            imacr: "ī",
+            image: "ℑ",
+            ImaginaryI: "ⅈ",
+            imagline: "ℐ",
+            imagpart: "ℑ",
+            imath: "ı",
+            Im: "ℑ",
+            imof: "⊷",
+            imped: "Ƶ",
+            Implies: "⇒",
+            incare: "℅",
+            "in": "∈",
+            infin: "∞",
+            infintie: "⧝",
+            inodot: "ı",
+            intcal: "⊺",
+            "int": "∫",
+            Int: "∬",
+            integers: "ℤ",
+            Integral: "∫",
+            intercal: "⊺",
+            Intersection: "⋂",
+            intlarhk: "⨗",
+            intprod: "⨼",
+            InvisibleComma: "⁣",
+            InvisibleTimes: "⁢",
+            IOcy: "Ё",
+            iocy: "ё",
+            Iogon: "Į",
+            iogon: "į",
+            Iopf: "𝕀",
+            iopf: "𝕚",
+            Iota: "Ι",
+            iota: "ι",
+            iprod: "⨼",
+            iquest: "¿",
+            iscr: "𝒾",
+            Iscr: "ℐ",
+            isin: "∈",
+            isindot: "⋵",
+            isinE: "⋹",
+            isins: "⋴",
+            isinsv: "⋳",
+            isinv: "∈",
+            it: "⁢",
+            Itilde: "Ĩ",
+            itilde: "ĩ",
+            Iukcy: "І",
+            iukcy: "і",
+            Iuml: "Ï",
+            iuml: "ï",
+            Jcirc: "Ĵ",
+            jcirc: "ĵ",
+            Jcy: "Й",
+            jcy: "й",
+            Jfr: "𝔍",
+            jfr: "𝔧",
+            jmath: "ȷ",
+            Jopf: "𝕁",
+            jopf: "𝕛",
+            Jscr: "𝒥",
+            jscr: "𝒿",
+            Jsercy: "Ј",
+            jsercy: "ј",
+            Jukcy: "Є",
+            jukcy: "є",
+            Kappa: "Κ",
+            kappa: "κ",
+            kappav: "ϰ",
+            Kcedil: "Ķ",
+            kcedil: "ķ",
+            Kcy: "К",
+            kcy: "к",
+            Kfr: "𝔎",
+            kfr: "𝔨",
+            kgreen: "ĸ",
+            KHcy: "Х",
+            khcy: "х",
+            KJcy: "Ќ",
+            kjcy: "ќ",
+            Kopf: "𝕂",
+            kopf: "𝕜",
+            Kscr: "𝒦",
+            kscr: "𝓀",
+            lAarr: "⇚",
+            Lacute: "Ĺ",
+            lacute: "ĺ",
+            laemptyv: "⦴",
+            lagran: "ℒ",
+            Lambda: "Λ",
+            lambda: "λ",
+            lang: "⟨",
+            Lang: "⟪",
+            langd: "⦑",
+            langle: "⟨",
+            lap: "⪅",
+            Laplacetrf: "ℒ",
+            laquo: "«",
+            larrb: "⇤",
+            larrbfs: "⤟",
+            larr: "←",
+            Larr: "↞",
+            lArr: "⇐",
+            larrfs: "⤝",
+            larrhk: "↩",
+            larrlp: "↫",
+            larrpl: "⤹",
+            larrsim: "⥳",
+            larrtl: "↢",
+            latail: "⤙",
+            lAtail: "⤛",
+            lat: "⪫",
+            late: "⪭",
+            lates: "⪭︀",
+            lbarr: "⤌",
+            lBarr: "⤎",
+            lbbrk: "❲",
+            lbrace: "{",
+            lbrack: "[",
+            lbrke: "⦋",
+            lbrksld: "⦏",
+            lbrkslu: "⦍",
+            Lcaron: "Ľ",
+            lcaron: "ľ",
+            Lcedil: "Ļ",
+            lcedil: "ļ",
+            lceil: "⌈",
+            lcub: "{",
+            Lcy: "Л",
+            lcy: "л",
+            ldca: "⤶",
+            ldquo: "“",
+            ldquor: "„",
+            ldrdhar: "⥧",
+            ldrushar: "⥋",
+            ldsh: "↲",
+            le: "≤",
+            lE: "≦",
+            LeftAngleBracket: "⟨",
+            LeftArrowBar: "⇤",
+            leftarrow: "←",
+            LeftArrow: "←",
+            Leftarrow: "⇐",
+            LeftArrowRightArrow: "⇆",
+            leftarrowtail: "↢",
+            LeftCeiling: "⌈",
+            LeftDoubleBracket: "⟦",
+            LeftDownTeeVector: "⥡",
+            LeftDownVectorBar: "⥙",
+            LeftDownVector: "⇃",
+            LeftFloor: "⌊",
+            leftharpoondown: "↽",
+            leftharpoonup: "↼",
+            leftleftarrows: "⇇",
+            leftrightarrow: "↔",
+            LeftRightArrow: "↔",
+            Leftrightarrow: "⇔",
+            leftrightarrows: "⇆",
+            leftrightharpoons: "⇋",
+            leftrightsquigarrow: "↭",
+            LeftRightVector: "⥎",
+            LeftTeeArrow: "↤",
+            LeftTee: "⊣",
+            LeftTeeVector: "⥚",
+            leftthreetimes: "⋋",
+            LeftTriangleBar: "⧏",
+            LeftTriangle: "⊲",
+            LeftTriangleEqual: "⊴",
+            LeftUpDownVector: "⥑",
+            LeftUpTeeVector: "⥠",
+            LeftUpVectorBar: "⥘",
+            LeftUpVector: "↿",
+            LeftVectorBar: "⥒",
+            LeftVector: "↼",
+            lEg: "⪋",
+            leg: "⋚",
+            leq: "≤",
+            leqq: "≦",
+            leqslant: "⩽",
+            lescc: "⪨",
+            les: "⩽",
+            lesdot: "⩿",
+            lesdoto: "⪁",
+            lesdotor: "⪃",
+            lesg: "⋚︀",
+            lesges: "⪓",
+            lessapprox: "⪅",
+            lessdot: "⋖",
+            lesseqgtr: "⋚",
+            lesseqqgtr: "⪋",
+            LessEqualGreater: "⋚",
+            LessFullEqual: "≦",
+            LessGreater: "≶",
+            lessgtr: "≶",
+            LessLess: "⪡",
+            lesssim: "≲",
+            LessSlantEqual: "⩽",
+            LessTilde: "≲",
+            lfisht: "⥼",
+            lfloor: "⌊",
+            Lfr: "𝔏",
+            lfr: "𝔩",
+            lg: "≶",
+            lgE: "⪑",
+            lHar: "⥢",
+            lhard: "↽",
+            lharu: "↼",
+            lharul: "⥪",
+            lhblk: "▄",
+            LJcy: "Љ",
+            ljcy: "љ",
+            llarr: "⇇",
+            ll: "≪",
+            Ll: "⋘",
+            llcorner: "⌞",
+            Lleftarrow: "⇚",
+            llhard: "⥫",
+            lltri: "◺",
+            Lmidot: "Ŀ",
+            lmidot: "ŀ",
+            lmoustache: "⎰",
+            lmoust: "⎰",
+            lnap: "⪉",
+            lnapprox: "⪉",
+            lne: "⪇",
+            lnE: "≨",
+            lneq: "⪇",
+            lneqq: "≨",
+            lnsim: "⋦",
+            loang: "⟬",
+            loarr: "⇽",
+            lobrk: "⟦",
+            longleftarrow: "⟵",
+            LongLeftArrow: "⟵",
+            Longleftarrow: "⟸",
+            longleftrightarrow: "⟷",
+            LongLeftRightArrow: "⟷",
+            Longleftrightarrow: "⟺",
+            longmapsto: "⟼",
+            longrightarrow: "⟶",
+            LongRightArrow: "⟶",
+            Longrightarrow: "⟹",
+            looparrowleft: "↫",
+            looparrowright: "↬",
+            lopar: "⦅",
+            Lopf: "𝕃",
+            lopf: "𝕝",
+            loplus: "⨭",
+            lotimes: "⨴",
+            lowast: "∗",
+            lowbar: "_",
+            LowerLeftArrow: "↙",
+            LowerRightArrow: "↘",
+            loz: "◊",
+            lozenge: "◊",
+            lozf: "⧫",
+            lpar: "(",
+            lparlt: "⦓",
+            lrarr: "⇆",
+            lrcorner: "⌟",
+            lrhar: "⇋",
+            lrhard: "⥭",
+            lrm: "‎",
+            lrtri: "⊿",
+            lsaquo: "‹",
+            lscr: "𝓁",
+            Lscr: "ℒ",
+            lsh: "↰",
+            Lsh: "↰",
+            lsim: "≲",
+            lsime: "⪍",
+            lsimg: "⪏",
+            lsqb: "[",
+            lsquo: "‘",
+            lsquor: "‚",
+            Lstrok: "Ł",
+            lstrok: "ł",
+            ltcc: "⪦",
+            ltcir: "⩹",
+            lt: "<",
+            LT: "<",
+            Lt: "≪",
+            ltdot: "⋖",
+            lthree: "⋋",
+            ltimes: "⋉",
+            ltlarr: "⥶",
+            ltquest: "⩻",
+            ltri: "◃",
+            ltrie: "⊴",
+            ltrif: "◂",
+            ltrPar: "⦖",
+            lurdshar: "⥊",
+            luruhar: "⥦",
+            lvertneqq: "≨︀",
+            lvnE: "≨︀",
+            macr: "¯",
+            male: "♂",
+            malt: "✠",
+            maltese: "✠",
+            Map: "⤅",
+            map: "↦",
+            mapsto: "↦",
+            mapstodown: "↧",
+            mapstoleft: "↤",
+            mapstoup: "↥",
+            marker: "▮",
+            mcomma: "⨩",
+            Mcy: "М",
+            mcy: "м",
+            mdash: "—",
+            mDDot: "∺",
+            measuredangle: "∡",
+            MediumSpace: " ",
+            Mellintrf: "ℳ",
+            Mfr: "𝔐",
+            mfr: "𝔪",
+            mho: "℧",
+            micro: "µ",
+            midast: "*",
+            midcir: "⫰",
+            mid: "∣",
+            middot: "·",
+            minusb: "⊟",
+            minus: "−",
+            minusd: "∸",
+            minusdu: "⨪",
+            MinusPlus: "∓",
+            mlcp: "⫛",
+            mldr: "…",
+            mnplus: "∓",
+            models: "⊧",
+            Mopf: "𝕄",
+            mopf: "𝕞",
+            mp: "∓",
+            mscr: "𝓂",
+            Mscr: "ℳ",
+            mstpos: "∾",
+            Mu: "Μ",
+            mu: "μ",
+            multimap: "⊸",
+            mumap: "⊸",
+            nabla: "∇",
+            Nacute: "Ń",
+            nacute: "ń",
+            nang: "∠⃒",
+            nap: "≉",
+            napE: "⩰̸",
+            napid: "≋̸",
+            napos: "ŉ",
+            napprox: "≉",
+            natural: "♮",
+            naturals: "ℕ",
+            natur: "♮",
+            nbsp: " ",
+            nbump: "≎̸",
+            nbumpe: "≏̸",
+            ncap: "⩃",
+            Ncaron: "Ň",
+            ncaron: "ň",
+            Ncedil: "Ņ",
+            ncedil: "ņ",
+            ncong: "≇",
+            ncongdot: "⩭̸",
+            ncup: "⩂",
+            Ncy: "Н",
+            ncy: "н",
+            ndash: "–",
+            nearhk: "⤤",
+            nearr: "↗",
+            neArr: "⇗",
+            nearrow: "↗",
+            ne: "≠",
+            nedot: "≐̸",
+            NegativeMediumSpace: "​",
+            NegativeThickSpace: "​",
+            NegativeThinSpace: "​",
+            NegativeVeryThinSpace: "​",
+            nequiv: "≢",
+            nesear: "⤨",
+            nesim: "≂̸",
+            NestedGreaterGreater: "≫",
+            NestedLessLess: "≪",
+            NewLine: "\n",
+            nexist: "∄",
+            nexists: "∄",
+            Nfr: "𝔑",
+            nfr: "𝔫",
+            ngE: "≧̸",
+            nge: "≱",
+            ngeq: "≱",
+            ngeqq: "≧̸",
+            ngeqslant: "⩾̸",
+            nges: "⩾̸",
+            nGg: "⋙̸",
+            ngsim: "≵",
+            nGt: "≫⃒",
+            ngt: "≯",
+            ngtr: "≯",
+            nGtv: "≫̸",
+            nharr: "↮",
+            nhArr: "⇎",
+            nhpar: "⫲",
+            ni: "∋",
+            nis: "⋼",
+            nisd: "⋺",
+            niv: "∋",
+            NJcy: "Њ",
+            njcy: "њ",
+            nlarr: "↚",
+            nlArr: "⇍",
+            nldr: "‥",
+            nlE: "≦̸",
+            nle: "≰",
+            nleftarrow: "↚",
+            nLeftarrow: "⇍",
+            nleftrightarrow: "↮",
+            nLeftrightarrow: "⇎",
+            nleq: "≰",
+            nleqq: "≦̸",
+            nleqslant: "⩽̸",
+            nles: "⩽̸",
+            nless: "≮",
+            nLl: "⋘̸",
+            nlsim: "≴",
+            nLt: "≪⃒",
+            nlt: "≮",
+            nltri: "⋪",
+            nltrie: "⋬",
+            nLtv: "≪̸",
+            nmid: "∤",
+            NoBreak: "⁠",
+            NonBreakingSpace: " ",
+            nopf: "𝕟",
+            Nopf: "ℕ",
+            Not: "⫬",
+            not: "¬",
+            NotCongruent: "≢",
+            NotCupCap: "≭",
+            NotDoubleVerticalBar: "∦",
+            NotElement: "∉",
+            NotEqual: "≠",
+            NotEqualTilde: "≂̸",
+            NotExists: "∄",
+            NotGreater: "≯",
+            NotGreaterEqual: "≱",
+            NotGreaterFullEqual: "≧̸",
+            NotGreaterGreater: "≫̸",
+            NotGreaterLess: "≹",
+            NotGreaterSlantEqual: "⩾̸",
+            NotGreaterTilde: "≵",
+            NotHumpDownHump: "≎̸",
+            NotHumpEqual: "≏̸",
+            notin: "∉",
+            notindot: "⋵̸",
+            notinE: "⋹̸",
+            notinva: "∉",
+            notinvb: "⋷",
+            notinvc: "⋶",
+            NotLeftTriangleBar: "⧏̸",
+            NotLeftTriangle: "⋪",
+            NotLeftTriangleEqual: "⋬",
+            NotLess: "≮",
+            NotLessEqual: "≰",
+            NotLessGreater: "≸",
+            NotLessLess: "≪̸",
+            NotLessSlantEqual: "⩽̸",
+            NotLessTilde: "≴",
+            NotNestedGreaterGreater: "⪢̸",
+            NotNestedLessLess: "⪡̸",
+            notni: "∌",
+            notniva: "∌",
+            notnivb: "⋾",
+            notnivc: "⋽",
+            NotPrecedes: "⊀",
+            NotPrecedesEqual: "⪯̸",
+            NotPrecedesSlantEqual: "⋠",
+            NotReverseElement: "∌",
+            NotRightTriangleBar: "⧐̸",
+            NotRightTriangle: "⋫",
+            NotRightTriangleEqual: "⋭",
+            NotSquareSubset: "⊏̸",
+            NotSquareSubsetEqual: "⋢",
+            NotSquareSuperset: "⊐̸",
+            NotSquareSupersetEqual: "⋣",
+            NotSubset: "⊂⃒",
+            NotSubsetEqual: "⊈",
+            NotSucceeds: "⊁",
+            NotSucceedsEqual: "⪰̸",
+            NotSucceedsSlantEqual: "⋡",
+            NotSucceedsTilde: "≿̸",
+            NotSuperset: "⊃⃒",
+            NotSupersetEqual: "⊉",
+            NotTilde: "≁",
+            NotTildeEqual: "≄",
+            NotTildeFullEqual: "≇",
+            NotTildeTilde: "≉",
+            NotVerticalBar: "∤",
+            nparallel: "∦",
+            npar: "∦",
+            nparsl: "⫽⃥",
+            npart: "∂̸",
+            npolint: "⨔",
+            npr: "⊀",
+            nprcue: "⋠",
+            nprec: "⊀",
+            npreceq: "⪯̸",
+            npre: "⪯̸",
+            nrarrc: "⤳̸",
+            nrarr: "↛",
+            nrArr: "⇏",
+            nrarrw: "↝̸",
+            nrightarrow: "↛",
+            nRightarrow: "⇏",
+            nrtri: "⋫",
+            nrtrie: "⋭",
+            nsc: "⊁",
+            nsccue: "⋡",
+            nsce: "⪰̸",
+            Nscr: "𝒩",
+            nscr: "𝓃",
+            nshortmid: "∤",
+            nshortparallel: "∦",
+            nsim: "≁",
+            nsime: "≄",
+            nsimeq: "≄",
+            nsmid: "∤",
+            nspar: "∦",
+            nsqsube: "⋢",
+            nsqsupe: "⋣",
+            nsub: "⊄",
+            nsubE: "⫅̸",
+            nsube: "⊈",
+            nsubset: "⊂⃒",
+            nsubseteq: "⊈",
+            nsubseteqq: "⫅̸",
+            nsucc: "⊁",
+            nsucceq: "⪰̸",
+            nsup: "⊅",
+            nsupE: "⫆̸",
+            nsupe: "⊉",
+            nsupset: "⊃⃒",
+            nsupseteq: "⊉",
+            nsupseteqq: "⫆̸",
+            ntgl: "≹",
+            Ntilde: "Ñ",
+            ntilde: "ñ",
+            ntlg: "≸",
+            ntriangleleft: "⋪",
+            ntrianglelefteq: "⋬",
+            ntriangleright: "⋫",
+            ntrianglerighteq: "⋭",
+            Nu: "Ν",
+            nu: "ν",
+            num: "#",
+            numero: "№",
+            numsp: " ",
+            nvap: "≍⃒",
+            nvdash: "⊬",
+            nvDash: "⊭",
+            nVdash: "⊮",
+            nVDash: "⊯",
+            nvge: "≥⃒",
+            nvgt: ">⃒",
+            nvHarr: "⤄",
+            nvinfin: "⧞",
+            nvlArr: "⤂",
+            nvle: "≤⃒",
+            nvlt: "<⃒",
+            nvltrie: "⊴⃒",
+            nvrArr: "⤃",
+            nvrtrie: "⊵⃒",
+            nvsim: "∼⃒",
+            nwarhk: "⤣",
+            nwarr: "↖",
+            nwArr: "⇖",
+            nwarrow: "↖",
+            nwnear: "⤧",
+            Oacute: "Ó",
+            oacute: "ó",
+            oast: "⊛",
+            Ocirc: "Ô",
+            ocirc: "ô",
+            ocir: "⊚",
+            Ocy: "О",
+            ocy: "о",
+            odash: "⊝",
+            Odblac: "Ő",
+            odblac: "ő",
+            odiv: "⨸",
+            odot: "⊙",
+            odsold: "⦼",
+            OElig: "Œ",
+            oelig: "œ",
+            ofcir: "⦿",
+            Ofr: "𝔒",
+            ofr: "𝔬",
+            ogon: "˛",
+            Ograve: "Ò",
+            ograve: "ò",
+            ogt: "⧁",
+            ohbar: "⦵",
+            ohm: "Ω",
+            oint: "∮",
+            olarr: "↺",
+            olcir: "⦾",
+            olcross: "⦻",
+            oline: "‾",
+            olt: "⧀",
+            Omacr: "Ō",
+            omacr: "ō",
+            Omega: "Ω",
+            omega: "ω",
+            Omicron: "Ο",
+            omicron: "ο",
+            omid: "⦶",
+            ominus: "⊖",
+            Oopf: "𝕆",
+            oopf: "𝕠",
+            opar: "⦷",
+            OpenCurlyDoubleQuote: "“",
+            OpenCurlyQuote: "‘",
+            operp: "⦹",
+            oplus: "⊕",
+            orarr: "↻",
+            Or: "⩔",
+            or: "∨",
+            ord: "⩝",
+            order: "ℴ",
+            orderof: "ℴ",
+            ordf: "ª",
+            ordm: "º",
+            origof: "⊶",
+            oror: "⩖",
+            orslope: "⩗",
+            orv: "⩛",
+            oS: "Ⓢ",
+            Oscr: "𝒪",
+            oscr: "ℴ",
+            Oslash: "Ø",
+            oslash: "ø",
+            osol: "⊘",
+            Otilde: "Õ",
+            otilde: "õ",
+            otimesas: "⨶",
+            Otimes: "⨷",
+            otimes: "⊗",
+            Ouml: "Ö",
+            ouml: "ö",
+            ovbar: "⌽",
+            OverBar: "‾",
+            OverBrace: "⏞",
+            OverBracket: "⎴",
+            OverParenthesis: "⏜",
+            para: "¶",
+            parallel: "∥",
+            par: "∥",
+            parsim: "⫳",
+            parsl: "⫽",
+            part: "∂",
+            PartialD: "∂",
+            Pcy: "П",
+            pcy: "п",
+            percnt: "%",
+            period: ".",
+            permil: "‰",
+            perp: "⊥",
+            pertenk: "‱",
+            Pfr: "𝔓",
+            pfr: "𝔭",
+            Phi: "Φ",
+            phi: "φ",
+            phiv: "ϕ",
+            phmmat: "ℳ",
+            phone: "☎",
+            Pi: "Π",
+            pi: "π",
+            pitchfork: "⋔",
+            piv: "ϖ",
+            planck: "ℏ",
+            planckh: "ℎ",
+            plankv: "ℏ",
+            plusacir: "⨣",
+            plusb: "⊞",
+            pluscir: "⨢",
+            plus: "+",
+            plusdo: "∔",
+            plusdu: "⨥",
+            pluse: "⩲",
+            PlusMinus: "±",
+            plusmn: "±",
+            plussim: "⨦",
+            plustwo: "⨧",
+            pm: "±",
+            Poincareplane: "ℌ",
+            pointint: "⨕",
+            popf: "𝕡",
+            Popf: "ℙ",
+            pound: "£",
+            prap: "⪷",
+            Pr: "⪻",
+            pr: "≺",
+            prcue: "≼",
+            precapprox: "⪷",
+            prec: "≺",
+            preccurlyeq: "≼",
+            Precedes: "≺",
+            PrecedesEqual: "⪯",
+            PrecedesSlantEqual: "≼",
+            PrecedesTilde: "≾",
+            preceq: "⪯",
+            precnapprox: "⪹",
+            precneqq: "⪵",
+            precnsim: "⋨",
+            pre: "⪯",
+            prE: "⪳",
+            precsim: "≾",
+            prime: "′",
+            Prime: "″",
+            primes: "ℙ",
+            prnap: "⪹",
+            prnE: "⪵",
+            prnsim: "⋨",
+            prod: "∏",
+            Product: "∏",
+            profalar: "⌮",
+            profline: "⌒",
+            profsurf: "⌓",
+            prop: "∝",
+            Proportional: "∝",
+            Proportion: "∷",
+            propto: "∝",
+            prsim: "≾",
+            prurel: "⊰",
+            Pscr: "𝒫",
+            pscr: "𝓅",
+            Psi: "Ψ",
+            psi: "ψ",
+            puncsp: " ",
+            Qfr: "𝔔",
+            qfr: "𝔮",
+            qint: "⨌",
+            qopf: "𝕢",
+            Qopf: "ℚ",
+            qprime: "⁗",
+            Qscr: "𝒬",
+            qscr: "𝓆",
+            quaternions: "ℍ",
+            quatint: "⨖",
+            quest: "?",
+            questeq: "≟",
+            quot: '"',
+            QUOT: '"',
+            rAarr: "⇛",
+            race: "∽̱",
+            Racute: "Ŕ",
+            racute: "ŕ",
+            radic: "√",
+            raemptyv: "⦳",
+            rang: "⟩",
+            Rang: "⟫",
+            rangd: "⦒",
+            range: "⦥",
+            rangle: "⟩",
+            raquo: "»",
+            rarrap: "⥵",
+            rarrb: "⇥",
+            rarrbfs: "⤠",
+            rarrc: "⤳",
+            rarr: "→",
+            Rarr: "↠",
+            rArr: "⇒",
+            rarrfs: "⤞",
+            rarrhk: "↪",
+            rarrlp: "↬",
+            rarrpl: "⥅",
+            rarrsim: "⥴",
+            Rarrtl: "⤖",
+            rarrtl: "↣",
+            rarrw: "↝",
+            ratail: "⤚",
+            rAtail: "⤜",
+            ratio: "∶",
+            rationals: "ℚ",
+            rbarr: "⤍",
+            rBarr: "⤏",
+            RBarr: "⤐",
+            rbbrk: "❳",
+            rbrace: "}",
+            rbrack: "]",
+            rbrke: "⦌",
+            rbrksld: "⦎",
+            rbrkslu: "⦐",
+            Rcaron: "Ř",
+            rcaron: "ř",
+            Rcedil: "Ŗ",
+            rcedil: "ŗ",
+            rceil: "⌉",
+            rcub: "}",
+            Rcy: "Р",
+            rcy: "р",
+            rdca: "⤷",
+            rdldhar: "⥩",
+            rdquo: "”",
+            rdquor: "”",
+            rdsh: "↳",
+            real: "ℜ",
+            realine: "ℛ",
+            realpart: "ℜ",
+            reals: "ℝ",
+            Re: "ℜ",
+            rect: "▭",
+            reg: "®",
+            REG: "®",
+            ReverseElement: "∋",
+            ReverseEquilibrium: "⇋",
+            ReverseUpEquilibrium: "⥯",
+            rfisht: "⥽",
+            rfloor: "⌋",
+            rfr: "𝔯",
+            Rfr: "ℜ",
+            rHar: "⥤",
+            rhard: "⇁",
+            rharu: "⇀",
+            rharul: "⥬",
+            Rho: "Ρ",
+            rho: "ρ",
+            rhov: "ϱ",
+            RightAngleBracket: "⟩",
+            RightArrowBar: "⇥",
+            rightarrow: "→",
+            RightArrow: "→",
+            Rightarrow: "⇒",
+            RightArrowLeftArrow: "⇄",
+            rightarrowtail: "↣",
+            RightCeiling: "⌉",
+            RightDoubleBracket: "⟧",
+            RightDownTeeVector: "⥝",
+            RightDownVectorBar: "⥕",
+            RightDownVector: "⇂",
+            RightFloor: "⌋",
+            rightharpoondown: "⇁",
+            rightharpoonup: "⇀",
+            rightleftarrows: "⇄",
+            rightleftharpoons: "⇌",
+            rightrightarrows: "⇉",
+            rightsquigarrow: "↝",
+            RightTeeArrow: "↦",
+            RightTee: "⊢",
+            RightTeeVector: "⥛",
+            rightthreetimes: "⋌",
+            RightTriangleBar: "⧐",
+            RightTriangle: "⊳",
+            RightTriangleEqual: "⊵",
+            RightUpDownVector: "⥏",
+            RightUpTeeVector: "⥜",
+            RightUpVectorBar: "⥔",
+            RightUpVector: "↾",
+            RightVectorBar: "⥓",
+            RightVector: "⇀",
+            ring: "˚",
+            risingdotseq: "≓",
+            rlarr: "⇄",
+            rlhar: "⇌",
+            rlm: "‏",
+            rmoustache: "⎱",
+            rmoust: "⎱",
+            rnmid: "⫮",
+            roang: "⟭",
+            roarr: "⇾",
+            robrk: "⟧",
+            ropar: "⦆",
+            ropf: "𝕣",
+            Ropf: "ℝ",
+            roplus: "⨮",
+            rotimes: "⨵",
+            RoundImplies: "⥰",
+            rpar: ")",
+            rpargt: "⦔",
+            rppolint: "⨒",
+            rrarr: "⇉",
+            Rrightarrow: "⇛",
+            rsaquo: "›",
+            rscr: "𝓇",
+            Rscr: "ℛ",
+            rsh: "↱",
+            Rsh: "↱",
+            rsqb: "]",
+            rsquo: "’",
+            rsquor: "’",
+            rthree: "⋌",
+            rtimes: "⋊",
+            rtri: "▹",
+            rtrie: "⊵",
+            rtrif: "▸",
+            rtriltri: "⧎",
+            RuleDelayed: "⧴",
+            ruluhar: "⥨",
+            rx: "℞",
+            Sacute: "Ś",
+            sacute: "ś",
+            sbquo: "‚",
+            scap: "⪸",
+            Scaron: "Š",
+            scaron: "š",
+            Sc: "⪼",
+            sc: "≻",
+            sccue: "≽",
+            sce: "⪰",
+            scE: "⪴",
+            Scedil: "Ş",
+            scedil: "ş",
+            Scirc: "Ŝ",
+            scirc: "ŝ",
+            scnap: "⪺",
+            scnE: "⪶",
+            scnsim: "⋩",
+            scpolint: "⨓",
+            scsim: "≿",
+            Scy: "С",
+            scy: "с",
+            sdotb: "⊡",
+            sdot: "⋅",
+            sdote: "⩦",
+            searhk: "⤥",
+            searr: "↘",
+            seArr: "⇘",
+            searrow: "↘",
+            sect: "§",
+            semi: ";",
+            seswar: "⤩",
+            setminus: "∖",
+            setmn: "∖",
+            sext: "✶",
+            Sfr: "𝔖",
+            sfr: "𝔰",
+            sfrown: "⌢",
+            sharp: "♯",
+            SHCHcy: "Щ",
+            shchcy: "щ",
+            SHcy: "Ш",
+            shcy: "ш",
+            ShortDownArrow: "↓",
+            ShortLeftArrow: "←",
+            shortmid: "∣",
+            shortparallel: "∥",
+            ShortRightArrow: "→",
+            ShortUpArrow: "↑",
+            shy: "­",
+            Sigma: "Σ",
+            sigma: "σ",
+            sigmaf: "ς",
+            sigmav: "ς",
+            sim: "∼",
+            simdot: "⩪",
+            sime: "≃",
+            simeq: "≃",
+            simg: "⪞",
+            simgE: "⪠",
+            siml: "⪝",
+            simlE: "⪟",
+            simne: "≆",
+            simplus: "⨤",
+            simrarr: "⥲",
+            slarr: "←",
+            SmallCircle: "∘",
+            smallsetminus: "∖",
+            smashp: "⨳",
+            smeparsl: "⧤",
+            smid: "∣",
+            smile: "⌣",
+            smt: "⪪",
+            smte: "⪬",
+            smtes: "⪬︀",
+            SOFTcy: "Ь",
+            softcy: "ь",
+            solbar: "⌿",
+            solb: "⧄",
+            sol: "/",
+            Sopf: "𝕊",
+            sopf: "𝕤",
+            spades: "♠",
+            spadesuit: "♠",
+            spar: "∥",
+            sqcap: "⊓",
+            sqcaps: "⊓︀",
+            sqcup: "⊔",
+            sqcups: "⊔︀",
+            Sqrt: "√",
+            sqsub: "⊏",
+            sqsube: "⊑",
+            sqsubset: "⊏",
+            sqsubseteq: "⊑",
+            sqsup: "⊐",
+            sqsupe: "⊒",
+            sqsupset: "⊐",
+            sqsupseteq: "⊒",
+            square: "□",
+            Square: "□",
+            SquareIntersection: "⊓",
+            SquareSubset: "⊏",
+            SquareSubsetEqual: "⊑",
+            SquareSuperset: "⊐",
+            SquareSupersetEqual: "⊒",
+            SquareUnion: "⊔",
+            squarf: "▪",
+            squ: "□",
+            squf: "▪",
+            srarr: "→",
+            Sscr: "𝒮",
+            sscr: "𝓈",
+            ssetmn: "∖",
+            ssmile: "⌣",
+            sstarf: "⋆",
+            Star: "⋆",
+            star: "☆",
+            starf: "★",
+            straightepsilon: "ϵ",
+            straightphi: "ϕ",
+            strns: "¯",
+            sub: "⊂",
+            Sub: "⋐",
+            subdot: "⪽",
+            subE: "⫅",
+            sube: "⊆",
+            subedot: "⫃",
+            submult: "⫁",
+            subnE: "⫋",
+            subne: "⊊",
+            subplus: "⪿",
+            subrarr: "⥹",
+            subset: "⊂",
+            Subset: "⋐",
+            subseteq: "⊆",
+            subseteqq: "⫅",
+            SubsetEqual: "⊆",
+            subsetneq: "⊊",
+            subsetneqq: "⫋",
+            subsim: "⫇",
+            subsub: "⫕",
+            subsup: "⫓",
+            succapprox: "⪸",
+            succ: "≻",
+            succcurlyeq: "≽",
+            Succeeds: "≻",
+            SucceedsEqual: "⪰",
+            SucceedsSlantEqual: "≽",
+            SucceedsTilde: "≿",
+            succeq: "⪰",
+            succnapprox: "⪺",
+            succneqq: "⪶",
+            succnsim: "⋩",
+            succsim: "≿",
+            SuchThat: "∋",
+            sum: "∑",
+            Sum: "∑",
+            sung: "♪",
+            sup1: "¹",
+            sup2: "²",
+            sup3: "³",
+            sup: "⊃",
+            Sup: "⋑",
+            supdot: "⪾",
+            supdsub: "⫘",
+            supE: "⫆",
+            supe: "⊇",
+            supedot: "⫄",
+            Superset: "⊃",
+            SupersetEqual: "⊇",
+            suphsol: "⟉",
+            suphsub: "⫗",
+            suplarr: "⥻",
+            supmult: "⫂",
+            supnE: "⫌",
+            supne: "⊋",
+            supplus: "⫀",
+            supset: "⊃",
+            Supset: "⋑",
+            supseteq: "⊇",
+            supseteqq: "⫆",
+            supsetneq: "⊋",
+            supsetneqq: "⫌",
+            supsim: "⫈",
+            supsub: "⫔",
+            supsup: "⫖",
+            swarhk: "⤦",
+            swarr: "↙",
+            swArr: "⇙",
+            swarrow: "↙",
+            swnwar: "⤪",
+            szlig: "ß",
+            Tab: "	",
+            target: "⌖",
+            Tau: "Τ",
+            tau: "τ",
+            tbrk: "⎴",
+            Tcaron: "Ť",
+            tcaron: "ť",
+            Tcedil: "Ţ",
+            tcedil: "ţ",
+            Tcy: "Т",
+            tcy: "т",
+            tdot: "⃛",
+            telrec: "⌕",
+            Tfr: "𝔗",
+            tfr: "𝔱",
+            there4: "∴",
+            therefore: "∴",
+            Therefore: "∴",
+            Theta: "Θ",
+            theta: "θ",
+            thetasym: "ϑ",
+            thetav: "ϑ",
+            thickapprox: "≈",
+            thicksim: "∼",
+            ThickSpace: "  ",
+            ThinSpace: " ",
+            thinsp: " ",
+            thkap: "≈",
+            thksim: "∼",
+            THORN: "Þ",
+            thorn: "þ",
+            tilde: "˜",
+            Tilde: "∼",
+            TildeEqual: "≃",
+            TildeFullEqual: "≅",
+            TildeTilde: "≈",
+            timesbar: "⨱",
+            timesb: "⊠",
+            times: "×",
+            timesd: "⨰",
+            tint: "∭",
+            toea: "⤨",
+            topbot: "⌶",
+            topcir: "⫱",
+            top: "⊤",
+            Topf: "𝕋",
+            topf: "𝕥",
+            topfork: "⫚",
+            tosa: "⤩",
+            tprime: "‴",
+            trade: "™",
+            TRADE: "™",
+            triangle: "▵",
+            triangledown: "▿",
+            triangleleft: "◃",
+            trianglelefteq: "⊴",
+            triangleq: "≜",
+            triangleright: "▹",
+            trianglerighteq: "⊵",
+            tridot: "◬",
+            trie: "≜",
+            triminus: "⨺",
+            TripleDot: "⃛",
+            triplus: "⨹",
+            trisb: "⧍",
+            tritime: "⨻",
+            trpezium: "⏢",
+            Tscr: "𝒯",
+            tscr: "𝓉",
+            TScy: "Ц",
+            tscy: "ц",
+            TSHcy: "Ћ",
+            tshcy: "ћ",
+            Tstrok: "Ŧ",
+            tstrok: "ŧ",
+            twixt: "≬",
+            twoheadleftarrow: "↞",
+            twoheadrightarrow: "↠",
+            Uacute: "Ú",
+            uacute: "ú",
+            uarr: "↑",
+            Uarr: "↟",
+            uArr: "⇑",
+            Uarrocir: "⥉",
+            Ubrcy: "Ў",
+            ubrcy: "ў",
+            Ubreve: "Ŭ",
+            ubreve: "ŭ",
+            Ucirc: "Û",
+            ucirc: "û",
+            Ucy: "У",
+            ucy: "у",
+            udarr: "⇅",
+            Udblac: "Ű",
+            udblac: "ű",
+            udhar: "⥮",
+            ufisht: "⥾",
+            Ufr: "𝔘",
+            ufr: "𝔲",
+            Ugrave: "Ù",
+            ugrave: "ù",
+            uHar: "⥣",
+            uharl: "↿",
+            uharr: "↾",
+            uhblk: "▀",
+            ulcorn: "⌜",
+            ulcorner: "⌜",
+            ulcrop: "⌏",
+            ultri: "◸",
+            Umacr: "Ū",
+            umacr: "ū",
+            uml: "¨",
+            UnderBar: "_",
+            UnderBrace: "⏟",
+            UnderBracket: "⎵",
+            UnderParenthesis: "⏝",
+            Union: "⋃",
+            UnionPlus: "⊎",
+            Uogon: "Ų",
+            uogon: "ų",
+            Uopf: "𝕌",
+            uopf: "𝕦",
+            UpArrowBar: "⤒",
+            uparrow: "↑",
+            UpArrow: "↑",
+            Uparrow: "⇑",
+            UpArrowDownArrow: "⇅",
+            updownarrow: "↕",
+            UpDownArrow: "↕",
+            Updownarrow: "⇕",
+            UpEquilibrium: "⥮",
+            upharpoonleft: "↿",
+            upharpoonright: "↾",
+            uplus: "⊎",
+            UpperLeftArrow: "↖",
+            UpperRightArrow: "↗",
+            upsi: "υ",
+            Upsi: "ϒ",
+            upsih: "ϒ",
+            Upsilon: "Υ",
+            upsilon: "υ",
+            UpTeeArrow: "↥",
+            UpTee: "⊥",
+            upuparrows: "⇈",
+            urcorn: "⌝",
+            urcorner: "⌝",
+            urcrop: "⌎",
+            Uring: "Ů",
+            uring: "ů",
+            urtri: "◹",
+            Uscr: "𝒰",
+            uscr: "𝓊",
+            utdot: "⋰",
+            Utilde: "Ũ",
+            utilde: "ũ",
+            utri: "▵",
+            utrif: "▴",
+            uuarr: "⇈",
+            Uuml: "Ü",
+            uuml: "ü",
+            uwangle: "⦧",
+            vangrt: "⦜",
+            varepsilon: "ϵ",
+            varkappa: "ϰ",
+            varnothing: "∅",
+            varphi: "ϕ",
+            varpi: "ϖ",
+            varpropto: "∝",
+            varr: "↕",
+            vArr: "⇕",
+            varrho: "ϱ",
+            varsigma: "ς",
+            varsubsetneq: "⊊︀",
+            varsubsetneqq: "⫋︀",
+            varsupsetneq: "⊋︀",
+            varsupsetneqq: "⫌︀",
+            vartheta: "ϑ",
+            vartriangleleft: "⊲",
+            vartriangleright: "⊳",
+            vBar: "⫨",
+            Vbar: "⫫",
+            vBarv: "⫩",
+            Vcy: "В",
+            vcy: "в",
+            vdash: "⊢",
+            vDash: "⊨",
+            Vdash: "⊩",
+            VDash: "⊫",
+            Vdashl: "⫦",
+            veebar: "⊻",
+            vee: "∨",
+            Vee: "⋁",
+            veeeq: "≚",
+            vellip: "⋮",
+            verbar: "|",
+            Verbar: "‖",
+            vert: "|",
+            Vert: "‖",
+            VerticalBar: "∣",
+            VerticalLine: "|",
+            VerticalSeparator: "❘",
+            VerticalTilde: "≀",
+            VeryThinSpace: " ",
+            Vfr: "𝔙",
+            vfr: "𝔳",
+            vltri: "⊲",
+            vnsub: "⊂⃒",
+            vnsup: "⊃⃒",
+            Vopf: "𝕍",
+            vopf: "𝕧",
+            vprop: "∝",
+            vrtri: "⊳",
+            Vscr: "𝒱",
+            vscr: "𝓋",
+            vsubnE: "⫋︀",
+            vsubne: "⊊︀",
+            vsupnE: "⫌︀",
+            vsupne: "⊋︀",
+            Vvdash: "⊪",
+            vzigzag: "⦚",
+            Wcirc: "Ŵ",
+            wcirc: "ŵ",
+            wedbar: "⩟",
+            wedge: "∧",
+            Wedge: "⋀",
+            wedgeq: "≙",
+            weierp: "℘",
+            Wfr: "𝔚",
+            wfr: "𝔴",
+            Wopf: "𝕎",
+            wopf: "𝕨",
+            wp: "℘",
+            wr: "≀",
+            wreath: "≀",
+            Wscr: "𝒲",
+            wscr: "𝓌",
+            xcap: "⋂",
+            xcirc: "◯",
+            xcup: "⋃",
+            xdtri: "▽",
+            Xfr: "𝔛",
+            xfr: "𝔵",
+            xharr: "⟷",
+            xhArr: "⟺",
+            Xi: "Ξ",
+            xi: "ξ",
+            xlarr: "⟵",
+            xlArr: "⟸",
+            xmap: "⟼",
+            xnis: "⋻",
+            xodot: "⨀",
+            Xopf: "𝕏",
+            xopf: "𝕩",
+            xoplus: "⨁",
+            xotime: "⨂",
+            xrarr: "⟶",
+            xrArr: "⟹",
+            Xscr: "𝒳",
+            xscr: "𝓍",
+            xsqcup: "⨆",
+            xuplus: "⨄",
+            xutri: "△",
+            xvee: "⋁",
+            xwedge: "⋀",
+            Yacute: "Ý",
+            yacute: "ý",
+            YAcy: "Я",
+            yacy: "я",
+            Ycirc: "Ŷ",
+            ycirc: "ŷ",
+            Ycy: "Ы",
+            ycy: "ы",
+            yen: "¥",
+            Yfr: "𝔜",
+            yfr: "𝔶",
+            YIcy: "Ї",
+            yicy: "ї",
+            Yopf: "𝕐",
+            yopf: "𝕪",
+            Yscr: "𝒴",
+            yscr: "𝓎",
+            YUcy: "Ю",
+            yucy: "ю",
+            yuml: "ÿ",
+            Yuml: "Ÿ",
+            Zacute: "Ź",
+            zacute: "ź",
+            Zcaron: "Ž",
+            zcaron: "ž",
+            Zcy: "З",
+            zcy: "з",
+            Zdot: "Ż",
+            zdot: "ż",
+            zeetrf: "ℨ",
+            ZeroWidthSpace: "​",
+            Zeta: "Ζ",
+            zeta: "ζ",
+            zfr: "𝔷",
+            Zfr: "ℨ",
+            ZHcy: "Ж",
+            zhcy: "ж",
+            zigrarr: "⇝",
+            zopf: "𝕫",
+            Zopf: "ℤ",
+            Zscr: "𝒵",
+            zscr: "𝓏",
+            zwj: "‍",
+            zwnj: "‌"
+        };
+    }, {} ],
+    132: [ function(require, module, exports) {
+        "use strict";
+        function assign(obj) {
+            var sources = Array.prototype.slice.call(arguments, 1);
+            sources.forEach(function(source) {
+                if (!source) {
+                    return;
+                }
+                Object.keys(source).forEach(function(key) {
+                    obj[key] = source[key];
+                });
+            });
+            return obj;
+        }
+        function _class(obj) {
+            return Object.prototype.toString.call(obj);
+        }
+        function isString(obj) {
+            return _class(obj) === "[object String]";
+        }
+        function isObject(obj) {
+            return _class(obj) === "[object Object]";
+        }
+        function isRegExp(obj) {
+            return _class(obj) === "[object RegExp]";
+        }
+        function isFunction(obj) {
+            return _class(obj) === "[object Function]";
+        }
+        function escapeRE(str) {
+            return str.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+        }
+        var defaultOptions = {
+            fuzzyLink: true,
+            fuzzyEmail: true,
+            fuzzyIP: false
+        };
+        function isOptionsObj(obj) {
+            return Object.keys(obj || {}).reduce(function(acc, k) {
+                return acc || defaultOptions.hasOwnProperty(k);
+            }, false);
+        }
+        var defaultSchemas = {
+            "http:": {
+                validate: function(text, pos, self) {
+                    var tail = text.slice(pos);
+                    if (!self.re.http) {
+                        self.re.http = new RegExp("^\\/\\/" + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, "i");
+                    }
+                    if (self.re.http.test(tail)) {
+                        return tail.match(self.re.http)[0].length;
+                    }
+                    return 0;
+                }
+            },
+            "https:": "http:",
+            "ftp:": "http:",
+            "//": {
+                validate: function(text, pos, self) {
+                    var tail = text.slice(pos);
+                    if (!self.re.no_http) {
+                        self.re.no_http = new RegExp("^" + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, "i");
+                    }
+                    if (self.re.no_http.test(tail)) {
+                        if (pos >= 3 && text[pos - 3] === ":") {
+                            return 0;
+                        }
+                        return tail.match(self.re.no_http)[0].length;
+                    }
+                    return 0;
+                }
+            },
+            "mailto:": {
+                validate: function(text, pos, self) {
+                    var tail = text.slice(pos);
+                    if (!self.re.mailto) {
+                        self.re.mailto = new RegExp("^" + self.re.src_email_name + "@" + self.re.src_host_strict, "i");
+                    }
+                    if (self.re.mailto.test(tail)) {
+                        return tail.match(self.re.mailto)[0].length;
+                    }
+                    return 0;
+                }
+            }
+        };
+        var tlds_2ch_src_re = "a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmnoruvwxyz]|d[ejkmoz]|e[cegrstu]|f[ijkmor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnprwyz]|l[abcikrstuvy]|m[acdeghklmnopqrstuvwxyz]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eosuw]|s[abcdeghijklmnortuvxyz]|t[cdfghjklmnortvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw]";
+        var tlds_default = "biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф".split("|");
+        function resetScanCache(self) {
+            self.__index__ = -1;
+            self.__text_cache__ = "";
+        }
+        function createValidator(re) {
+            return function(text, pos) {
+                var tail = text.slice(pos);
+                if (re.test(tail)) {
+                    return tail.match(re)[0].length;
+                }
+                return 0;
+            };
+        }
+        function createNormalizer() {
+            return function(match, self) {
+                self.normalize(match);
+            };
+        }
+        function compile(self) {
+            var re = self.re = assign({}, require("./lib/re"));
+            var tlds = self.__tlds__.slice();
+            if (!self.__tlds_replaced__) {
+                tlds.push(tlds_2ch_src_re);
+            }
+            tlds.push(re.src_xn);
+            re.src_tlds = tlds.join("|");
+            function untpl(tpl) {
+                return tpl.replace("%TLDS%", re.src_tlds);
+            }
+            re.email_fuzzy = RegExp(untpl(re.tpl_email_fuzzy), "i");
+            re.link_fuzzy = RegExp(untpl(re.tpl_link_fuzzy), "i");
+            re.link_no_ip_fuzzy = RegExp(untpl(re.tpl_link_no_ip_fuzzy), "i");
+            re.host_fuzzy_test = RegExp(untpl(re.tpl_host_fuzzy_test), "i");
+            var aliases = [];
+            self.__compiled__ = {};
+            function schemaError(name, val) {
+                throw new Error('(LinkifyIt) Invalid schema "' + name + '": ' + val);
+            }
+            Object.keys(self.__schemas__).forEach(function(name) {
+                var val = self.__schemas__[name];
+                if (val === null) {
+                    return;
+                }
+                var compiled = {
+                    validate: null,
+                    link: null
+                };
+                self.__compiled__[name] = compiled;
+                if (isObject(val)) {
+                    if (isRegExp(val.validate)) {
+                        compiled.validate = createValidator(val.validate);
+                    } else if (isFunction(val.validate)) {
+                        compiled.validate = val.validate;
+                    } else {
+                        schemaError(name, val);
+                    }
+                    if (isFunction(val.normalize)) {
+                        compiled.normalize = val.normalize;
+                    } else if (!val.normalize) {
+                        compiled.normalize = createNormalizer();
+                    } else {
+                        schemaError(name, val);
+                    }
+                    return;
+                }
+                if (isString(val)) {
+                    aliases.push(name);
+                    return;
+                }
+                schemaError(name, val);
+            });
+            aliases.forEach(function(alias) {
+                if (!self.__compiled__[self.__schemas__[alias]]) {
+                    return;
+                }
+                self.__compiled__[alias].validate = self.__compiled__[self.__schemas__[alias]].validate;
+                self.__compiled__[alias].normalize = self.__compiled__[self.__schemas__[alias]].normalize;
+            });
+            self.__compiled__[""] = {
+                validate: null,
+                normalize: createNormalizer()
+            };
+            var slist = Object.keys(self.__compiled__).filter(function(name) {
+                return name.length > 0 && self.__compiled__[name];
+            }).map(escapeRE).join("|");
+            self.re.schema_test = RegExp("(^|(?!_)(?:>|" + re.src_ZPCc + "))(" + slist + ")", "i");
+            self.re.schema_search = RegExp("(^|(?!_)(?:>|" + re.src_ZPCc + "))(" + slist + ")", "ig");
+            self.re.pretest = RegExp("(" + self.re.schema_test.source + ")|" + "(" + self.re.host_fuzzy_test.source + ")|" + "@", "i");
+            resetScanCache(self);
+        }
+        function Match(self, shift) {
+            var start = self.__index__, end = self.__last_index__, text = self.__text_cache__.slice(start, end);
+            this.schema = self.__schema__.toLowerCase();
+            this.index = start + shift;
+            this.lastIndex = end + shift;
+            this.raw = text;
+            this.text = text;
+            this.url = text;
+        }
+        function createMatch(self, shift) {
+            var match = new Match(self, shift);
+            self.__compiled__[match.schema].normalize(match, self);
+            return match;
+        }
+        function LinkifyIt(schemas, options) {
+            if (!(this instanceof LinkifyIt)) {
+                return new LinkifyIt(schemas, options);
+            }
+            if (!options) {
+                if (isOptionsObj(schemas)) {
+                    options = schemas;
+                    schemas = {};
+                }
+            }
+            this.__opts__ = assign({}, defaultOptions, options);
+            this.__index__ = -1;
+            this.__last_index__ = -1;
+            this.__schema__ = "";
+            this.__text_cache__ = "";
+            this.__schemas__ = assign({}, defaultSchemas, schemas);
+            this.__compiled__ = {};
+            this.__tlds__ = tlds_default;
+            this.__tlds_replaced__ = false;
+            this.re = {};
+            compile(this);
+        }
+        LinkifyIt.prototype.add = function add(schema, definition) {
+            this.__schemas__[schema] = definition;
+            compile(this);
+            return this;
+        };
+        LinkifyIt.prototype.set = function set(options) {
+            this.__opts__ = assign(this.__opts__, options);
+            return this;
+        };
+        LinkifyIt.prototype.test = function test(text) {
+            this.__text_cache__ = text;
+            this.__index__ = -1;
+            if (!text.length) {
+                return false;
+            }
+            var m, ml, me, len, shift, next, re, tld_pos, at_pos;
+            if (this.re.schema_test.test(text)) {
+                re = this.re.schema_search;
+                re.lastIndex = 0;
+                while ((m = re.exec(text)) !== null) {
+                    len = this.testSchemaAt(text, m[2], re.lastIndex);
+                    if (len) {
+                        this.__schema__ = m[2];
+                        this.__index__ = m.index + m[1].length;
+                        this.__last_index__ = m.index + m[0].length + len;
+                        break;
+                    }
+                }
+            }
+            if (this.__opts__.fuzzyLink && this.__compiled__["http:"]) {
+                tld_pos = text.search(this.re.host_fuzzy_test);
+                if (tld_pos >= 0) {
+                    if (this.__index__ < 0 || tld_pos < this.__index__) {
+                        if ((ml = text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy)) !== null) {
+                            shift = ml.index + ml[1].length;
+                            if (this.__index__ < 0 || shift < this.__index__) {
+                                this.__schema__ = "";
+                                this.__index__ = shift;
+                                this.__last_index__ = ml.index + ml[0].length;
+                            }
+                        }
+                    }
+                }
+            }
+            if (this.__opts__.fuzzyEmail && this.__compiled__["mailto:"]) {
+                at_pos = text.indexOf("@");
+                if (at_pos >= 0) {
+                    if ((me = text.match(this.re.email_fuzzy)) !== null) {
+                        shift = me.index + me[1].length;
+                        next = me.index + me[0].length;
+                        if (this.__index__ < 0 || shift < this.__index__ || shift === this.__index__ && next > this.__last_index__) {
+                            this.__schema__ = "mailto:";
+                            this.__index__ = shift;
+                            this.__last_index__ = next;
+                        }
+                    }
+                }
+            }
+            return this.__index__ >= 0;
+        };
+        LinkifyIt.prototype.pretest = function pretest(text) {
+            return this.re.pretest.test(text);
+        };
+        LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
+            if (!this.__compiled__[schema.toLowerCase()]) {
+                return 0;
+            }
+            return this.__compiled__[schema.toLowerCase()].validate(text, pos, this);
+        };
+        LinkifyIt.prototype.match = function match(text) {
+            var shift = 0, result = [];
+            if (this.__index__ >= 0 && this.__text_cache__ === text) {
+                result.push(createMatch(this, shift));
+                shift = this.__last_index__;
+            }
+            var tail = shift ? text.slice(shift) : text;
+            while (this.test(tail)) {
+                result.push(createMatch(this, shift));
+                tail = tail.slice(this.__last_index__);
+                shift += this.__last_index__;
+            }
+            if (result.length) {
+                return result;
+            }
+            return null;
+        };
+        LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
+            list = Array.isArray(list) ? list : [ list ];
+            if (!keepOld) {
+                this.__tlds__ = list.slice();
+                this.__tlds_replaced__ = true;
+                compile(this);
+                return this;
+            }
+            this.__tlds__ = this.__tlds__.concat(list).sort().filter(function(el, idx, arr) {
+                return el !== arr[idx - 1];
+            }).reverse();
+            compile(this);
+            return this;
+        };
+        LinkifyIt.prototype.normalize = function normalize(match) {
+            if (!match.schema) {
+                match.url = "http://" + match.url;
+            }
+            if (match.schema === "mailto:" && !/^mailto:/i.test(match.url)) {
+                match.url = "mailto:" + match.url;
+            }
+        };
+        module.exports = LinkifyIt;
+    }, {
+        "./lib/re": 133
+    } ],
+    133: [ function(require, module, exports) {
+        "use strict";
+        var src_Any = exports.src_Any = require("uc.micro/properties/Any/regex").source;
+        var src_Cc = exports.src_Cc = require("uc.micro/categories/Cc/regex").source;
+        var src_Z = exports.src_Z = require("uc.micro/categories/Z/regex").source;
+        var src_P = exports.src_P = require("uc.micro/categories/P/regex").source;
+        var src_ZPCc = exports.src_ZPCc = [ src_Z, src_P, src_Cc ].join("|");
+        var src_ZCc = exports.src_ZCc = [ src_Z, src_Cc ].join("|");
+        var src_pseudo_letter = "(?:(?!" + src_ZPCc + ")" + src_Any + ")";
+        var src_pseudo_letter_non_d = "(?:(?![0-9]|" + src_ZPCc + ")" + src_Any + ")";
+        var src_ip4 = exports.src_ip4 = "(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+        exports.src_auth = "(?:(?:(?!" + src_ZCc + ").)+@)?";
+        var src_port = exports.src_port = "(?::(?:6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|[1-5]?\\d{1,4}))?";
+        var src_host_terminator = exports.src_host_terminator = "(?=$|" + src_ZPCc + ")(?!-|_|:\\d|\\.-|\\.(?!$|" + src_ZPCc + "))";
+        var src_path = exports.src_path = "(?:" + "[/?#]" + "(?:" + "(?!" + src_ZCc + "|[()[\\]{}.,\"'?!\\-]).|" + "\\[(?:(?!" + src_ZCc + "|\\]).)*\\]|" + "\\((?:(?!" + src_ZCc + "|[)]).)*\\)|" + "\\{(?:(?!" + src_ZCc + "|[}]).)*\\}|" + '\\"(?:(?!' + src_ZCc + '|["]).)+\\"|' + "\\'(?:(?!" + src_ZCc + "|[']).)+\\'|" + "\\'(?=" + src_pseudo_letter + ").|" + "\\.{2,3}[a-zA-Z0-9%/]|" + "\\.(?!" + src_ZCc + "|[.]).|" + "\\-(?!--(?:[^-]|$))(?:-*)|" + "\\,(?!" + src_ZCc + ").|" + "\\!(?!" + src_ZCc + "|[!]).|" + "\\?(?!" + src_ZCc + "|[?])." + ")+" + "|\\/" + ")?";
+        var src_email_name = exports.src_email_name = '[\\-;:&=\\+\\$,\\"\\.a-zA-Z0-9_]+';
+        var src_xn = exports.src_xn = "xn--[a-z0-9\\-]{1,59}";
+        var src_domain_root = exports.src_domain_root = "(?:" + src_xn + "|" + src_pseudo_letter_non_d + "{1,63}" + ")";
+        var src_domain = exports.src_domain = "(?:" + src_xn + "|" + "(?:" + src_pseudo_letter + ")" + "|" + "(?:" + src_pseudo_letter + "(?:-(?!-)|" + src_pseudo_letter + "){0,61}" + src_pseudo_letter + ")" + ")";
+        var src_host = exports.src_host = "(?:" + src_ip4 + "|" + "(?:(?:(?:" + src_domain + ")\\.)*" + src_domain_root + ")" + ")";
+        var tpl_host_fuzzy = exports.tpl_host_fuzzy = "(?:" + src_ip4 + "|" + "(?:(?:(?:" + src_domain + ")\\.)+(?:%TLDS%))" + ")";
+        var tpl_host_no_ip_fuzzy = exports.tpl_host_no_ip_fuzzy = "(?:(?:(?:" + src_domain + ")\\.)+(?:%TLDS%))";
+        exports.src_host_strict = src_host + src_host_terminator;
+        var tpl_host_fuzzy_strict = exports.tpl_host_fuzzy_strict = tpl_host_fuzzy + src_host_terminator;
+        exports.src_host_port_strict = src_host + src_port + src_host_terminator;
+        var tpl_host_port_fuzzy_strict = exports.tpl_host_port_fuzzy_strict = tpl_host_fuzzy + src_port + src_host_terminator;
+        var tpl_host_port_no_ip_fuzzy_strict = exports.tpl_host_port_no_ip_fuzzy_strict = tpl_host_no_ip_fuzzy + src_port + src_host_terminator;
+        exports.tpl_host_fuzzy_test = "localhost|\\.\\d{1,3}\\.|(?:\\.(?:%TLDS%)(?:" + src_ZPCc + "|$))";
+        exports.tpl_email_fuzzy = "(^|>|" + src_ZCc + ")(" + src_email_name + "@" + tpl_host_fuzzy_strict + ")";
+        exports.tpl_link_fuzzy = "(^|(?![.:/\\-_@])(?:[$+<=>^`|]|" + src_ZPCc + "))" + "((?![$+<=>^`|])" + tpl_host_port_fuzzy_strict + src_path + ")";
+        exports.tpl_link_no_ip_fuzzy = "(^|(?![.:/\\-_@])(?:[$+<=>^`|]|" + src_ZPCc + "))" + "((?![$+<=>^`|])" + tpl_host_port_no_ip_fuzzy_strict + src_path + ")";
+    }, {
+        "uc.micro/categories/Cc/regex": 139,
+        "uc.micro/categories/P/regex": 141,
+        "uc.micro/categories/Z/regex": 142,
+        "uc.micro/properties/Any/regex": 144
+    } ],
+    134: [ function(require, module, exports) {
+        "use strict";
+        var decodeCache = {};
+        function getDecodeCache(exclude) {
+            var i, ch, cache = decodeCache[exclude];
+            if (cache) {
+                return cache;
+            }
+            cache = decodeCache[exclude] = [];
+            for (i = 0; i < 128; i++) {
+                ch = String.fromCharCode(i);
+                cache.push(ch);
+            }
+            for (i = 0; i < exclude.length; i++) {
+                ch = exclude.charCodeAt(i);
+                cache[ch] = "%" + ("0" + ch.toString(16).toUpperCase()).slice(-2);
+            }
+            return cache;
+        }
+        function decode(string, exclude) {
+            var cache;
+            if (typeof exclude !== "string") {
+                exclude = decode.defaultChars;
+            }
+            cache = getDecodeCache(exclude);
+            return string.replace(/(%[a-f0-9]{2})+/gi, function(seq) {
+                var i, l, b1, b2, b3, b4, chr, result = "";
+                for (i = 0, l = seq.length; i < l; i += 3) {
+                    b1 = parseInt(seq.slice(i + 1, i + 3), 16);
+                    if (b1 < 128) {
+                        result += cache[b1];
+                        continue;
+                    }
+                    if ((b1 & 224) === 192 && i + 3 < l) {
+                        b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+                        if ((b2 & 192) === 128) {
+                            chr = b1 << 6 & 1984 | b2 & 63;
+                            if (chr < 128) {
+                                result += "��";
+                            } else {
+                                result += String.fromCharCode(chr);
+                            }
+                            i += 3;
+                            continue;
+                        }
+                    }
+                    if ((b1 & 240) === 224 && i + 6 < l) {
+                        b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+                        b3 = parseInt(seq.slice(i + 7, i + 9), 16);
+                        if ((b2 & 192) === 128 && (b3 & 192) === 128) {
+                            chr = b1 << 12 & 61440 | b2 << 6 & 4032 | b3 & 63;
+                            if (chr < 2048 || chr >= 55296 && chr <= 57343) {
+                                result += "���";
+                            } else {
+                                result += String.fromCharCode(chr);
+                            }
+                            i += 6;
+                            continue;
+                        }
+                    }
+                    if ((b1 & 248) === 240 && i + 9 < l) {
+                        b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+                        b3 = parseInt(seq.slice(i + 7, i + 9), 16);
+                        b4 = parseInt(seq.slice(i + 10, i + 12), 16);
+                        if ((b2 & 192) === 128 && (b3 & 192) === 128 && (b4 & 192) === 128) {
+                            chr = b1 << 18 & 1835008 | b2 << 12 & 258048 | b3 << 6 & 4032 | b4 & 63;
+                            if (chr < 65536 || chr > 1114111) {
+                                result += "����";
+                            } else {
+                                chr -= 65536;
+                                result += String.fromCharCode(55296 + (chr >> 10), 56320 + (chr & 1023));
+                            }
+                            i += 9;
+                            continue;
+                        }
+                    }
+                    result += "�";
+                }
+                return result;
+            });
+        }
+        decode.defaultChars = ";/?:@&=+$,#";
+        decode.componentChars = "";
+        module.exports = decode;
+    }, {} ],
+    135: [ function(require, module, exports) {
+        "use strict";
+        var encodeCache = {};
+        function getEncodeCache(exclude) {
+            var i, ch, cache = encodeCache[exclude];
+            if (cache) {
+                return cache;
+            }
+            cache = encodeCache[exclude] = [];
+            for (i = 0; i < 128; i++) {
+                ch = String.fromCharCode(i);
+                if (/^[0-9a-z]$/i.test(ch)) {
+                    cache.push(ch);
+                } else {
+                    cache.push("%" + ("0" + i.toString(16).toUpperCase()).slice(-2));
+                }
+            }
+            for (i = 0; i < exclude.length; i++) {
+                cache[exclude.charCodeAt(i)] = exclude[i];
+            }
+            return cache;
+        }
+        function encode(string, exclude, keepEscaped) {
+            var i, l, code, nextCode, cache, result = "";
+            if (typeof exclude !== "string") {
+                keepEscaped = exclude;
+                exclude = encode.defaultChars;
+            }
+            if (typeof keepEscaped === "undefined") {
+                keepEscaped = true;
+            }
+            cache = getEncodeCache(exclude);
+            for (i = 0, l = string.length; i < l; i++) {
+                code = string.charCodeAt(i);
+                if (keepEscaped && code === 37 && i + 2 < l) {
+                    if (/^[0-9a-f]{2}$/i.test(string.slice(i + 1, i + 3))) {
+                        result += string.slice(i, i + 3);
+                        i += 2;
+                        continue;
+                    }
+                }
+                if (code < 128) {
+                    result += cache[code];
+                    continue;
+                }
+                if (code >= 55296 && code <= 57343) {
+                    if (code >= 55296 && code <= 56319 && i + 1 < l) {
+                        nextCode = string.charCodeAt(i + 1);
+                        if (nextCode >= 56320 && nextCode <= 57343) {
+                            result += encodeURIComponent(string[i] + string[i + 1]);
+                            i++;
+                            continue;
+                        }
+                    }
+                    result += "%EF%BF%BD";
+                    continue;
+                }
+                result += encodeURIComponent(string[i]);
+            }
+            return result;
+        }
+        encode.defaultChars = ";/?:@&=+$,-_.!~*'()#";
+        encode.componentChars = "-_.!~*'()";
+        module.exports = encode;
+    }, {} ],
+    136: [ function(require, module, exports) {
+        "use strict";
+        module.exports = function format(url) {
+            var result = "";
+            result += url.protocol || "";
+            result += url.slashes ? "//" : "";
+            result += url.auth ? url.auth + "@" : "";
+            if (url.hostname && url.hostname.indexOf(":") !== -1) {
+                result += "[" + url.hostname + "]";
+            } else {
+                result += url.hostname || "";
+            }
+            result += url.port ? ":" + url.port : "";
+            result += url.pathname || "";
+            result += url.search || "";
+            result += url.hash || "";
+            return result;
+        };
+    }, {} ],
+    137: [ function(require, module, exports) {
+        "use strict";
+        module.exports.encode = require("./encode");
+        module.exports.decode = require("./decode");
+        module.exports.format = require("./format");
+        module.exports.parse = require("./parse");
+    }, {
+        "./decode": 134,
+        "./encode": 135,
+        "./format": 136,
+        "./parse": 138
+    } ],
+    138: [ function(require, module, exports) {
+        "use strict";
+        function Url() {
+            this.protocol = null;
+            this.slashes = null;
+            this.auth = null;
+            this.port = null;
+            this.hostname = null;
+            this.hash = null;
+            this.search = null;
+            this.pathname = null;
+        }
+        var protocolPattern = /^([a-z0-9.+-]+:)/i, portPattern = /:[0-9]*$/, simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/, delims = [ "<", ">", '"', "`", " ", "\r", "\n", "	" ], unwise = [ "{", "}", "|", "\\", "^", "`" ].concat(delims), autoEscape = [ "'" ].concat(unwise), nonHostChars = [ "%", "/", "?", ";", "#" ].concat(autoEscape), hostEndingChars = [ "/", "?", "#" ], hostnameMaxLen = 255, hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/, hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/, hostlessProtocol = {
+            javascript: true,
+            "javascript:": true
+        }, slashedProtocol = {
+            http: true,
+            https: true,
+            ftp: true,
+            gopher: true,
+            file: true,
+            "http:": true,
+            "https:": true,
+            "ftp:": true,
+            "gopher:": true,
+            "file:": true
+        };
+        function urlParse(url, slashesDenoteHost) {
+            if (url && url instanceof Url) {
+                return url;
+            }
+            var u = new Url();
+            u.parse(url, slashesDenoteHost);
+            return u;
+        }
+        Url.prototype.parse = function(url, slashesDenoteHost) {
+            var i, l, lowerProto, hec, slashes, rest = url;
+            rest = rest.trim();
+            if (!slashesDenoteHost && url.split("#").length === 1) {
+                var simplePath = simplePathPattern.exec(rest);
+                if (simplePath) {
+                    this.pathname = simplePath[1];
+                    if (simplePath[2]) {
+                        this.search = simplePath[2];
+                    }
+                    return this;
+                }
+            }
+            var proto = protocolPattern.exec(rest);
+            if (proto) {
+                proto = proto[0];
+                lowerProto = proto.toLowerCase();
+                this.protocol = proto;
+                rest = rest.substr(proto.length);
+            }
+            if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+                slashes = rest.substr(0, 2) === "//";
+                if (slashes && !(proto && hostlessProtocol[proto])) {
+                    rest = rest.substr(2);
+                    this.slashes = true;
+                }
+            }
+            if (!hostlessProtocol[proto] && (slashes || proto && !slashedProtocol[proto])) {
+                var hostEnd = -1;
+                for (i = 0; i < hostEndingChars.length; i++) {
+                    hec = rest.indexOf(hostEndingChars[i]);
+                    if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
+                        hostEnd = hec;
+                    }
+                }
+                var auth, atSign;
+                if (hostEnd === -1) {
+                    atSign = rest.lastIndexOf("@");
+                } else {
+                    atSign = rest.lastIndexOf("@", hostEnd);
+                }
+                if (atSign !== -1) {
+                    auth = rest.slice(0, atSign);
+                    rest = rest.slice(atSign + 1);
+                    this.auth = auth;
+                }
+                hostEnd = -1;
+                for (i = 0; i < nonHostChars.length; i++) {
+                    hec = rest.indexOf(nonHostChars[i]);
+                    if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
+                        hostEnd = hec;
+                    }
+                }
+                if (hostEnd === -1) {
+                    hostEnd = rest.length;
+                }
+                if (rest[hostEnd - 1] === ":") {
+                    hostEnd--;
+                }
+                var host = rest.slice(0, hostEnd);
+                rest = rest.slice(hostEnd);
+                this.parseHost(host);
+                this.hostname = this.hostname || "";
+                var ipv6Hostname = this.hostname[0] === "[" && this.hostname[this.hostname.length - 1] === "]";
+                if (!ipv6Hostname) {
+                    var hostparts = this.hostname.split(/\./);
+                    for (i = 0, l = hostparts.length; i < l; i++) {
+                        var part = hostparts[i];
+                        if (!part) {
+                            continue;
+                        }
+                        if (!part.match(hostnamePartPattern)) {
+                            var newpart = "";
+                            for (var j = 0, k = part.length; j < k; j++) {
+                                if (part.charCodeAt(j) > 127) {
+                                    newpart += "x";
+                                } else {
+                                    newpart += part[j];
+                                }
+                            }
+                            if (!newpart.match(hostnamePartPattern)) {
+                                var validParts = hostparts.slice(0, i);
+                                var notHost = hostparts.slice(i + 1);
+                                var bit = part.match(hostnamePartStart);
+                                if (bit) {
+                                    validParts.push(bit[1]);
+                                    notHost.unshift(bit[2]);
+                                }
+                                if (notHost.length) {
+                                    rest = notHost.join(".") + rest;
+                                }
+                                this.hostname = validParts.join(".");
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (this.hostname.length > hostnameMaxLen) {
+                    this.hostname = "";
+                }
+                if (ipv6Hostname) {
+                    this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+                }
+            }
+            var hash = rest.indexOf("#");
+            if (hash !== -1) {
+                this.hash = rest.substr(hash);
+                rest = rest.slice(0, hash);
+            }
+            var qm = rest.indexOf("?");
+            if (qm !== -1) {
+                this.search = rest.substr(qm);
+                rest = rest.slice(0, qm);
+            }
+            if (rest) {
+                this.pathname = rest;
+            }
+            if (slashedProtocol[lowerProto] && this.hostname && !this.pathname) {
+                this.pathname = "";
+            }
+            return this;
+        };
+        Url.prototype.parseHost = function(host) {
+            var port = portPattern.exec(host);
+            if (port) {
+                port = port[0];
+                if (port !== ":") {
+                    this.port = port.substr(1);
+                }
+                host = host.substr(0, host.length - port.length);
+            }
+            if (host) {
+                this.hostname = host;
+            }
+        };
+        module.exports = urlParse;
+    }, {} ],
+    139: [ function(require, module, exports) {
+        module.exports = /[\0-\x1F\x7F-\x9F]/;
+    }, {} ],
+    140: [ function(require, module, exports) {
+        module.exports = /[\xAD\u0600-\u0605\u061C\u06DD\u070F\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/;
+    }, {} ],
+    141: [ function(require, module, exports) {
+        module.exports = /[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E42\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC8\uDDCD\uDE38-\uDE3D]|\uD805[\uDCC6\uDDC1-\uDDC9\uDE41-\uDE43]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F/;
+    }, {} ],
+    142: [ function(require, module, exports) {
+        module.exports = /[ \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/;
+    }, {} ],
+    143: [ function(require, module, exports) {
+        module.exports.Any = require("./properties/Any/regex");
+        module.exports.Cc = require("./categories/Cc/regex");
+        module.exports.Cf = require("./categories/Cf/regex");
+        module.exports.P = require("./categories/P/regex");
+        module.exports.Z = require("./categories/Z/regex");
+    }, {
+        "./categories/Cc/regex": 139,
+        "./categories/Cf/regex": 140,
+        "./categories/P/regex": 141,
+        "./categories/Z/regex": 142,
+        "./properties/Any/regex": 144
+    } ],
+    144: [ function(require, module, exports) {
+        module.exports = /[\0-\uD7FF\uDC00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF]/;
+    }, {} ],
+    145: [ function(require, module, exports) {
         !function(name, context, definition) {
             if (typeof module != "undefined" && module.exports) module.exports = definition(); else if (typeof define == "function" && define.amd) define(definition); else context[name] = definition();
         }("reqwest", this, function() {
@@ -3891,7 +10359,7 @@
             return reqwest;
         });
     }, {} ],
-    78: [ function(require, module, exports) {
+    146: [ function(require, module, exports) {
         !function(e, t, n) {
             "use strict";
             !function o(e, t, n) {
@@ -4386,25 +10854,25 @@
             }) : "undefined" != typeof module && module.exports && (module.exports = sweetAlert);
         }(window, document);
     }, {} ],
-    79: [ function(require, module, exports) {
+    147: [ function(require, module, exports) {
         var createElement = require("./vdom/create-element.js");
         module.exports = createElement;
     }, {
-        "./vdom/create-element.js": 91
+        "./vdom/create-element.js": 159
     } ],
-    80: [ function(require, module, exports) {
+    148: [ function(require, module, exports) {
         var diff = require("./vtree/diff.js");
         module.exports = diff;
     }, {
-        "./vtree/diff.js": 111
+        "./vtree/diff.js": 179
     } ],
-    81: [ function(require, module, exports) {
+    149: [ function(require, module, exports) {
         var h = require("./virtual-hyperscript/index.js");
         module.exports = h;
     }, {
-        "./virtual-hyperscript/index.js": 98
+        "./virtual-hyperscript/index.js": 166
     } ],
-    82: [ function(require, module, exports) {
+    150: [ function(require, module, exports) {
         module.exports = function split(undef) {
             var nativeSplit = String.prototype.split, compliantExecNpcg = /()??/.exec("")[1] === undef, self;
             self = function(str, separator, limit) {
@@ -4455,7 +10923,7 @@
             return self;
         }();
     }, {} ],
-    83: [ function(require, module, exports) {
+    151: [ function(require, module, exports) {
         "use strict";
         var OneVersionConstraint = require("individual/one-version");
         var MY_VERSION = "7";
@@ -4470,9 +10938,9 @@
             return hash;
         }
     }, {
-        "individual/one-version": 85
+        "individual/one-version": 153
     } ],
-    84: [ function(require, module, exports) {
+    152: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var root = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
@@ -4486,7 +10954,7 @@
             }
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    85: [ function(require, module, exports) {
+    153: [ function(require, module, exports) {
         "use strict";
         var Individual = require("./index.js");
         module.exports = OneVersion;
@@ -4500,9 +10968,9 @@
             return Individual(key, defaultValue);
         }
     }, {
-        "./index.js": 84
+        "./index.js": 152
     } ],
-    86: [ function(require, module, exports) {
+    154: [ function(require, module, exports) {
         (function(global) {
             var topLevel = typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : {};
             var minDoc = require("min-document");
@@ -4519,13 +10987,13 @@
     }, {
         "min-document": 3
     } ],
-    87: [ function(require, module, exports) {
+    155: [ function(require, module, exports) {
         "use strict";
         module.exports = function isObject(x) {
             return typeof x === "object" && x !== null;
         };
     }, {} ],
-    88: [ function(require, module, exports) {
+    156: [ function(require, module, exports) {
         var nativeIsArray = Array.isArray;
         var toString = Object.prototype.toString;
         module.exports = nativeIsArray || isArray;
@@ -4533,13 +11001,13 @@
             return toString.call(obj) === "[object Array]";
         }
     }, {} ],
-    89: [ function(require, module, exports) {
+    157: [ function(require, module, exports) {
         var patch = require("./vdom/patch.js");
         module.exports = patch;
     }, {
-        "./vdom/patch.js": 94
+        "./vdom/patch.js": 162
     } ],
-    90: [ function(require, module, exports) {
+    158: [ function(require, module, exports) {
         var isObject = require("is-object");
         var isHook = require("../vnode/is-vhook.js");
         module.exports = applyProperties;
@@ -4620,10 +11088,10 @@
             }
         }
     }, {
-        "../vnode/is-vhook.js": 102,
-        "is-object": 87
+        "../vnode/is-vhook.js": 170,
+        "is-object": 155
     } ],
-    91: [ function(require, module, exports) {
+    159: [ function(require, module, exports) {
         var document = require("global/document");
         var applyProperties = require("./apply-properties");
         var isVNode = require("../vnode/is-vnode.js");
@@ -4658,14 +11126,14 @@
             return node;
         }
     }, {
-        "../vnode/handle-thunk.js": 100,
-        "../vnode/is-vnode.js": 103,
-        "../vnode/is-vtext.js": 104,
-        "../vnode/is-widget.js": 105,
-        "./apply-properties": 90,
-        "global/document": 86
+        "../vnode/handle-thunk.js": 168,
+        "../vnode/is-vnode.js": 171,
+        "../vnode/is-vtext.js": 172,
+        "../vnode/is-widget.js": 173,
+        "./apply-properties": 158,
+        "global/document": 154
     } ],
-    92: [ function(require, module, exports) {
+    160: [ function(require, module, exports) {
         var noChild = {};
         module.exports = domIndex;
         function domIndex(rootNode, tree, indices, nodes) {
@@ -4725,7 +11193,7 @@
             return a > b ? 1 : -1;
         }
     }, {} ],
-    93: [ function(require, module, exports) {
+    161: [ function(require, module, exports) {
         var applyProperties = require("./apply-properties");
         var isWidget = require("../vnode/is-widget.js");
         var VPatch = require("../vnode/vpatch.js");
@@ -4853,12 +11321,12 @@
             return newRoot;
         }
     }, {
-        "../vnode/is-widget.js": 105,
-        "../vnode/vpatch.js": 108,
-        "./apply-properties": 90,
-        "./update-widget": 95
+        "../vnode/is-widget.js": 173,
+        "../vnode/vpatch.js": 176,
+        "./apply-properties": 158,
+        "./update-widget": 163
     } ],
-    94: [ function(require, module, exports) {
+    162: [ function(require, module, exports) {
         var document = require("global/document");
         var isArray = require("x-is-array");
         var render = require("./create-element");
@@ -4917,13 +11385,13 @@
             return indices;
         }
     }, {
-        "./create-element": 91,
-        "./dom-index": 92,
-        "./patch-op": 93,
-        "global/document": 86,
-        "x-is-array": 88
+        "./create-element": 159,
+        "./dom-index": 160,
+        "./patch-op": 161,
+        "global/document": 154,
+        "x-is-array": 156
     } ],
-    95: [ function(require, module, exports) {
+    163: [ function(require, module, exports) {
         var isWidget = require("../vnode/is-widget.js");
         module.exports = updateWidget;
         function updateWidget(a, b) {
@@ -4937,9 +11405,9 @@
             return false;
         }
     }, {
-        "../vnode/is-widget.js": 105
+        "../vnode/is-widget.js": 173
     } ],
-    96: [ function(require, module, exports) {
+    164: [ function(require, module, exports) {
         "use strict";
         var EvStore = require("ev-store");
         module.exports = EvHook;
@@ -4960,9 +11428,9 @@
             es[propName] = undefined;
         };
     }, {
-        "ev-store": 83
+        "ev-store": 151
     } ],
-    97: [ function(require, module, exports) {
+    165: [ function(require, module, exports) {
         "use strict";
         module.exports = SoftSetHook;
         function SoftSetHook(value) {
@@ -4977,7 +11445,7 @@
             }
         };
     }, {} ],
-    98: [ function(require, module, exports) {
+    166: [ function(require, module, exports) {
         "use strict";
         var isArray = require("x-is-array");
         var VNode = require("../vnode/vnode.js");
@@ -5076,19 +11544,19 @@
             }
         }
     }, {
-        "../vnode/is-thunk": 101,
-        "../vnode/is-vhook": 102,
-        "../vnode/is-vnode": 103,
-        "../vnode/is-vtext": 104,
-        "../vnode/is-widget": 105,
-        "../vnode/vnode.js": 107,
-        "../vnode/vtext.js": 109,
-        "./hooks/ev-hook.js": 96,
-        "./hooks/soft-set-hook.js": 97,
-        "./parse-tag.js": 99,
-        "x-is-array": 88
+        "../vnode/is-thunk": 169,
+        "../vnode/is-vhook": 170,
+        "../vnode/is-vnode": 171,
+        "../vnode/is-vtext": 172,
+        "../vnode/is-widget": 173,
+        "../vnode/vnode.js": 175,
+        "../vnode/vtext.js": 177,
+        "./hooks/ev-hook.js": 164,
+        "./hooks/soft-set-hook.js": 165,
+        "./parse-tag.js": 167,
+        "x-is-array": 156
     } ],
-    99: [ function(require, module, exports) {
+    167: [ function(require, module, exports) {
         "use strict";
         var split = require("browser-split");
         var classIdSplit = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/;
@@ -5129,9 +11597,9 @@
             return props.namespace ? tagName : tagName.toUpperCase();
         }
     }, {
-        "browser-split": 82
+        "browser-split": 150
     } ],
-    100: [ function(require, module, exports) {
+    168: [ function(require, module, exports) {
         var isVNode = require("./is-vnode");
         var isVText = require("./is-vtext");
         var isWidget = require("./is-widget");
@@ -5162,51 +11630,51 @@
             return renderedThunk;
         }
     }, {
-        "./is-thunk": 101,
-        "./is-vnode": 103,
-        "./is-vtext": 104,
-        "./is-widget": 105
+        "./is-thunk": 169,
+        "./is-vnode": 171,
+        "./is-vtext": 172,
+        "./is-widget": 173
     } ],
-    101: [ function(require, module, exports) {
+    169: [ function(require, module, exports) {
         module.exports = isThunk;
         function isThunk(t) {
             return t && t.type === "Thunk";
         }
     }, {} ],
-    102: [ function(require, module, exports) {
+    170: [ function(require, module, exports) {
         module.exports = isHook;
         function isHook(hook) {
             return hook && (typeof hook.hook === "function" && !hook.hasOwnProperty("hook") || typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"));
         }
     }, {} ],
-    103: [ function(require, module, exports) {
+    171: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = isVirtualNode;
         function isVirtualNode(x) {
             return x && x.type === "VirtualNode" && x.version === version;
         }
     }, {
-        "./version": 106
+        "./version": 174
     } ],
-    104: [ function(require, module, exports) {
+    172: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = isVirtualText;
         function isVirtualText(x) {
             return x && x.type === "VirtualText" && x.version === version;
         }
     }, {
-        "./version": 106
+        "./version": 174
     } ],
-    105: [ function(require, module, exports) {
+    173: [ function(require, module, exports) {
         module.exports = isWidget;
         function isWidget(w) {
             return w && w.type === "Widget";
         }
     }, {} ],
-    106: [ function(require, module, exports) {
+    174: [ function(require, module, exports) {
         module.exports = "2";
     }, {} ],
-    107: [ function(require, module, exports) {
+    175: [ function(require, module, exports) {
         var version = require("./version");
         var isVNode = require("./is-vnode");
         var isWidget = require("./is-widget");
@@ -5268,13 +11736,13 @@
         VirtualNode.prototype.version = version;
         VirtualNode.prototype.type = "VirtualNode";
     }, {
-        "./is-thunk": 101,
-        "./is-vhook": 102,
-        "./is-vnode": 103,
-        "./is-widget": 105,
-        "./version": 106
+        "./is-thunk": 169,
+        "./is-vhook": 170,
+        "./is-vnode": 171,
+        "./is-widget": 173,
+        "./version": 174
     } ],
-    108: [ function(require, module, exports) {
+    176: [ function(require, module, exports) {
         var version = require("./version");
         VirtualPatch.NONE = 0;
         VirtualPatch.VTEXT = 1;
@@ -5294,9 +11762,9 @@
         VirtualPatch.prototype.version = version;
         VirtualPatch.prototype.type = "VirtualPatch";
     }, {
-        "./version": 106
+        "./version": 174
     } ],
-    109: [ function(require, module, exports) {
+    177: [ function(require, module, exports) {
         var version = require("./version");
         module.exports = VirtualText;
         function VirtualText(text) {
@@ -5305,9 +11773,9 @@
         VirtualText.prototype.version = version;
         VirtualText.prototype.type = "VirtualText";
     }, {
-        "./version": 106
+        "./version": 174
     } ],
-    110: [ function(require, module, exports) {
+    178: [ function(require, module, exports) {
         var isObject = require("is-object");
         var isHook = require("../vnode/is-vhook");
         module.exports = diffProps;
@@ -5359,10 +11827,10 @@
             }
         }
     }, {
-        "../vnode/is-vhook": 102,
-        "is-object": 87
+        "../vnode/is-vhook": 170,
+        "is-object": 155
     } ],
-    111: [ function(require, module, exports) {
+    179: [ function(require, module, exports) {
         var isArray = require("x-is-array");
         var VPatch = require("../vnode/vpatch");
         var isVNode = require("../vnode/is-vnode");
@@ -5680,16 +12148,16 @@
             }
         }
     }, {
-        "../vnode/handle-thunk": 100,
-        "../vnode/is-thunk": 101,
-        "../vnode/is-vnode": 103,
-        "../vnode/is-vtext": 104,
-        "../vnode/is-widget": 105,
-        "../vnode/vpatch": 108,
-        "./diff-props": 110,
-        "x-is-array": 88
+        "../vnode/handle-thunk": 168,
+        "../vnode/is-thunk": 169,
+        "../vnode/is-vnode": 171,
+        "../vnode/is-vtext": 172,
+        "../vnode/is-widget": 173,
+        "../vnode/vpatch": 176,
+        "./diff-props": 178,
+        "x-is-array": 156
     } ],
-    112: [ function(require, module, exports) {
+    180: [ function(require, module, exports) {
         var events = require("./events");
         function Content() {
             if (!(this instanceof Content)) {
@@ -5697,7 +12165,9 @@
             }
             this.id = -1;
             this.title = "";
+            this._title = "";
             this.keywords = [];
+            this.references = [];
             this.icon = "";
             this.text = "";
             this.overview = "";
@@ -5711,6 +12181,8 @@
             this.page = "";
             this.rabbitHole = "";
             this.type = "Overview";
+            this._type = "overview";
+            this.modified = new Date();
             this.listItemType = "";
             this.timestamp = null;
             this.level = -1;
@@ -5719,16 +12191,22 @@
             var name;
             for (name in data) {
                 if (this.hasOwnProperty(name)) {
-                    this[name] = data[name];
+                    if (typeof data[name] === "string") {
+                        this[name] = data[name].trim();
+                    } else {
+                        this[name] = data[name];
+                    }
                 }
             }
             return this;
         };
         Content.prototype.savePage = function(self) {
             this.set({
-                text: this.text.trim()
+                text: this.text.trim(),
+                keywords: this.keywords,
+                modified: Date && Date.now() || new Date()
             });
-            this[this.type.toLowerCase()] = this.text;
+            this[this._type] = this.text;
             var data = {
                 __metadata: {
                     type: this.listItemType
@@ -5742,21 +12220,21 @@
                 Contributions: this.contributions
             };
             self.className += " loading";
-            var el = self.getElementsByTagName("i")[0];
+            var el = self.children[0];
             events.emit("content.save", data, this.id, el);
         };
         module.exports = Content;
     }, {
-        "./events": 115
+        "./events": 183
     } ],
-    113: [ function(require, module, exports) {
-        var pages = require("./pages"), events = require("./events"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked, reduce = require("lodash/collection/reduce");
+    181: [ function(require, module, exports) {
+        var pages = require("./pages"), events = require("./events"), DOM = require("./dom"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked, reduce = require("lodash/collection/reduce");
         function init() {
             events.emit("page.init");
         }
         events.on("page.init", function() {
             reqwest({
-                url: baseURL + "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
+                url: baseURL + phOptionsURI,
                 method: "GET",
                 type: "json",
                 contentType: "application/json",
@@ -5771,11 +12249,9 @@
                         setup[option.Variable] = option.Value;
                         return setup;
                     }, {});
-                    console.log("options: ", options);
                     pages.set({
                         options: options
                     });
-                    console.log("pages.options: ", pages.options);
                 },
                 error: function(error) {
                     console.log("Error loading settings, will go with defaults.  Error: ", error);
@@ -5790,7 +12266,7 @@
             var timestamp = Date && Date.now() || new Date();
             clicked = parseInt(timestamp, 10);
             reqwest({
-                url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link",
+                url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link,Created,Modified",
                 method: "GET",
                 type: "json",
                 contentType: "application/json",
@@ -5828,6 +12304,11 @@
                 events.emit("missing", path);
                 return false;
             }
+            if (inTransition.output) {
+                return false;
+            }
+            inTransition.output = true;
+            DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
             var timestamp = Date && Date.now() || new Date();
             clicked = parseInt(timestamp, 10);
             reqwest({
@@ -5909,9 +12390,9 @@
                 }
             });
         });
-        events.on("content.save", function(data, id, self) {
-            self.removeAttribute("style");
-            self.innerHTML = "...saving...";
+        events.on("content.save", function(data, id, btnText) {
+            btnText.removeAttribute("style");
+            btnText.innerHTML = "...saving...";
             if (inTransition.tempSaveText) {
                 clearTimeout(inTransition.tempSaveText);
             }
@@ -5939,38 +12420,38 @@
                             "IF-MATCH": "*"
                         },
                         success: function() {
-                            self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-                            self.style.fontWeight = "bold";
-                            self.innerHTML = "Saved!";
+                            btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+                            btnText.style.fontWeight = "bold";
+                            btnText.innerHTML = "Saved!";
                         },
                         error: function(error) {
-                            self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-                            self.style.color = "#FF2222";
-                            self.style.fontWeight = "bold";
-                            self.innerHTML = "Connection error (press F12 for Console)";
+                            btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+                            btnText.style.color = "#FF2222";
+                            btnText.style.fontWeight = "bold";
+                            btnText.innerHTML = "Connection error (press F12 for Console)";
                             console["error" || "log"]("Couldn't save due to error: ", error.response);
                         },
                         complete: function() {
                             inTransition.tempSaveText = setTimeout(function() {
-                                self.removeAttribute("style");
-                                self.innerHTML = "Save";
+                                btnText.removeAttribute("style");
+                                btnText.innerHTML = "Save";
                                 inTransition.tempSaveText = null;
                             }, 1500);
                         }
                     });
                 },
                 error: function(error) {
-                    self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-                    self.style.color = "#FF2222";
-                    self.style.fontWeight = "bold";
-                    self.innerHTML = "Digest error (press F12 for Console)";
+                    btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+                    btnText.style.color = "#FF2222";
+                    btnText.style.fontWeight = "bold";
+                    btnText.innerHTML = "Digest error (press F12 for Console)";
                     console["error" || "log"]("Couldn't save due to error retrieving new digest: ", error.response);
                     console.log("Error getting new digest: ", error);
                 },
                 complete: function() {
                     inTransition.tempSaveText = setTimeout(function() {
-                        self.removeAttribute("style");
-                        self.innerHTML = "Save";
+                        btnText.removeAttribute("style");
+                        btnText.innerHTML = "Save";
                         inTransition.tempSaveText = null;
                     }, 1500);
                 }
@@ -5978,15 +12459,16 @@
         });
         module.exports = init;
     }, {
-        "./events": 115,
-        "./helpers": 116,
-        "./pages": 120,
-        "lodash/collection/reduce": 27,
-        reqwest: 77,
-        sweetalert: 78
+        "./dom": 182,
+        "./events": 183,
+        "./helpers": 184,
+        "./pages": 188,
+        "lodash/collection/reduce": 28,
+        reqwest: 145,
+        sweetalert: 146
     } ],
-    114: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), render = require("./page"), renderNav = require("./nav"), renderTabs = require("./tabs");
+    182: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), misc = require("./helpers"), codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), renderPage = require("./page"), renderNav = require("./nav"), renderTabs = require("./tabs");
         function DOM() {
             if (!(this instanceof DOM)) {
                 return new DOM();
@@ -5995,7 +12477,7 @@
                 fullPage: true,
                 cheatSheet: false,
                 addingContent: false,
-                editorTheme: "base16-light"
+                level: 0
             };
         }
         DOM.prototype.set = function(data) {
@@ -6019,53 +12501,43 @@
         };
         DOM.prototype.preRender = function() {
             this.navDOM = renderNav();
-            this.tabsDOM = this.state.addingContent === false ? renderTabs() : null;
-            return render(this.navDOM, this.tabsDOM, this);
+            this.tabsDOM = this.state.addingContent === false || !misc.inTransition.output ? renderTabs() : null;
+            return renderPage(this.navDOM, this.tabsDOM, this);
         };
         DOM.prototype.init = function() {
             var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
             this.dirtyDOM = this.preRender();
             this.rootNode = createElement(this.dirtyDOM);
             wrapper.parentNode.replaceChild(this.rootNode, wrapper);
+            this.searchInput = document.getElementById("ph-search");
+            this.content = document.getElementById("ph-content");
+            this.title = document.getElementById("ph-title");
+            this.cheatSheet = document.getElementById("cheatSheet");
+            this.textarea = document.getElementById("ph-textarea");
+            this.output = document.getElementById("ph-output");
             this.reset();
         };
         DOM.prototype.loadContent = function() {
-            if (this.state.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim()) {
+            if (this.state.fullPage && !pages.current[pages.current._type]) {
                 events.emit("tab.change", "Overview");
             }
             var refreshDOM = this.preRender();
             var patches = diff(this.dirtyDOM, refreshDOM);
             this.rootNode = patch(this.rootNode, patches);
             this.dirtyDOM = refreshDOM;
-            this.reset();
-            if (codeMirror) this.initEditor();
+            if (codeMirror) {
+                this.reset();
+                if (!this.state.fullPage) {
+                    this.initEditor();
+                }
+            }
         };
         DOM.prototype.reset = function() {
-            this.searchInput = document.getElementById("ph-search");
-            this.content = document.getElementById("ph-content");
-            this.title = document.getElementById("ph-title");
-            this.cheatSheet = document.getElementById("cheatSheet");
-            this.textarea = document.getElementById("ph-textarea");
             if (this.editor) {
                 var wrap = this.editor.getWrapperElement();
                 wrap.parentNode.removeChild(wrap);
             }
             this.editor = null;
-            this.output = document.getElementById("ph-output");
-            if (this.output) {
-                var links = this.output.querySelectorAll("a"), total = links.length, i = 0;
-                for (;i < total; ++i) {
-                    misc.addEvent("click", links[i], openExternal);
-                }
-            }
-            function openExternal(event) {
-                if (/mailto:|#\//.test(this.href) === false) {
-                    event = event || window.event;
-                    if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                    if (event.stopPropagation) event.stopPropagation();
-                    window.open(this.href, "_blank");
-                }
-            }
         };
         DOM.prototype.initEditor = function() {
             var self = this;
@@ -6075,9 +12547,13 @@
                 lineNumbers: false,
                 lineWrapping: true,
                 lineSeparator: "\n",
-                theme: this.state.editorTheme,
+                theme: phEditorTheme,
                 extraKeys: {
-                    Enter: "newlineAndIndentContinueMarkdownList"
+                    Enter: "newlineAndIndentContinueMarkdownList",
+                    "Ctrl-S": function() {
+                        var saveButton = document.getElementById("ph-save");
+                        if (!misc.inTransition.tempSaveText) pages.current.savePage(saveButton);
+                    }
                 }
             });
             this.editor.on("change", function(e) {
@@ -6090,24 +12566,25 @@
             this.editor.refresh();
         };
         DOM.prototype.renderOut = function(text, type) {
+            var regLink = /<a (href="https?:\/\/)/gi;
             type = pages.current.level > 1 ? "## " + type + "\n" : "";
-            this.output.innerHTML = misc.md.render(type + text);
+            this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
         };
         var dom = new DOM();
         module.exports = dom;
     }, {
-        "./events": 115,
-        "./helpers": 116,
-        "./nav": 118,
-        "./page": 119,
-        "./pages": 120,
-        "./tabs": 121,
-        "virtual-dom/create-element": 79,
-        "virtual-dom/diff": 80,
-        "virtual-dom/h": 81,
-        "virtual-dom/patch": 89
+        "./events": 183,
+        "./helpers": 184,
+        "./nav": 186,
+        "./page": 187,
+        "./pages": 188,
+        "./tabs": 189,
+        "virtual-dom/create-element": 147,
+        "virtual-dom/diff": 148,
+        "virtual-dom/h": 149,
+        "virtual-dom/patch": 157
     } ],
-    115: [ function(require, module, exports) {
+    183: [ function(require, module, exports) {
         var Events = require("eventemitter2").EventEmitter2, events = new Events({
             wildcard: true
         });
@@ -6115,21 +12592,24 @@
     }, {
         eventemitter2: 2
     } ],
-    116: [ function(require, module, exports) {
+    184: [ function(require, module, exports) {
         function addEvent(evt, element, fnc) {
             return element.addEventListener ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc);
         }
         function removeEvent(evt, element, fnc) {
             return element.removeEventListener ? element.removeEventListener(evt, fnc, false) : element.detachEvent("on" + evt, fnc);
         }
-        var md = markdownit({
+        var markdownit = require("markdown-it"), md = markdownit({
             typographer: true,
             linkify: true,
             breaks: true,
+            xhtmlOut: true,
             quotes: "“”‘’"
         }), inTransition = {
-            tempSaveText: null
-        }, clicked = -1, codeMirror, hideEmptyTabs = true;
+            output: false,
+            tempSaveText: null,
+            tab: false
+        }, clicked = -1, codeMirror;
         try {
             codeMirror = CodeMirror;
         } catch (e) {
@@ -6141,15 +12621,21 @@
             md: md,
             inTransition: inTransition,
             clicked: clicked,
-            codeMirror: codeMirror,
-            hideEmptyTabs: hideEmptyTabs
+            codeMirror: codeMirror
         };
-    }, {} ],
-    117: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, Content = require("./content"), pages = require("./pages"), events = require("./events"), current = pages.current, DOM = require("./dom"), pageInit = require("./data"), router = Router({
+    }, {
+        "markdown-it": 78
+    } ],
+    185: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), DOM = require("./dom"), pageInit = require("./data"), router = Router({
             "/": {
                 on: function() {
                     events.emit("content.loading", "/");
+                }
+            },
+            "/new": {
+                on: function() {
+                    events.emit("content.adding");
                 }
             },
             "/(\\w+)": {
@@ -6191,31 +12677,11 @@
         sweetAlert.setDefaults({
             allowOutsideClick: true,
             showCancelButton: true,
-            cancelButtonText: "Nope.",
+            cancelButtonText: "No",
             confirmButtonText: "Yes!"
         });
         events.on("page.success", function() {
             DOM.init();
-            var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-            var tabCurrent = document.querySelector("#ph-tabs a.icon-overview");
-            if (activeLink) {
-                activeLink.className += " active";
-            }
-            if (tabCurrent) {
-                tabCurrent.parentNode.className += " tab-current";
-            }
-            var hashArray = window.location.hash.slice(2).split(/\//), i, total;
-            if (hashArray.length > 1) {
-                var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-                if (phPage) {
-                    i = 0;
-                    total = phPage.length;
-                    for (;i < total; ++i) {
-                        phPage[i].removeAttribute("style");
-                        phPage[i].parentNode.removeAttribute("style");
-                    }
-                }
-            }
             if (window.location.hash) {
                 router.init();
             } else {
@@ -6253,14 +12719,6 @@
                 router.setRoute("/");
             });
         });
-        events.on("content.loading", function() {
-            if (inTransition.output) {
-                return false;
-            }
-            inTransition.output = DOM.output.innerHTML;
-            DOM.output.className += " loading";
-            DOM.output.innerHTML = "<div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div>";
-        });
         events.on("content.loaded", function(data) {
             var obj = data.d;
             if (!obj) {
@@ -6282,21 +12740,12 @@
                     return false;
                 });
             }
-            var subLinks = document.querySelectorAll(".ph-page.link, .ph-rabbit-hole.link");
-            var tabCurrent = document.querySelector(".tab-current");
-            var i = 0;
-            total = subLinks.length;
-            for (;i < total; ++i) {
-                subLinks[i].style.display = "none";
-            }
-            if (tabCurrent) {
-                tabCurrent.className = tabCurrent.className.replace(/ ?tab\-current/gi, "");
-            }
-            current.set({
+            pages.current.set({
                 id: obj.ID,
                 title: obj.Title || "",
                 _title: obj.Title || "",
                 keywords: obj.Keywords && obj.Keywords.results || [],
+                references: obj.References && obj.References.results || [],
                 icon: obj.Icon || "",
                 text: obj.Overview || "",
                 overview: obj.Overview || "",
@@ -6310,50 +12759,30 @@
                 page: obj.Page || "",
                 rabbitHole: obj.rabbitHole || "",
                 type: "Overview",
+                _type: "overview",
+                modified: new Date(obj.Modified || obj.Created),
                 listItemType: obj.__metadata.type,
                 timestamp: Date && Date.now() || new Date(),
                 level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
             });
-            resetPage();
-            DOM.renderOut(current.text, current.type);
-            var activeLink = document.querySelector("#ph-nav a[href='" + window.location.hash + "']");
-            var currentTab = document.querySelector("#ph-tabs .icon-home");
-            if (activeLink) {
-                activeLink.className += " active";
-            }
-            if (currentTab) {
-                currentTab.parentNode.className += " tab-current";
-            }
-            var hashArray = window.location.hash.slice(2).split(/\//), total;
-            if (hashArray.length > 1) {
-                var phPage = document.querySelectorAll("#ph-nav a[href^='#/" + hashArray[0] + "/" + hashArray[1] + "/']");
-                if (phPage) {
-                    i = 0;
-                    total = phPage.length;
-                    for (;i < total; ++i) {
-                        phPage[i].removeAttribute("style");
-                        phPage[i].parentNode.removeAttribute("style");
-                    }
-                }
-            }
             DOM.loadContent();
-            var regLoading = / ?loading/gi;
+            DOM.renderOut(pages.current.text, pages.current.type);
             inTransition.output = null;
-            DOM.output.className = DOM.output.className.replace(regLoading, "");
+            document.title = pages.current.title;
         });
         events.on("tab.change", function(page) {
             var content = {};
-            content[current.type.replace(/\s/g, "").toLowerCase()] = current.text;
-            content.text = current[page.replace(/\s/g, "").toLowerCase()];
+            content[pages.current._type] = pages.current.text;
             content.type = page;
-            current.set(content);
-            DOM.renderOut(current.text, current.type);
+            content._type = page.replace(/\s/g, "").toLowerCase().trim();
+            content.text = pages.current[content._type];
+            pages.current.set(content);
             if (codeMirror) {
                 DOM.loadContent();
             }
+            DOM.renderOut(content.text, content.type);
         });
-        events.on("content.start", function() {
-            resetPage();
+        events.on("content.adding", function() {
             DOM.set({
                 state: {
                     addingContent: true
@@ -6362,11 +12791,6 @@
             document.querySelector(".ph-btn.ph-create").className += " active";
         });
         function resetPage() {
-            var oldActive = document.querySelectorAll("a.active"), i = 0, total = oldActive.length;
-            for (;i < total; ++i) {
-                oldActive[i].className = oldActive[i].className.replace(/ ?active/gi, "");
-            }
-            document.title = pages.current.title;
             DOM.set({
                 state: {
                     addingContent: false
@@ -6375,24 +12799,31 @@
         }
         pageInit();
     }, {
-        "./content": 112,
-        "./data": 113,
-        "./dom": 114,
-        "./events": 115,
-        "./helpers": 116,
-        "./pages": 120,
+        "./data": 181,
+        "./dom": 182,
+        "./events": 183,
+        "./helpers": 184,
+        "./pages": 188,
         "director/build/director": 1,
-        horsey: 4,
-        reqwest: 77,
-        sweetalert: 78,
-        "virtual-dom/diff": 80,
-        "virtual-dom/h": 81,
-        "virtual-dom/patch": 89
+        horsey: 5,
+        reqwest: 145,
+        sweetalert: 146,
+        "virtual-dom/diff": 148,
+        "virtual-dom/h": 149,
+        "virtual-dom/patch": 157
     } ],
-    118: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./pages"), events = require("./events");
+    186: [ function(require, module, exports) {
+        var h = require("virtual-dom/h"), codeMirror = require("./helpers").codeMirror, map = require("lodash/collection/map"), pages = require("./pages"), events = require("./events"), hashArray, level, a;
         function renderLink(link) {
-            return h("li#ph-link-" + link.id + link.className, link.attr, [ h("a.ph-level-" + link.level, {
+            var c = link.href.indexOf(a), attr = {
+                style: {}
+            };
+            if (link.level > 2 && (c < 0 || level < 2)) {
+                attr.style = {
+                    display: "none"
+                };
+            }
+            return h("li#ph-link-" + link.id + link.className, attr, [ h("a.ph-level-" + link.level + (link.href === window.location.hash ? ".active" : ""), {
                 href: link.href,
                 target: link.href.charAt(0) !== "#" ? "_blank" : ""
             }, [ !link.icon ? null : h("i.icon.icon-" + link.icon), h("span.link-title", [ String(link.title) ]), h("span.place") ]) ]);
@@ -6402,12 +12833,15 @@
             for (;i < count; ++i) {
                 links[i] = renderLink(section.links[i]);
             }
-            return h("li.ph-section.link", [ h("p", [ h("a", {
-                href: section.path
+            return h("li.ph-section.link", [ h("p", [ h("a" + ("#" + section.path === window.location.hash ? ".active" : ""), {
+                href: "#" + section.path
             }, [ h("span.link-title", [ String(section.title) ]) ]) ]), h("ul", links) ]);
         }
         function renderNav() {
             var links = [], name;
+            hashArray = window.location.hash.slice(1).split(/\//g);
+            level = hashArray.length - 1;
+            a = hashArray.slice(0, 3).join("/");
             for (name in pages.sections) {
                 if (pages.sections.hasOwnProperty(name)) {
                     links.push(renderSection(pages.sections[name]));
@@ -6415,16 +12849,17 @@
             }
             if (codeMirror) {
                 links.unshift(h("a.ph-btn.ph-create.loading", {
-                    href: "#",
+                    href: "#/new",
                     title: "New section",
                     onclick: function(event) {
                         event = event || window.event;
                         if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
+                        events.emit("content.adding");
                         return false;
                     }
                 }, [ h("span.btn-title", [ "Add content" ]) ]));
             }
-            return h("#ph-nav", [ h(".header", [ h("a", {
+            return h("#ph-nav", [ h(".header", [ h("a" + (window.location.hash === "#/" ? ".active" : ""), {
                 href: "#/"
             }, [ h(".logo", [ h("img", {
                 src: pages.options.images + "/phLogo64.png",
@@ -6441,13 +12876,13 @@
         }
         module.exports = renderNav;
     }, {
-        "./events": 115,
-        "./helpers": 116,
-        "./pages": 120,
-        "lodash/collection/map": 25,
-        "virtual-dom/h": 81
+        "./events": 183,
+        "./helpers": 184,
+        "./pages": 188,
+        "lodash/collection/map": 26,
+        "virtual-dom/h": 149
     } ],
-    119: [ function(require, module, exports) {
+    187: [ function(require, module, exports) {
         var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), misc = require("./helpers"), inTransition = misc.inTransition;
         function renderLoader() {
             return h("#ph-loader.loader-group", [ h(".bigSqr", [ h(".square.first"), h(".square.second"), h(".square.third"), h(".square.fourth") ]), h(".text", [ "loading..." ]) ]);
@@ -6467,15 +12902,6 @@
                 }
             }) ]) ]) ]);
         }
-        function renderCheatSheet() {
-            return h("#cheatSheet", {}, [ "This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:", h("p", [ h("a", {
-                target: "_blank",
-                href: "http://jbt.github.io/markdown-editor"
-            }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
-                target: "_blank",
-                href: "http://stackedit.io"
-            }, [ "http://stackedit.io" ]) ]) ]);
-        }
         function renderEditor(tabsDOM, DOM) {
             return h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [ h("a.ph-toggle-editor", {
                 href: "#",
@@ -6489,7 +12915,28 @@
                         }
                     });
                 }
-            }, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a.ph-edit-btn.ph-save", {
+            }, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title" + (misc.codeMirror ? ".ph-cm" : ""), {
+                contentEditable: misc.codeMirror ? true : false,
+                oninput: function(e) {
+                    if (e.keyCode === 13 || e.keyCode === 27) {
+                        this.blur();
+                        return false;
+                    }
+                },
+                onblur: function() {
+                    var title = this.textContent || this.innerText;
+                    title = title.trim();
+                    pages.current.set({
+                        title: title
+                    });
+                    if (title !== pages.current._title) {
+                        this.style.transition = "border .05s ease-out";
+                        this.style.borderBottomColor = "#00B16A";
+                    } else {
+                        this.removeAttribute("style");
+                    }
+                }
+            }, [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a#ph-save.ph-edit-btn.ph-save", {
                 href: "#",
                 title: "Save",
                 onclick: function(event) {
@@ -6509,7 +12956,17 @@
                     });
                     return false;
                 }
-            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), DOM.state.cheatSheet ? renderCheatSheet() : null, h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]) ]);
+            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), h("div#cheatSheet", !DOM.state.cheatSheet ? {
+                style: {
+                    display: "none"
+                }
+            } : null, [ "This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:", h("p", [ h("a", {
+                target: "_blank",
+                href: "http://jbt.github.io/markdown-editor"
+            }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
+                target: "_blank",
+                href: "http://stackedit.io"
+            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output"), h(".clearfix"), h("small.ph-modified-date", [ "Last updated: " + pages.current.modified.toLocaleDateString() ]) ]) ]);
         }
         function renderDefault(tabsDOM) {
             return h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]);
@@ -6523,12 +12980,12 @@
         }
         module.exports = renderPage;
     }, {
-        "./events": 115,
-        "./helpers": 116,
-        "./pages": 120,
-        "virtual-dom/h": 81
+        "./events": 183,
+        "./helpers": 184,
+        "./pages": 188,
+        "virtual-dom/h": 149
     } ],
-    120: [ function(require, module, exports) {
+    188: [ function(require, module, exports) {
         var events = require("./events"), Content = require("./content"), pluck = require("lodash/collection/pluck");
         function Pages() {
             if (!(this instanceof Pages)) {
@@ -6539,7 +12996,6 @@
                 hideEmptyTabs: true,
                 searchPlaceholder: "Search using keywords, AFIs or titles...",
                 emptyTabsNotify: false,
-                editorTheme: "base16-light",
                 images: "/kj/kx7/PublicHealth/SiteAssets/Images"
             };
         }
@@ -6576,7 +13032,7 @@
                 urls[i] = result.Path;
                 if (result.Section !== "" && result.Program === "") {
                     this.sections[result.Section] = {
-                        path: !result.Link ? "#/" + result.Section : result.Link,
+                        path: !result.Link ? "/" + result.Section : result.Link,
                         title: result.Title,
                         id: result.ID,
                         links: []
@@ -6607,7 +13063,6 @@
                 } else if (page.Program !== "") {
                     className = parents[page.Path] || ".ph-program.link";
                 }
-                if (page.Link) {}
                 if (page.Program !== "") {
                     this.sections[page.Section].links.push({
                         path: page.Path,
@@ -6617,12 +13072,7 @@
                         className: className,
                         name: name,
                         id: page.ID,
-                        icon: page.Icon || "",
-                        attr: isPage ? {
-                            style: {
-                                display: "none"
-                            }
-                        } : {}
+                        icon: page.Icon || ""
                     });
                 }
             }
@@ -6632,7 +13082,6 @@
             var firstTry = title.replace(regNormalize, "");
             path += "/" + newName.replace(regNormalize, "");
             var pathArray = path.slice(1).split("/");
-            var keywords = null;
             var data = {
                 __metadata: {
                     type: self.current.listItemType
@@ -6649,11 +13098,11 @@
         var pages = new Pages();
         module.exports = pages;
     }, {
-        "./content": 112,
-        "./events": 115,
-        "lodash/collection/pluck": 26
+        "./content": 180,
+        "./events": 183,
+        "lodash/collection/pluck": 27
     } ],
-    121: [ function(require, module, exports) {
+    189: [ function(require, module, exports) {
         var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), map = require("lodash/collection/map"), tabs = [ {
             title: "Overview",
             icon: "home"
@@ -6679,9 +13128,9 @@
                     display: "none"
                 }
             }, group = map(tabs, function(tab) {
-                var tabName = tab.title.replace(/\s/g, "").toLowerCase();
-                var className = ".tab-" + tabName + (pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ? ".tab-empty" : "") + (pages.current.type.replace(/\s/g, "").toLowerCase() === tabName ? ".tab-current" : "");
-                return h("li" + className, [ h("a.icon.icon-" + tab.icon, {
+                var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
+                var className = ".tab-" + tabName + (pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ? ".tab-empty" : "") + (pages.current._type === tabName ? ".tab-current" : "");
+                return h("li" + className, [ h("div.ph-tab-box", [ h("a.icon.icon-" + tab.icon, {
                     href: "#",
                     onclick: function(e) {
                         e = e || window.event;
@@ -6689,15 +13138,15 @@
                         events.emit("tab.change", tab.title);
                         return false;
                     }
-                }, [ h("span", [ String(tab.title) ]) ]) ]);
+                }, [ h("span", [ String(tab.title) ]) ]) ]) ]);
             });
             return h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [ h("nav", [ h("ul", style, group) ]) ]);
         }
         module.exports = renderTabs;
     }, {
-        "./events": 115,
-        "./pages": 120,
-        "lodash/collection/map": 25,
-        "virtual-dom/h": 81
+        "./events": 183,
+        "./pages": 188,
+        "lodash/collection/map": 26,
+        "virtual-dom/h": 149
     } ]
-}, {}, [ 117 ]);
+}, {}, [ 185 ]);

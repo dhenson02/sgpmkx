@@ -62,7 +62,7 @@ events.on("page.loading", function () {
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
 	reqwest({
-		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link",
+		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link,Created,Modified",
 		method: "GET",
 		type: "json",
 		contentType: "application/json",
@@ -104,7 +104,8 @@ events.on("content.loading", function ( path ) {
 	if ( inTransition.output ) {
 		return false;
 	}
-	inTransition.output = DOM.output.innerHTML;
+	//inTransition.output = DOM.output.innerHTML;
+	inTransition.output = true;
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	var timestamp = (Date && Date.now() || new Date());
@@ -122,6 +123,7 @@ events.on("content.loading", function ( path ) {
 		},
 		success: function ( data ) {
 			if ( clicked !== parseInt(timestamp, 10) ) {
+				// Prevent accidental load of previously clicked destination
 				return false;
 			}
 			events.emit("content.loaded", data);
@@ -190,9 +192,9 @@ events.on("content.create", function ( data, path, title ) {
 	});
 });
 
-events.on("content.save", function ( data, id, self ) {
-	self.removeAttribute("style");
-	self.innerHTML = "...saving...";
+events.on("content.save", function ( data, id, btnText ) {
+	btnText.removeAttribute("style");
+	btnText.innerHTML = "...saving...";
 	if ( inTransition.tempSaveText ) {
 		clearTimeout(inTransition.tempSaveText);
 	}
@@ -220,38 +222,38 @@ events.on("content.save", function ( data, id, self ) {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-					self.style.fontWeight = "bold";
-					self.innerHTML = "Saved!";
+					btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+					btnText.style.fontWeight = "bold";
+					btnText.innerHTML = "Saved!";
 				},
 				error: function ( error ) {
-					self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-					self.style.color = "#FF2222";
-					self.style.fontWeight = "bold";
-					self.innerHTML = "Connection error (press F12 for Console)";
+					btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+					btnText.style.color = "#FF2222";
+					btnText.style.fontWeight = "bold";
+					btnText.innerHTML = "Connection error (press F12 for Console)";
 					console["error" || "log"]("Couldn't save due to error: ", error.response);
 				},
 				complete: function () {
 					inTransition.tempSaveText = setTimeout(function () {
-						self.removeAttribute("style");
-						self.innerHTML = "Save";
+						btnText.removeAttribute("style");
+						btnText.innerHTML = "Save";
 						inTransition.tempSaveText = null;
 					}, 1500);
 				}
 			});
 		},
 		error: function ( error ) {
-			self.parentNode.className = self.parentNode.className.replace(/ ?loading/gi, "");
-			self.style.color = "#FF2222";
-			self.style.fontWeight = "bold";
-			self.innerHTML = "Digest error (press F12 for Console)";
+			btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+			btnText.style.color = "#FF2222";
+			btnText.style.fontWeight = "bold";
+			btnText.innerHTML = "Digest error (press F12 for Console)";
 			console["error" || "log"]("Couldn't save due to error retrieving new digest: ", error.response);
 			console.log("Error getting new digest: ", error);
 		},
 		complete: function () {
 			inTransition.tempSaveText = setTimeout(function () {
-				self.removeAttribute("style");
-				self.innerHTML = "Save";
+				btnText.removeAttribute("style");
+				btnText.innerHTML = "Save";
 				inTransition.tempSaveText = null;
 			}, 1500);
 		}

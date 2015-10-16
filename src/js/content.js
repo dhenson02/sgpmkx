@@ -8,6 +8,7 @@ function Content () {
 	this.title = "";
 	this._title = "";
 	this.keywords = [];
+	this.references = [];
 	this.icon = "";
 	this.text = "";
 	this.overview = "";
@@ -21,6 +22,8 @@ function Content () {
 	this.page = "";
 	this.rabbitHole = "";
 	this.type = "Overview";
+	this._type = "overview";
+	this.modified = new Date();
 	this.listItemType = "";
 	this.timestamp = null;
 	this.level = -1;
@@ -44,9 +47,10 @@ Content.prototype.set = function ( data ) {
 Content.prototype.savePage = function ( self ) {
 	this.set({
 		text: this.text.trim(),
-		keywords: this.keywords
+		keywords: this.keywords,
+		modified: (Date && Date.now() || new Date())
 	});
-	this[this.type.toLowerCase()] = this.text;
+	this[this._type] = this.text;
 	var data = {
 		'__metadata': {
 			'type': this.listItemType
@@ -63,7 +67,7 @@ Content.prototype.savePage = function ( self ) {
 		'Contributions': this.contributions
 	};
 	self.className += " loading";
-	var el = self.getElementsByTagName("i")[0];
+	var el = self.children[0];
 	events.emit("content.save", data, this.id, el);
 };
 

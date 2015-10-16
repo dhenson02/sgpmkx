@@ -34,10 +34,11 @@ body {
 	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";*/
 	opacity: .35;
 	pointer-events: none;
+	cursor: default;
 }
 
 #ph-wrapper, #ph-wrapper h1, #ph-wrapper h2, #ph-wrapper h3, #ph-wrapper h4, #ph-wrapper h5, #ph-wrapper h6 {
-	font-family: Roboto, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", sans-serif;
+	font-family: "Roboto", "Segoe UI Light", "Segoe UI", "Segoe", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", sans-serif;
 }
 
 #ph-wrapper a {
@@ -45,13 +46,15 @@ body {
 	text-decoration: none;
 }
 
-#ph-wrapper a:active, #ph-wrapper a:hover, #ph-wrapper a:focus {
+#ph-wrapper a:active,
+#ph-wrapper a:hover,
+#ph-wrapper a:focus {
 	outline: 0;
 }
 
-#ph-wrapper a:active {
+/*#ph-wrapper a:active {
 	transition: color .075s ease-out;
-}
+}*/
 
 #ph-wrapper {
 	font-size: 20px;
@@ -60,7 +63,7 @@ body {
 	position: relative;
 	padding-left: 20px;
 	padding-right: 20px;
-	color: #222;
+	color: #000;
 }
 
 #ph-content {
@@ -87,11 +90,13 @@ body {
 }
 
 #ph-title {
+	opacity: 1;
 	font-size: 3.5em;
 	border: 4px dashed transparent;
 	padding: 10px;
 	transition: border .05s ease-out;
 	/*margin: 20px;*/
+	outline: 0;
 }
 
 #ph-title.ph-cm:hover {
@@ -99,7 +104,7 @@ body {
 }
 
 #ph-title.ph-cm:focus {
-	color: #000;
+	color: #777777;
 }
 
 #ph-contentWrap {
@@ -139,6 +144,11 @@ body {
 	display: block;
 	width: 400px;
 	font-weight: 200;
+}
+
+#cheatSheet {
+	height: 300px;
+	padding: 20px 0;
 }
 
 .fullPage #ph-input,
@@ -193,16 +203,7 @@ body {
 	margin-right: 0;
 }
 
-#cheatSheet {
-	height: 300px;
-	padding: 20px 0;
-}
-
-#ph-wrapper.loading,
-#ph-content.loading,
-#ph-contentWrap.loading,
-#ph-input.loading,
-#ph-output.loading {
+#ph-wrapper .loading {
 	border-color: #BBBBBB;
 	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";*/
 	opacity: .35;

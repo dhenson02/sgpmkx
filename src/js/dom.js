@@ -45,7 +45,7 @@ DOM.prototype.set = function ( data ) {
 
 DOM.prototype.preRender = function () {
 	this.navDOM = renderNav();
-	this.tabsDOM = ( this.state.addingContent === false ) ? renderTabs() : null;
+	this.tabsDOM = ( this.state.addingContent === false || !misc.inTransition.output ) ? renderTabs() : null;
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
@@ -64,15 +64,19 @@ DOM.prototype.init = function () {
 };
 
 DOM.prototype.loadContent = function  () {
-	if ( this.state.fullPage && !pages.current[pages.current.type.replace(/\s/g, "").toLowerCase()].trim() ) {
+	if ( this.state.fullPage && !pages.current[pages.current._type] ) {
 		events.emit("tab.change", "Overview");
 	}
 	var refreshDOM = this.preRender();
 	var patches = diff(this.dirtyDOM, refreshDOM);
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
-	this.reset();
-	if ( codeMirror ) this.initEditor();
+	if ( codeMirror ) {
+		this.reset();
+		if ( !this.state.fullPage ) {
+			this.initEditor();
+		}
+	}
 };
 
 DOM.prototype.reset = function () {
@@ -81,23 +85,6 @@ DOM.prototype.reset = function () {
 		wrap.parentNode.removeChild(wrap);
 	}
 	this.editor = null;
-	if ( this.output ) {
-		var links = this.output.querySelectorAll("a"),
-			total = links.length,
-			i = 0;
-		for ( ; i < total; ++i ) {
-			misc.addEvent("click", links[i], openExternal);
-		}
-	}
-	function openExternal ( event ) {
-		if ( /mailto:|#\//.test(this.href) === false ) {
-			event = event || window.event;
-			if ( event.preventDefault ) event.preventDefault();
-			else event.returnValue = false;
-			if ( event.stopPropagation ) event.stopPropagation();
-			window.open(this.href, "_blank");
-		}
-	}
 };
 
 DOM.prototype.initEditor = function () {
@@ -128,8 +115,9 @@ DOM.prototype.initEditor = function () {
 };
 
 DOM.prototype.renderOut = function ( text, type ) {
+	var regLink = /<a (href="https?:\/\/)/gi;
 	type = ( pages.current.level > 1 ) ? "## " + type + "\n" : "";
-	this.output.innerHTML = misc.md.render(type + text);
+	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
 };
 
 var dom = new DOM();

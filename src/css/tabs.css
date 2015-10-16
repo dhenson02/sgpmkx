@@ -85,6 +85,10 @@
 	/*color: #7014CC;*/
 }
 
+#ph-tabs nav a:active {
+	font-weight: 700;
+}
+
 #ph-tabs .icon::before {
 	display: block;
 	margin: 0;
@@ -115,20 +119,22 @@
 	}
 }
 
+/*
 #ph-tabs nav {
 	background: rgba(255, 255, 255, 0.4);
 }
+*/
 
 #ph-tabs nav ul li a {
 	overflow: visible;
 	padding: 1.5em 0;
 	line-height: 1;
-	transition: color .1s ease-out;
+	transition: color .05s ease-out;
 }
 
 #ph-tabs nav ul li a span {
 	/*font-weight: 700;*/
-	font-size: 0.6em;
+	font-size: .6em;
 }
 
 /*#ph-tabs nav ul .tab-current {
