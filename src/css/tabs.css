@@ -86,7 +86,7 @@
 	/*color: #7014CC;*/
 }
 
-#ph-tabs nav a:active {
+#ph-tabs nav li:not(.tab-current) a:active {
 	font-weight: 700;
 }
 

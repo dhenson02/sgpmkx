@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b194fd6e-1191-49b9-9613-ae237f97afe1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/dom.js" afterPath="$PROJECT_DIR$/src/js/dom.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/page.js" afterPath="$PROJECT_DIR$/src/js/page.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/pages.js" afterPath="$PROJECT_DIR$/src/js/pages.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/tabs.css" afterPath="$PROJECT_DIR$/src/css/tabs.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src.iws" />
@@ -104,8 +103,8 @@
                       <file leaf-file-name="dom.js" pinned="false" current-in-tab="true">
                         <entry file="file://$PROJECT_DIR$/src/js/dom.js">
                           <provider selected="true" editor-type-id="text-editor">
-                            <state vertical-scroll-proportion="0.45454547">
-                              <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+                            <state vertical-scroll-proportion="0.5194805">
+                              <caret line="48" column="55" selection-start-line="48" selection-start-column="55" selection-end-line="48" selection-end-column="55" />
                               <folding />
                             </state>
                           </provider>
@@ -119,7 +118,7 @@
                         <entry file="file://$PROJECT_DIR$/src/js/pages.js">
                           <provider selected="true" editor-type-id="text-editor">
                             <state vertical-scroll-proportion="0.41724136">
-                              <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+                              <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
                               <folding>
                                 <element signature="e#1232#1419#0" expanded="true" />
                                 <element signature="e#1743#1945#0" expanded="true" />
@@ -170,14 +169,14 @@
               <file leaf-file-name="page.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/src/js/page.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state vertical-scroll-proportion="0.22535211">
-                      <caret line="59" column="29" selection-start-line="59" selection-start-column="29" selection-end-line="59" selection-end-column="29" />
+                    <state vertical-scroll-proportion="0.5070422">
+                      <caret line="119" column="41" selection-start-line="119" selection-start-column="41" selection-end-line="119" selection-end-column="41" />
                       <folding>
                         <element signature="e#505#634#0" expanded="true" />
                         <element signature="e#1318#1686#0" expanded="false" />
-                        <element signature="e#1814#2110#0" expanded="false" />
-                        <element signature="e#2194#2755#0" expanded="false" />
-                        <element signature="e#3776#4164#0" expanded="false" />
+                        <element signature="e#1794#2090#0" expanded="false" />
+                        <element signature="e#2174#2735#0" expanded="false" />
+                        <element signature="e#3756#4144#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -259,10 +258,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="nav.css" pinned="false" current-in-tab="true">
+          <file leaf-file-name="nav.css" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/css/nav.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.19685039">
+                <state vertical-scroll-proportion="0.0">
                   <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
                   <folding />
                 </state>
@@ -279,11 +278,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="tabs.css" pinned="false" current-in-tab="false">
+          <file leaf-file-name="tabs.css" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.25826773">
+                  <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -430,11 +429,11 @@
         <option value="$PROJECT_DIR$/src/css/buttons.css" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/src/css/create.css" />
-        <option value="$PROJECT_DIR$/src/css/tabs.css" />
         <option value="$PROJECT_DIR$/src/css/nav.css" />
         <option value="$PROJECT_DIR$/src/js/pages.js" />
-        <option value="$PROJECT_DIR$/src/js/page.js" />
         <option value="$PROJECT_DIR$/src/js/dom.js" />
+        <option value="$PROJECT_DIR$/src/js/page.js" />
+        <option value="$PROJECT_DIR$/src/css/tabs.css" />
       </list>
     </option>
   </component>
@@ -770,12 +769,6 @@
       <option name="number" value="Default" />
       <updated>1437005519578</updated>
     </task>
-    <task id="LOCAL-00067" summary="some semblance of functioning code">
-      <created>1442044044754</created>
-      <option name="number" value="00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1442044044754</updated>
-    </task>
     <task id="LOCAL-00068" summary="tab auto-activated with tab-current class upon page load.  moved some of the pageSetup() code to the ASPX file to be done immediately rather than waiting.   sub-parent &amp; parent classes and the children classes (ph-rabbit-hole) setup but no CSS written yet.">
       <created>1442062126564</created>
       <option name="number" value="00068" />
@@ -1064,7 +1057,13 @@
       <option name="project" value="LOCAL" />
       <updated>1444967895824</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="new site-provided options added - hideNav/SearchWhileEditing.  self-explanatory.">
+      <created>1444968164236</created>
+      <option name="number" value="00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1444968164236</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1146,7 +1145,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="LIMIT_HISTORY" value="false" />
     <option name="MAXIMUM_HISTORY_ROWS" value="30000" />
-    <MESSAGE value="better equipped to handle local dev environment." />
     <MESSAGE value="toggle editor &quot;button&quot; is now a basic link almost, active link color adjusted on nav, local dev improved/corrected (data variable accidental insertion in complete())." />
     <MESSAGE value="buttons styled, navbar better styling with padding, alignments, markdown-it settings adjusted (no code highlighting necessary)." />
     <MESSAGE value="better styling for editor toggle and (this was a couple commits ago but...) external links inside of #ph-output now open in new window/tab" />
@@ -1171,7 +1169,8 @@
     <MESSAGE value="nav menu css and HTML cleaned up, set editor toggle to take over page (remove navbar) for more room" />
     <MESSAGE value="re-worked virtual-dom rendering to include a bit more, more responsive feel, full screen view while editing (may have done in previous commit actually), better event handling (title input takes ENTER now to blur), content add button and wrapper added to #ph-content and open/close functionality added." />
     <MESSAGE value="better styling for navbar (font sizes and padding mainly), hide search if viewing content editor" />
-    <option name="LAST_COMMIT_MESSAGE" value="better styling for navbar (font sizes and padding mainly), hide search if viewing content editor" />
+    <MESSAGE value="new site-provided options added - hideNav/SearchWhileEditing.  self-explanatory." />
+    <option name="LAST_COMMIT_MESSAGE" value="new site-provided options added - hideNav/SearchWhileEditing.  self-explanatory." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2093,14 +2092,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/css/icons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2109,10 +2100,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/js/pages.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.41724136">
-          <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
           <folding>
             <element signature="e#1232#1419#0" expanded="true" />
             <element signature="e#1743#1945#0" expanded="true" />
@@ -2123,30 +2122,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/page.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.22535211">
-          <caret line="59" column="29" selection-start-line="59" selection-start-column="29" selection-end-line="59" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.5070422">
+          <caret line="119" column="41" selection-start-line="119" selection-start-column="41" selection-end-line="119" selection-end-column="41" />
           <folding>
             <element signature="e#505#634#0" expanded="true" />
             <element signature="e#1318#1686#0" expanded="false" />
-            <element signature="e#1814#2110#0" expanded="false" />
-            <element signature="e#2194#2755#0" expanded="false" />
-            <element signature="e#3776#4164#0" expanded="false" />
+            <element signature="e#1794#2090#0" expanded="false" />
+            <element signature="e#2174#2735#0" expanded="false" />
+            <element signature="e#3756#4144#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/dom.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45454547">
-          <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+        <state vertical-scroll-proportion="0.5194805">
+          <caret line="48" column="55" selection-start-line="48" selection-start-column="55" selection-end-line="48" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/css/nav.css">
+    <entry file="file://$PROJECT_DIR$/src/css/tabs.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19685039">
-          <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.25826773">
+          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
           <folding />
         </state>
       </provider>

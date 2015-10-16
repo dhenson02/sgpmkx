@@ -76,8 +76,6 @@ function renderEditor ( tabsDOM, DOM ) {
 				}
 			}, [h("span.btn-title", [DOM.state.addingContent ? "Cancel" : "Add content"])]),
 
-			h(".clearfix"),
-
 			h("a.ph-toggle-editor", {
 				href: "#",
 				role: "button",
