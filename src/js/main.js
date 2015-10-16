@@ -52,7 +52,7 @@ var h = require("virtual-dom/h"),
 		notfound: function () {
 			sweetAlert({
 				title: "Oops",
-				text: "Page doesn\'t exist.  Sorry :(\n\nI\'ll redirect you to the homepage instead.",
+				text: "Page doesn\'t exist.  Sorry :( \nI\'ll redirect you to the homepage instead.",
 				timer: 2000,
 				showConfirmButton: false,
 				showCancelButton: false,
@@ -168,9 +168,9 @@ events.on("content.loaded", function ( data ) {
 		timestamp: (Date && Date.now() || new Date()),
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
+	inTransition.output = false;
 	DOM.loadContent();
 	DOM.renderOut(pages.current.text, pages.current.type);
-	inTransition.output = null;
 	document.title = pages.current.title;
 });
 

@@ -48,7 +48,7 @@ Content.prototype.savePage = function ( self ) {
 	this.set({
 		text: this.text.trim(),
 		keywords: this.keywords,
-		modified: (Date && Date.now() || new Date())
+		modified: new Date()
 	});
 	this[this._type] = this.text;
 	var data = {

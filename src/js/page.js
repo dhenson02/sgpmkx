@@ -96,7 +96,7 @@ function renderEditor ( tabsDOM, DOM ) {
 			}, [
 				String(pages.current.title || "")
 			]),
-			tabsDOM,
+			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [tabsDOM]),
 			h("#ph-buttons", [
 				//h(".clearfix"),
 				h("a#ph-save.ph-edit-btn.ph-save", {
@@ -164,7 +164,7 @@ function renderDefault ( tabsDOM ) {
 	return (
 		h("#ph-content.fullPage", [
 			h("h1#ph-title", [String(pages.current.title || "")]),
-			tabsDOM,
+			h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [tabsDOM]),
 			h("#ph-contentWrap", [
 				h("#ph-output")
 			])

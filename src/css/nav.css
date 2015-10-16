@@ -1,13 +1,13 @@
-#ph-side-nav {
+#ph-nav {
 	/*z-index: 6;*/
 	color: #FAFCFE;
 	background-color: #0072C6;
 	position: relative;
 	float: left;
 	clear: none;
-	left: 0;
-	bottom: 0;
-	top: 0;
+	/*left: 0;
+	  bottom: 0;
+	  top: 0;*/
 	width: 320px;
 	height: 100%;
 	overflow: hidden;
@@ -17,9 +17,9 @@
 	border-radius: 16px 0 0 16px;
 }
 
-#ph-side-nav .header,
-#ph-side-nav .logo,
-#ph-side-nav .text {
+#ph-nav .header,
+#ph-nav .logo,
+#ph-nav .text {
 	display: block;
 	text-align: center;
 	margin-left: auto;
@@ -27,28 +27,28 @@
 	line-height: normal;
 }
 
-#ph-side-nav .header {
+#ph-nav .header {
 	padding-top: 10px;
 	padding-right: 17px;
 	padding-bottom: 10px;
 }
 
-#ph-side-nav .text {
+#ph-nav .text {
 	font-size: 21px;
 }
 
-#ph-side-nav .text small {
+#ph-nav .text small {
 	font-size: .65em;
 }
 
-#ph-nav {
-	position: relative;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	width: 337px;
-	overflow: auto;
-}
+/*#ph-nav {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 337px;
+  overflow: auto;
+}*/
 
 #ph-nav a,
 #ph-nav a:hover {
@@ -102,17 +102,19 @@
 	display: none;
 }
 
+/*
 #ph-nav hr {
-	display: block;
-	color: #FFFFFF;
-	height: 1px;
-	margin: 0;
-	padding: 0;
-	border: none;
-	border-top: 1px solid;
-	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";*/
-	opacity: .2;
+  display: block;
+  color: #FFFFFF;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-top: 1px solid;
+  /!*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";*!/
+  opacity: .2;
 }
+*/
 
 #ph-nav ul {
 	margin: 0;

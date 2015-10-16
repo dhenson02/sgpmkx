@@ -71,10 +71,8 @@ function renderTabs () {
 	 }
 	 }*/
 	return (
-		h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [
-			h("nav", [
-				h("ul", style, group)
-			])
+		h("nav", [
+			h("ul", style, group)
 		])
 	);
 }

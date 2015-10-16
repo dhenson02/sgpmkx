@@ -44,8 +44,8 @@ DOM.prototype.set = function ( data ) {
 };
 
 DOM.prototype.preRender = function () {
-	this.navDOM = renderNav();
-	this.tabsDOM = ( this.state.addingContent === false || !misc.inTransition.output ) ? renderTabs() : null;
+	this.navDOM = ( this.state.fullPage ) ? renderNav() : null;
+	this.tabsDOM = ( this.state.addingContent === false && misc.inTransition.output === false ) ? renderTabs() : null;
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
