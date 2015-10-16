@@ -12204,7 +12204,7 @@
             this.set({
                 text: this.text.trim(),
                 keywords: this.keywords,
-                modified: Date && Date.now() || new Date()
+                modified: new Date()
             });
             this[this._type] = this.text;
             var data = {
@@ -12500,8 +12500,8 @@
             return this;
         };
         DOM.prototype.preRender = function() {
-            this.navDOM = renderNav();
-            this.tabsDOM = this.state.addingContent === false || !misc.inTransition.output ? renderTabs() : null;
+            this.navDOM = pages.options.hideNavWhileEditing && this.state.fullPage ? renderNav() : null;
+            this.tabsDOM = renderTabs();
             return renderPage(this.navDOM, this.tabsDOM, this);
         };
         DOM.prototype.init = function() {
@@ -12515,10 +12515,10 @@
             this.cheatSheet = document.getElementById("cheatSheet");
             this.textarea = document.getElementById("ph-textarea");
             this.output = document.getElementById("ph-output");
-            this.reset();
+            if (codeMirror) this.resetEditor();
         };
         DOM.prototype.loadContent = function() {
-            if (this.state.fullPage && !pages.current[pages.current._type]) {
+            if (this.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions") {
                 events.emit("tab.change", "Overview");
             }
             var refreshDOM = this.preRender();
@@ -12526,18 +12526,11 @@
             this.rootNode = patch(this.rootNode, patches);
             this.dirtyDOM = refreshDOM;
             if (codeMirror) {
-                this.reset();
+                this.resetEditor();
                 if (!this.state.fullPage) {
                     this.initEditor();
                 }
             }
-        };
-        DOM.prototype.reset = function() {
-            if (this.editor) {
-                var wrap = this.editor.getWrapperElement();
-                wrap.parentNode.removeChild(wrap);
-            }
-            this.editor = null;
         };
         DOM.prototype.initEditor = function() {
             var self = this;
@@ -12564,6 +12557,13 @@
                 });
             });
             this.editor.refresh();
+        };
+        DOM.prototype.resetEditor = function() {
+            if (this.editor) {
+                var wrap = this.editor.getWrapperElement();
+                wrap.parentNode.removeChild(wrap);
+            }
+            this.editor = null;
         };
         DOM.prototype.renderOut = function(text, type) {
             var regLink = /<a (href="https?:\/\/)/gi;
@@ -12633,11 +12633,6 @@
                     events.emit("content.loading", "/");
                 }
             },
-            "/new": {
-                on: function() {
-                    events.emit("content.adding");
-                }
-            },
             "/(\\w+)": {
                 on: function(section) {
                     events.emit("content.loading", "/" + section.replace(/\s/g, ""));
@@ -12664,7 +12659,7 @@
             notfound: function() {
                 sweetAlert({
                     title: "Oops",
-                    text: "Page doesn't exist.  Sorry :(\n\nI'll redirect you to the homepage instead.",
+                    text: "Page doesn't exist.  Sorry :( \nI'll redirect you to the homepage instead.",
                     timer: 2e3,
                     showConfirmButton: false,
                     showCancelButton: false,
@@ -12765,9 +12760,9 @@
                 timestamp: Date && Date.now() || new Date(),
                 level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
             });
+            inTransition.output = false;
             DOM.loadContent();
             DOM.renderOut(pages.current.text, pages.current.type);
-            inTransition.output = null;
             document.title = pages.current.title;
         });
         events.on("tab.change", function(page) {
@@ -12782,14 +12777,7 @@
             }
             DOM.renderOut(content.text, content.type);
         });
-        events.on("content.adding", function() {
-            DOM.set({
-                state: {
-                    addingContent: true
-                }
-            });
-            document.querySelector(".ph-btn.ph-create").className += " active";
-        });
+        events.on("content.adding", function() {});
         function resetPage() {
             DOM.set({
                 state: {
@@ -12847,18 +12835,6 @@
                     links.push(renderSection(pages.sections[name]));
                 }
             }
-            if (codeMirror) {
-                links.unshift(h("a.ph-btn.ph-create.loading", {
-                    href: "#/new",
-                    title: "New section",
-                    onclick: function(event) {
-                        event = event || window.event;
-                        if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                        events.emit("content.adding");
-                        return false;
-                    }
-                }, [ h("span.btn-title", [ "Add content" ]) ]));
-            }
             return h("#ph-nav", [ h(".header", [ h("a" + (window.location.hash === "#/" ? ".active" : ""), {
                 href: "#/"
             }, [ h(".logo", [ h("img", {
@@ -12888,7 +12864,7 @@
             return h("#ph-loader.loader-group", [ h(".bigSqr", [ h(".square.first"), h(".square.second"), h(".square.third"), h(".square.fourth") ]), h(".text", [ "loading..." ]) ]);
         }
         function renderAddContent() {
-            return h("#ph-content.fullPage.adding-content", [ h("fieldset", [ h("legend", [ "Many things to be added soon" ]), h("label", [ "Title", h("input.ph-title-input", {
+            return h("fieldset", [ h("legend", [ "Many things to be added soon" ]), h("label", [ "Title", h("input.ph-title-input", {
                 oninput: function(e) {
                     return e;
                 }
@@ -12900,10 +12876,25 @@
                 oninput: function(e) {
                     return e;
                 }
-            }) ]) ]) ]);
+            }) ]) ]);
         }
         function renderEditor(tabsDOM, DOM) {
-            return h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [ h("a.ph-toggle-editor", {
+            return h("#ph-content" + (DOM.state.fullPage ? ".fullPage" : ""), [ h("#ph-create-wrap", [ DOM.state.addingContent ? renderAddContent() : null ]), h("a.ph-btn.ph-create", {
+                href: "#",
+                title: "New section",
+                style: phAddClass ? {
+                    display: "none"
+                } : {},
+                onclick: function(event) {
+                    event = event || window.event;
+                    if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
+                    DOM.set({
+                        state: {
+                            addingContent: !DOM.state.addingContent
+                        }
+                    });
+                }
+            }, [ h("span.btn-title", [ DOM.state.addingContent ? "Cancel" : "Add content" ]) ]), h("a.ph-toggle-editor", {
                 href: "#",
                 role: "button",
                 onclick: function(event) {
@@ -12915,10 +12906,10 @@
                         }
                     });
                 }
-            }, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title" + (misc.codeMirror ? ".ph-cm" : ""), {
-                contentEditable: misc.codeMirror ? true : false,
-                oninput: function(e) {
-                    if (e.keyCode === 13 || e.keyCode === 27) {
+            }, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]), h("h1#ph-title.ph-cm", {
+                contentEditable: true,
+                onkeypress: function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
                         this.blur();
                         return false;
                     }
@@ -12936,13 +12927,15 @@
                         this.removeAttribute("style");
                     }
                 }
-            }, [ String(pages.current.title || "") ]), tabsDOM, h("#ph-buttons", [ h("a#ph-save.ph-edit-btn.ph-save", {
+            }, [ String(pages.current.title || "") ]), h("#ph-tabs.ph-tabs", [ tabsDOM ]), h("#ph-buttons", [ h("a#ph-save.ph-edit-btn.ph-save", {
                 href: "#",
                 title: "Save",
                 onclick: function(event) {
                     event = event || window.event;
                     if (event.preventDefault) event.preventDefault(); else event.returnValue = false;
-                    if (!inTransition.tempSaveText) pages.current.savePage(this);
+                    if (!inTransition.tempSaveText) {
+                        pages.current.savePage(this);
+                    }
                 }
             }, [ h("i.icon.icon-diskette", [ "Save" ]) ]), h("a.ph-edit-btn.ph-cheatsheet", {
                 href: "#",
@@ -12956,7 +12949,7 @@
                     });
                     return false;
                 }
-            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), h("div#cheatSheet", !DOM.state.cheatSheet ? {
+            }, [ h("i.icon.icon-pen", [ "Markdown help" ]) ]) ]), h("#cheatSheet", !DOM.state.cheatSheet ? {
                 style: {
                     display: "none"
                 }
@@ -12966,17 +12959,21 @@
             }, [ "http://jbt.github.io/markdown-editor" ]) ]), h("p", [ h("a", {
                 target: "_blank",
                 href: "http://stackedit.io"
-            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output"), h(".clearfix"), h("small.ph-modified-date", [ "Last updated: " + pages.current.modified.toLocaleDateString() ]) ]) ]);
+            }, [ "http://stackedit.io" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]), h(".clearfix"), h("small.ph-modified-date", [ "Last updated: " + pages.current.modified.toLocaleDateString() ]) ]);
         }
         function renderDefault(tabsDOM) {
-            return h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), tabsDOM, h("#ph-contentWrap", [ h("#ph-output") ]) ]);
+            return h("#ph-content.fullPage", [ h("h1#ph-title", [ String(pages.current.title || "") ]), h("#ph-tabs.ph-tabs", [ tabsDOM ]), h("#ph-contentWrap", [ h("#ph-output") ]) ]);
         }
         function renderPage(navDOM, tabsDOM, DOM) {
-            return h("#ph-wrapper", [ h("#ph-search-wrap", [ h("label", [ h("input#ph-search", {
+            return h("#ph-wrapper", [ h("#ph-search-wrap", {
+                style: pages.options.hideSearchWhileEditing && !DOM.state.fullPage ? {
+                    display: "none"
+                } : {}
+            }, [ h("label", [ h("input#ph-search", {
                 type: "text",
                 name: "ph-search",
                 placeholder: pages.options.searchPlaceholder
-            }) ]) ]), h("#ph-side-nav", [ navDOM ]), misc.codeMirror ? DOM.state.addingContent ? renderAddContent() : renderEditor(tabsDOM, DOM) : renderDefault(tabsDOM) ]);
+            }) ]) ]), h("#ph-side-nav", [ navDOM ]), misc.codeMirror ? renderEditor(tabsDOM, DOM) : renderDefault(tabsDOM) ]);
         }
         module.exports = renderPage;
     }, {
@@ -12996,7 +12993,13 @@
                 hideEmptyTabs: true,
                 searchPlaceholder: "Search using keywords, AFIs or titles...",
                 emptyTabsNotify: false,
-                images: "/kj/kx7/PublicHealth/SiteAssets/Images"
+                images: "/kj/kx7/PublicHealth/SiteAssets/Images",
+                contribPOCName: "Jane Dizoe",
+                contribPOCEmail: "joe.dirt@example.com",
+                contribEmailSubject: "Contribution to PH Kx",
+                contribEmailBody: "I thought this amazing tool I made could benefit others.  Here's why:\n\n",
+                hideSearchWhileEditing: true,
+                hideNavWhileEditing: true
             };
         }
         Pages.prototype.set = function(data) {
@@ -13009,7 +13012,7 @@
                         var opt;
                         for (opt in data.options) {
                             if (this.options.hasOwnProperty(opt)) {
-                                this.options[opt] = data.options[opt] === "yes" ? true : data.options[opt] === "no" ? false : data.options[opt];
+                                this.options[opt] = data.options[opt] === "yes" || data.options[opt] === "true" ? true : data.options[opt] === "no" || data.options[opt] === "false" ? false : data.options[opt];
                             }
                         }
                     }
@@ -13129,7 +13132,7 @@
                 }
             }, group = map(tabs, function(tab) {
                 var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
-                var className = ".tab-" + tabName + (pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 ? ".tab-empty" : "") + (pages.current._type === tabName ? ".tab-current" : "");
+                var className = ".ph-tab-" + tabName + (pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 && tabName !== "contributions" ? ".tab-empty" : "") + (pages.current._type === tabName ? ".tab-current" : "");
                 return h("li" + className, [ h("div.ph-tab-box", [ h("a.icon.icon-" + tab.icon, {
                     href: "#",
                     onclick: function(e) {
@@ -13138,9 +13141,12 @@
                         events.emit("tab.change", tab.title);
                         return false;
                     }
-                }, [ h("span", [ String(tab.title) ]) ]) ]) ]);
+                }, [ h("span", [ String(tab.title) ]) ]) ]), pages.options.contribPOCEmail && tabName === "contributions" ? h("a.ph-contrib-poc", {
+                    href: "mailto:" + pages.options.contribPOCEmail,
+                    title: "POC: " + pages.options.contribPOCName
+                }, [ String("POC: " + pages.options.contribPOCName) ]) : null ]);
             });
-            return h("#ph-tabs.ph-tabs.ph-tabs-style-iconbox", [ h("nav", [ h("ul", style, group) ]) ]);
+            return h("nav", [ h("ul", style, group) ]);
         }
         module.exports = renderTabs;
     }, {

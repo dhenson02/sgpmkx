@@ -210,12 +210,13 @@
 
 }
 
- #ph-tabs .ph-tab-contributions .ph-contrib-poc {
+#ph-tabs .ph-tab-contributions .ph-contrib-poc {
 	opacity: 0;
 	transition: opacity .075s ease-out;
 	padding: 5px;
 	font-size: .6em;
 	color: #F62459;
+	pointer-events: none;
 }
 
 /*#ph-tabs .ph-tab-contributions .ph-tab-box:hover + .ph-contrib-poc,*/
