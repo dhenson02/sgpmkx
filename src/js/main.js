@@ -40,12 +40,7 @@ var h = require("virtual-dom/h"),
 		},
 		'/(\\w+-dev)': {
 			on: function ( dev ) {
-				if (codeMirror) {
-					events.emit("content.loading", "/" + dev);
-				}
-				else {
-					events.emit("content.loading", "/" + dev.slice(0, -4));
-				}
+				events.emit("content.loading", "/" + (codeMirror ? dev : dev.slice(0,-4)));
 			}
 		},
 		'/(\\w+)': {
@@ -70,10 +65,6 @@ var h = require("virtual-dom/h"),
 		}
 	}).configure({
 		strict: false,
-		after: function() {
-			DOM.update();
-		},
-		//after: resetPage,
 		notfound: function () {
 			sweetAlert({
 				title: "Oops",
@@ -95,7 +86,7 @@ sweetAlert.setDefaults({
 	confirmButtonText: "Yes!"
 });
 
-events.on("page.success", function () {
+events.on("page.loaded", function () {
 	DOM.init();
 	if ( window.location.hash ) {
 		/**
@@ -181,11 +172,13 @@ events.on("content.loaded", function ( data ) {
 		timestamp: (Date && Date.now() || new Date()),
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
+
 	inTransition.output = false;
 	DOM.update();
 	DOM.renderOut(pages.current.text, pages.current.type);
 	document.title = pages.current.title;
 });
+
 events.on("tab.change", function ( page ) {
 	var content = {};
 	content[pages.current._type] = pages.current.text;
@@ -193,20 +186,10 @@ events.on("tab.change", function ( page ) {
 	content._type = page.replace(/\s/g, "").toLowerCase().trim();
 	content.text = pages.current[content._type];
 	pages.current.set(content);
+
+	inTransition.output = false;
 	DOM.update();
 	DOM.renderOut(content.text, content.type);
 });
-
-/*events.on("content.adding", function () {
-
-});
-
-function resetPage () {
-	DOM.set({
-		state: {
-			addingContent: false
-		}
-	});
-}*/
 
 pageInit();

@@ -27,7 +27,7 @@ app.get("/items", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send(db);
-	}, 200);
+	}, 120);
 });
 
 app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
@@ -42,7 +42,7 @@ app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 				}
 			}
 		});
-	}, 200);
+	}, 120);
 });
 
 app.get("/opt", function ( req, res ) {
@@ -52,7 +52,7 @@ app.get("/opt", function ( req, res ) {
 	cmTimer = setTimeout(function () {
 		res.send({ d: { results: [
 			{Variable: "hideSearchWhileEditing", Value: "false"}, { Variable: "images", Value: "img" }] } });
-	}, 100);
+	}, 120);
 });
 
 app.get("/check/true", function ( req, res ) {
@@ -61,7 +61,7 @@ app.get("/check/true", function ( req, res ) {
 	}
 	cmTimer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 100);
+	}, 120);
 });
 
 app.get("/items(:id)", function ( req, res ) {
@@ -71,7 +71,7 @@ app.get("/items(:id)", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send(db_[id]);
-	}, 200);
+	}, 120);
 });
 
 // Save
@@ -99,7 +99,7 @@ app.post("/items(:id)", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 200);
+	}, 120);
 });
 
 // Create
@@ -118,7 +118,7 @@ app.post('/items', function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 200);
+	}, 120);
 });
 
 var server = app.listen(3000, function () {

@@ -33,10 +33,8 @@ function renderTabs () {
 		group = tabs.map(function ( tab ) {
 			var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
 			var className = ".ph-tab-" + tabName + (
-					( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 && tabName !== "contributions" ) ? ".tab-empty" : ""
-				) + (
-					( pages.current._type === tabName ) ? ".tab-current" : ""
-				);
+				( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 && tabName !== "contributions" ) ? ".tab-empty" : "" ) + (
+				( pages.current._type === tabName ) ? ".tab-current" : "" );
 
 			return (
 				h("li" + className, [

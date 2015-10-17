@@ -2,6 +2,7 @@ module.exports = function ( grunt ) {
 	grunt.initConfig({
 		browserify: {
 			options: {
+				plugin: ["minifyify"],
 				browserifyOptions: {
 					debug: true
 				}
@@ -57,20 +58,20 @@ module.exports = function ( grunt ) {
 			dev: {
 				options: {
 					compress: false,
-					beautify: {
+					beautify: true/*{
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
 						max_line_len: 32000,
 						bracketize: true,
 						semicolons: true
-					},
+					}*/,
 					screwIE8: true,
 					mangle: false,
 					wrap: false,
 					reserved: "CodeMirror",
-					sourceMap: true,
-					preserveComments: false
+					//sourceMap: true,
+					preserveComments: "all"
 				},
 				files: {
 					'dist/js/main.js': '.tmp/main.js'
@@ -93,10 +94,8 @@ module.exports = function ( grunt ) {
 					'src/css/loader.css',
 					'src/css/search.css',
 					'src/css/create.css',
-					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.min.css'
-					/*'node_modules/animate.css/animate.min.css'*/
 				],
 				dest: '.tmp/main.min.css'
 			},
@@ -114,10 +113,8 @@ module.exports = function ( grunt ) {
 					'src/css/loader.css',
 					'src/css/search.css',
 					'src/css/create.css',
-					/*'css/loader2.css',*/
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.css'
-					/*'node_modules/animate.css/animate.min.css'*/
 				],
 				dest: '.tmp/main.css'
 			}
@@ -224,7 +221,7 @@ module.exports = function ( grunt ) {
 		//'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
-		'browserify:dist',
+		'browserify:dev',
 		'uglify:dev',
 		'purifycss:dev',
 	    'postcss:dev'

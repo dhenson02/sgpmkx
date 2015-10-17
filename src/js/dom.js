@@ -2,6 +2,7 @@ var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
 	createElement = require("virtual-dom/create-element"),
+	parser = require("dom2hscript"),
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events"),
@@ -20,27 +21,6 @@ function DOM () {
 		level: 0
 	};
 }
-
-DOM.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			if ( name !== "state" ) {
-				this[name] = data[name];
-			}
-			else {
-				var opt;
-				for ( opt in data.state ) {
-					if ( this.state.hasOwnProperty(opt) ) {
-						this.state[opt] = data.state[opt];
-					}
-				}
-				this.update();
-			}
-		}
-	}
-	return this;
-};
 
 DOM.prototype.preRender = function () {
 	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav() : null;
@@ -68,16 +48,30 @@ DOM.prototype.init = function () {
 	}
 };
 
-DOM.prototype.update = function  () {
-	if ( this.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions" ) {
-		events.emit("tab.change", "Overview");
+DOM.prototype.set = function ( data ) {
+	var name;
+	for ( name in data ) {
+		if ( this.hasOwnProperty(name) ) {
+			this[name] = data[name];
+		}
 	}
+};
 
+DOM.prototype.setState = function ( data ) {
+	var opt;
+	for ( opt in data ) {
+		if ( this.state.hasOwnProperty(opt) ) {
+			this.state[opt] = data[opt];
+		}
+	}
+	this.update();
+};
+
+DOM.prototype.update = function () {
 	var refreshDOM = this.preRender();
 	var patches = diff(this.dirtyDOM, refreshDOM);
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
-
 	if ( this.editor ) {
 		this.editor.setValue(pages.current.text);
 	}
@@ -90,13 +84,16 @@ DOM.prototype.initEditor = function () {
 		matchBrackets: true,
 		lineNumbers: false,
 		lineWrapping: true,
+		tabSize: 2,
 		lineSeparator: "\n",
 		theme: phEditorTheme,
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
 				var saveButton = document.getElementById("ph-save");
-				if ( !misc.inTransition.tempSaveText ) pages.current.savePage(saveButton);
+				if ( !misc.inTransition.tempSaveText ) {
+					pages.current.savePage(saveButton);
+				}
 			}
 		}
 	});
@@ -110,19 +107,19 @@ DOM.prototype.initEditor = function () {
 	this.editor.refresh();
 };
 
-DOM.prototype.resetEditor = function () {
-	if ( this.editor ) {
-		var wrap = this.editor.getWrapperElement();
-		wrap.parentNode.removeChild(wrap);
-	}
-	this.editor = null;
-};
-
 DOM.prototype.renderOut = function ( text, type ) {
 	var regLink = /<a (href="https?:\/\/)/gi;
 	type = ( pages.current.level > 1 ) ? "## " + type + "\n" : "";
 	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
 };
+
+/*DOM.prototype.resetEditor = function () {
+	if ( this.editor ) {
+		var wrap = this.editor.getWrapperElement();
+		wrap.parentNode.removeChild(wrap);
+	}
+	this.editor = null;
+};*/
 
 var dom = new DOM();
 

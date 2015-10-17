@@ -96,24 +96,22 @@ Pages.prototype.set = function ( data ) {
 	var name;
 	for ( name in data ) {
 		if ( this.hasOwnProperty(name) ) {
-			if ( name !== "options" ) {
-				this[name] = data[name];
-			}
-			else {
-				var opt;
-				for ( opt in data.options ) {
-					if ( this.options.hasOwnProperty(opt) ) {
-						this.options[opt] = ( data.options[opt] === "yes" || data.options[opt] === "true" ) ?
-							true :
-							( data.options[opt] === "no" || data.options[opt] === "false" ) ?
-								false :
-								data.options[opt];
-					}
-				}
-			}
+			this[name] = data[name];
 		}
 	}
 	return this;
+};
+
+Pages.prototype.setOption = function ( data ) {
+	var opt;
+	for ( opt in data ) {
+		if ( this.options.hasOwnProperty(opt) ) {
+			this.options[opt] = (
+				( data[opt] === "yes" || data[opt] === "true" ) ? true :
+				( data[opt] === "no" || data[opt] === "false" ) ? false : data[opt]
+			);
+		}
+	}
 };
 
 Pages.prototype.init = function ( data ) {

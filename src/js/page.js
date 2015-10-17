@@ -1,10 +1,44 @@
 var h = require("virtual-dom/h"),
+	createElement = require("virtual-dom/create-element"),
 	pages = require("./pages"),
 	events = require("./events"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition;
 
-function renderLoader () {
+/*function Loader () {
+	this.state = inTransition.output;
+	console.log("root - state vs inTransition", this.state, inTransition.output);
+}
+Loader.prototype.type = "Widget";
+Loader.prototype.init = function () {
+	console.log("init - state vs inTransition", this.state, inTransition.output);
+	return createElement(
+ h("#ph-loader.loader-group", [
+ h(".bigSqr", [
+ h(".square.first"),
+ h(".square.second"),
+ h(".square.third"),
+ h(".square.fourth")
+ ]),
+ h(".text", ["loading..."])
+ ])
+	);
+};
+Loader.prototype.update = function ( prev ) {
+	console.log("update - state vs inTransition", this.state, inTransition.output);
+	console.log("update - state vs prev", this.state, prev.state);
+	if ( prev.state !== this.state ) {
+		return ( !this.state ? this.init() : createElement(h("")) );
+	}
+	else {
+		return null;
+	}
+};
+Loader.prototype.destroy = function () {
+	console.log("destroy - state vs inTransition", this.state, inTransition.output);
+};*/
+
+/*function renderLoader() {
 	return (
 		h("#ph-loader.loader-group", [
 			h(".bigSqr", [
@@ -16,7 +50,7 @@ function renderLoader () {
 			h(".text", ["loading..."])
 		])
 	);
-}
+}*/
 
 function renderAddContent () {
 	return (
@@ -68,11 +102,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					if ( event.preventDefault ) event.preventDefault();
 					else event.returnValue = false;
 
-					DOM.set({
-						state: {
-							addingContent: !DOM.state.addingContent
-						}
-					});
+					DOM.setState({ addingContent: !DOM.state.addingContent });
 				}
 			}, [h("span.btn-title", [DOM.state.addingContent ? "Cancel" : "Add content"])]),
 
@@ -84,10 +114,11 @@ function renderEditor ( tabsDOM, DOM ) {
 					if ( event.preventDefault ) event.preventDefault();
 					else event.returnValue = false;
 
-					DOM.set({
-						state: {
-							fullPage: !DOM.state.fullPage
-						}
+					if ( DOM.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions" ) {
+						events.emit("tab.change", "Overview");
+					}
+					DOM.setState({
+						fullPage: !DOM.state.fullPage
 					});
 				}
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
@@ -121,7 +152,6 @@ function renderEditor ( tabsDOM, DOM ) {
 			h("#ph-tabs.ph-tabs", [tabsDOM]),
 
 			h("#ph-buttons", [
-				//h(".clearfix"),
 				h("a#ph-save.ph-edit-btn.ph-save", {
 					href: "#",
 					title: "Save",
@@ -134,29 +164,25 @@ function renderEditor ( tabsDOM, DOM ) {
 							pages.current.savePage(this);
 						}
 					}
-				}, [
-					h("i.icon.icon-diskette", ["Save"])
-				]),
-				h("a.ph-edit-btn.ph-cheatsheet", {
+				}, [ h("i.icon.icon-diskette", ["Save"]) ])
+				/*h("a.ph-edit-btn.ph-cheatsheet", {
 					href: "#",
 					onclick: function ( event ) {
 						event = event || window.event;
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
-						DOM.set({
-							state: {
-								cheatSheet: !DOM.state.cheatSheet
-							}
+						DOM.setState({
+							cheatSheet: !DOM.state.cheatSheet
 						});
 						return false;
 					}
 				}, [
 					h("i.icon.icon-pen", ["Markdown help"])
-				])
+				])*/
 			]),
 
-			h("#cheatSheet", ( !DOM.state.cheatSheet ? { style: { display: "none" } } : null ), [
+			/*h("#cheatSheet", ( !DOM.state.cheatSheet ? { style: { display: "none" } } : null ), [
 				"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
 				h("p", [
 					h("a", {
@@ -170,7 +196,7 @@ function renderEditor ( tabsDOM, DOM ) {
 						href: "http://stackedit.io"
 					}, ["http://stackedit.io"])
 				])
-			]),
+			]),*/
 
 			h("#ph-contentWrap", [
 				h("#ph-input", [
@@ -178,7 +204,6 @@ function renderEditor ( tabsDOM, DOM ) {
 				]),
 				h("#ph-output")
 			]),
-
 			h(".clearfix"),
 			h("small.ph-modified-date", [
 				"Last updated: " + pages.current.modified.toLocaleDateString()
@@ -209,6 +234,7 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 					h("input#ph-search", {
 						type: "text",
 						name: "ph-search",
+						"tab-index": 1,
 						placeholder: pages.options.searchPlaceholder
 					})
 				])

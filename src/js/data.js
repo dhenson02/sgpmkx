@@ -1,14 +1,39 @@
-var	pages = require("./pages"),
+var reqwest = require("reqwest"),
+	sweetAlert = require("sweetalert"),
+	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
-	reqwest = require("reqwest"),
-	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
 	clicked = misc.clicked;
 
 function init () {
-	events.emit("page.init");
+	reqwest({
+		url: baseURL + phOptionsURI,
+		method: "GET",
+		type: "json",
+		contentType: "application/json",
+		withCredentials: phLive,
+		headers: {
+			"Accept": "application/json;odata=verbose",
+			"text-Type": "application/json;odata=verbose",
+			"Content-Type": "application/json;odata=verbose"
+		},
+		success: function ( data ) {
+			var options = {};
+			data.d.results.forEach(function ( option ) {
+				options[option.Variable] = option.Value;
+			});
+			pages.setOption(options);
+		},
+		error: function ( error ) {
+			console.log("Error loading settings, will go with defaults.  Error: ", error);
+			console.log("pages.options: ", pages.options);
+		},
+		complete: function () {
+			events.emit("page.loading");
+		}
+	});
 }
 
 /*events.on("manager.verifying", function () {
@@ -28,38 +53,10 @@ function init () {
 	});
 });*/
 
-events.on("page.init", function () {
-	reqwest({
-		url: baseURL + phOptionsURI,
-		method: "GET",
-		type: "json",
-		contentType: "application/json",
-		withCredentials: phLive,
-		headers: {
-			"Accept": "application/json;odata=verbose",
-			"text-Type": "application/json;odata=verbose",
-			"Content-Type": "application/json;odata=verbose"
-		},
-		success: function ( data ) {
-			var options = {};
-			data.d.results.forEach(function ( option ) {
-				options[option.Variable] = option.Value;
-			});
-			pages.set({ options: options });
-		},
-		error: function ( error ) {
-			console.log("Error loading settings, will go with defaults.  Error: ", error);
-			console.log("pages.options: ", pages.options);
-		},
-		complete: function () {
-			events.emit("page.loading");
-		}
-	});
-});
-
 events.on("page.loading", function () {
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
+
 	reqwest({
 		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Keywords,References,Link,Created,Modified",
 		method: "GET",
@@ -77,7 +74,6 @@ events.on("page.loading", function () {
 			}
 			pages.init(data);
 			events.emit("page.loaded");
-			events.emit("page.success");
 			if ( pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror ) {
 				sweetAlert({
 					title: "Tabs missing?",
@@ -103,7 +99,7 @@ events.on("content.loading", function ( path ) {
 	if ( inTransition.output ) {
 		return false;
 	}
-	//inTransition.output = DOM.output.innerHTML;
+
 	inTransition.output = true;
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
