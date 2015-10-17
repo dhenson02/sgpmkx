@@ -16,30 +16,22 @@ body { opacity: 1; }
 		phLive = true,
 		phEditorTheme = "base16-light",
 		phOptionsURI = "/_api/lists/getByTitle('Options')/items/?$select=Variable,Value",
-		phAddClass = ".loading";
+		phAddClass = ".loading",
+		CodeMirror = null,
+		leftNav = document.getElementById("leftnav"),
+		phWrapper = document.createElement("div"),
+        phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div");
 
     /* Get rid of the ugly nav on the left if it's there */
-    try {
-        var leftNav = document.getElementById("leftnav");
-        leftNav.parentNode.removeChild(leftNav);
-    } catch (e) {}
-
-    var phWrapper = document.createElement("div");
+    if ( leftNav ) leftNav.parentNode.removeChild(leftNav);
     phWrapper.id = "wrapper";
-	try {
-		var phWrapperTemp = document.getElementById("wrapper");
-		phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
-	}
-	catch ( e ) {
-		try {
-			phWrapperTemp = document.querySelector(".tabs-wrapper + div");
-			phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
-		} catch ( e ) {
-			document.body.appendChild(phWrapper);
-		}
-	}
-
 	phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+    if ( phWrapperTemp ) {
+        phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+    }
+    else {
+        document.body.appendChild(phWrapper);
+    }
 
 
 //]]>

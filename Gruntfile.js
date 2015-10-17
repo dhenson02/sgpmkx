@@ -19,10 +19,10 @@ module.exports = function ( grunt ) {
 			dist: {
 				options: {
 					beautify: {
-						indent_level: 2,
+						indent_level: 4,
 						width: 80,
 						quote_style: 0,
-						max_line_len: 1000,
+						max_line_len: 32000,
 						bracketize: true,
 						semicolons: true
 					},
@@ -42,10 +42,11 @@ module.exports = function ( grunt ) {
 						cascade: true
 					},
 					screwIE8: false,
+					reserved: "CodeMirror",
 					wrap: false,
 					mangle: true,
-					sourceMap: false,
-					preserveComments: "some"
+					sourceMap: false
+					//preserveComments: "some"
 				},
 				files: {
 					'dist/js/main.min.js': '.tmp/main.js'
@@ -55,9 +56,17 @@ module.exports = function ( grunt ) {
 				options: {
 					compress: false,
 					screwIE8: false,
-					beautify: true,
+					beautify: {
+						indent_level: 4,
+						width: 80,
+						quote_style: 0,
+						max_line_len: 32000,
+						bracketize: true,
+						semicolons: true
+					},
 					mangle: false,
 					wrap: false,
+					reserved: "CodeMirror",
 					sourceMap: false
 				},
 				files: {

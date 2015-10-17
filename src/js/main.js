@@ -176,10 +176,12 @@ events.on("tab.change", function ( page ) {
 	content._type = page.replace(/\s/g, "").toLowerCase().trim();
 	content.text = pages.current[content._type];
 	pages.current.set(content);
-	if ( codeMirror ) {
+	console.log("tab changed in code");
+	//if ( codeMirror ) {
 		DOM.loadContent();
-	}
+	//}
 	DOM.renderOut(content.text, content.type);
+	console.log("tab should have loaded by now");
 });
 
 events.on("content.adding", function () {

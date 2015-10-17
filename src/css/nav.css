@@ -1,5 +1,6 @@
 #ph-nav {
 	/*z-index: 6;*/
+	transform: translate3d(0,0,0);
 	color: #FAFCFE;
 	background-color: #0072C6;
 	position: relative;
@@ -58,8 +59,8 @@
 .ph-btn .icon::before {
 	margin: 0;
 	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
+	/*top: 50%;
+	transform: translateY(-50%);*/
 }
 
 .ph-section .btn-title,
@@ -114,51 +115,44 @@
 	padding: 15px 20px 15px 40px;
 }
 
-#ph-nav .ph-level-2 {
-	font-size: 15px;
-	padding: 7px 20px;
-}
-
 #ph-nav .ph-page,
 #ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
 }
 
+#ph-nav .ph-level-2 {
+	font-size: 15px;
+	padding: 5px 20px;
+	line-height: 1.6;
+}
+
 #ph-nav .ph-level-3 {
 	color: #FAFCFE;
 	font-size: 13px;
-	padding: 7px 30px 7px 60px;
+	line-height: 1.6;
+	padding: 8px 30px 8px 60px;
 }
 
 #ph-nav .ph-rabbit-hole {
-	/*padding-bottom: 10px;*/
 	list-style-type: none;
-	text-align: right;
+	text-align: left;
+	padding: 8px 0;
+	margin: 0 60px;
+	width: calc(100% - 120px);
 }
 
 #ph-nav .ph-level-4 {
-	transition: background .15s ease-out, border .15s ease-out;
-	background-color: #133E6F;
 	color: #FFFFFF;
 	font-size: 13px;
-	border: 1px solid transparent;
 	margin: 0 auto;
-	padding: 5px 10px;
-	max-width: 80%;
+	padding: 3px 5px;
+	max-width: 85%;
+	line-height: 1.2;
 }
 
 #ph-nav .active {
-	/*transition: font-weight .05s ease-out;*/
 	font-weight: bold;
 	text-shadow: 0 1px 1px #222222;
-}
-
-#ph-nav .ph-rabbit-hole .active {
-	transition: background .15s ease-out, border .15s ease-out;
-	color: #FFFFFF;
-	border-right-color: #FFFFFF;
-	/*font-weight: 300;*/
-	/*background-color: #0C2949;*/
 }
 
 #ph-nav .active > .place {
@@ -183,34 +177,23 @@
 
 #ph-nav .active > .place:after {
 	visibility: hidden;
-	/*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";*/
 	opacity: 0;
 }
 
 #ph-nav .ph-parent a .place:after {
 	position: absolute;
-	transform: translateY(-50%);
 	content: "\2235";
-	/*content: "\002B";*/
-	top: 50%;
 	right: 1em;
-	/*margin-right: 1em;*/
 	text-shadow: 0 1px 0 #133E6F;
 }
 
-#ph-nav .ph-sub-parent a {
-	padding: 15px 30px 15px 65px;
-	text-align: left;
-	text-transform: uppercase;
-	font-size: 15px;
+#ph-nav .ph-sub-parent {
+	background: transparent;
 }
 
-#ph-nav .ph-parent + .ph-sub-parent a {
-	padding-top: 10px;
-}
-
-#ph-nav .ph-rabbit-hole  {
-	padding-bottom: 10px;
+#ph-nav .ph-sub-parent .active,
+#ph-nav .ph-sub-parent a.active:hover {
+	text-decoration: underline;
 }
 
 #ph-nav .ph-opened {

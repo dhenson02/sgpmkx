@@ -20,13 +20,13 @@ var markdownit = require("markdown-it"),
 		tab: false
 	},
 	clicked = -1,
-	codeMirror;
-
+	codeMirror = CodeMirror;
+/*
 try {
 	codeMirror = CodeMirror;
 } catch (e) {
 	codeMirror = null;
-}
+}*/
 
 module.exports = {
 	addEvent: addEvent,

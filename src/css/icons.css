@@ -16,8 +16,8 @@
 	-moz-osx-font-smoothing: grayscale;
 
 	margin: 0 .5em 0 0;
-	vertical-align: middle;
-	font-size: 1.3em;
+	/*vertical-align: middle;
+	font-size: 1.3em;*/
 	-webkit-backface-visibility: hidden;
 	font-family: 'stroke7pixeden';
 	speak: none;
