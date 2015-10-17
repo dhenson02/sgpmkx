@@ -1,3 +1,20 @@
+/**
+ * @license
+ * Test
+ */
+/**
+ * Test2
+ * @license
+ */
+
+/**
+ * @preserve
+ * TestP
+ */
+/**
+ * TestP2
+ * @preserve
+ */
 var h = require("virtual-dom/h"),
 	diff = require("virtual-dom/diff"),
 	patch = require("virtual-dom/patch"),
@@ -19,6 +36,16 @@ var h = require("virtual-dom/h"),
 		'/': {
 			on: function () {
 				events.emit("content.loading", "/");
+			}
+		},
+		'/(\\w+-dev)': {
+			on: function ( dev ) {
+				if (codeMirror) {
+					events.emit("content.loading", "/" + dev);
+				}
+				else {
+					events.emit("content.loading", "/" + dev.slice(0, -4));
+				}
 			}
 		},
 		'/(\\w+)': {
@@ -43,7 +70,10 @@ var h = require("virtual-dom/h"),
 		}
 	}).configure({
 		strict: false,
-		after: resetPage,
+		after: function() {
+			DOM.update();
+		},
+		//after: resetPage,
 		notfound: function () {
 			sweetAlert({
 				title: "Oops",
@@ -106,7 +136,7 @@ events.on("missing", function ( path ) {
 	sweetAlert({
 		title: "Uh oh",
 		text: path + " doesn't seem to match any of our pages.  Try the search!  For now I'll just load the homepage for you.",
-		confirmButtonText: "OK!",
+		confirmButtonText: "Shucks!",
 		allowOutsideClick: false,
 		allowEscapeKey: false,
 		showCancelButton: false
@@ -122,20 +152,8 @@ events.on("content.loaded", function ( data ) {
 		return false;
 	}
 	if ( obj.Link ) {
-		sweetAlert({
-			title: "See ya!",
-			text: "You are now leaving the Public Health Kx.  Bye!",
-			type: "warning",
-			cancelButtonText: "Nah I'll stay",
-			confirmButtonText: "Go!",
-			//confirmButtonColor: "#ec6c62",
-			closeOnConfirm: false,
-			showCancelButton: true,
-			showLoaderOnConfirm: true
-		}, function () {
-			window.open(obj.Link, "_blank");
-			return false;
-		});
+		window.open(obj.Link, "_blank");
+		return false;
 	}
 
 	pages.current.set({
@@ -164,11 +182,10 @@ events.on("content.loaded", function ( data ) {
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
 	inTransition.output = false;
-	DOM.loadContent();
+	DOM.update();
 	DOM.renderOut(pages.current.text, pages.current.type);
 	document.title = pages.current.title;
 });
-
 events.on("tab.change", function ( page ) {
 	var content = {};
 	content[pages.current._type] = pages.current.text;
@@ -176,15 +193,11 @@ events.on("tab.change", function ( page ) {
 	content._type = page.replace(/\s/g, "").toLowerCase().trim();
 	content.text = pages.current[content._type];
 	pages.current.set(content);
-	console.log("tab changed in code");
-	//if ( codeMirror ) {
-		DOM.loadContent();
-	//}
+	DOM.update();
 	DOM.renderOut(content.text, content.type);
-	console.log("tab should have loaded by now");
 });
 
-events.on("content.adding", function () {
+/*events.on("content.adding", function () {
 
 });
 
@@ -194,6 +207,6 @@ function resetPage () {
 			addingContent: false
 		}
 	});
-}
+}*/
 
 pageInit();

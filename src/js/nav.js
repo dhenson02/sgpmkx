@@ -1,6 +1,4 @@
 var h = require("virtual-dom/h"),
-	codeMirror = require("./helpers").codeMirror,
-	map = require("lodash/collection/map"),
 	pages = require("./pages"),
 	events = require("./events"),
 	hashArray, level, a;
@@ -35,7 +33,7 @@ function renderSection ( section ) {
 		links[i] = renderLink(section.links[i]);
 	}
 	return (
-		h("li.ph-section.link", [
+		h("li#ph-link-" + section.id + ".ph-section.link", [
 			h("p", [
 				h("a" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
 					"href": "#" + section.path
@@ -61,20 +59,6 @@ function renderNav () {
 			links.push(renderSection(pages.sections[name]));
 		}
 	}
-/*	if ( codeMirror ) {
-		links.unshift(
-			( phAddClass ) ?
-				null :
-				(
-					h("a.ph-btn.ph-create" + ( window.location.hash === "#/new" ? ".active" : "" ), {
-						href: "#/new",
-						title: "New section"
-					}, [
-						h("span.btn-title", ["Add content"])
-					])
-				)
-		);
-	}*/
 	return (
 		h("#ph-nav", [
 			h(".header", [

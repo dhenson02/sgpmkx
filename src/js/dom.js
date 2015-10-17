@@ -3,7 +3,6 @@ var h = require("virtual-dom/h"),
 	patch = require("virtual-dom/patch"),
 	createElement = require("virtual-dom/create-element"),
 	misc = require("./helpers"),
-	codeMirror = misc.codeMirror,
 	pages = require("./pages"),
 	events = require("./events"),
 	renderPage = require("./page"),
@@ -36,7 +35,7 @@ DOM.prototype.set = function ( data ) {
 						this.state[opt] = data.state[opt];
 					}
 				}
-				this.loadContent();
+				this.update();
 			}
 		}
 	}
@@ -56,6 +55,7 @@ DOM.prototype.init = function () {
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
+	this.editor = null;
 	this.searchInput = document.getElementById("ph-search");
 	this.content = document.getElementById("ph-content");
 	this.title = document.getElementById("ph-title");
@@ -63,28 +63,29 @@ DOM.prototype.init = function () {
 	this.textarea = document.getElementById("ph-textarea");
 	this.output = document.getElementById("ph-output");
 
-	if ( codeMirror ) this.resetEditor();
+	if ( misc.codeMirror ) {
+		this.initEditor();
+	}
 };
 
-DOM.prototype.loadContent = function  () {
+DOM.prototype.update = function  () {
 	if ( this.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions" ) {
 		events.emit("tab.change", "Overview");
 	}
+
 	var refreshDOM = this.preRender();
 	var patches = diff(this.dirtyDOM, refreshDOM);
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
-	if ( codeMirror ) {
-		this.resetEditor();
-		if ( !this.state.fullPage ) {
-			this.initEditor();
-		}
+
+	if ( this.editor ) {
+		this.editor.setValue(pages.current.text);
 	}
 };
 
 DOM.prototype.initEditor = function () {
 	var self = this;
-	this.editor = codeMirror.fromTextArea(this.textarea, {
+	this.editor = misc.codeMirror.fromTextArea(this.textarea, {
 		mode: 'gfm',
 		matchBrackets: true,
 		lineNumbers: false,
@@ -95,16 +96,16 @@ DOM.prototype.initEditor = function () {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
 				var saveButton = document.getElementById("ph-save");
-				if ( !misc.inTransition.tempSaveText ) pages.current.savePage(saveButton)
+				if ( !misc.inTransition.tempSaveText ) pages.current.savePage(saveButton);
 			}
 		}
 	});
 	this.editor.on("change", function ( e ) {
 		var val = e.getValue();
-		self.renderOut(val, pages.current.type);
 		pages.current.set({
 			text: val
 		});
+		self.renderOut(val, pages.current.type);
 	});
 	this.editor.refresh();
 };

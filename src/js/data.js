@@ -5,8 +5,7 @@ var	pages = require("./pages"),
 	sweetAlert = require("sweetalert"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
-	clicked = misc.clicked,
-	reduce = require("lodash/collection/reduce");
+	clicked = misc.clicked;
 
 function init () {
 	events.emit("page.init");
@@ -42,10 +41,10 @@ events.on("page.init", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			var options = reduce(data.d.results, function ( setup, option ) {
-				setup[option.Variable] = option.Value;
-				return setup;
-			}, {});
+			var options = {};
+			data.d.results.forEach(function ( option ) {
+				options[option.Variable] = option.Value;
+			});
 			pages.set({ options: options });
 		},
 		error: function ( error ) {
@@ -192,7 +191,78 @@ events.on("content.create", function ( data, path, title ) {
 	});
 });
 
-events.on("content.save", function ( data, id, btnText ) {
+events.on("title.saving", function ( title, el ) {
+	if ( inTransition.titleBorder ) {
+		clearTimeout(inTransition.titleBorder);
+	}
+	reqwest({
+		url: baseURL + phContext + "/_api/contextinfo",
+		method: "POST",
+		withCredentials: phLive,
+		headers: {
+			"Accept": "application/json;odata=verbose",
+			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+		},
+		success: function ( ctx ) {
+			reqwest({
+				url: sitePath + "/items(" + pages.current.id + ")",
+				method: "POST",
+				data: JSON.stringify({
+					'__metadata': {
+						'type': pages.current.listItemType
+					},
+					'Title': title
+				}),
+				type: "json",
+				withCredentials: phLive,
+				headers: {
+					"X-HTTP-Method": "MERGE",
+					"Accept": "application/json;odata=verbose",
+					"text-Type": "application/json;odata=verbose",
+					"Content-Type": "application/json;odata=verbose",
+					"X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue,
+					"IF-MATCH": "*"
+				},
+				success: function () {
+					pages.current.set({
+						_title: title
+					});
+					document.title = title;
+					el.className = el.className.replace(/ ?loading/gi, "");
+					DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
+					el.style.borderBottomColor = "#00B16A";
+				},
+				error: function ( error ) {
+					el.className = el.className.replace(/ ?loading/gi, "");
+					el.style.border = "2px dashed #FF2222";
+					el.style.fontWeight = "bold";
+					console.log("Error saving title: ", error);
+				},
+				complete: function () {
+					inTransition.title = false;
+					inTransition.titleBorder = setTimeout(function () {
+						el.removeAttribute("style");
+						el.contentEditable = true;
+						inTransition.titleBorder = null;
+					}, 1000);
+				}
+			});
+		},
+		error: function ( error ) {
+			el.className = el.className.replace(/ ?loading/gi, "");
+			el.style.border = "2px dashed #FF2222";
+			el.style.fontWeight = "bold";
+			console.log("Error getting new digest: ", error);
+			inTransition.title = false;
+			inTransition.titleBorder = setTimeout(function () {
+				el.removeAttribute("style");
+				el.contentEditable = true;
+			}, 1000);
+		}
+	});
+});
+
+events.on("content.save", function ( data, btnText ) {
 	btnText.removeAttribute("style");
 	btnText.innerHTML = "...saving...";
 	if ( inTransition.tempSaveText ) {
@@ -208,7 +278,7 @@ events.on("content.save", function ( data, id, btnText ) {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + id + ")",
+				url: sitePath + "/items(" + pages.current.id + ")",
 				method: "POST",
 				data: JSON.stringify(data),
 				type: "json",
@@ -231,14 +301,14 @@ events.on("content.save", function ( data, id, btnText ) {
 					btnText.style.color = "#FF2222";
 					btnText.style.fontWeight = "bold";
 					btnText.innerHTML = "Connection error (press F12 for Console)";
-					console["error" || "log"]("Couldn't save due to error: ", error.response);
+					console.log("Couldn't save due to error: ", error.response);
 				},
 				complete: function () {
 					inTransition.tempSaveText = setTimeout(function () {
 						btnText.removeAttribute("style");
 						btnText.innerHTML = "Save";
 						inTransition.tempSaveText = null;
-					}, 1500);
+					}, 1000);
 				}
 			});
 		},
@@ -247,15 +317,12 @@ events.on("content.save", function ( data, id, btnText ) {
 			btnText.style.color = "#FF2222";
 			btnText.style.fontWeight = "bold";
 			btnText.innerHTML = "Digest error (press F12 for Console)";
-			console["error" || "log"]("Couldn't save due to error retrieving new digest: ", error.response);
 			console.log("Error getting new digest: ", error);
-		},
-		complete: function () {
 			inTransition.tempSaveText = setTimeout(function () {
 				btnText.removeAttribute("style");
 				btnText.innerHTML = "Save";
 				inTransition.tempSaveText = null;
-			}, 1500);
+			}, 1000);
 		}
 	});
 });

@@ -6,6 +6,7 @@ body { opacity: 0; }
 body { opacity: 1; }
 </style>
 <title>Velocity Raptinators</title>
+<div id="ph-root"></div>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -32,8 +33,6 @@ body { opacity: 1; }
     else {
         document.body.appendChild(phWrapper);
     }
-
-
 //]]>
 </script>
 <style type="text/css">

@@ -1,7 +1,6 @@
 var h = require("virtual-dom/h"),
 	pages = require("./pages"),
 	events = require("./events"),
-	map = require("lodash/collection/map"),
 	tabs = [
 		{
 			title: "Overview",
@@ -31,7 +30,7 @@ var h = require("virtual-dom/h"),
 
 function renderTabs () {
 	var style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } },
-		group = map(tabs, function ( tab ) {
+		group = tabs.map(function ( tab ) {
 			var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
 			var className = ".ph-tab-" + tabName + (
 					( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 && tabName !== "contributions" ) ? ".tab-empty" : ""
@@ -59,7 +58,6 @@ function renderTabs () {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName
 						}, ["Submit your own!"]) :
-						//}, [String("POC: " + pages.options.contribPOCName)]) :
 						null
 				])
 			);

@@ -2,30 +2,32 @@ module.exports = function ( grunt ) {
 	grunt.initConfig({
 		browserify: {
 			options: {
-				sourceMap: true
+				browserifyOptions: {
+					debug: true
+				}
 			},
 			dist: {
 				files: {
-					'.tmp/main.js': 'src/js/main.js'
+					'.tmp/main.min.js': 'src/js/main.js'
 				}
-			}/*,
+			},
 			dev: {
 				files: {
-					'dist/js/main.js': 'src/js/main.js'
+					'.tmp/main.js': 'src/js/main.js'
 				}
-			}*/
+			}
 		},
 		uglify: {
 			dist: {
 				options: {
-					beautify: {
+					/*beautify: {
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
 						max_line_len: 32000,
 						bracketize: true,
 						semicolons: true
-					},
+					},*/
 					compress: {
 						unsafe: true,
 						drop_console: true,
@@ -41,21 +43,20 @@ module.exports = function ( grunt ) {
 						sequences: true,
 						cascade: true
 					},
-					screwIE8: false,
+					screwIE8: true,
 					reserved: "CodeMirror",
 					wrap: false,
 					mangle: true,
-					sourceMap: false
-					//preserveComments: "some"
+					sourceMap: true,
+					preserveComments: "some"
 				},
 				files: {
-					'dist/js/main.min.js': '.tmp/main.js'
+					'dist/js/main.min.js': '.tmp/main.min.js'
 				}
 			},
 			dev: {
 				options: {
 					compress: false,
-					screwIE8: false,
 					beautify: {
 						indent_level: 4,
 						width: 80,
@@ -64,13 +65,14 @@ module.exports = function ( grunt ) {
 						bracketize: true,
 						semicolons: true
 					},
+					screwIE8: true,
 					mangle: false,
 					wrap: false,
 					reserved: "CodeMirror",
-					sourceMap: false
+					sourceMap: true,
+					preserveComments: false
 				},
 				files: {
-					//'dist/js/main.min.js': '.tmp/main.js'
 					'dist/js/main.js': '.tmp/main.js'
 				}
 			}
@@ -96,7 +98,7 @@ module.exports = function ( grunt ) {
 					'node_modules/horsey/dist/horsey.min.css'
 					/*'node_modules/animate.css/animate.min.css'*/
 				],
-				dest: '.tmp/main.css'
+				dest: '.tmp/main.min.css'
 			},
 			dev: {
 				src: ['dist/main_template.html', 'dist/js/main.js'],
@@ -117,7 +119,7 @@ module.exports = function ( grunt ) {
 					'node_modules/horsey/dist/horsey.css'
 					/*'node_modules/animate.css/animate.min.css'*/
 				],
-				dest: 'dist/css/main.pre.css'
+				dest: '.tmp/main.css'
 			}
 		},
 		postcss: {
@@ -125,16 +127,16 @@ module.exports = function ( grunt ) {
 				map: { inline: false },
 				processors: [
 					require('pixrem')(),
-					require('autoprefixer')({ browsers: 'last 3 versions' }),
+					require('autoprefixer')({ browsers: 'last 2 versions' }),
 					require('cssnano')()
 				]
 			},
 			dist: {
-				src: '.tmp/main.css',
+				src: '.tmp/main.min.css',
 				dest: 'dist/css/main.min.css'
 			},
 			dev: {
-				src: 'dist/css/main.pre.css',
+				src: '.tmp/main.css',
 				dest: 'dist/css/main.css'
 			}
 		},
@@ -197,7 +199,7 @@ module.exports = function ( grunt ) {
 					'src/js/*.js'
 				],
 				tasks: [
-					'browserify:dist',
+					'browserify:dev',
 					'uglify:dev',
 					'purifycss:dev',
 				    'postcss:dev'

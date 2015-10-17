@@ -107,12 +107,13 @@ function renderEditor ( tabsDOM, DOM ) {
 						title: title
 					});
 					if ( title !== pages.current._title ) {
-						this.style.transition = "border .05s ease-out";
-						this.style.borderBottomColor = "#F62459";
-						// 3px double
-					}
-					else {
-						this.removeAttribute("style");
+						if ( inTransition.title || !pages.options.saveTitleAfterEdit ) {
+							return false;
+						}
+						inTransition.title = true;
+						this.contentEditable = false;
+						this.className += " loading";
+						events.emit("title.saving", title, this);
 					}
 				}
 			}, [String(pages.current.title || "")]),

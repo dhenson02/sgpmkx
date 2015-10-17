@@ -97,7 +97,7 @@ body {
 	border: none;
 	border-bottom: 4px dashed transparent;
 	padding: 10px 0;
-	transition: border .05s ease-out;
+	/*transition: border .05s ease-out;*/
 	outline: 0;
 }
 
@@ -107,7 +107,7 @@ body {
 
 #ph-title.ph-cm:focus {
 	color: #777777;
-	border-bottom-color: #00B16A;
+	border-bottom-color: #F62459;
 }
 
 #ph-contentWrap {

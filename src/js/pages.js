@@ -1,7 +1,76 @@
 var events = require("./events"),
-	Content = require("./content"),
-	pluck = require("lodash/collection/pluck");
+	misc = require("./helpers");
 
+function Content () {
+	if ( !(this instanceof Content) ) {
+		return new Content();
+	}
+	this.id = -1;
+	this.title = "";
+	this._title = "";
+	this.keywords = [];
+	this.references = [];
+	this.icon = "";
+	this.text = "";
+	this.overview = "";
+	this.policy = "";
+	this.training = "";
+	this.resources = "";
+	this.tools = "";
+	this.contributions = "";
+	this.section = "";
+	this.program = "";
+	this.page = "";
+	this.rabbitHole = "";
+	this.type = "Overview";
+	this._type = "overview";
+	this.modified = new Date();
+	this.listItemType = "";
+	this.timestamp = null;
+	this.level = -1;
+}
+
+Content.prototype.set = function ( data ) {
+	var name;
+	for ( name in data ) {
+		if ( this.hasOwnProperty(name) ) {
+			if ( typeof data[name] === "string" ) {
+				this[name] = data[name].trim();
+			}
+			else {
+				this[name] = data[name];
+			}
+		}
+	}
+	return this;
+};
+
+Content.prototype.savePage = function ( self ) {
+	this.set({
+		text: this.text.trim(),
+		keywords: this.keywords,
+		modified: new Date()
+	});
+	this[this._type] = this.text;
+	var data = {
+		'__metadata': {
+			'type': this.listItemType
+		},
+		'Title': this.title,
+		/*'Keywords': {
+		 results: this.keywords
+		 },*/
+		'Overview': this.overview,
+		'Policy': this.policy,
+		'Training': this.training,
+		'Resources': this.resources,
+		'Tools': this.tools,
+		'Contributions': this.contributions
+	};
+	self.className += " loading";
+	var el = self.children[0];
+	events.emit("content.save", data, el);
+};
 
 function Pages () {
 	if ( !(this instanceof Pages) ) {
@@ -18,7 +87,8 @@ function Pages () {
 		contribEmailSubject: "Contribution to PH Kx",
 		contribEmailBody: "I thought this amazing tool I made could benefit others.  Here's why:\n\n",
 		hideSearchWhileEditing: true,
-		hideNavWhileEditing: true
+		hideNavWhileEditing: true,
+		saveTitleAfterEdit: true
 	};
 }
 
@@ -67,6 +137,7 @@ Pages.prototype.init = function ( data ) {
 		result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
 		result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
+		if ( !misc.codeMirror && /-dev/gi.test(result.Section + result.Program + result.Page + result.rabbitHole) ) continue;
 		/**
 		 * This creates a new property `Path` and cascades down the
 		 * logical chain of categories.
@@ -131,8 +202,15 @@ Pages.prototype.init = function ( data ) {
 		/**
 		 * Used for searching the site quick and easy using Horsey.
 		 */
+		keywords = keywords.map(function ( obj ) {
+			return obj.Label;
+		});
+		references = references.map(function ( obj ) {
+			return obj.Label;
+		});
 		this.titles[i] = {
-			text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
+			//text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
+			text: page.Title + " " + keywords.join(" ") + references.join(" "),
 			value: page.Path,
 			renderText: page.Title
 		};
