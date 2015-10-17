@@ -1,44 +1,11 @@
-var h = require("virtual-dom/h"),
-	createElement = require("virtual-dom/create-element"),
-	pages = require("./pages"),
-	events = require("./events"),
+var h = require("virtual-dom/dist/virtual-dom").h,
 	misc = require("./helpers"),
-	inTransition = misc.inTransition;
+	inTransition = misc.inTransition,
+	pages = require("./pages"),
+	events = require("./events");
 
-/*function Loader () {
-	this.state = inTransition.output;
-	console.log("root - state vs inTransition", this.state, inTransition.output);
-}
-Loader.prototype.type = "Widget";
-Loader.prototype.init = function () {
-	console.log("init - state vs inTransition", this.state, inTransition.output);
-	return createElement(
- h("#ph-loader.loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", ["loading..."])
- ])
-	);
-};
-Loader.prototype.update = function ( prev ) {
-	console.log("update - state vs inTransition", this.state, inTransition.output);
-	console.log("update - state vs prev", this.state, prev.state);
-	if ( prev.state !== this.state ) {
-		return ( !this.state ? this.init() : createElement(h("")) );
-	}
-	else {
-		return null;
-	}
-};
-Loader.prototype.destroy = function () {
-	console.log("destroy - state vs inTransition", this.state, inTransition.output);
-};*/
-
-/*function renderLoader() {
+/*
+function renderLoader() {
 	return (
 		h("#ph-loader.loader-group", [
 			h(".bigSqr", [
@@ -50,7 +17,8 @@ Loader.prototype.destroy = function () {
 			h(".text", ["loading..."])
 		])
 	);
-}*/
+}
+*/
 
 function renderAddContent () {
 	return (
@@ -64,6 +32,7 @@ function renderAddContent () {
 				"Title",
 				h("input.ph-title-input", {
 					oninput: function ( e ) {
+						this.value = pages.current.modified.toLocaleString();
 						return e;
 					}
 				})
@@ -90,8 +59,11 @@ function renderAddContent () {
 
 function renderEditor ( tabsDOM, DOM ) {
 	return (
-		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ) /*+ ( DOM.state.addingContent ? ".adding-content" : "" )*/, [
+		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
+
+
 			h("#ph-create-wrap", [DOM.state.addingContent ? renderAddContent() : null]),
+
 
 			h("a.ph-btn.ph-create", {
 				href: "#",
@@ -105,6 +77,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					DOM.setState({ addingContent: !DOM.state.addingContent });
 				}
 			}, [h("span.btn-title", [DOM.state.addingContent ? "Cancel" : "Add content"])]),
+
 
 			h("a.ph-toggle-editor", {
 				href: "#",
@@ -123,6 +96,7 @@ function renderEditor ( tabsDOM, DOM ) {
 				}
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
 
+
 			h("h1#ph-title.ph-cm", {
 				contentEditable: true,
 				onkeypress: function ( e ) {
@@ -138,10 +112,10 @@ function renderEditor ( tabsDOM, DOM ) {
 						title: title
 					});
 					if ( title !== pages.current._title ) {
-						if ( inTransition.title || !pages.options.saveTitleAfterEdit ) {
+						if ( misc.inTransition.title || !pages.options.saveTitleAfterEdit ) {
 							return false;
 						}
-						inTransition.title = true;
+						misc.inTransition.title = true;
 						this.contentEditable = false;
 						this.className += " loading";
 						events.emit("title.saving", title, this);
@@ -149,7 +123,9 @@ function renderEditor ( tabsDOM, DOM ) {
 				}
 			}, [String(pages.current.title || "")]),
 
+
 			h("#ph-tabs.ph-tabs", [tabsDOM]),
+
 
 			h("#ph-buttons", [
 				h("a#ph-save.ph-edit-btn.ph-save", {
@@ -160,7 +136,7 @@ function renderEditor ( tabsDOM, DOM ) {
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
-						if ( !inTransition.tempSaveText ) {
+						if ( !misc.inTransition.tempSaveText ) {
 							pages.current.savePage(this);
 						}
 					}

@@ -21,14 +21,14 @@ module.exports = function ( grunt ) {
 		uglify: {
 			dist: {
 				options: {
-					/*beautify: {
+					beautify: {
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
-						max_line_len: 32000,
+						max_line_len: 4000,
 						bracketize: true,
 						semicolons: true
-					},*/
+					},
 					compress: {
 						unsafe: true,
 						drop_console: true,
@@ -58,19 +58,12 @@ module.exports = function ( grunt ) {
 			dev: {
 				options: {
 					compress: false,
-					beautify: true/*{
-						indent_level: 4,
-						width: 80,
-						quote_style: 0,
-						max_line_len: 32000,
-						bracketize: true,
-						semicolons: true
-					}*/,
+					beautify: true,
 					screwIE8: true,
 					mangle: false,
 					wrap: false,
 					reserved: "CodeMirror",
-					//sourceMap: true,
+					sourceMap: true,
 					preserveComments: "all"
 				},
 				files: {

@@ -15,13 +15,13 @@
  * TestP2
  * @preserve
  */
-var h = require("virtual-dom/h"),
-	diff = require("virtual-dom/diff"),
-	patch = require("virtual-dom/patch"),
-	reqwest = require("reqwest"),
+var vdom = require("virtual-dom/dist/virtual-dom"),
+	h = vdom.h,
+	diff = vdom.diff,
+	patch = vdom.patch,
+	Router = require("director/build/director").Router,
 	sweetAlert = require("sweetalert"),
 	horsey = require("horsey"),
-	Router = require("director/build/director").Router,
 
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
@@ -147,7 +147,7 @@ events.on("content.loaded", function ( data ) {
 		return false;
 	}
 
-	pages.current.set({
+	pages.current = pages.current.reset({
 		id: obj.ID,
 		title: obj.Title || "",
 		_title: obj.Title || "",
@@ -175,6 +175,9 @@ events.on("content.loaded", function ( data ) {
 
 	inTransition.output = false;
 	DOM.update();
+	if ( window.pageYOffset > DOM.content.offsetTop ) {
+		window.scroll(0, DOM.content.offsetTop);
+	}
 	DOM.renderOut(pages.current.text, pages.current.type);
 	document.title = pages.current.title;
 });

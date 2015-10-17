@@ -1,14 +1,14 @@
-var h = require("virtual-dom/h"),
-	diff = require("virtual-dom/diff"),
-	patch = require("virtual-dom/patch"),
-	createElement = require("virtual-dom/create-element"),
-	parser = require("dom2hscript"),
+var vdom = require("virtual-dom/dist/virtual-dom"),
+	h = vdom.h,
+	diff = vdom.diff,
+	patch = vdom.patch,
+	createElement = vdom.create,
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events"),
-	renderPage = require("./page"),
 	renderNav = require("./nav"),
-	renderTabs = require("./tabs");
+	renderTabs = require("./tabs"),
+	renderPage = require("./page");
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -48,30 +48,27 @@ DOM.prototype.init = function () {
 	}
 };
 
-DOM.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
+DOM.prototype.set = function ( data, ctx ) {
+	ctx = ctx || this;
+	for ( var name in data ) {
+		if ( ctx.hasOwnProperty(name) ) {
+			ctx[name] = data[name];
 		}
 	}
 };
 
 DOM.prototype.setState = function ( data ) {
-	var opt;
-	for ( opt in data ) {
-		if ( this.state.hasOwnProperty(opt) ) {
-			this.state[opt] = data[opt];
-		}
-	}
+	this.set(data, this.state);
 	this.update();
 };
 
 DOM.prototype.update = function () {
-	var refreshDOM = this.preRender();
-	var patches = diff(this.dirtyDOM, refreshDOM);
+	var refreshDOM = this.preRender(),
+		patches = diff(this.dirtyDOM, refreshDOM);
+
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
+
 	if ( this.editor ) {
 		this.editor.setValue(pages.current.text);
 	}

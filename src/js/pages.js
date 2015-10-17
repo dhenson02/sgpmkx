@@ -1,9 +1,9 @@
-var events = require("./events"),
-	misc = require("./helpers");
+var misc = require("./helpers"),
+	events = require("./events");
 
-function Content () {
+function Content ( data ) {
 	if ( !(this instanceof Content) ) {
-		return new Content();
+		return new Content( data );
 	}
 	this.id = -1;
 	this.title = "";
@@ -28,21 +28,22 @@ function Content () {
 	this.listItemType = "";
 	this.timestamp = null;
 	this.level = -1;
+	if ( data ) {
+		return this.set(data);
+	}
 }
 
 Content.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
+	for ( var name in data ) {
 		if ( this.hasOwnProperty(name) ) {
-			if ( typeof data[name] === "string" ) {
-				this[name] = data[name].trim();
-			}
-			else {
-				this[name] = data[name];
-			}
+			this[name] = ( typeof data[name] === "string" ) ? data[name].trim() : this[name] = data[name];
 		}
 	}
 	return this;
+};
+
+Content.prototype.reset = function ( data ) {
+	return new Content(data);
 };
 
 Content.prototype.savePage = function ( self ) {
@@ -80,7 +81,7 @@ function Pages () {
 	this.options = {
 		hideEmptyTabs: true,
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
-		emptyTabsNotify: false,
+		emptyTabsNotify: true,
 		images: "/kj/kx7/PublicHealth/SiteAssets/Images",
 		contribPOCName: "Jane Dizoe",
 		contribPOCEmail: "joe.dirt@example.com",
@@ -92,30 +93,30 @@ function Pages () {
 	};
 }
 
-Pages.prototype.set = function ( data ) {
-	var name;
-	for ( name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = data[name];
+Pages.prototype.set = function ( data, ctx ) {
+	var self = ctx || this;
+	for ( var name in data ) {
+		if ( self.hasOwnProperty(name) ) {
+			if ( !ctx ) {
+				self[name] = data[name];
+			}
+			else {
+				self[name] = (
+					( data[name] === "yes" || data[name] === "true" ) ? true :
+						( data[name] === "no" || data[name] === "false" ) ? false : data[name]
+				);
+			}
 		}
 	}
-	return this;
 };
 
 Pages.prototype.setOption = function ( data ) {
-	var opt;
-	for ( opt in data ) {
-		if ( this.options.hasOwnProperty(opt) ) {
-			this.options[opt] = (
-				( data[opt] === "yes" || data[opt] === "true" ) ? true :
-				( data[opt] === "no" || data[opt] === "false" ) ? false : data[opt]
-			);
-		}
-	}
+	this.set(data, this.options);
 };
 
 Pages.prototype.init = function ( data ) {
-	var urls = [],
+	var regDev = /-dev/gi,
+		urls = [],
 		i = 0,
 		count = data.d.results.length,
 		result,
@@ -135,7 +136,7 @@ Pages.prototype.init = function ( data ) {
 		result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
 		result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
-		if ( !misc.codeMirror && /-dev/gi.test(result.Section + result.Program + result.Page + result.rabbitHole) ) continue;
+		if ( !misc.codeMirror && regDev.test(result.Section + result.Program + result.Page + result.rabbitHole) ) continue;
 		/**
 		 * This creates a new property `Path` and cascades down the
 		 * logical chain of categories.

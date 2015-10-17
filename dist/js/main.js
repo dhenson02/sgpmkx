@@ -300,254 +300,30 @@
         }("object" == typeof exports ? exports : window);
     }, {} ],
     2: [ function(require, module, exports) {
-        var parser = require("./parser"), parseStyle = function(e) {
-            for (var r = e.style, t = {}, a = 0; a < r.length; ++a) {
-                var s = r.item(a);
-                t[s] = r[s];
-            }
+        function Event(t) {
+            return this instanceof Event ? t ? mixin(t, proto) : void 0 : new Event(t);
+        }
+        function mixin(t, i) {
+            for (var s in i) t[s] = i[s];
             return t;
-        }, parseDOM = function(e) {
-            if (!e.tagName && e.nodeType === Node.TEXT_NODE) return JSON.stringify(e.textContent);
-            if (e.attributes) {
-                for (var r = {}, t = 0; t < e.attributes.length; t++) {
-                    var a = e.attributes[t];
-                    a.name && a.value && ("style" == a.name ? r.style = parseStyle(e) : r[a.name] = a.value);
-                }
-                var s = "h('" + e.tagName;
-                r.id && (s = s + "#" + r.id, delete r.id), r["class"] && (s = s + "." + r["class"].replace(/ /g, "."), 
-                delete r["class"]), s += "',", s += JSON.stringify(r);
-                s += ",[";
-                for (var t = 0; t < e.childNodes.length; t++) s += parseDOM(e.childNodes[t]) + ",";
-                return s += "])";
-            }
-        }, parseHTML = function(e) {
-            return parseDOM(parser(e));
+        }
+        var proto = Event.prototype;
+        module.exports = Event, proto.on = function(t, i) {
+            return this._cbs = this._cbs || {}, (this._cbs[t] || (this._cbs[t] = [])).unshift(i), 
+            this;
+        }, proto.off = function(t, i) {
+            if (this._cbs = this._cbs || {}, !t) return this._cbs = {};
+            if (!i) return delete this._cbs[t];
+            for (var s, n = this._cbs[t] || []; n && ~(s = n.indexOf(i)); ) n.splice(s, 1);
+            return this;
+        }, proto.fire = function(t) {
+            this._cbs = this._cbs || {};
+            var i = t.name || t, s = t.ctx || this, n = this._cbs[i];
+            if (n) for (var r = [].slice.call(arguments, 1), e = n.length; e--; ) n[e].apply(s, r);
+            return this;
         };
-        exports.parseDOM = parseDOM, exports.parseHTML = parseHTML, module.exports = exports;
-    }, {
-        "./parser": 3
-    } ],
+    }, {} ],
     3: [ function(require, module, exports) {
-        var parser;
-        if (!window.DOMParser) throw new Error("DOMParser required");
-        !function(r) {
-            "use strict";
-            var e = r.prototype, t = e.parseFromString;
-            try {
-                if (new r().parseFromString("", "text/html")) return;
-            } catch (n) {}
-            e.parseFromString = function(r, e) {
-                if (/^\s*text\/html\s*(?:;|$)/i.test(e)) {
-                    var n = document.implementation.createHTMLDocument("");
-                    return r.toLowerCase().indexOf("<!doctype") > -1 ? n.documentElement.innerHTML = r : n.body.innerHTML = r, 
-                    n;
-                }
-                return t.apply(this, arguments);
-            };
-        }(DOMParser), parser = new DOMParser(), module.exports = function(r, e) {
-            var t, n = parser.parseFromString(r, "text/html");
-            t = r.substring(0, 10).match(/\<body.+/gi) ? n.getElementsByTagName("body")[0] : n.getElementsByTagName("body")[0].firstChild;
-            var a = t.getElementsByTagName("parsererror");
-            if (a && a.length > 0) {
-                if (e === !0) throw new Error(a[0].textContent);
-                for (var o = 0; o < a.length; o++) a[o].parentElement.removeChild(a[o]);
-            }
-            return t;
-        };
-    }, {} ],
-    4: [ function(require, module, exports) {
-        !function(e) {
-            function t() {
-                this._events = {}, this._conf && s.call(this, this._conf);
-            }
-            function s(e) {
-                e && (this._conf = e, e.delimiter && (this.delimiter = e.delimiter), e.maxListeners && (this._events.maxListeners = e.maxListeners), 
-                e.wildcard && (this.wildcard = e.wildcard), e.newListener && (this.newListener = e.newListener), 
-                this.wildcard && (this.listenerTree = {}));
-            }
-            function i(e) {
-                this._events = {}, this.newListener = !1, s.call(this, e);
-            }
-            function n(e, t, s, i) {
-                if (!s) return [];
-                var r, l, o, h, a, f, c, u = [], _ = t.length, p = t[i], v = t[i + 1];
-                if (i === _ && s._listeners) {
-                    if ("function" == typeof s._listeners) return e && e.push(s._listeners), [ s ];
-                    for (r = 0, l = s._listeners.length; l > r; r++) e && e.push(s._listeners[r]);
-                    return [ s ];
-                }
-                if ("*" === p || "**" === p || s[p]) {
-                    if ("*" === p) {
-                        for (o in s) "_listeners" !== o && s.hasOwnProperty(o) && (u = u.concat(n(e, t, s[o], i + 1)));
-                        return u;
-                    }
-                    if ("**" === p) {
-                        c = i + 1 === _ || i + 2 === _ && "*" === v, c && s._listeners && (u = u.concat(n(e, t, s, _)));
-                        for (o in s) "_listeners" !== o && s.hasOwnProperty(o) && ("*" === o || "**" === o ? (s[o]._listeners && !c && (u = u.concat(n(e, t, s[o], _))), 
-                        u = u.concat(n(e, t, s[o], i))) : u = o === v ? u.concat(n(e, t, s[o], i + 2)) : u.concat(n(e, t, s[o], i)));
-                        return u;
-                    }
-                    u = u.concat(n(e, t, s[p], i + 1));
-                }
-                if (h = s["*"], h && n(e, t, h, i + 1), a = s["**"]) if (_ > i) {
-                    a._listeners && n(e, t, a, _);
-                    for (o in a) "_listeners" !== o && a.hasOwnProperty(o) && (o === v ? n(e, t, a[o], i + 2) : o === p ? n(e, t, a[o], i + 1) : (f = {}, 
-                    f[o] = a[o], n(e, t, {
-                        "**": f
-                    }, i + 1)));
-                } else a._listeners ? n(e, t, a, _) : a["*"] && a["*"]._listeners && n(e, t, a["*"], _);
-                return u;
-            }
-            function r(e, t) {
-                e = "string" == typeof e ? e.split(this.delimiter) : e.slice();
-                for (var s = 0, i = e.length; i > s + 1; s++) if ("**" === e[s] && "**" === e[s + 1]) return;
-                for (var n = this.listenerTree, r = e.shift(); r; ) {
-                    if (n[r] || (n[r] = {}), n = n[r], 0 === e.length) {
-                        if (n._listeners) {
-                            if ("function" == typeof n._listeners) n._listeners = [ n._listeners, t ]; else if (l(n._listeners) && (n._listeners.push(t), 
-                            !n._listeners.warned)) {
-                                var h = o;
-                                "undefined" != typeof this._events.maxListeners && (h = this._events.maxListeners), 
-                                h > 0 && n._listeners.length > h && (n._listeners.warned = !0, console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.", n._listeners.length), 
-                                console.trace());
-                            }
-                        } else n._listeners = t;
-                        return !0;
-                    }
-                    r = e.shift();
-                }
-                return !0;
-            }
-            var l = Array.isArray ? Array.isArray : function(e) {
-                return "[object Array]" === Object.prototype.toString.call(e);
-            }, o = 10;
-            i.prototype.delimiter = ".", i.prototype.setMaxListeners = function(e) {
-                this._events || t.call(this), this._events.maxListeners = e, this._conf || (this._conf = {}), 
-                this._conf.maxListeners = e;
-            }, i.prototype.event = "", i.prototype.once = function(e, t) {
-                return this.many(e, 1, t), this;
-            }, i.prototype.many = function(e, t, s) {
-                function i() {
-                    0 === --t && n.off(e, i), s.apply(this, arguments);
-                }
-                var n = this;
-                if ("function" != typeof s) throw new Error("many only accepts instances of Function");
-                return i._origin = s, this.on(e, i), n;
-            }, i.prototype.emit = function() {
-                this._events || t.call(this);
-                var e = arguments[0];
-                if ("newListener" === e && !this.newListener && !this._events.newListener) return !1;
-                if (this._all) {
-                    for (var s = arguments.length, i = new Array(s - 1), r = 1; s > r; r++) i[r - 1] = arguments[r];
-                    for (r = 0, s = this._all.length; s > r; r++) this.event = e, this._all[r].apply(this, i);
-                }
-                if ("error" === e && !(this._all || this._events.error || this.wildcard && this.listenerTree.error)) throw arguments[1] instanceof Error ? arguments[1] : new Error("Uncaught, unspecified 'error' event.");
-                var l;
-                if (this.wildcard) {
-                    l = [];
-                    var o = "string" == typeof e ? e.split(this.delimiter) : e.slice();
-                    n.call(this, l, o, this.listenerTree, 0);
-                } else l = this._events[e];
-                if ("function" == typeof l) {
-                    if (this.event = e, 1 === arguments.length) l.call(this); else if (arguments.length > 1) switch (arguments.length) {
-                      case 2:
-                        l.call(this, arguments[1]);
-                        break;
-
-                      case 3:
-                        l.call(this, arguments[1], arguments[2]);
-                        break;
-
-                      default:
-                        for (var s = arguments.length, i = new Array(s - 1), r = 1; s > r; r++) i[r - 1] = arguments[r];
-                        l.apply(this, i);
-                    }
-                    return !0;
-                }
-                if (l) {
-                    for (var s = arguments.length, i = new Array(s - 1), r = 1; s > r; r++) i[r - 1] = arguments[r];
-                    for (var h = l.slice(), r = 0, s = h.length; s > r; r++) this.event = e, h[r].apply(this, i);
-                    return h.length > 0 || !!this._all;
-                }
-                return !!this._all;
-            }, i.prototype.on = function(e, s) {
-                if ("function" == typeof e) return this.onAny(e), this;
-                if ("function" != typeof s) throw new Error("on only accepts instances of Function");
-                if (this._events || t.call(this), this.emit("newListener", e, s), this.wildcard) return r.call(this, e, s), 
-                this;
-                if (this._events[e]) {
-                    if ("function" == typeof this._events[e]) this._events[e] = [ this._events[e], s ]; else if (l(this._events[e]) && (this._events[e].push(s), 
-                    !this._events[e].warned)) {
-                        var i = o;
-                        "undefined" != typeof this._events.maxListeners && (i = this._events.maxListeners), 
-                        i > 0 && this._events[e].length > i && (this._events[e].warned = !0, console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.", this._events[e].length), 
-                        console.trace());
-                    }
-                } else this._events[e] = s;
-                return this;
-            }, i.prototype.onAny = function(e) {
-                if ("function" != typeof e) throw new Error("onAny only accepts instances of Function");
-                return this._all || (this._all = []), this._all.push(e), this;
-            }, i.prototype.addListener = i.prototype.on, i.prototype.off = function(e, t) {
-                if ("function" != typeof t) throw new Error("removeListener only takes instances of Function");
-                var s, i = [];
-                if (this.wildcard) {
-                    var r = "string" == typeof e ? e.split(this.delimiter) : e.slice();
-                    i = n.call(this, null, r, this.listenerTree, 0);
-                } else {
-                    if (!this._events[e]) return this;
-                    s = this._events[e], i.push({
-                        _listeners: s
-                    });
-                }
-                for (var o = 0; o < i.length; o++) {
-                    var h = i[o];
-                    if (s = h._listeners, l(s)) {
-                        for (var a = -1, f = 0, c = s.length; c > f; f++) if (s[f] === t || s[f].listener && s[f].listener === t || s[f]._origin && s[f]._origin === t) {
-                            a = f;
-                            break;
-                        }
-                        if (0 > a) continue;
-                        return this.wildcard ? h._listeners.splice(a, 1) : this._events[e].splice(a, 1), 
-                        0 === s.length && (this.wildcard ? delete h._listeners : delete this._events[e]), 
-                        this;
-                    }
-                    (s === t || s.listener && s.listener === t || s._origin && s._origin === t) && (this.wildcard ? delete h._listeners : delete this._events[e]);
-                }
-                return this;
-            }, i.prototype.offAny = function(e) {
-                var t, s = 0, i = 0;
-                if (e && this._all && this._all.length > 0) {
-                    for (t = this._all, s = 0, i = t.length; i > s; s++) if (e === t[s]) return t.splice(s, 1), 
-                    this;
-                } else this._all = [];
-                return this;
-            }, i.prototype.removeListener = i.prototype.off, i.prototype.removeAllListeners = function(e) {
-                if (0 === arguments.length) return !this._events || t.call(this), this;
-                if (this.wildcard) for (var s = "string" == typeof e ? e.split(this.delimiter) : e.slice(), i = n.call(this, null, s, this.listenerTree, 0), r = 0; r < i.length; r++) {
-                    var l = i[r];
-                    l._listeners = null;
-                } else {
-                    if (!this._events[e]) return this;
-                    this._events[e] = null;
-                }
-                return this;
-            }, i.prototype.listeners = function(e) {
-                if (this.wildcard) {
-                    var s = [], i = "string" == typeof e ? e.split(this.delimiter) : e.slice();
-                    return n.call(this, s, i, this.listenerTree, 0), s;
-                }
-                return this._events || t.call(this), this._events[e] || (this._events[e] = []), 
-                l(this._events[e]) || (this._events[e] = [ this._events[e] ]), this._events[e];
-            }, i.prototype.listenersAny = function() {
-                return this._all ? this._all : [];
-            }, "function" == typeof define && define.amd ? define(function() {
-                return i;
-            }) : "object" == typeof exports ? exports.EventEmitter2 = i : window.EventEmitter2 = i;
-        }();
-    }, {} ],
-    5: [ function(require, module, exports) {}, {} ],
-    6: [ function(require, module, exports) {
         (function(global) {
             !function(e) {
                 function o(e) {
@@ -648,7 +424,7 @@
             }(this);
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    7: [ function(require, module, exports) {
+    4: [ function(require, module, exports) {
         "use strict";
         function find(e) {
             var t, n;
@@ -897,12 +673,12 @@
         var sell = require("sell"), crossvent = require("crossvent"), bullseye = require("bullseye"), fuzzysearch = require("fuzzysearch"), KEY_ENTER = 13, KEY_ESC = 27, KEY_UP = 38, KEY_DOWN = 40, cache = [], doc = document, docElement = doc.documentElement;
         horsey.find = find, module.exports = horsey;
     }, {
-        bullseye: 8,
-        crossvent: 23,
-        fuzzysearch: 25,
-        sell: 26
+        bullseye: 5,
+        crossvent: 20,
+        fuzzysearch: 22,
+        sell: 23
     } ],
-    8: [ function(require, module, exports) {
+    5: [ function(require, module, exports) {
         "use strict";
         function bullseye(e, t, r) {
             function o() {
@@ -948,11 +724,11 @@
         var crossvent = require("crossvent"), throttle = require("./throttle"), tailormade = require("./tailormade");
         module.exports = bullseye;
     }, {
-        "./tailormade": 20,
-        "./throttle": 21,
-        crossvent: 10
+        "./tailormade": 17,
+        "./throttle": 18,
+        crossvent: 7
     } ],
-    9: [ function(require, module, exports) {
+    6: [ function(require, module, exports) {
         (function(global) {
             function useNative() {
                 try {
@@ -977,7 +753,7 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    10: [ function(require, module, exports) {
+    7: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function addEventEasy(e, t, n, r) {
@@ -1046,10 +822,10 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./eventmap": 11,
-        "custom-event": 9
+        "./eventmap": 8,
+        "custom-event": 6
     } ],
-    11: [ function(require, module, exports) {
+    8: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var eventmap = [], eventname = "", ron = /^on/;
@@ -1057,7 +833,7 @@
             module.exports = eventmap;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    12: [ function(require, module, exports) {
+    9: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var getSelection, doc = global.document, getSelectionRaw = require("./getSelectionRaw"), getSelectionNullOp = require("./getSelectionNullOp"), getSelectionSynthetic = require("./getSelectionSynthetic"), isHost = require("./isHost");
@@ -1065,12 +841,12 @@
             module.exports = getSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./getSelectionNullOp": 13,
-        "./getSelectionRaw": 14,
-        "./getSelectionSynthetic": 15,
-        "./isHost": 16
+        "./getSelectionNullOp": 10,
+        "./getSelectionRaw": 11,
+        "./getSelectionSynthetic": 12,
+        "./isHost": 13
     } ],
-    13: [ function(require, module, exports) {
+    10: [ function(require, module, exports) {
         "use strict";
         function noop() {}
         function getSelectionNullOp() {
@@ -1081,7 +857,7 @@
         }
         module.exports = getSelectionNullOp;
     }, {} ],
-    14: [ function(require, module, exports) {
+    11: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function getSelectionRaw() {
@@ -1090,7 +866,7 @@
             module.exports = getSelectionRaw;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    15: [ function(require, module, exports) {
+    12: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function GetSelection(e) {
@@ -1209,9 +985,9 @@
             }, module.exports = getSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./rangeToTextRange": 17
+        "./rangeToTextRange": 14
     } ],
-    16: [ function(require, module, exports) {
+    13: [ function(require, module, exports) {
         "use strict";
         function isHostMethod(t, o) {
             var e = typeof t[o];
@@ -1233,7 +1009,7 @@
             properties: many(isHostProperty)
         };
     }, {} ],
-    17: [ function(require, module, exports) {
+    14: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function rangeToTextRange(e) {
@@ -1265,7 +1041,7 @@
             module.exports = rangeToTextRange;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    18: [ function(require, module, exports) {
+    15: [ function(require, module, exports) {
         "use strict";
         var getSelection = require("./getSelection"), setSelection = require("./setSelection");
         module.exports = {
@@ -1273,10 +1049,10 @@
             set: setSelection
         };
     }, {
-        "./getSelection": 12,
-        "./setSelection": 19
+        "./getSelection": 9,
+        "./setSelection": 16
     } ],
-    19: [ function(require, module, exports) {
+    16: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function setSelection(e) {
@@ -1294,10 +1070,10 @@
             module.exports = setSelection;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./getSelection": 12,
-        "./rangeToTextRange": 17
+        "./getSelection": 9,
+        "./rangeToTextRange": 14
     } ],
-    20: [ function(require, module, exports) {
+    17: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function tailormade(t, e) {
@@ -1381,12 +1157,12 @@
             module.exports = tailormade;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./throttle": 21,
-        crossvent: 10,
-        seleccion: 18,
-        sell: 26
+        "./throttle": 18,
+        crossvent: 7,
+        seleccion: 15,
+        sell: 23
     } ],
-    21: [ function(require, module, exports) {
+    18: [ function(require, module, exports) {
         "use strict";
         function throttle(t, e) {
             var o, n = -(1 / 0);
@@ -1401,7 +1177,7 @@
         }
         module.exports = throttle;
     }, {} ],
-    22: [ function(require, module, exports) {
+    19: [ function(require, module, exports) {
         (function(global) {
             function useNative() {
                 try {
@@ -1426,7 +1202,7 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    23: [ function(require, module, exports) {
+    20: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             function addEventEasy(e, t, n, r) {
@@ -1494,10 +1270,10 @@
             };
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {
-        "./eventmap": 24,
-        "custom-event": 22
+        "./eventmap": 21,
+        "custom-event": 19
     } ],
-    24: [ function(require, module, exports) {
+    21: [ function(require, module, exports) {
         (function(global) {
             "use strict";
             var eventmap = [], eventname = "", ron = /^on/;
@@ -1505,7 +1281,7 @@
             module.exports = eventmap;
         }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    25: [ function(require, module, exports) {
+    22: [ function(require, module, exports) {
         "use strict";
         function fuzzysearch(r, e) {
             var t = e.length, n = r.length;
@@ -1519,7 +1295,7 @@
         }
         module.exports = fuzzysearch;
     }, {} ],
-    26: [ function(require, module, exports) {
+    23: [ function(require, module, exports) {
         "use strict";
         function easyGet(e) {
             return {
@@ -1569,32 +1345,32 @@
         document.selection && document.selection.createRange && (get = hardGet, set = hardSet), 
         module.exports = sell;
     }, {} ],
-    27: [ function(require, module, exports) {
+    24: [ function(require, module, exports) {
         "use strict";
         module.exports = require("./lib/");
     }, {
-        "./lib/": 37
+        "./lib/": 34
     } ],
-    28: [ function(require, module, exports) {
+    25: [ function(require, module, exports) {
         "use strict";
         module.exports = require("entities/maps/entities.json");
     }, {
-        "entities/maps/entities.json": 80
+        "entities/maps/entities.json": 77
     } ],
-    29: [ function(require, module, exports) {
+    26: [ function(require, module, exports) {
         "use strict";
         module.exports = [ "address", "article", "aside", "base", "basefont", "blockquote", "body", "caption", "center", "col", "colgroup", "dd", "details", "dialog", "dir", "div", "dl", "dt", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "head", "header", "hr", "html", "iframe", "legend", "li", "link", "main", "menu", "menuitem", "meta", "nav", "noframes", "ol", "optgroup", "option", "p", "param", "pre", "section", "source", "title", "summary", "table", "tbody", "td", "tfoot", "th", "thead", "title", "tr", "track", "ul" ];
     }, {} ],
-    30: [ function(require, module, exports) {
+    27: [ function(require, module, exports) {
         "use strict";
         var attr_name = "[a-zA-Z_:][a-zA-Z0-9:._-]*", unquoted = "[^\"'=<>`\\x00-\\x20]+", single_quoted = "'[^']*'", double_quoted = '"[^"]*"', attr_value = "(?:" + unquoted + "|" + single_quoted + "|" + double_quoted + ")", attribute = "(?:\\s+" + attr_name + "(?:\\s*=\\s*" + attr_value + ")?)", open_tag = "<[A-Za-z][A-Za-z0-9\\-]*" + attribute + "*\\s*\\/?>", close_tag = "<\\/[A-Za-z][A-Za-z0-9\\-]*\\s*>", comment = "<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->", processing = "<[?].*?[?]>", declaration = "<![A-Z]+\\s+[^>]*>", cdata = "<!\\[CDATA\\[[\\s\\S]*?\\]\\]>", HTML_TAG_RE = new RegExp("^(?:" + open_tag + "|" + close_tag + "|" + comment + "|" + processing + "|" + declaration + "|" + cdata + ")"), HTML_OPEN_CLOSE_TAG_RE = new RegExp("^(?:" + open_tag + "|" + close_tag + ")");
         module.exports.HTML_TAG_RE = HTML_TAG_RE, module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
     }, {} ],
-    31: [ function(require, module, exports) {
+    28: [ function(require, module, exports) {
         "use strict";
         module.exports = [ "coap", "doi", "javascript", "aaa", "aaas", "about", "acap", "cap", "cid", "crid", "data", "dav", "dict", "dns", "file", "ftp", "geo", "go", "gopher", "h323", "http", "https", "iax", "icap", "im", "imap", "info", "ipp", "iris", "iris.beep", "iris.xpc", "iris.xpcs", "iris.lwz", "ldap", "mailto", "mid", "msrp", "msrps", "mtqp", "mupdate", "news", "nfs", "ni", "nih", "nntp", "opaquelocktoken", "pop", "pres", "rtsp", "service", "session", "shttp", "sieve", "sip", "sips", "sms", "snmp", "soap.beep", "soap.beeps", "tag", "tel", "telnet", "tftp", "thismessage", "tn3270", "tip", "tv", "urn", "vemmi", "ws", "wss", "xcon", "xcon-userid", "xmlrpc.beep", "xmlrpc.beeps", "xmpp", "z39.50r", "z39.50s", "adiumxtra", "afp", "afs", "aim", "apt", "attachment", "aw", "beshare", "bitcoin", "bolo", "callto", "chrome", "chrome-extension", "com-eventbrite-attendee", "content", "cvs", "dlna-playsingle", "dlna-playcontainer", "dtn", "dvb", "ed2k", "facetime", "feed", "finger", "fish", "gg", "git", "gizmoproject", "gtalk", "hcp", "icon", "ipn", "irc", "irc6", "ircs", "itms", "jar", "jms", "keyparc", "lastfm", "ldaps", "magnet", "maps", "market", "message", "mms", "ms-help", "msnim", "mumble", "mvn", "notes", "oid", "palm", "paparazzi", "platform", "proxy", "psyc", "query", "res", "resource", "rmi", "rsync", "rtmp", "secondlife", "sftp", "sgn", "skype", "smb", "soldat", "spotify", "ssh", "steam", "svn", "teamspeak", "things", "udp", "unreal", "ut2004", "ventrilo", "view-source", "webcal", "wtai", "wyciwyg", "xfire", "xri", "ymsgr" ];
     }, {} ],
-    32: [ function(require, module, exports) {
+    29: [ function(require, module, exports) {
         "use strict";
         function _class(e) {
             return Object.prototype.toString.call(e);
@@ -1737,21 +1513,21 @@
         exports.isSpace = isSpace, exports.isWhiteSpace = isWhiteSpace, exports.isMdAsciiPunct = isMdAsciiPunct, 
         exports.isPunctChar = isPunctChar, exports.escapeRE = escapeRE, exports.normalizeReference = normalizeReference;
     }, {
-        "./entities": 28,
-        mdurl: 86,
-        "uc.micro": 92,
-        "uc.micro/categories/P/regex": 90
+        "./entities": 25,
+        mdurl: 83,
+        "uc.micro": 89,
+        "uc.micro/categories/P/regex": 87
     } ],
-    33: [ function(require, module, exports) {
+    30: [ function(require, module, exports) {
         "use strict";
         exports.parseLinkLabel = require("./parse_link_label"), exports.parseLinkDestination = require("./parse_link_destination"), 
         exports.parseLinkTitle = require("./parse_link_title");
     }, {
-        "./parse_link_destination": 34,
-        "./parse_link_label": 35,
-        "./parse_link_title": 36
+        "./parse_link_destination": 31,
+        "./parse_link_label": 32,
+        "./parse_link_title": 33
     } ],
-    34: [ function(require, module, exports) {
+    31: [ function(require, module, exports) {
         "use strict";
         var unescapeAll = require("../common/utils").unescapeAll;
         module.exports = function(e, r, s) {
@@ -1779,9 +1555,9 @@
             n.ok = !0, n);
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    35: [ function(require, module, exports) {
+    32: [ function(require, module, exports) {
         "use strict";
         module.exports = function(o, s, p) {
             var e, r, i, n, t = -1, f = o.posMax, u = o.pos;
@@ -1796,7 +1572,7 @@
             return r && (t = o.pos), o.pos = u, t;
         };
     }, {} ],
-    36: [ function(require, module, exports) {
+    33: [ function(require, module, exports) {
         "use strict";
         var unescapeAll = require("../common/utils").unescapeAll;
         module.exports = function(e, r, s) {
@@ -1817,9 +1593,9 @@
             return l;
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    37: [ function(require, module, exports) {
+    34: [ function(require, module, exports) {
         "use strict";
         function validateLink(e) {
             var r = e.trim().toLowerCase();
@@ -1896,20 +1672,20 @@
             return r = r || {}, this.renderer.render(this.parseInline(e, r), this.options, r);
         }, module.exports = MarkdownIt;
     }, {
-        "./common/utils": 32,
-        "./helpers": 33,
-        "./parser_block": 38,
-        "./parser_core": 39,
-        "./parser_inline": 40,
-        "./presets/commonmark": 41,
-        "./presets/default": 42,
-        "./presets/zero": 43,
-        "./renderer": 44,
-        "linkify-it": 81,
-        mdurl: 86,
-        punycode: 6
+        "./common/utils": 29,
+        "./helpers": 30,
+        "./parser_block": 35,
+        "./parser_core": 36,
+        "./parser_inline": 37,
+        "./presets/commonmark": 38,
+        "./presets/default": 39,
+        "./presets/zero": 40,
+        "./renderer": 41,
+        "linkify-it": 78,
+        mdurl: 83,
+        punycode: 3
     } ],
-    38: [ function(require, module, exports) {
+    35: [ function(require, module, exports) {
         "use strict";
         function ParserBlock() {
             this.ruler = new Ruler();
@@ -1936,21 +1712,21 @@
             return e ? (o = new this.State(e, r, l, t), void this.tokenize(o, o.line, o.lineMax)) : [];
         }, ParserBlock.prototype.State = require("./rules_block/state_block"), module.exports = ParserBlock;
     }, {
-        "./ruler": 45,
-        "./rules_block/blockquote": 46,
-        "./rules_block/code": 47,
-        "./rules_block/fence": 48,
-        "./rules_block/heading": 49,
-        "./rules_block/hr": 50,
-        "./rules_block/html_block": 51,
-        "./rules_block/lheading": 52,
-        "./rules_block/list": 53,
-        "./rules_block/paragraph": 54,
-        "./rules_block/reference": 55,
-        "./rules_block/state_block": 56,
-        "./rules_block/table": 57
+        "./ruler": 42,
+        "./rules_block/blockquote": 43,
+        "./rules_block/code": 44,
+        "./rules_block/fence": 45,
+        "./rules_block/heading": 46,
+        "./rules_block/hr": 47,
+        "./rules_block/html_block": 48,
+        "./rules_block/lheading": 49,
+        "./rules_block/list": 50,
+        "./rules_block/paragraph": 51,
+        "./rules_block/reference": 52,
+        "./rules_block/state_block": 53,
+        "./rules_block/table": 54
     } ],
-    39: [ function(require, module, exports) {
+    36: [ function(require, module, exports) {
         "use strict";
         function Core() {
             this.ruler = new Ruler();
@@ -1962,16 +1738,16 @@
             for (l = this.ruler.getRules(""), r = 0, u = l.length; u > r; r++) l[r](e);
         }, Core.prototype.State = require("./rules_core/state_core"), module.exports = Core;
     }, {
-        "./ruler": 45,
-        "./rules_core/block": 58,
-        "./rules_core/inline": 59,
-        "./rules_core/linkify": 60,
-        "./rules_core/normalize": 61,
-        "./rules_core/replacements": 62,
-        "./rules_core/smartquotes": 63,
-        "./rules_core/state_core": 64
+        "./ruler": 42,
+        "./rules_core/block": 55,
+        "./rules_core/inline": 56,
+        "./rules_core/linkify": 57,
+        "./rules_core/normalize": 58,
+        "./rules_core/replacements": 59,
+        "./rules_core/smartquotes": 60,
+        "./rules_core/state_core": 61
     } ],
-    40: [ function(require, module, exports) {
+    37: [ function(require, module, exports) {
         "use strict";
         function ParserInline() {
             var e;
@@ -1997,23 +1773,23 @@
             for (this.tokenize(u), l = this.ruler2.getRules(""), t = l.length, s = 0; t > s; s++) l[s](u);
         }, ParserInline.prototype.State = require("./rules_inline/state_inline"), module.exports = ParserInline;
     }, {
-        "./ruler": 45,
-        "./rules_inline/autolink": 65,
-        "./rules_inline/backticks": 66,
-        "./rules_inline/balance_pairs": 67,
-        "./rules_inline/emphasis": 68,
-        "./rules_inline/entity": 69,
-        "./rules_inline/escape": 70,
-        "./rules_inline/html_inline": 71,
-        "./rules_inline/image": 72,
-        "./rules_inline/link": 73,
-        "./rules_inline/newline": 74,
-        "./rules_inline/state_inline": 75,
-        "./rules_inline/strikethrough": 76,
-        "./rules_inline/text": 77,
-        "./rules_inline/text_collapse": 78
+        "./ruler": 42,
+        "./rules_inline/autolink": 62,
+        "./rules_inline/backticks": 63,
+        "./rules_inline/balance_pairs": 64,
+        "./rules_inline/emphasis": 65,
+        "./rules_inline/entity": 66,
+        "./rules_inline/escape": 67,
+        "./rules_inline/html_inline": 68,
+        "./rules_inline/image": 69,
+        "./rules_inline/link": 70,
+        "./rules_inline/newline": 71,
+        "./rules_inline/state_inline": 72,
+        "./rules_inline/strikethrough": 73,
+        "./rules_inline/text": 74,
+        "./rules_inline/text_collapse": 75
     } ],
-    41: [ function(require, module, exports) {
+    38: [ function(require, module, exports) {
         "use strict";
         module.exports = {
             options: {
@@ -2041,7 +1817,7 @@
             }
         };
     }, {} ],
-    42: [ function(require, module, exports) {
+    39: [ function(require, module, exports) {
         "use strict";
         module.exports = {
             options: {
@@ -2062,7 +1838,7 @@
             }
         };
     }, {} ],
-    43: [ function(require, module, exports) {
+    40: [ function(require, module, exports) {
         "use strict";
         module.exports = {
             options: {
@@ -2090,7 +1866,7 @@
             }
         };
     }, {} ],
-    44: [ function(require, module, exports) {
+    41: [ function(require, module, exports) {
         "use strict";
         function Renderer() {
             this.rules = assign({}, default_rules);
@@ -2143,9 +1919,9 @@
             return s;
         }, module.exports = Renderer;
     }, {
-        "./common/utils": 32
+        "./common/utils": 29
     } ],
-    45: [ function(require, module, exports) {
+    42: [ function(require, module, exports) {
         "use strict";
         function Ruler() {
             this.__rules__ = [], this.__cache__ = null;
@@ -2224,7 +2000,7 @@
             return null === this.__cache__ && this.__compile__(), this.__cache__[_] || [];
         }, module.exports = Ruler;
     }, {} ],
-    46: [ function(require, module, exports) {
+    43: [ function(require, module, exports) {
         "use strict";
         var isSpace = require("../common/utils").isSpace;
         module.exports = function(t, r, e, s) {
@@ -2257,9 +2033,9 @@
             return t.blkIndent = c, !0;
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    47: [ function(require, module, exports) {
+    44: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e, n, t) {
             var o, i, r;
@@ -2272,7 +2048,7 @@
             r.map = [ n, e.line ], !0;
         };
     }, {} ],
-    48: [ function(require, module, exports) {
+    45: [ function(require, module, exports) {
         "use strict";
         module.exports = function(r, e, s, t) {
             var n, i, c, u, a, f, o, k = !1, p = r.bMarks[e] + r.tShift[e], d = r.eMarks[e];
@@ -2292,7 +2068,7 @@
             !0;
         };
     }, {} ],
-    49: [ function(require, module, exports) {
+    46: [ function(require, module, exports) {
         "use strict";
         var isSpace = require("../common/utils").isSpace;
         module.exports = function(e, r, i, s) {
@@ -2306,9 +2082,9 @@
             t.markup = "########".slice(0, a), !0);
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    50: [ function(require, module, exports) {
+    47: [ function(require, module, exports) {
         "use strict";
         var isSpace = require("../common/utils").isSpace;
         module.exports = function(r, e, i, a) {
@@ -2322,9 +2098,9 @@
             c.markup = Array(s + 1).join(String.fromCharCode(t)), !0);
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    51: [ function(require, module, exports) {
+    48: [ function(require, module, exports) {
         "use strict";
         var block_names = require("../common/html_blocks"), HTML_OPEN_CLOSE_TAG_RE = require("../common/html_re").HTML_OPEN_CLOSE_TAG_RE, HTML_SEQUENCES = [ [ /^<(script|pre|style)(?=(\s|>|$))/i, /<\/(script|pre|style)>/i, !0 ], [ /^<!--/, /-->/, !0 ], [ /^<\?/, /\?>/, !0 ], [ /^<![A-Z]/, />/, !0 ], [ /^<!\[CDATA\[/, /\]\]>/, !0 ], [ new RegExp("^</?(" + block_names.join("|") + ")(?=(\\s|/?>|$))", "i"), /^$/, !0 ], [ new RegExp(HTML_OPEN_CLOSE_TAG_RE.source + "\\s*$"), /^$/, !1 ] ];
         module.exports = function(e, t, r, E) {
@@ -2343,10 +2119,10 @@
             !0;
         };
     }, {
-        "../common/html_blocks": 29,
-        "../common/html_re": 30
+        "../common/html_blocks": 26,
+        "../common/html_re": 27
     } ],
-    52: [ function(require, module, exports) {
+    49: [ function(require, module, exports) {
         "use strict";
         module.exports = function(r, n, e) {
             var t, i, s, a, h, o = n + 1;
@@ -2359,7 +2135,7 @@
             a.markup = String.fromCharCode(t), !0))));
         };
     }, {} ],
-    53: [ function(require, module, exports) {
+    50: [ function(require, module, exports) {
         "use strict";
         function skipBulletListMarker(r, e) {
             var t, i, s, a;
@@ -2425,9 +2201,9 @@
             !0;
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    54: [ function(require, module, exports) {
+    51: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e, n) {
             for (var r, p, t, a, i, l = n + 1, s = e.md.block.ruler.getRules("paragraph"), o = e.lineMax; o > l && !e.isEmpty(l); l++) if (!(e.sCount[l] - e.blkIndent > 3 || e.sCount[l] < 0)) {
@@ -2442,7 +2218,7 @@
             i.children = [], i = e.push("paragraph_close", "p", -1), !0;
         };
     }, {} ],
-    55: [ function(require, module, exports) {
+    52: [ function(require, module, exports) {
         "use strict";
         var parseLinkDestination = require("../helpers/parse_link_destination"), parseLinkTitle = require("../helpers/parse_link_title"), normalizeReference = require("../common/utils").normalizeReference, isSpace = require("../common/utils").isSpace;
         module.exports = function(e, r, i, n) {
@@ -2485,11 +2261,11 @@
             }), e.line = r + b + 1, !0) : !1;
         };
     }, {
-        "../common/utils": 32,
-        "../helpers/parse_link_destination": 34,
-        "../helpers/parse_link_title": 36
+        "../common/utils": 29,
+        "../helpers/parse_link_destination": 31,
+        "../helpers/parse_link_title": 33
     } ],
-    56: [ function(require, module, exports) {
+    53: [ function(require, module, exports) {
         "use strict";
         function StateBlock(t, s, e, i) {
             var r, h, o, n, a, c, p, k;
@@ -2550,10 +2326,10 @@
             return c.join("");
         }, StateBlock.prototype.Token = Token, module.exports = StateBlock;
     }, {
-        "../common/utils": 32,
-        "../token": 79
+        "../common/utils": 29,
+        "../token": 76
     } ],
-    57: [ function(require, module, exports) {
+    54: [ function(require, module, exports) {
         "use strict";
         function getLine(t, e) {
             var r = t.bMarks[e] + t.blkIndent, n = t.eMarks[e];
@@ -2602,7 +2378,7 @@
             d[1] = f[1] = p, t.line = p, !0;
         };
     }, {} ],
-    58: [ function(require, module, exports) {
+    55: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e) {
             var n;
@@ -2610,14 +2386,14 @@
             n.children = [], e.tokens.push(n)) : e.md.block.parse(e.src, e.md, e.env, e.tokens);
         };
     }, {} ],
-    59: [ function(require, module, exports) {
+    56: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e) {
             var n, t, i, o = e.tokens;
             for (t = 0, i = o.length; i > t; t++) n = o[t], "inline" === n.type && e.md.inline.parse(n.content, e.md, e.env, n.children);
         };
     }, {} ],
-    60: [ function(require, module, exports) {
+    57: [ function(require, module, exports) {
         "use strict";
         function isLinkOpen(e) {
             return /^<a[>\s]/i.test(e);
@@ -2645,9 +2421,9 @@
             } else for (n--; l[n].level !== a.level && "link_open" !== l[n].type; ) n--;
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    61: [ function(require, module, exports) {
+    58: [ function(require, module, exports) {
         "use strict";
         var NEWLINES_RE = /\r[\n\u0085]|[\u2424\u2028\u0085]/g, NULL_RE = /\u0000/g;
         module.exports = function(r) {
@@ -2655,7 +2431,7 @@
             u = r.src.replace(NEWLINES_RE, "\n"), u = u.replace(NULL_RE, "�"), r.src = u;
         };
     }, {} ],
-    62: [ function(require, module, exports) {
+    59: [ function(require, module, exports) {
         "use strict";
         function replaceFn(e, t) {
             return SCOPED_ABBR[t.toLowerCase()];
@@ -2680,7 +2456,7 @@
             RARE_RE.test(e.tokens[t].content) && replace_rare(e.tokens[t].children));
         };
     }, {} ],
-    63: [ function(require, module, exports) {
+    60: [ function(require, module, exports) {
         "use strict";
         function replaceAt(e, t, n) {
             return e.substr(0, t) + n + e.substr(t + 1);
@@ -2721,9 +2497,9 @@
             if (e.md.options.typographer) for (t = e.tokens.length - 1; t >= 0; t--) "inline" === e.tokens[t].type && QUOTE_TEST_RE.test(e.tokens[t].content) && process_inlines(e.tokens[t].children, e);
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    64: [ function(require, module, exports) {
+    61: [ function(require, module, exports) {
         "use strict";
         function StateCore(e, t, o) {
             this.src = e, this.env = o, this.tokens = [], this.inlineMode = !1, this.md = t;
@@ -2731,9 +2507,9 @@
         var Token = require("../token");
         StateCore.prototype.Token = Token, module.exports = StateCore;
     }, {
-        "../token": 79
+        "../token": 76
     } ],
-    65: [ function(require, module, exports) {
+    62: [ function(require, module, exports) {
         "use strict";
         var url_schemas = require("../common/url_schemas"), EMAIL_RE = /^<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/, AUTOLINK_RE = /^<([a-zA-Z.\-]{1,25}):([^<>\x00-\x20]*)>/;
         module.exports = function(e, a) {
@@ -2749,9 +2525,9 @@
             r.info = "auto"), e.pos += s[0].length, !0) : !1) : !1);
         };
     }, {
-        "../common/url_schemas": 31
+        "../common/url_schemas": 28
     } ],
-    66: [ function(require, module, exports) {
+    63: [ function(require, module, exports) {
         "use strict";
         module.exports = function(r, e) {
             var c, o, s, n, t, i, p = r.pos, d = r.src.charCodeAt(p);
@@ -2765,7 +2541,7 @@
             return e || (r.pending += s), r.pos += s.length, !0;
         };
     }, {} ],
-    67: [ function(require, module, exports) {
+    64: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e) {
             var r, l, m, i, o = e.delimiters, n = e.delimiters.length;
@@ -2778,7 +2554,7 @@
             }
         };
     }, {} ],
-    68: [ function(require, module, exports) {
+    65: [ function(require, module, exports) {
         "use strict";
         module.exports.tokenize = function(e, n) {
             var t, o, r, s = e.pos, k = e.src.charCodeAt(s);
@@ -2806,7 +2582,7 @@
             e.tokens[m[t.end - 1].token].content = "", n++));
         };
     }, {} ],
-    69: [ function(require, module, exports) {
+    66: [ function(require, module, exports) {
         "use strict";
         var entities = require("../common/entities"), has = require("../common/utils").has, isValidEntityCode = require("../common/utils").isValidEntityCode, fromCodePoint = require("../common/utils").fromCodePoint, DIGITAL_RE = /^&#((?:x[a-f0-9]{1,8}|[0-9]{1,8}));/i, NAMED_RE = /^&([a-z][a-z0-9]{1,31});/i;
         module.exports = function(e, i) {
@@ -2821,10 +2597,10 @@
             return i || (e.pending += "&"), e.pos++, !0;
         };
     }, {
-        "../common/entities": 28,
-        "../common/utils": 32
+        "../common/entities": 25,
+        "../common/utils": 29
     } ],
-    70: [ function(require, module, exports) {
+    67: [ function(require, module, exports) {
         "use strict";
         for (var isSpace = require("../common/utils").isSpace, ESCAPED = [], i = 0; 256 > i; i++) ESCAPED.push(0);
         "\\!\"#$%&'()*+,./:;<=>?@[]^_`{|}~-".split("").forEach(function(r) {
@@ -2844,9 +2620,9 @@
             return e || (r.pending += "\\"), r.pos++, !0;
         };
     }, {
-        "../common/utils": 32
+        "../common/utils": 29
     } ],
-    71: [ function(require, module, exports) {
+    68: [ function(require, module, exports) {
         "use strict";
         function isLetter(t) {
             var e = 32 | t;
@@ -2860,9 +2636,9 @@
             n.content = t.src.slice(o, o + s[0].length)), t.pos += s[0].length, !0) : !1)) : !1;
         };
     }, {
-        "../common/html_re": 30
+        "../common/html_re": 27
     } ],
-    72: [ function(require, module, exports) {
+    69: [ function(require, module, exports) {
         "use strict";
         var parseLinkLabel = require("../helpers/parse_link_label"), parseLinkDestination = require("../helpers/parse_link_destination"), parseLinkTitle = require("../helpers/parse_link_title"), normalizeReference = require("../common/utils").normalizeReference, isSpace = require("../common/utils").isSpace;
         module.exports = function(e, r) {
@@ -2893,12 +2669,12 @@
             e.pos = t, e.posMax = k, !0;
         };
     }, {
-        "../common/utils": 32,
-        "../helpers/parse_link_destination": 34,
-        "../helpers/parse_link_label": 35,
-        "../helpers/parse_link_title": 36
+        "../common/utils": 29,
+        "../helpers/parse_link_destination": 31,
+        "../helpers/parse_link_label": 32,
+        "../helpers/parse_link_title": 33
     } ],
-    73: [ function(require, module, exports) {
+    70: [ function(require, module, exports) {
         "use strict";
         var parseLinkLabel = require("../helpers/parse_link_label"), parseLinkDestination = require("../helpers/parse_link_destination"), parseLinkTitle = require("../helpers/parse_link_title"), normalizeReference = require("../common/utils").normalizeReference, isSpace = require("../common/utils").isSpace;
         module.exports = function(e, r) {
@@ -2928,12 +2704,12 @@
             e.pos = t, e.posMax = d, !0;
         };
     }, {
-        "../common/utils": 32,
-        "../helpers/parse_link_destination": 34,
-        "../helpers/parse_link_label": 35,
-        "../helpers/parse_link_title": 36
+        "../common/utils": 29,
+        "../helpers/parse_link_destination": 31,
+        "../helpers/parse_link_label": 32,
+        "../helpers/parse_link_title": 33
     } ],
-    74: [ function(require, module, exports) {
+    71: [ function(require, module, exports) {
         "use strict";
         module.exports = function(e, r) {
             var n, p, s = e.pos;
@@ -2944,7 +2720,7 @@
             return e.pos = s, !0;
         };
     }, {} ],
-    75: [ function(require, module, exports) {
+    72: [ function(require, module, exports) {
         "use strict";
         function StateInline(e, t, i, n) {
             this.src = e, this.env = i, this.md = t, this.tokens = n, this.pos = 0, this.posMax = this.src.length, 
@@ -2973,10 +2749,10 @@
             };
         }, StateInline.prototype.Token = Token, module.exports = StateInline;
     }, {
-        "../common/utils": 32,
-        "../token": 79
+        "../common/utils": 29,
+        "../token": 76
     } ],
-    76: [ function(require, module, exports) {
+    73: [ function(require, module, exports) {
         "use strict";
         module.exports.tokenize = function(e, t) {
             var n, o, s, r, k, p = e.pos, l = e.src.charCodeAt(p);
@@ -3006,7 +2782,7 @@
             }
         };
     }, {} ],
-    77: [ function(require, module, exports) {
+    74: [ function(require, module, exports) {
         "use strict";
         function isTerminatorChar(s) {
             switch (s) {
@@ -3045,7 +2821,7 @@
             !0);
         };
     }, {} ],
-    78: [ function(require, module, exports) {
+    75: [ function(require, module, exports) {
         "use strict";
         module.exports = function(t) {
             var e, n, o = 0, s = t.tokens, c = t.tokens.length;
@@ -3054,7 +2830,7 @@
             e !== n && (s.length = n);
         };
     }, {} ],
-    79: [ function(require, module, exports) {
+    76: [ function(require, module, exports) {
         "use strict";
         function Token(t, s, i) {
             this.type = t, this.tag = s, this.attrs = null, this.map = null, this.nesting = i, 
@@ -3070,7 +2846,7 @@
             this.attrs ? this.attrs.push(t) : this.attrs = [ t ];
         }, module.exports = Token;
     }, {} ],
-    80: [ function(require, module, exports) {
+    77: [ function(require, module, exports) {
         module.exports = {
             Aacute: "Á",
             aacute: "á",
@@ -5199,7 +4975,7 @@
             zwnj: "‌"
         };
     }, {} ],
-    81: [ function(require, module, exports) {
+    78: [ function(require, module, exports) {
         "use strict";
         function assign(t) {
             var e = Array.prototype.slice.call(arguments, 1);
@@ -5365,9 +5141,9 @@
             t.schema || (t.url = "http://" + t.url), "mailto:" !== t.schema || /^mailto:/i.test(t.url) || (t.url = "mailto:" + t.url);
         }, module.exports = LinkifyIt;
     }, {
-        "./lib/re": 82
+        "./lib/re": 79
     } ],
-    82: [ function(require, module, exports) {
+    79: [ function(require, module, exports) {
         "use strict";
         var src_Any = exports.src_Any = require("uc.micro/properties/Any/regex").source, src_Cc = exports.src_Cc = require("uc.micro/categories/Cc/regex").source, src_Z = exports.src_Z = require("uc.micro/categories/Z/regex").source, src_P = exports.src_P = require("uc.micro/categories/P/regex").source, src_ZPCc = exports.src_ZPCc = [ src_Z, src_P, src_Cc ].join("|"), src_ZCc = exports.src_ZCc = [ src_Z, src_Cc ].join("|"), src_pseudo_letter = "(?:(?!" + src_ZPCc + ")" + src_Any + ")", src_pseudo_letter_non_d = "(?:(?![0-9]|" + src_ZPCc + ")" + src_Any + ")", src_ip4 = exports.src_ip4 = "(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
         exports.src_auth = "(?:(?:(?!" + src_ZCc + ").)+@)?";
@@ -5381,12 +5157,12 @@
         exports.tpl_link_fuzzy = "(^|(?![.:/\\-_@])(?:[$+<=>^`|]|" + src_ZPCc + "))((?![$+<=>^`|])" + tpl_host_port_fuzzy_strict + src_path + ")", 
         exports.tpl_link_no_ip_fuzzy = "(^|(?![.:/\\-_@])(?:[$+<=>^`|]|" + src_ZPCc + "))((?![$+<=>^`|])" + tpl_host_port_no_ip_fuzzy_strict + src_path + ")";
     }, {
-        "uc.micro/categories/Cc/regex": 88,
-        "uc.micro/categories/P/regex": 90,
-        "uc.micro/categories/Z/regex": 91,
-        "uc.micro/properties/Any/regex": 93
+        "uc.micro/categories/Cc/regex": 85,
+        "uc.micro/categories/P/regex": 87,
+        "uc.micro/categories/Z/regex": 88,
+        "uc.micro/properties/Any/regex": 90
     } ],
-    83: [ function(require, module, exports) {
+    80: [ function(require, module, exports) {
         "use strict";
         function getDecodeCache(e) {
             var r, t, o = decodeCache[e];
@@ -5416,7 +5192,7 @@
         var decodeCache = {};
         decode.defaultChars = ";/?:@&=+$,#", decode.componentChars = "", module.exports = decode;
     }, {} ],
-    84: [ function(require, module, exports) {
+    81: [ function(require, module, exports) {
         "use strict";
         function getEncodeCache(e) {
             var o, n, t = encodeCache[e];
@@ -5443,7 +5219,7 @@
         encode.defaultChars = ";/?:@&=+$,-_.!~*'()#", encode.componentChars = "-_.!~*'()", 
         module.exports = encode;
     }, {} ],
-    85: [ function(require, module, exports) {
+    82: [ function(require, module, exports) {
         "use strict";
         module.exports = function(t) {
             var a = "";
@@ -5452,17 +5228,17 @@
             a += t.port ? ":" + t.port : "", a += t.pathname || "", a += t.search || "", a += t.hash || "";
         };
     }, {} ],
-    86: [ function(require, module, exports) {
+    83: [ function(require, module, exports) {
         "use strict";
         module.exports.encode = require("./encode"), module.exports.decode = require("./decode"), 
         module.exports.format = require("./format"), module.exports.parse = require("./parse");
     }, {
-        "./decode": 83,
-        "./encode": 84,
-        "./format": 85,
-        "./parse": 87
+        "./decode": 80,
+        "./encode": 81,
+        "./format": 82,
+        "./parse": 84
     } ],
-    87: [ function(require, module, exports) {
+    84: [ function(require, module, exports) {
         "use strict";
         function Url() {
             this.protocol = null, this.slashes = null, this.auth = null, this.port = null, this.hostname = null, 
@@ -5536,33 +5312,33 @@
             t && (this.hostname = t);
         }, module.exports = urlParse;
     }, {} ],
-    88: [ function(require, module, exports) {
+    85: [ function(require, module, exports) {
         module.exports = /[\0-\x1F\x7F-\x9F]/;
     }, {} ],
-    89: [ function(require, module, exports) {
+    86: [ function(require, module, exports) {
         module.exports = /[\xAD\u0600-\u0605\u061C\u06DD\u070F\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/;
     }, {} ],
-    90: [ function(require, module, exports) {
+    87: [ function(require, module, exports) {
         module.exports = /[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E42\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC8\uDDCD\uDE38-\uDE3D]|\uD805[\uDCC6\uDDC1-\uDDC9\uDE41-\uDE43]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F/;
     }, {} ],
-    91: [ function(require, module, exports) {
+    88: [ function(require, module, exports) {
         module.exports = /[ \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/;
     }, {} ],
-    92: [ function(require, module, exports) {
+    89: [ function(require, module, exports) {
         module.exports.Any = require("./properties/Any/regex"), module.exports.Cc = require("./categories/Cc/regex"), 
         module.exports.Cf = require("./categories/Cf/regex"), module.exports.P = require("./categories/P/regex"), 
         module.exports.Z = require("./categories/Z/regex");
     }, {
-        "./categories/Cc/regex": 88,
-        "./categories/Cf/regex": 89,
-        "./categories/P/regex": 90,
-        "./categories/Z/regex": 91,
-        "./properties/Any/regex": 93
+        "./categories/Cc/regex": 85,
+        "./categories/Cf/regex": 86,
+        "./categories/P/regex": 87,
+        "./categories/Z/regex": 88,
+        "./properties/Any/regex": 90
     } ],
-    93: [ function(require, module, exports) {
+    90: [ function(require, module, exports) {
         module.exports = /[\0-\uD7FF\uDC00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF]/;
     }, {} ],
-    94: [ function(require, module, exports) {
+    91: [ function(require, module, exports) {
         !function(e, t, r) {
             "undefined" != typeof module && module.exports ? module.exports = r() : "function" == typeof define && define.amd ? define(r) : t[e] = r();
         }("reqwest", this, function() {
@@ -5817,7 +5593,7 @@
             }, reqwest;
         });
     }, {} ],
-    95: [ function(require, module, exports) {
+    92: [ function(require, module, exports) {
         !function(e, t, n) {
             "use strict";
             !function o(e, t, n) {
@@ -6312,696 +6088,745 @@
             }) : "undefined" != typeof module && module.exports && (module.exports = sweetAlert);
         }(window, document);
     }, {} ],
-    96: [ function(require, module, exports) {
-        var createElement = require("./vdom/create-element.js");
-        module.exports = createElement;
-    }, {
-        "./vdom/create-element.js": 108
-    } ],
-    97: [ function(require, module, exports) {
-        var diff = require("./vtree/diff.js");
-        module.exports = diff;
-    }, {
-        "./vtree/diff.js": 128
-    } ],
-    98: [ function(require, module, exports) {
-        var h = require("./virtual-hyperscript/index.js");
-        module.exports = h;
-    }, {
-        "./virtual-hyperscript/index.js": 115
-    } ],
-    99: [ function(require, module, exports) {
-        module.exports = function(e) {
-            var t, n = String.prototype.split, l = /()??/.exec("")[1] === e;
-            return t = function(t, r, i) {
-                if ("[object RegExp]" !== Object.prototype.toString.call(r)) return n.call(t, r, i);
-                var s, g, o, p, c = [], u = (r.ignoreCase ? "i" : "") + (r.multiline ? "m" : "") + (r.extended ? "x" : "") + (r.sticky ? "y" : ""), x = 0, r = new RegExp(r.source, u + "g");
-                for (t += "", l || (s = new RegExp("^" + r.source + "$(?!\\s)", u)), i = i === e ? -1 >>> 0 : i >>> 0; (g = r.exec(t)) && (o = g.index + g[0].length, 
-                !(o > x && (c.push(t.slice(x, g.index)), !l && g.length > 1 && g[0].replace(s, function() {
-                    for (var t = 1; t < arguments.length - 2; t++) arguments[t] === e && (g[t] = e);
-                }), g.length > 1 && g.index < t.length && Array.prototype.push.apply(c, g.slice(1)), 
-                p = g[0].length, x = o, c.length >= i))); ) r.lastIndex === g.index && r.lastIndex++;
-                return x === t.length ? (p || !r.test("")) && c.push("") : c.push(t.slice(x)), c.length > i ? c.slice(0, i) : c;
-            };
-        }();
-    }, {} ],
-    100: [ function(require, module, exports) {
-        "use strict";
-        function EvStore(e) {
-            var r = e[hashKey];
-            return r || (r = e[hashKey] = {}), r;
-        }
-        var OneVersionConstraint = require("individual/one-version"), MY_VERSION = "7";
-        OneVersionConstraint("ev-store", MY_VERSION);
-        var hashKey = "__EV_STORE_KEY@" + MY_VERSION;
-        module.exports = EvStore;
-    }, {
-        "individual/one-version": 102
-    } ],
-    101: [ function(require, module, exports) {
+    93: [ function(require, module, exports) {
         (function(global) {
-            "use strict";
-            function Individual(o, n) {
-                return o in root ? root[o] : (root[o] = n, n);
-            }
-            var root = "undefined" != typeof window ? window : "undefined" != typeof global ? global : {};
-            module.exports = Individual;
-        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-    }, {} ],
-    102: [ function(require, module, exports) {
-        "use strict";
-        function OneVersion(n, e, i) {
-            var r = "__INDIVIDUAL_ONE_VERSION_" + n, o = r + "_ENFORCE_SINGLETON", a = Individual(o, e);
-            if (a !== e) throw new Error("Can only have one copy of " + n + ".\nYou already have version " + a + " installed.\nThis means you cannot install version " + e);
-            return Individual(r, i);
-        }
-        var Individual = require("./index.js");
-        module.exports = OneVersion;
-    }, {
-        "./index.js": 101
-    } ],
-    103: [ function(require, module, exports) {
-        (function(global) {
-            var topLevel = "undefined" != typeof global ? global : "undefined" != typeof window ? window : {}, minDoc = require("min-document");
-            if ("undefined" != typeof document) module.exports = document; else {
-                var doccy = topLevel["__GLOBAL_DOCUMENT_CACHE@4"];
-                doccy || (doccy = topLevel["__GLOBAL_DOCUMENT_CACHE@4"] = minDoc), module.exports = doccy;
-            }
-        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-    }, {
-        "min-document": 5
-    } ],
-    104: [ function(require, module, exports) {
-        "use strict";
-        module.exports = function(t) {
-            return "object" == typeof t && null !== t;
-        };
-    }, {} ],
-    105: [ function(require, module, exports) {
-        function isArray(r) {
-            return "[object Array]" === toString.call(r);
-        }
-        var nativeIsArray = Array.isArray, toString = Object.prototype.toString;
-        module.exports = nativeIsArray || isArray;
-    }, {} ],
-    106: [ function(require, module, exports) {
-        var patch = require("./vdom/patch.js");
-        module.exports = patch;
-    }, {
-        "./vdom/patch.js": 111
-    } ],
-    107: [ function(require, module, exports) {
-        function applyProperties(o, t, e) {
-            for (var r in t) {
-                var i = t[r];
-                void 0 === i ? removeProperty(o, r, i, e) : isHook(i) ? (removeProperty(o, r, i, e), 
-                i.hook && i.hook(o, r, e ? e[r] : void 0)) : isObject(i) ? patchObject(o, t, e, r, i) : o[r] = i;
-            }
-        }
-        function removeProperty(o, t, e, r) {
-            if (r) {
-                var i = r[t];
-                if (isHook(i)) i.unhook && i.unhook(o, t, e); else if ("attributes" === t) for (var v in i) o.removeAttribute(v); else if ("style" === t) for (var s in i) o.style[s] = ""; else "string" == typeof i ? o[t] = "" : o[t] = null;
-            }
-        }
-        function patchObject(o, t, e, r, i) {
-            var v = e ? e[r] : void 0;
-            if ("attributes" !== r) {
-                if (v && isObject(v) && getPrototype(v) !== getPrototype(i)) return void (o[r] = i);
-                isObject(o[r]) || (o[r] = {});
-                var s = "style" === r ? "" : void 0;
-                for (var n in i) {
-                    var p = i[n];
-                    o[r][n] = void 0 === p ? s : p;
+            !function(e) {
+                if ("object" == typeof exports && "undefined" != typeof module) module.exports = e(); else if ("function" == typeof define && define.amd) define([], e); else {
+                    var n;
+                    "undefined" != typeof window ? n = window : "undefined" != typeof global ? n = global : "undefined" != typeof self && (n = self), 
+                    n.virtualDom = e();
                 }
-            } else for (var c in i) {
-                var u = i[c];
-                void 0 === u ? o.removeAttribute(c) : o.setAttribute(c, u);
-            }
-        }
-        function getPrototype(o) {
-            return Object.getPrototypeOf ? Object.getPrototypeOf(o) : o.__proto__ ? o.__proto__ : o.constructor ? o.constructor.prototype : void 0;
-        }
-        var isObject = require("is-object"), isHook = require("../vnode/is-vhook.js");
-        module.exports = applyProperties;
-    }, {
-        "../vnode/is-vhook.js": 119,
-        "is-object": 104
-    } ],
-    108: [ function(require, module, exports) {
-        function createElement(e, r) {
-            var t = r ? r.document || document : document, n = r ? r.warn : null;
-            if (e = handleThunk(e).a, isWidget(e)) return e.init();
-            if (isVText(e)) return t.createTextNode(e.text);
-            if (!isVNode(e)) return n && n("Item is not a valid virtual dom node", e), null;
-            var i = null === e.namespace ? t.createElement(e.tagName) : t.createElementNS(e.namespace, e.tagName), a = e.properties;
-            applyProperties(i, a);
-            for (var d = e.children, l = 0; l < d.length; l++) {
-                var o = createElement(d[l], r);
-                o && i.appendChild(o);
-            }
-            return i;
-        }
-        var document = require("global/document"), applyProperties = require("./apply-properties"), isVNode = require("../vnode/is-vnode.js"), isVText = require("../vnode/is-vtext.js"), isWidget = require("../vnode/is-widget.js"), handleThunk = require("../vnode/handle-thunk.js");
-        module.exports = createElement;
-    }, {
-        "../vnode/handle-thunk.js": 117,
-        "../vnode/is-vnode.js": 120,
-        "../vnode/is-vtext.js": 121,
-        "../vnode/is-widget.js": 122,
-        "./apply-properties": 107,
-        "global/document": 103
-    } ],
-    109: [ function(require, module, exports) {
-        function domIndex(n, e, r, i) {
-            return r && 0 !== r.length ? (r.sort(ascending), recurse(n, e, r, i, 0)) : {};
-        }
-        function recurse(n, e, r, i, t) {
-            if (i = i || {}, n) {
-                indexInRange(r, t, t) && (i[t] = n);
-                var d = e.children;
-                if (d) for (var u = n.childNodes, o = 0; o < e.children.length; o++) {
-                    t += 1;
-                    var c = d[o] || noChild, f = t + (c.count || 0);
-                    indexInRange(r, t, f) && recurse(u[o], c, r, i, t), t = f;
-                }
-            }
-            return i;
-        }
-        function indexInRange(n, e, r) {
-            if (0 === n.length) return !1;
-            for (var i, t, d = 0, u = n.length - 1; u >= d; ) {
-                if (i = (u + d) / 2 >> 0, t = n[i], d === u) return t >= e && r >= t;
-                if (e > t) d = i + 1; else {
-                    if (!(t > r)) return !0;
-                    u = i - 1;
-                }
-            }
-            return !1;
-        }
-        function ascending(n, e) {
-            return n > e ? 1 : -1;
-        }
-        var noChild = {};
-        module.exports = domIndex;
-    }, {} ],
-    110: [ function(require, module, exports) {
-        function applyPatch(e, r, t) {
-            var a = e.type, n = e.vNode, o = e.patch;
-            switch (a) {
-              case VPatch.REMOVE:
-                return removeNode(r, n);
-
-              case VPatch.INSERT:
-                return insertNode(r, o, t);
-
-              case VPatch.VTEXT:
-                return stringPatch(r, n, o, t);
-
-              case VPatch.WIDGET:
-                return widgetPatch(r, n, o, t);
-
-              case VPatch.VNODE:
-                return vNodePatch(r, n, o, t);
-
-              case VPatch.ORDER:
-                return reorderChildren(r, o), r;
-
-              case VPatch.PROPS:
-                return applyProperties(r, o, n.properties), r;
-
-              case VPatch.THUNK:
-                return replaceRoot(r, t.patch(r, o, t));
-
-              default:
-                return r;
-            }
-        }
-        function removeNode(e, r) {
-            var t = e.parentNode;
-            return t && t.removeChild(e), destroyWidget(e, r), null;
-        }
-        function insertNode(e, r, t) {
-            var a = t.render(r, t);
-            return e && e.appendChild(a), e;
-        }
-        function stringPatch(e, r, t, a) {
-            var n;
-            if (3 === e.nodeType) e.replaceData(0, e.length, t.text), n = e; else {
-                var o = e.parentNode;
-                n = a.render(t, a), o && n !== e && o.replaceChild(n, e);
-            }
-            return n;
-        }
-        function widgetPatch(e, r, t, a) {
-            var n, o = updateWidget(r, t);
-            n = o ? t.update(r, e) || e : a.render(t, a);
-            var d = e.parentNode;
-            return d && n !== e && d.replaceChild(n, e), o || destroyWidget(e, r), n;
-        }
-        function vNodePatch(e, r, t, a) {
-            var n = e.parentNode, o = a.render(t, a);
-            return n && o !== e && n.replaceChild(o, e), o;
-        }
-        function destroyWidget(e, r) {
-            "function" == typeof r.destroy && isWidget(r) && r.destroy(e);
-        }
-        function reorderChildren(e, r) {
-            for (var t, a, n, o = e.childNodes, d = {}, i = 0; i < r.removes.length; i++) a = r.removes[i], 
-            t = o[a.from], a.key && (d[a.key] = t), e.removeChild(t);
-            for (var c = o.length, p = 0; p < r.inserts.length; p++) n = r.inserts[p], t = d[n.key], 
-            e.insertBefore(t, n.to >= c++ ? null : o[n.to]);
-        }
-        function replaceRoot(e, r) {
-            return e && r && e !== r && e.parentNode && e.parentNode.replaceChild(r, e), r;
-        }
-        var applyProperties = require("./apply-properties"), isWidget = require("../vnode/is-widget.js"), VPatch = require("../vnode/vpatch.js"), updateWidget = require("./update-widget");
-        module.exports = applyPatch;
-    }, {
-        "../vnode/is-widget.js": 122,
-        "../vnode/vpatch.js": 125,
-        "./apply-properties": 107,
-        "./update-widget": 112
-    } ],
-    111: [ function(require, module, exports) {
-        function patch(r, e, t) {
-            return t = t || {}, t.patch = t.patch && t.patch !== patch ? t.patch : patchRecursive, 
-            t.render = t.render || render, t.patch(r, e, t);
-        }
-        function patchRecursive(r, e, t) {
-            var a = patchIndices(e);
-            if (0 === a.length) return r;
-            var n = domIndex(r, e.a, a), c = r.ownerDocument;
-            t.document || c === document || (t.document = c);
-            for (var p = 0; p < a.length; p++) {
-                var u = a[p];
-                r = applyPatch(r, n[u], e[u], t);
-            }
-            return r;
-        }
-        function applyPatch(r, e, t, a) {
-            if (!e) return r;
-            var n;
-            if (isArray(t)) for (var c = 0; c < t.length; c++) n = patchOp(t[c], e, a), e === r && (r = n); else n = patchOp(t, e, a), 
-            e === r && (r = n);
-            return r;
-        }
-        function patchIndices(r) {
-            var e = [];
-            for (var t in r) "a" !== t && e.push(Number(t));
-            return e;
-        }
-        var document = require("global/document"), isArray = require("x-is-array"), render = require("./create-element"), domIndex = require("./dom-index"), patchOp = require("./patch-op");
-        module.exports = patch;
-    }, {
-        "./create-element": 108,
-        "./dom-index": 109,
-        "./patch-op": 110,
-        "global/document": 103,
-        "x-is-array": 105
-    } ],
-    112: [ function(require, module, exports) {
-        function updateWidget(i, e) {
-            return isWidget(i) && isWidget(e) ? "name" in i && "name" in e ? i.id === e.id : i.init === e.init : !1;
-        }
-        var isWidget = require("../vnode/is-widget.js");
-        module.exports = updateWidget;
-    }, {
-        "../vnode/is-widget.js": 122
-    } ],
-    113: [ function(require, module, exports) {
-        "use strict";
-        function EvHook(o) {
-            return this instanceof EvHook ? void (this.value = o) : new EvHook(o);
-        }
-        var EvStore = require("ev-store");
-        module.exports = EvHook, EvHook.prototype.hook = function(o, t) {
-            var e = EvStore(o), r = t.substr(3);
-            e[r] = this.value;
-        }, EvHook.prototype.unhook = function(o, t) {
-            var e = EvStore(o), r = t.substr(3);
-            e[r] = void 0;
-        };
-    }, {
-        "ev-store": 100
-    } ],
-    114: [ function(require, module, exports) {
-        "use strict";
-        function SoftSetHook(o) {
-            return this instanceof SoftSetHook ? void (this.value = o) : new SoftSetHook(o);
-        }
-        module.exports = SoftSetHook, SoftSetHook.prototype.hook = function(o, t) {
-            o[t] !== this.value && (o[t] = this.value);
-        };
-    }, {} ],
-    115: [ function(require, module, exports) {
-        "use strict";
-        function h(e, r, i) {
-            var t, n, o, s, a = [];
-            return !i && isChildren(r) && (i = r, n = {}), n = n || r || {}, t = parseTag(e, n), 
-            n.hasOwnProperty("key") && (o = n.key, n.key = void 0), n.hasOwnProperty("namespace") && (s = n.namespace, 
-            n.namespace = void 0), "INPUT" !== t || s || !n.hasOwnProperty("value") || void 0 === n.value || isHook(n.value) || (n.value = softSetHook(n.value)), 
-            transformProperties(n), void 0 !== i && null !== i && addChild(i, a, t, n), new VNode(t, n, a, o, s);
-        }
-        function addChild(e, r, i, t) {
-            if ("string" == typeof e) r.push(new VText(e)); else if ("number" == typeof e) r.push(new VText(String(e))); else if (isChild(e)) r.push(e); else {
-                if (!isArray(e)) {
-                    if (null === e || void 0 === e) return;
-                    throw UnexpectedVirtualElement({
-                        foreignObject: e,
-                        parentVnode: {
-                            tagName: i,
-                            properties: t
+            }(function() {
+                return function e(n, t, r) {
+                    function o(s, u) {
+                        if (!t[s]) {
+                            if (!n[s]) {
+                                var a = "function" == typeof require && require;
+                                if (!u && a) return a(s, !0);
+                                if (i) return i(s, !0);
+                                var v = new Error("Cannot find module '" + s + "'");
+                                throw v.code = "MODULE_NOT_FOUND", v;
+                            }
+                            var f = t[s] = {
+                                exports: {}
+                            };
+                            n[s][0].call(f.exports, function(e) {
+                                var t = n[s][1][e];
+                                return o(t ? t : e);
+                            }, f, f.exports, e, n, t, r);
                         }
-                    });
-                }
-                for (var n = 0; n < e.length; n++) addChild(e[n], r, i, t);
-            }
-        }
-        function transformProperties(e) {
-            for (var r in e) if (e.hasOwnProperty(r)) {
-                var i = e[r];
-                if (isHook(i)) continue;
-                "ev-" === r.substr(0, 3) && (e[r] = evHook(i));
-            }
-        }
-        function isChild(e) {
-            return isVNode(e) || isVText(e) || isWidget(e) || isVThunk(e);
-        }
-        function isChildren(e) {
-            return "string" == typeof e || isArray(e) || isChild(e);
-        }
-        function UnexpectedVirtualElement(e) {
-            var r = new Error();
-            return r.type = "virtual-hyperscript.unexpected.virtual-element", r.message = "Unexpected virtual child passed to h().\nExpected a VNode / Vthunk / VWidget / string but:\ngot:\n" + errorString(e.foreignObject) + ".\nThe parent vnode is:\n" + errorString(e.parentVnode), 
-            r.foreignObject = e.foreignObject, r.parentVnode = e.parentVnode, r;
-        }
-        function errorString(e) {
-            try {
-                return JSON.stringify(e, null, "    ");
-            } catch (r) {
-                return String(e);
-            }
-        }
-        var isArray = require("x-is-array"), VNode = require("../vnode/vnode.js"), VText = require("../vnode/vtext.js"), isVNode = require("../vnode/is-vnode"), isVText = require("../vnode/is-vtext"), isWidget = require("../vnode/is-widget"), isHook = require("../vnode/is-vhook"), isVThunk = require("../vnode/is-thunk"), parseTag = require("./parse-tag.js"), softSetHook = require("./hooks/soft-set-hook.js"), evHook = require("./hooks/ev-hook.js");
-        module.exports = h;
-    }, {
-        "../vnode/is-thunk": 118,
-        "../vnode/is-vhook": 119,
-        "../vnode/is-vnode": 120,
-        "../vnode/is-vtext": 121,
-        "../vnode/is-widget": 122,
-        "../vnode/vnode.js": 124,
-        "../vnode/vtext.js": 126,
-        "./hooks/ev-hook.js": 113,
-        "./hooks/soft-set-hook.js": 114,
-        "./parse-tag.js": 116,
-        "x-is-array": 105
-    } ],
-    116: [ function(require, module, exports) {
-        "use strict";
-        function parseTag(s, a) {
-            if (!s) return "DIV";
-            var t = !a.hasOwnProperty("id"), e = split(s, classIdSplit), r = null;
-            notClassId.test(e[1]) && (r = "DIV");
-            var l, n, i, p;
-            for (p = 0; p < e.length; p++) n = e[p], n && (i = n.charAt(0), r ? "." === i ? (l = l || [], 
-            l.push(n.substring(1, n.length))) : "#" === i && t && (a.id = n.substring(1, n.length)) : r = n);
-            return l && (a.className && l.push(a.className), a.className = l.join(" ")), a.namespace ? r : r.toUpperCase();
-        }
-        var split = require("browser-split"), classIdSplit = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/, notClassId = /^\.|#/;
-        module.exports = parseTag;
-    }, {
-        "browser-split": 99
-    } ],
-    117: [ function(require, module, exports) {
-        function handleThunk(e, n) {
-            var r = e, i = n;
-            return isThunk(n) && (i = renderThunk(n, e)), isThunk(e) && (r = renderThunk(e, null)), 
-            {
-                a: r,
-                b: i
-            };
-        }
-        function renderThunk(e, n) {
-            var r = e.vnode;
-            if (r || (r = e.vnode = e.render(n)), !(isVNode(r) || isVText(r) || isWidget(r))) throw new Error("thunk did not return a valid node");
-            return r;
-        }
-        var isVNode = require("./is-vnode"), isVText = require("./is-vtext"), isWidget = require("./is-widget"), isThunk = require("./is-thunk");
-        module.exports = handleThunk;
-    }, {
-        "./is-thunk": 118,
-        "./is-vnode": 120,
-        "./is-vtext": 121,
-        "./is-widget": 122
-    } ],
-    118: [ function(require, module, exports) {
-        function isThunk(n) {
-            return n && "Thunk" === n.type;
-        }
-        module.exports = isThunk;
+                        return t[s].exports;
+                    }
+                    for (var i = "function" == typeof require && require, s = 0; s < r.length; s++) o(r[s]);
+                    return o;
+                }({
+                    1: [ function(e, n, t) {
+                        var r = e("./vdom/create-element.js");
+                        n.exports = r;
+                    }, {
+                        "./vdom/create-element.js": 15
+                    } ],
+                    2: [ function(e, n, t) {
+                        var r = e("./vtree/diff.js");
+                        n.exports = r;
+                    }, {
+                        "./vtree/diff.js": 35
+                    } ],
+                    3: [ function(e, n, t) {
+                        var r = e("./virtual-hyperscript/index.js");
+                        n.exports = r;
+                    }, {
+                        "./virtual-hyperscript/index.js": 22
+                    } ],
+                    4: [ function(e, n, t) {
+                        var r = e("./diff.js"), o = e("./patch.js"), i = e("./h.js"), s = e("./create-element.js"), u = e("./vnode/vnode.js"), a = e("./vnode/vtext.js");
+                        n.exports = {
+                            diff: r,
+                            patch: o,
+                            h: i,
+                            create: s,
+                            VNode: u,
+                            VText: a
+                        };
+                    }, {
+                        "./create-element.js": 1,
+                        "./diff.js": 2,
+                        "./h.js": 3,
+                        "./patch.js": 13,
+                        "./vnode/vnode.js": 31,
+                        "./vnode/vtext.js": 33
+                    } ],
+                    5: [ function(e, n, t) {
+                        n.exports = function(e) {
+                            var n, t = String.prototype.split, r = /()??/.exec("")[1] === e;
+                            return n = function(n, o, i) {
+                                if ("[object RegExp]" !== Object.prototype.toString.call(o)) return t.call(n, o, i);
+                                var s, u, a, v, f = [], d = (o.ignoreCase ? "i" : "") + (o.multiline ? "m" : "") + (o.extended ? "x" : "") + (o.sticky ? "y" : ""), c = 0, o = new RegExp(o.source, d + "g");
+                                for (n += "", r || (s = new RegExp("^" + o.source + "$(?!\\s)", d)), i = i === e ? -1 >>> 0 : i >>> 0; (u = o.exec(n)) && (a = u.index + u[0].length, 
+                                !(a > c && (f.push(n.slice(c, u.index)), !r && u.length > 1 && u[0].replace(s, function() {
+                                    for (var n = 1; n < arguments.length - 2; n++) arguments[n] === e && (u[n] = e);
+                                }), u.length > 1 && u.index < n.length && Array.prototype.push.apply(f, u.slice(1)), 
+                                v = u[0].length, c = a, f.length >= i))); ) o.lastIndex === u.index && o.lastIndex++;
+                                return c === n.length ? (v || !o.test("")) && f.push("") : f.push(n.slice(c)), f.length > i ? f.slice(0, i) : f;
+                            };
+                        }();
+                    }, {} ],
+                    6: [ function(e, n, t) {}, {} ],
+                    7: [ function(e, n, t) {
+                        "use strict";
+                        function r(e) {
+                            var n = e[s];
+                            return n || (n = e[s] = {}), n;
+                        }
+                        var o = e("individual/one-version"), i = "7";
+                        o("ev-store", i);
+                        var s = "__EV_STORE_KEY@" + i;
+                        n.exports = r;
+                    }, {
+                        "individual/one-version": 9
+                    } ],
+                    8: [ function(e, n, t) {
+                        (function(e) {
+                            "use strict";
+                            function t(e, n) {
+                                return e in r ? r[e] : (r[e] = n, n);
+                            }
+                            var r = "undefined" != typeof window ? window : "undefined" != typeof e ? e : {};
+                            n.exports = t;
+                        }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
+                    }, {} ],
+                    9: [ function(e, n, t) {
+                        "use strict";
+                        function r(e, n, t) {
+                            var r = "__INDIVIDUAL_ONE_VERSION_" + e, i = r + "_ENFORCE_SINGLETON", s = o(i, n);
+                            if (s !== n) throw new Error("Can only have one copy of " + e + ".\nYou already have version " + s + " installed.\nThis means you cannot install version " + n);
+                            return o(r, t);
+                        }
+                        var o = e("./index.js");
+                        n.exports = r;
+                    }, {
+                        "./index.js": 8
+                    } ],
+                    10: [ function(e, n, t) {
+                        (function(t) {
+                            var r = "undefined" != typeof t ? t : "undefined" != typeof window ? window : {}, o = e("min-document");
+                            if ("undefined" != typeof document) n.exports = document; else {
+                                var i = r["__GLOBAL_DOCUMENT_CACHE@4"];
+                                i || (i = r["__GLOBAL_DOCUMENT_CACHE@4"] = o), n.exports = i;
+                            }
+                        }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
+                    }, {
+                        "min-document": 6
+                    } ],
+                    11: [ function(e, n, t) {
+                        "use strict";
+                        n.exports = function(e) {
+                            return "object" == typeof e && null !== e;
+                        };
+                    }, {} ],
+                    12: [ function(e, n, t) {
+                        function r(e) {
+                            return "[object Array]" === i.call(e);
+                        }
+                        var o = Array.isArray, i = Object.prototype.toString;
+                        n.exports = o || r;
+                    }, {} ],
+                    13: [ function(e, n, t) {
+                        var r = e("./vdom/patch.js");
+                        n.exports = r;
+                    }, {
+                        "./vdom/patch.js": 18
+                    } ],
+                    14: [ function(e, n, t) {
+                        function r(e, n, t) {
+                            for (var r in n) {
+                                var s = n[r];
+                                void 0 === s ? o(e, r, s, t) : a(s) ? (o(e, r, s, t), s.hook && s.hook(e, r, t ? t[r] : void 0)) : u(s) ? i(e, n, t, r, s) : e[r] = s;
+                            }
+                        }
+                        function o(e, n, t, r) {
+                            if (r) {
+                                var o = r[n];
+                                if (a(o)) o.unhook && o.unhook(e, n, t); else if ("attributes" === n) for (var i in o) e.removeAttribute(i); else if ("style" === n) for (var s in o) e.style[s] = ""; else "string" == typeof o ? e[n] = "" : e[n] = null;
+                            }
+                        }
+                        function i(e, n, t, r, o) {
+                            var i = t ? t[r] : void 0;
+                            if ("attributes" !== r) {
+                                if (i && u(i) && s(i) !== s(o)) return void (e[r] = o);
+                                u(e[r]) || (e[r] = {});
+                                var a = "style" === r ? "" : void 0;
+                                for (var v in o) {
+                                    var f = o[v];
+                                    e[r][v] = void 0 === f ? a : f;
+                                }
+                            } else for (var d in o) {
+                                var c = o[d];
+                                void 0 === c ? e.removeAttribute(d) : e.setAttribute(d, c);
+                            }
+                        }
+                        function s(e) {
+                            return Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__ ? e.__proto__ : e.constructor ? e.constructor.prototype : void 0;
+                        }
+                        var u = e("is-object"), a = e("../vnode/is-vhook.js");
+                        n.exports = r;
+                    }, {
+                        "../vnode/is-vhook.js": 26,
+                        "is-object": 11
+                    } ],
+                    15: [ function(e, n, t) {
+                        function r(e, n) {
+                            var t = n ? n.document || o : o, f = n ? n.warn : null;
+                            if (e = v(e).a, a(e)) return e.init();
+                            if (u(e)) return t.createTextNode(e.text);
+                            if (!s(e)) return f && f("Item is not a valid virtual dom node", e), null;
+                            var d = null === e.namespace ? t.createElement(e.tagName) : t.createElementNS(e.namespace, e.tagName), c = e.properties;
+                            i(d, c);
+                            for (var l = e.children, p = 0; p < l.length; p++) {
+                                var h = r(l[p], n);
+                                h && d.appendChild(h);
+                            }
+                            return d;
+                        }
+                        var o = e("global/document"), i = e("./apply-properties"), s = e("../vnode/is-vnode.js"), u = e("../vnode/is-vtext.js"), a = e("../vnode/is-widget.js"), v = e("../vnode/handle-thunk.js");
+                        n.exports = r;
+                    }, {
+                        "../vnode/handle-thunk.js": 24,
+                        "../vnode/is-vnode.js": 27,
+                        "../vnode/is-vtext.js": 28,
+                        "../vnode/is-widget.js": 29,
+                        "./apply-properties": 14,
+                        "global/document": 10
+                    } ],
+                    16: [ function(e, n, t) {
+                        function r(e, n, t, r) {
+                            return t && 0 !== t.length ? (t.sort(s), o(e, n, t, r, 0)) : {};
+                        }
+                        function o(e, n, t, r, s) {
+                            if (r = r || {}, e) {
+                                i(t, s, s) && (r[s] = e);
+                                var a = n.children;
+                                if (a) for (var v = e.childNodes, f = 0; f < n.children.length; f++) {
+                                    s += 1;
+                                    var d = a[f] || u, c = s + (d.count || 0);
+                                    i(t, s, c) && o(v[f], d, t, r, s), s = c;
+                                }
+                            }
+                            return r;
+                        }
+                        function i(e, n, t) {
+                            if (0 === e.length) return !1;
+                            for (var r, o, i = 0, s = e.length - 1; s >= i; ) {
+                                if (r = (s + i) / 2 >> 0, o = e[r], i === s) return o >= n && t >= o;
+                                if (n > o) i = r + 1; else {
+                                    if (!(o > t)) return !0;
+                                    s = r - 1;
+                                }
+                            }
+                            return !1;
+                        }
+                        function s(e, n) {
+                            return e > n ? 1 : -1;
+                        }
+                        var u = {};
+                        n.exports = r;
+                    }, {} ],
+                    17: [ function(e, n, t) {
+                        function r(e, n, t) {
+                            var r = e.type, v = e.vNode, l = e.patch;
+                            switch (r) {
+                              case p.REMOVE:
+                                return o(n, v);
+
+                              case p.INSERT:
+                                return i(n, l, t);
+
+                              case p.VTEXT:
+                                return s(n, v, l, t);
+
+                              case p.WIDGET:
+                                return u(n, v, l, t);
+
+                              case p.VNODE:
+                                return a(n, v, l, t);
+
+                              case p.ORDER:
+                                return f(n, l), n;
+
+                              case p.PROPS:
+                                return c(n, l, v.properties), n;
+
+                              case p.THUNK:
+                                return d(n, t.patch(n, l, t));
+
+                              default:
+                                return n;
+                            }
+                        }
+                        function o(e, n) {
+                            var t = e.parentNode;
+                            return t && t.removeChild(e), v(e, n), null;
+                        }
+                        function i(e, n, t) {
+                            var r = t.render(n, t);
+                            return e && e.appendChild(r), e;
+                        }
+                        function s(e, n, t, r) {
+                            var o;
+                            if (3 === e.nodeType) e.replaceData(0, e.length, t.text), o = e; else {
+                                var i = e.parentNode;
+                                o = r.render(t, r), i && o !== e && i.replaceChild(o, e);
+                            }
+                            return o;
+                        }
+                        function u(e, n, t, r) {
+                            var o, i = h(n, t);
+                            o = i ? t.update(n, e) || e : r.render(t, r);
+                            var s = e.parentNode;
+                            return s && o !== e && s.replaceChild(o, e), i || v(e, n), o;
+                        }
+                        function a(e, n, t, r) {
+                            var o = e.parentNode, i = r.render(t, r);
+                            return o && i !== e && o.replaceChild(i, e), i;
+                        }
+                        function v(e, n) {
+                            "function" == typeof n.destroy && l(n) && n.destroy(e);
+                        }
+                        function f(e, n) {
+                            for (var t, r, o, i = e.childNodes, s = {}, u = 0; u < n.removes.length; u++) r = n.removes[u], 
+                            t = i[r.from], r.key && (s[r.key] = t), e.removeChild(t);
+                            for (var a = i.length, v = 0; v < n.inserts.length; v++) o = n.inserts[v], t = s[o.key], 
+                            e.insertBefore(t, o.to >= a++ ? null : i[o.to]);
+                        }
+                        function d(e, n) {
+                            return e && n && e !== n && e.parentNode && e.parentNode.replaceChild(n, e), n;
+                        }
+                        var c = e("./apply-properties"), l = e("../vnode/is-widget.js"), p = e("../vnode/vpatch.js"), h = e("./update-widget");
+                        n.exports = r;
+                    }, {
+                        "../vnode/is-widget.js": 29,
+                        "../vnode/vpatch.js": 32,
+                        "./apply-properties": 14,
+                        "./update-widget": 19
+                    } ],
+                    18: [ function(e, n, t) {
+                        function r(e, n, t) {
+                            return t = t || {}, t.patch = t.patch && t.patch !== r ? t.patch : o, t.render = t.render || v, 
+                            t.patch(e, n, t);
+                        }
+                        function o(e, n, t) {
+                            var r = s(n);
+                            if (0 === r.length) return e;
+                            var o = f(e, n.a, r), a = e.ownerDocument;
+                            t.document || a === u || (t.document = a);
+                            for (var v = 0; v < r.length; v++) {
+                                var d = r[v];
+                                e = i(e, o[d], n[d], t);
+                            }
+                            return e;
+                        }
+                        function i(e, n, t, r) {
+                            if (!n) return e;
+                            var o;
+                            if (a(t)) for (var i = 0; i < t.length; i++) o = d(t[i], n, r), n === e && (e = o); else o = d(t, n, r), 
+                            n === e && (e = o);
+                            return e;
+                        }
+                        function s(e) {
+                            var n = [];
+                            for (var t in e) "a" !== t && n.push(Number(t));
+                            return n;
+                        }
+                        var u = e("global/document"), a = e("x-is-array"), v = e("./create-element"), f = e("./dom-index"), d = e("./patch-op");
+                        n.exports = r;
+                    }, {
+                        "./create-element": 15,
+                        "./dom-index": 16,
+                        "./patch-op": 17,
+                        "global/document": 10,
+                        "x-is-array": 12
+                    } ],
+                    19: [ function(e, n, t) {
+                        function r(e, n) {
+                            return o(e) && o(n) ? "name" in e && "name" in n ? e.id === n.id : e.init === n.init : !1;
+                        }
+                        var o = e("../vnode/is-widget.js");
+                        n.exports = r;
+                    }, {
+                        "../vnode/is-widget.js": 29
+                    } ],
+                    20: [ function(e, n, t) {
+                        "use strict";
+                        function r(e) {
+                            return this instanceof r ? void (this.value = e) : new r(e);
+                        }
+                        var o = e("ev-store");
+                        n.exports = r, r.prototype.hook = function(e, n) {
+                            var t = o(e), r = n.substr(3);
+                            t[r] = this.value;
+                        }, r.prototype.unhook = function(e, n) {
+                            var t = o(e), r = n.substr(3);
+                            t[r] = void 0;
+                        };
+                    }, {
+                        "ev-store": 7
+                    } ],
+                    21: [ function(e, n, t) {
+                        "use strict";
+                        function r(e) {
+                            return this instanceof r ? void (this.value = e) : new r(e);
+                        }
+                        n.exports = r, r.prototype.hook = function(e, n) {
+                            e[n] !== this.value && (e[n] = this.value);
+                        };
+                    }, {} ],
+                    22: [ function(e, n, t) {
+                        "use strict";
+                        function r(e, n, t) {
+                            var r, s, a, v, f = [];
+                            return !t && u(n) && (t = n, s = {}), s = s || n || {}, r = k(e, s), s.hasOwnProperty("key") && (a = s.key, 
+                            s.key = void 0), s.hasOwnProperty("namespace") && (v = s.namespace, s.namespace = void 0), 
+                            "INPUT" !== r || v || !s.hasOwnProperty("value") || void 0 === s.value || y(s.value) || (s.value = x(s.value)), 
+                            i(s), void 0 !== t && null !== t && o(t, f, r, s), new d(r, s, f, a, v);
+                        }
+                        function o(e, n, t, r) {
+                            if ("string" == typeof e) n.push(new c(e)); else if ("number" == typeof e) n.push(new c(String(e))); else if (s(e)) n.push(e); else {
+                                if (!f(e)) {
+                                    if (null === e || void 0 === e) return;
+                                    throw a({
+                                        foreignObject: e,
+                                        parentVnode: {
+                                            tagName: t,
+                                            properties: r
+                                        }
+                                    });
+                                }
+                                for (var i = 0; i < e.length; i++) o(e[i], n, t, r);
+                            }
+                        }
+                        function i(e) {
+                            for (var n in e) if (e.hasOwnProperty(n)) {
+                                var t = e[n];
+                                if (y(t)) continue;
+                                "ev-" === n.substr(0, 3) && (e[n] = m(t));
+                            }
+                        }
+                        function s(e) {
+                            return l(e) || p(e) || h(e) || g(e);
+                        }
+                        function u(e) {
+                            return "string" == typeof e || f(e) || s(e);
+                        }
+                        function a(e) {
+                            var n = new Error();
+                            return n.type = "virtual-hyperscript.unexpected.virtual-element", n.message = "Unexpected virtual child passed to h().\nExpected a VNode / Vthunk / VWidget / string but:\ngot:\n" + v(e.foreignObject) + ".\nThe parent vnode is:\n" + v(e.parentVnode), 
+                            n.foreignObject = e.foreignObject, n.parentVnode = e.parentVnode, n;
+                        }
+                        function v(e) {
+                            try {
+                                return JSON.stringify(e, null, "    ");
+                            } catch (n) {
+                                return String(e);
+                            }
+                        }
+                        var f = e("x-is-array"), d = e("../vnode/vnode.js"), c = e("../vnode/vtext.js"), l = e("../vnode/is-vnode"), p = e("../vnode/is-vtext"), h = e("../vnode/is-widget"), y = e("../vnode/is-vhook"), g = e("../vnode/is-thunk"), k = e("./parse-tag.js"), x = e("./hooks/soft-set-hook.js"), m = e("./hooks/ev-hook.js");
+                        n.exports = r;
+                    }, {
+                        "../vnode/is-thunk": 25,
+                        "../vnode/is-vhook": 26,
+                        "../vnode/is-vnode": 27,
+                        "../vnode/is-vtext": 28,
+                        "../vnode/is-widget": 29,
+                        "../vnode/vnode.js": 31,
+                        "../vnode/vtext.js": 33,
+                        "./hooks/ev-hook.js": 20,
+                        "./hooks/soft-set-hook.js": 21,
+                        "./parse-tag.js": 23,
+                        "x-is-array": 12
+                    } ],
+                    23: [ function(e, n, t) {
+                        "use strict";
+                        function r(e, n) {
+                            if (!e) return "DIV";
+                            var t = !n.hasOwnProperty("id"), r = o(e, i), u = null;
+                            s.test(r[1]) && (u = "DIV");
+                            var a, v, f, d;
+                            for (d = 0; d < r.length; d++) v = r[d], v && (f = v.charAt(0), u ? "." === f ? (a = a || [], 
+                            a.push(v.substring(1, v.length))) : "#" === f && t && (n.id = v.substring(1, v.length)) : u = v);
+                            return a && (n.className && a.push(n.className), n.className = a.join(" ")), n.namespace ? u : u.toUpperCase();
+                        }
+                        var o = e("browser-split"), i = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/, s = /^\.|#/;
+                        n.exports = r;
+                    }, {
+                        "browser-split": 5
+                    } ],
+                    24: [ function(e, n, t) {
+                        function r(e, n) {
+                            var t = e, r = n;
+                            return a(n) && (r = o(n, e)), a(e) && (t = o(e, null)), {
+                                a: t,
+                                b: r
+                            };
+                        }
+                        function o(e, n) {
+                            var t = e.vnode;
+                            if (t || (t = e.vnode = e.render(n)), !(i(t) || s(t) || u(t))) throw new Error("thunk did not return a valid node");
+                            return t;
+                        }
+                        var i = e("./is-vnode"), s = e("./is-vtext"), u = e("./is-widget"), a = e("./is-thunk");
+                        n.exports = r;
+                    }, {
+                        "./is-thunk": 25,
+                        "./is-vnode": 27,
+                        "./is-vtext": 28,
+                        "./is-widget": 29
+                    } ],
+                    25: [ function(e, n, t) {
+                        function r(e) {
+                            return e && "Thunk" === e.type;
+                        }
+                        n.exports = r;
+                    }, {} ],
+                    26: [ function(e, n, t) {
+                        function r(e) {
+                            return e && ("function" == typeof e.hook && !e.hasOwnProperty("hook") || "function" == typeof e.unhook && !e.hasOwnProperty("unhook"));
+                        }
+                        n.exports = r;
+                    }, {} ],
+                    27: [ function(e, n, t) {
+                        function r(e) {
+                            return e && "VirtualNode" === e.type && e.version === o;
+                        }
+                        var o = e("./version");
+                        n.exports = r;
+                    }, {
+                        "./version": 30
+                    } ],
+                    28: [ function(e, n, t) {
+                        function r(e) {
+                            return e && "VirtualText" === e.type && e.version === o;
+                        }
+                        var o = e("./version");
+                        n.exports = r;
+                    }, {
+                        "./version": 30
+                    } ],
+                    29: [ function(e, n, t) {
+                        function r(e) {
+                            return e && "Widget" === e.type;
+                        }
+                        n.exports = r;
+                    }, {} ],
+                    30: [ function(e, n, t) {
+                        n.exports = "2";
+                    }, {} ],
+                    31: [ function(e, n, t) {
+                        function r(e, n, t, r, o) {
+                            this.tagName = e, this.properties = n || v, this.children = t || f, this.key = null != r ? String(r) : void 0, 
+                            this.namespace = "string" == typeof o ? o : null;
+                            var d, c = t && t.length || 0, l = 0, p = !1, h = !1, y = !1;
+                            for (var g in n) if (n.hasOwnProperty(g)) {
+                                var k = n[g];
+                                a(k) && k.unhook && (d || (d = {}), d[g] = k);
+                            }
+                            for (var x = 0; c > x; x++) {
+                                var m = t[x];
+                                i(m) ? (l += m.count || 0, !p && m.hasWidgets && (p = !0), !h && m.hasThunks && (h = !0), 
+                                y || !m.hooks && !m.descendantHooks || (y = !0)) : !p && s(m) ? "function" == typeof m.destroy && (p = !0) : !h && u(m) && (h = !0);
+                            }
+                            this.count = c + l, this.hasWidgets = p, this.hasThunks = h, this.hooks = d, this.descendantHooks = y;
+                        }
+                        var o = e("./version"), i = e("./is-vnode"), s = e("./is-widget"), u = e("./is-thunk"), a = e("./is-vhook");
+                        n.exports = r;
+                        var v = {}, f = [];
+                        r.prototype.version = o, r.prototype.type = "VirtualNode";
+                    }, {
+                        "./is-thunk": 25,
+                        "./is-vhook": 26,
+                        "./is-vnode": 27,
+                        "./is-widget": 29,
+                        "./version": 30
+                    } ],
+                    32: [ function(e, n, t) {
+                        function r(e, n, t) {
+                            this.type = Number(e), this.vNode = n, this.patch = t;
+                        }
+                        var o = e("./version");
+                        r.NONE = 0, r.VTEXT = 1, r.VNODE = 2, r.WIDGET = 3, r.PROPS = 4, r.ORDER = 5, r.INSERT = 6, 
+                        r.REMOVE = 7, r.THUNK = 8, n.exports = r, r.prototype.version = o, r.prototype.type = "VirtualPatch";
+                    }, {
+                        "./version": 30
+                    } ],
+                    33: [ function(e, n, t) {
+                        function r(e) {
+                            this.text = String(e);
+                        }
+                        var o = e("./version");
+                        n.exports = r, r.prototype.version = o, r.prototype.type = "VirtualText";
+                    }, {
+                        "./version": 30
+                    } ],
+                    34: [ function(e, n, t) {
+                        function r(e, n) {
+                            var t;
+                            for (var u in e) {
+                                u in n || (t = t || {}, t[u] = void 0);
+                                var a = e[u], v = n[u];
+                                if (a !== v) if (i(a) && i(v)) if (o(v) !== o(a)) t = t || {}, t[u] = v; else if (s(v)) t = t || {}, 
+                                t[u] = v; else {
+                                    var f = r(a, v);
+                                    f && (t = t || {}, t[u] = f);
+                                } else t = t || {}, t[u] = v;
+                            }
+                            for (var d in n) d in e || (t = t || {}, t[d] = n[d]);
+                            return t;
+                        }
+                        function o(e) {
+                            return Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__ ? e.__proto__ : e.constructor ? e.constructor.prototype : void 0;
+                        }
+                        var i = e("is-object"), s = e("../vnode/is-vhook");
+                        n.exports = r;
+                    }, {
+                        "../vnode/is-vhook": 26,
+                        "is-object": 11
+                    } ],
+                    35: [ function(e, n, t) {
+                        function r(e, n) {
+                            var t = {
+                                a: e
+                            };
+                            return o(e, n, t, 0), t;
+                        }
+                        function o(e, n, t, r) {
+                            if (e !== n) {
+                                var o = t[r], u = !1;
+                                if (w(e) || w(n)) a(e, n, t, r); else if (null == n) m(e) || (s(e, t, r), o = t[r]), 
+                                o = h(o, new g(g.REMOVE, e, n)); else if (k(n)) if (k(e)) if (e.tagName === n.tagName && e.namespace === n.namespace && e.key === n.key) {
+                                    var v = O(e.properties, n.properties);
+                                    v && (o = h(o, new g(g.PROPS, e, v))), o = i(e, n, t, o, r);
+                                } else o = h(o, new g(g.VNODE, e, n)), u = !0; else o = h(o, new g(g.VNODE, e, n)), 
+                                u = !0; else x(n) ? x(e) ? e.text !== n.text && (o = h(o, new g(g.VTEXT, e, n))) : (o = h(o, new g(g.VTEXT, e, n)), 
+                                u = !0) : m(n) && (m(e) || (u = !0), o = h(o, new g(g.WIDGET, e, n)));
+                                o && (t[r] = o), u && s(e, t, r);
+                            }
+                        }
+                        function i(e, n, t, r, i) {
+                            for (var s = e.children, u = c(s, n.children), a = u.children, v = s.length, f = a.length, d = v > f ? v : f, l = 0; d > l; l++) {
+                                var p = s[l], y = a[l];
+                                i += 1, p ? o(p, y, t, i) : y && (r = h(r, new g(g.INSERT, null, y))), k(p) && p.count && (i += p.count);
+                            }
+                            return u.moves && (r = h(r, new g(g.ORDER, e, u.moves))), r;
+                        }
+                        function s(e, n, t) {
+                            f(e, n, t), u(e, n, t);
+                        }
+                        function u(e, n, t) {
+                            if (m(e)) "function" == typeof e.destroy && (n[t] = h(n[t], new g(g.REMOVE, e, null))); else if (k(e) && (e.hasWidgets || e.hasThunks)) for (var r = e.children, o = r.length, i = 0; o > i; i++) {
+                                var s = r[i];
+                                t += 1, u(s, n, t), k(s) && s.count && (t += s.count);
+                            } else w(e) && a(e, null, n, t);
+                        }
+                        function a(e, n, t, o) {
+                            var i = j(e, n), s = r(i.a, i.b);
+                            v(s) && (t[o] = new g(g.THUNK, null, s));
+                        }
+                        function v(e) {
+                            for (var n in e) if ("a" !== n) return !0;
+                            return !1;
+                        }
+                        function f(e, n, t) {
+                            if (k(e)) {
+                                if (e.hooks && (n[t] = h(n[t], new g(g.PROPS, e, d(e.hooks)))), e.descendantHooks || e.hasThunks) for (var r = e.children, o = r.length, i = 0; o > i; i++) {
+                                    var s = r[i];
+                                    t += 1, f(s, n, t), k(s) && s.count && (t += s.count);
+                                }
+                            } else w(e) && a(e, null, n, t);
+                        }
+                        function d(e) {
+                            var n = {};
+                            for (var t in e) n[t] = void 0;
+                            return n;
+                        }
+                        function c(e, n) {
+                            var t = p(n), r = t.keys, o = t.free;
+                            if (o.length === n.length) return {
+                                children: n,
+                                moves: null
+                            };
+                            var i = p(e), s = i.keys, u = i.free;
+                            if (u.length === e.length) return {
+                                children: n,
+                                moves: null
+                            };
+                            for (var a = [], v = 0, f = o.length, d = 0, c = 0; c < e.length; c++) {
+                                var h, y = e[c];
+                                y.key ? r.hasOwnProperty(y.key) ? (h = r[y.key], a.push(n[h])) : (h = c - d++, a.push(null)) : f > v ? (h = o[v++], 
+                                a.push(n[h])) : (h = c - d++, a.push(null));
+                            }
+                            for (var g = v >= o.length ? n.length : o[v], k = 0; k < n.length; k++) {
+                                var x = n[k];
+                                x.key ? s.hasOwnProperty(x.key) || a.push(x) : k >= g && a.push(x);
+                            }
+                            for (var m, w = a.slice(), j = 0, O = [], N = [], E = 0; E < n.length; ) {
+                                var b = n[E];
+                                for (m = w[j]; null === m && w.length; ) O.push(l(w, j, null)), m = w[j];
+                                m && m.key === b.key ? (j++, E++) : b.key ? (m && m.key && r[m.key] !== E + 1 ? (O.push(l(w, j, m.key)), 
+                                m = w[j], m && m.key === b.key ? j++ : N.push({
+                                    key: b.key,
+                                    to: E
+                                })) : N.push({
+                                    key: b.key,
+                                    to: E
+                                }), E++) : m && m.key && O.push(l(w, j, m.key));
+                            }
+                            for (;j < w.length; ) m = w[j], O.push(l(w, j, m && m.key));
+                            return O.length !== d || N.length ? {
+                                children: a,
+                                moves: {
+                                    removes: O,
+                                    inserts: N
+                                }
+                            } : {
+                                children: a,
+                                moves: null
+                            };
+                        }
+                        function l(e, n, t) {
+                            return e.splice(n, 1), {
+                                from: n,
+                                key: t
+                            };
+                        }
+                        function p(e) {
+                            for (var n = {}, t = [], r = e.length, o = 0; r > o; o++) {
+                                var i = e[o];
+                                i.key ? n[i.key] = o : t.push(o);
+                            }
+                            return {
+                                keys: n,
+                                free: t
+                            };
+                        }
+                        function h(e, n) {
+                            return e ? (y(e) ? e.push(n) : e = [ e, n ], e) : n;
+                        }
+                        var y = e("x-is-array"), g = e("../vnode/vpatch"), k = e("../vnode/is-vnode"), x = e("../vnode/is-vtext"), m = e("../vnode/is-widget"), w = e("../vnode/is-thunk"), j = e("../vnode/handle-thunk"), O = e("./diff-props");
+                        n.exports = r;
+                    }, {
+                        "../vnode/handle-thunk": 24,
+                        "../vnode/is-thunk": 25,
+                        "../vnode/is-vnode": 27,
+                        "../vnode/is-vtext": 28,
+                        "../vnode/is-widget": 29,
+                        "../vnode/vpatch": 32,
+                        "./diff-props": 34,
+                        "x-is-array": 12
+                    } ]
+                }, {}, [ 4 ])(4);
+            });
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
     }, {} ],
-    119: [ function(require, module, exports) {
-        function isHook(o) {
-            return o && ("function" == typeof o.hook && !o.hasOwnProperty("hook") || "function" == typeof o.unhook && !o.hasOwnProperty("unhook"));
-        }
-        module.exports = isHook;
-    }, {} ],
-    120: [ function(require, module, exports) {
-        function isVirtualNode(e) {
-            return e && "VirtualNode" === e.type && e.version === version;
-        }
-        var version = require("./version");
-        module.exports = isVirtualNode;
-    }, {
-        "./version": 123
-    } ],
-    121: [ function(require, module, exports) {
-        function isVirtualText(e) {
-            return e && "VirtualText" === e.type && e.version === version;
-        }
-        var version = require("./version");
-        module.exports = isVirtualText;
-    }, {
-        "./version": 123
-    } ],
-    122: [ function(require, module, exports) {
-        function isWidget(e) {
-            return e && "Widget" === e.type;
-        }
-        module.exports = isWidget;
-    }, {} ],
-    123: [ function(require, module, exports) {
-        module.exports = "2";
-    }, {} ],
-    124: [ function(require, module, exports) {
-        function VirtualNode(e, i, o, s, r) {
-            this.tagName = e, this.properties = i || noProperties, this.children = o || noChildren, 
-            this.key = null != s ? String(s) : void 0, this.namespace = "string" == typeof r ? r : null;
-            var t, n = o && o.length || 0, h = 0, a = !1, d = !1, u = !1;
-            for (var k in i) if (i.hasOwnProperty(k)) {
-                var l = i[k];
-                isVHook(l) && l.unhook && (t || (t = {}), t[k] = l);
-            }
-            for (var p = 0; n > p; p++) {
-                var v = o[p];
-                isVNode(v) ? (h += v.count || 0, !a && v.hasWidgets && (a = !0), !d && v.hasThunks && (d = !0), 
-                u || !v.hooks && !v.descendantHooks || (u = !0)) : !a && isWidget(v) ? "function" == typeof v.destroy && (a = !0) : !d && isThunk(v) && (d = !0);
-            }
-            this.count = n + h, this.hasWidgets = a, this.hasThunks = d, this.hooks = t, this.descendantHooks = u;
-        }
-        var version = require("./version"), isVNode = require("./is-vnode"), isWidget = require("./is-widget"), isThunk = require("./is-thunk"), isVHook = require("./is-vhook");
-        module.exports = VirtualNode;
-        var noProperties = {}, noChildren = [];
-        VirtualNode.prototype.version = version, VirtualNode.prototype.type = "VirtualNode";
-    }, {
-        "./is-thunk": 118,
-        "./is-vhook": 119,
-        "./is-vnode": 120,
-        "./is-widget": 122,
-        "./version": 123
-    } ],
-    125: [ function(require, module, exports) {
-        function VirtualPatch(t, a, r) {
-            this.type = Number(t), this.vNode = a, this.patch = r;
-        }
-        var version = require("./version");
-        VirtualPatch.NONE = 0, VirtualPatch.VTEXT = 1, VirtualPatch.VNODE = 2, VirtualPatch.WIDGET = 3, 
-        VirtualPatch.PROPS = 4, VirtualPatch.ORDER = 5, VirtualPatch.INSERT = 6, VirtualPatch.REMOVE = 7, 
-        VirtualPatch.THUNK = 8, module.exports = VirtualPatch, VirtualPatch.prototype.version = version, 
-        VirtualPatch.prototype.type = "VirtualPatch";
-    }, {
-        "./version": 123
-    } ],
-    126: [ function(require, module, exports) {
-        function VirtualText(t) {
-            this.text = String(t);
-        }
-        var version = require("./version");
-        module.exports = VirtualText, VirtualText.prototype.version = version, VirtualText.prototype.type = "VirtualText";
-    }, {
-        "./version": 123
-    } ],
-    127: [ function(require, module, exports) {
-        function diffProps(o, t) {
-            var e;
-            for (var r in o) {
-                r in t || (e = e || {}, e[r] = void 0);
-                var i = o[r], f = t[r];
-                if (i !== f) if (isObject(i) && isObject(f)) if (getPrototype(f) !== getPrototype(i)) e = e || {}, 
-                e[r] = f; else if (isHook(f)) e = e || {}, e[r] = f; else {
-                    var s = diffProps(i, f);
-                    s && (e = e || {}, e[r] = s);
-                } else e = e || {}, e[r] = f;
-            }
-            for (var n in t) n in o || (e = e || {}, e[n] = t[n]);
-            return e;
-        }
-        function getPrototype(o) {
-            return Object.getPrototypeOf ? Object.getPrototypeOf(o) : o.__proto__ ? o.__proto__ : o.constructor ? o.constructor.prototype : void 0;
-        }
-        var isObject = require("is-object"), isHook = require("../vnode/is-vhook");
-        module.exports = diffProps;
-    }, {
-        "../vnode/is-vhook": 119,
-        "is-object": 104
-    } ],
-    128: [ function(require, module, exports) {
-        function diff(e, n) {
-            var t = {
-                a: e
-            };
-            return walk(e, n, t, 0), t;
-        }
-        function walk(e, n, t, r) {
-            if (e !== n) {
-                var h = t[r], a = !1;
-                if (isThunk(e) || isThunk(n)) thunks(e, n, t, r); else if (null == n) isWidget(e) || (clearState(e, t, r), 
-                h = t[r]), h = appendPatch(h, new VPatch(VPatch.REMOVE, e, n)); else if (isVNode(n)) if (isVNode(e)) if (e.tagName === n.tagName && e.namespace === n.namespace && e.key === n.key) {
-                    var i = diffProps(e.properties, n.properties);
-                    i && (h = appendPatch(h, new VPatch(VPatch.PROPS, e, i))), h = diffChildren(e, n, t, h, r);
-                } else h = appendPatch(h, new VPatch(VPatch.VNODE, e, n)), a = !0; else h = appendPatch(h, new VPatch(VPatch.VNODE, e, n)), 
-                a = !0; else isVText(n) ? isVText(e) ? e.text !== n.text && (h = appendPatch(h, new VPatch(VPatch.VTEXT, e, n))) : (h = appendPatch(h, new VPatch(VPatch.VTEXT, e, n)), 
-                a = !0) : isWidget(n) && (isWidget(e) || (a = !0), h = appendPatch(h, new VPatch(VPatch.WIDGET, e, n)));
-                h && (t[r] = h), a && clearState(e, t, r);
-            }
-        }
-        function diffChildren(e, n, t, r, h) {
-            for (var a = e.children, i = reorder(a, n.children), s = i.children, o = a.length, u = s.length, c = o > u ? o : u, d = 0; c > d; d++) {
-                var l = a[d], f = s[d];
-                h += 1, l ? walk(l, f, t, h) : f && (r = appendPatch(r, new VPatch(VPatch.INSERT, null, f))), 
-                isVNode(l) && l.count && (h += l.count);
-            }
-            return i.moves && (r = appendPatch(r, new VPatch(VPatch.ORDER, e, i.moves))), r;
-        }
-        function clearState(e, n, t) {
-            unhook(e, n, t), destroyWidgets(e, n, t);
-        }
-        function destroyWidgets(e, n, t) {
-            if (isWidget(e)) "function" == typeof e.destroy && (n[t] = appendPatch(n[t], new VPatch(VPatch.REMOVE, e, null))); else if (isVNode(e) && (e.hasWidgets || e.hasThunks)) for (var r = e.children, h = r.length, a = 0; h > a; a++) {
-                var i = r[a];
-                t += 1, destroyWidgets(i, n, t), isVNode(i) && i.count && (t += i.count);
-            } else isThunk(e) && thunks(e, null, n, t);
-        }
-        function thunks(e, n, t, r) {
-            var h = handleThunk(e, n), a = diff(h.a, h.b);
-            hasPatches(a) && (t[r] = new VPatch(VPatch.THUNK, null, a));
-        }
-        function hasPatches(e) {
-            for (var n in e) if ("a" !== n) return !0;
-            return !1;
-        }
-        function unhook(e, n, t) {
-            if (isVNode(e)) {
-                if (e.hooks && (n[t] = appendPatch(n[t], new VPatch(VPatch.PROPS, e, undefinedKeys(e.hooks)))), 
-                e.descendantHooks || e.hasThunks) for (var r = e.children, h = r.length, a = 0; h > a; a++) {
-                    var i = r[a];
-                    t += 1, unhook(i, n, t), isVNode(i) && i.count && (t += i.count);
-                }
-            } else isThunk(e) && thunks(e, null, n, t);
-        }
-        function undefinedKeys(e) {
-            var n = {};
-            for (var t in e) n[t] = void 0;
-            return n;
-        }
-        function reorder(e, n) {
-            var t = keyIndex(n), r = t.keys, h = t.free;
-            if (h.length === n.length) return {
-                children: n,
-                moves: null
-            };
-            var a = keyIndex(e), i = a.keys, s = a.free;
-            if (s.length === e.length) return {
-                children: n,
-                moves: null
-            };
-            for (var o = [], u = 0, c = h.length, d = 0, l = 0; l < e.length; l++) {
-                var f, k = e[l];
-                k.key ? r.hasOwnProperty(k.key) ? (f = r[k.key], o.push(n[f])) : (f = l - d++, o.push(null)) : c > u ? (f = h[u++], 
-                o.push(n[f])) : (f = l - d++, o.push(null));
-            }
-            for (var p = u >= h.length ? n.length : h[u], P = 0; P < n.length; P++) {
-                var v = n[P];
-                v.key ? i.hasOwnProperty(v.key) || o.push(v) : P >= p && o.push(v);
-            }
-            for (var y, V = o.slice(), g = 0, T = [], m = [], w = 0; w < n.length; ) {
-                var N = n[w];
-                for (y = V[g]; null === y && V.length; ) T.push(remove(V, g, null)), y = V[g];
-                y && y.key === N.key ? (g++, w++) : N.key ? (y && y.key && r[y.key] !== w + 1 ? (T.push(remove(V, g, y.key)), 
-                y = V[g], y && y.key === N.key ? g++ : m.push({
-                    key: N.key,
-                    to: w
-                })) : m.push({
-                    key: N.key,
-                    to: w
-                }), w++) : y && y.key && T.push(remove(V, g, y.key));
-            }
-            for (;g < V.length; ) y = V[g], T.push(remove(V, g, y && y.key));
-            return T.length !== d || m.length ? {
-                children: o,
-                moves: {
-                    removes: T,
-                    inserts: m
-                }
-            } : {
-                children: o,
-                moves: null
-            };
-        }
-        function remove(e, n, t) {
-            return e.splice(n, 1), {
-                from: n,
-                key: t
-            };
-        }
-        function keyIndex(e) {
-            for (var n = {}, t = [], r = e.length, h = 0; r > h; h++) {
-                var a = e[h];
-                a.key ? n[a.key] = h : t.push(h);
-            }
-            return {
-                keys: n,
-                free: t
-            };
-        }
-        function appendPatch(e, n) {
-            return e ? (isArray(e) ? e.push(n) : e = [ e, n ], e) : n;
-        }
-        var isArray = require("x-is-array"), VPatch = require("../vnode/vpatch"), isVNode = require("../vnode/is-vnode"), isVText = require("../vnode/is-vtext"), isWidget = require("../vnode/is-widget"), isThunk = require("../vnode/is-thunk"), handleThunk = require("../vnode/handle-thunk"), diffProps = require("./diff-props");
-        module.exports = diff;
-    }, {
-        "../vnode/handle-thunk": 117,
-        "../vnode/is-thunk": 118,
-        "../vnode/is-vnode": 120,
-        "../vnode/is-vtext": 121,
-        "../vnode/is-widget": 122,
-        "../vnode/vpatch": 125,
-        "./diff-props": 127,
-        "x-is-array": 105
-    } ],
-    129: [ function(require, module, exports) {
+    94: [ function(require, module, exports) {
         function init() {
             reqwest({
                 url: baseURL + phOptionsURI,
@@ -7015,10 +6840,9 @@
                     "Content-Type": "application/json;odata=verbose"
                 },
                 success: function(e) {
-                    var t = {};
-                    e.d.results.forEach(function(e) {
-                        t[e.Variable] = e.Value;
-                    }), pages.setOption(t);
+                    pages.setOption(e.d.results.reduce(function(e, t) {
+                        return e[t.Variable] = t.Value, e;
+                    }, {}));
                 },
                 error: function(e) {
                     console.log("Error loading settings, will go with defaults.  Error: ", e), console.log("pages.options: ", pages.options);
@@ -7028,7 +6852,7 @@
                 }
             });
         }
-        var reqwest = require("reqwest"), sweetAlert = require("sweetalert"), pages = require("./pages"), events = require("./events"), DOM = require("./dom"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked;
+        var reqwest = require("reqwest"), sweetAlert = require("sweetalert"), pages = require("./pages"), events = require("./events"), DOM = require("./dom"), misc = require("./helpers"), inTransition = misc.inTransition, clicked = misc.clicked, regLoading = / ?loading/gi;
         events.on("page.loading", function() {
             var e = Date && Date.now() || new Date();
             clicked = parseInt(e, 10), reqwest({
@@ -7046,7 +6870,7 @@
                     return clicked !== parseInt(e, 10) ? !1 : (pages.init(t), events.emit("page.loaded"), 
                     void (pages.options.hideEmptyTabs === !0 && pages.options.emptyTabsNotify === !0 && misc.codeMirror && sweetAlert({
                         title: "Tabs missing?",
-                        text: misc.md.render("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
+                        text: misc.md.renderInline("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
                         type: "info",
                         html: !0,
                         showCancelButton: !1,
@@ -7080,7 +6904,7 @@
                     console.log("error connecting:", e);
                 }
             });
-        }), events.on("content.create", function(e, t, o) {
+        }), events.on("content.create", function(e, t, n) {
             reqwest({
                 url: baseURL + phContext + "/_api/contextinfo",
                 method: "POST",
@@ -7089,7 +6913,7 @@
                     Accept: "application/json;odata=verbose",
                     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
                 },
-                success: function(n) {
+                success: function(o) {
                     reqwest({
                         url: sitePath + "/items",
                         method: "POST",
@@ -7101,12 +6925,12 @@
                             Accept: "application/json;odata=verbose",
                             "text-Type": "application/json;odata=verbose",
                             "Content-Type": "application/json;odata=verbose",
-                            "X-RequestDigest": n.d.GetContextWebInformation.FormDigestValue
+                            "X-RequestDigest": o.d.GetContextWebInformation.FormDigestValue
                         },
                         success: function() {
                             sweetAlert({
                                 title: "Success!",
-                                text: misc.md.render(o + " was created at [" + t + "](#" + t + ")"),
+                                text: misc.md.renderInline(n + " was created at [" + t + "](#" + t + ")"),
                                 type: "success",
                                 showConfirmButton: !1,
                                 showCancelButton: !1,
@@ -7116,7 +6940,7 @@
                         error: function(e) {
                             sweetAlert({
                                 title: "Failure",
-                                text: misc.md.render(o + " **was not** created at *" + t + "*"),
+                                text: misc.md.renderInline(n + " **was not** created at *" + t + "*"),
                                 type: "fail",
                                 showCancelButton: !1,
                                 html: !0
@@ -7127,7 +6951,7 @@
                 error: function(e) {
                     sweetAlert({
                         title: "Failure",
-                        text: misc.md.render(o + " **was not** created at *" + t + "*"),
+                        text: misc.md.renderInline(n + " **was not** created at *" + t + "*"),
                         type: "fail",
                         showCancelButton: !1,
                         html: !0
@@ -7143,7 +6967,7 @@
                     Accept: "application/json;odata=verbose",
                     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
                 },
-                success: function(o) {
+                success: function(n) {
                     reqwest({
                         url: sitePath + "/items(" + pages.current.id + ")",
                         method: "POST",
@@ -7160,31 +6984,33 @@
                             Accept: "application/json;odata=verbose",
                             "text-Type": "application/json;odata=verbose",
                             "Content-Type": "application/json;odata=verbose",
-                            "X-RequestDigest": o.d.GetContextWebInformation.FormDigestValue,
+                            "X-RequestDigest": n.d.GetContextWebInformation.FormDigestValue,
                             "IF-MATCH": "*"
                         },
                         success: function() {
                             pages.current.set({
                                 _title: e
-                            }), document.title = e, t.className = t.className.replace(/ ?loading/gi, ""), DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = e, 
-                            t.style.borderBottomColor = "#00B16A";
+                            }), t.className = t.className.replace(regLoading, ""), t.style.borderBottomColor = "#00B16A", 
+                            DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = e, 
+                            t.contentEditable = !0, document.title = e;
                         },
                         error: function(e) {
-                            t.className = t.className.replace(/ ?loading/gi, ""), t.style.border = "2px dashed #FF2222", 
+                            t.className = t.className.replace(regLoading, ""), t.style.border = "2px dashed #FF2222", 
                             t.style.fontWeight = "bold", console.log("Error saving title: ", e);
                         },
                         complete: function() {
-                            inTransition.title = !1, inTransition.titleBorder = setTimeout(function() {
-                                t.removeAttribute("style"), t.contentEditable = !0, inTransition.titleBorder = null;
+                            inTransition.title = !1, inTransition.titleBorder && clearTimeout(inTransition.titleBorder), 
+                            inTransition.titleBorder = setTimeout(function() {
+                                t.removeAttribute("style"), inTransition.titleBorder = null;
                             }, 1e3);
                         }
                     });
                 },
                 error: function(e) {
-                    t.className = t.className.replace(/ ?loading/gi, ""), t.style.border = "2px dashed #FF2222", 
-                    t.style.fontWeight = "bold", console.log("Error getting new digest: ", e), inTransition.title = !1, 
-                    inTransition.titleBorder = setTimeout(function() {
-                        t.removeAttribute("style"), t.contentEditable = !0;
+                    t.className = t.className.replace(regLoading, ""), t.style.border = "2px dashed #FF2222", 
+                    t.style.fontWeight = "bold", t.contentEditable = !0, console.log("Error getting new digest: ", e), 
+                    inTransition.title = !1, inTransition.titleBorder = setTimeout(function() {
+                        t.removeAttribute("style"), inTransition.titleBorder = null;
                     }, 1e3);
                 }
             });
@@ -7198,7 +7024,7 @@
                     Accept: "application/json;odata=verbose",
                     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
                 },
-                success: function(o) {
+                success: function(n) {
                     reqwest({
                         url: sitePath + "/items(" + pages.current.id + ")",
                         method: "POST",
@@ -7210,15 +7036,15 @@
                             Accept: "application/json;odata=verbose",
                             "text-Type": "application/json;odata=verbose",
                             "Content-Type": "application/json;odata=verbose",
-                            "X-RequestDigest": o.d.GetContextWebInformation.FormDigestValue,
+                            "X-RequestDigest": n.d.GetContextWebInformation.FormDigestValue,
                             "IF-MATCH": "*"
                         },
                         success: function() {
-                            t.parentNode.className = t.parentNode.className.replace(/ ?loading/gi, ""), t.style.fontWeight = "bold", 
+                            t.parentNode.className = t.parentNode.className.replace(regLoading, ""), t.style.fontWeight = "bold", 
                             t.innerHTML = "Saved!";
                         },
                         error: function(e) {
-                            t.parentNode.className = t.parentNode.className.replace(/ ?loading/gi, ""), t.style.color = "#FF2222", 
+                            t.parentNode.className = t.parentNode.className.replace(regLoading, ""), t.style.color = "#FF2222", 
                             t.style.fontWeight = "bold", t.innerHTML = "Connection error (press F12 for Console)", 
                             console.log("Couldn't save due to error: ", e.response);
                         },
@@ -7230,7 +7056,7 @@
                     });
                 },
                 error: function(e) {
-                    t.parentNode.className = t.parentNode.className.replace(/ ?loading/gi, ""), t.style.color = "#FF2222", 
+                    t.parentNode.className = t.parentNode.className.replace(regLoading, ""), t.style.color = "#FF2222", 
                     t.style.fontWeight = "bold", t.innerHTML = "Digest error (press F12 for Console)", 
                     console.log("Error getting new digest: ", e), inTransition.tempSaveText = setTimeout(function() {
                         t.removeAttribute("style"), t.innerHTML = "Save", inTransition.tempSaveText = null;
@@ -7239,14 +7065,14 @@
             });
         }), module.exports = init;
     }, {
-        "./dom": 130,
-        "./events": 131,
-        "./helpers": 132,
-        "./pages": 136,
-        reqwest: 94,
-        sweetalert: 95
+        "./dom": 95,
+        "./events": 96,
+        "./helpers": 97,
+        "./pages": 101,
+        reqwest: 91,
+        sweetalert: 92
     } ],
-    130: [ function(require, module, exports) {
+    95: [ function(require, module, exports) {
         function DOM() {
             return this instanceof DOM ? void (this.state = {
                 fullPage: !0,
@@ -7255,7 +7081,7 @@
                 level: 0
             }) : new DOM();
         }
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), createElement = require("virtual-dom/create-element"), parser = require("dom2hscript"), misc = require("./helpers"), pages = require("./pages"), events = require("./events"), renderPage = require("./page"), renderNav = require("./nav"), renderTabs = require("./tabs");
+        var vdom = require("virtual-dom/dist/virtual-dom"), h = vdom.h, diff = vdom.diff, patch = vdom.patch, createElement = vdom.create, misc = require("./helpers"), pages = require("./pages"), events = require("./events"), renderNav = require("./nav"), renderTabs = require("./tabs"), renderPage = require("./page");
         DOM.prototype.preRender = function() {
             return this.navDOM = pages.options.hideNavWhileEditing && this.state.fullPage ? renderNav() : null, 
             this.tabsDOM = renderTabs(), renderPage(this.navDOM, this.tabsDOM, this);
@@ -7266,13 +7092,11 @@
             this.content = document.getElementById("ph-content"), this.title = document.getElementById("ph-title"), 
             this.cheatSheet = document.getElementById("cheatSheet"), this.textarea = document.getElementById("ph-textarea"), 
             this.output = document.getElementById("ph-output"), misc.codeMirror && this.initEditor();
-        }, DOM.prototype.set = function(e) {
-            var t;
-            for (t in e) this.hasOwnProperty(t) && (this[t] = e[t]);
+        }, DOM.prototype.set = function(e, t) {
+            t = t || this;
+            for (var r in e) t.hasOwnProperty(r) && (t[r] = e[r]);
         }, DOM.prototype.setState = function(e) {
-            var t;
-            for (t in e) this.state.hasOwnProperty(t) && (this.state[t] = e[t]);
-            this.update();
+            this.set(e, this.state), this.update();
         }, DOM.prototype.update = function() {
             var e = this.preRender(), t = diff(this.dirtyDOM, e);
             this.rootNode = patch(this.rootNode, t), this.dirtyDOM = e, this.editor && this.editor.setValue(pages.current.text);
@@ -7306,27 +7130,23 @@
         var dom = new DOM();
         module.exports = dom;
     }, {
-        "./events": 131,
-        "./helpers": 132,
-        "./nav": 134,
-        "./page": 135,
-        "./pages": 136,
-        "./tabs": 137,
-        dom2hscript: 2,
-        "virtual-dom/create-element": 96,
-        "virtual-dom/diff": 97,
-        "virtual-dom/h": 98,
-        "virtual-dom/patch": 106
+        "./events": 96,
+        "./helpers": 97,
+        "./nav": 99,
+        "./page": 100,
+        "./pages": 101,
+        "./tabs": 102,
+        "virtual-dom/dist/virtual-dom": 93
     } ],
-    131: [ function(require, module, exports) {
-        var Events = require("eventemitter2").EventEmitter2, events = new Events({
-            wildcard: !0
-        });
+    96: [ function(require, module, exports) {
+        var Events = require("event");
+        Events.prototype.emit = Events.prototype.fire;
+        var events = new Events({});
         module.exports = events;
     }, {
-        eventemitter2: 4
+        event: 2
     } ],
-    132: [ function(require, module, exports) {
+    97: [ function(require, module, exports) {
         function addEvent(e, t, n) {
             return t.addEventListener ? t.addEventListener(e, n, !1) : t.attachEvent("on" + e, n);
         }
@@ -7353,10 +7173,10 @@
             codeMirror: codeMirror
         };
     }, {
-        "markdown-it": 27
+        "markdown-it": 24
     } ],
-    133: [ function(require, module, exports) {
-        var h = require("virtual-dom/h"), diff = require("virtual-dom/diff"), patch = require("virtual-dom/patch"), reqwest = require("reqwest"), sweetAlert = require("sweetalert"), horsey = require("horsey"), Router = require("director/build/director").Router, misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), DOM = require("./dom"), pageInit = require("./data"), router = Router({
+    98: [ function(require, module, exports) {
+        var vdom = require("virtual-dom/dist/virtual-dom"), h = vdom.h, diff = vdom.diff, patch = vdom.patch, Router = require("director/build/director").Router, sweetAlert = require("sweetalert"), horsey = require("horsey"), misc = require("./helpers"), inTransition = misc.inTransition, codeMirror = misc.codeMirror, pages = require("./pages"), events = require("./events"), DOM = require("./dom"), pageInit = require("./data"), router = Router({
             "/": {
                 on: function() {
                     events.emit("content.loading", "/");
@@ -7376,12 +7196,12 @@
                         events.emit("content.loading", "/" + e.replace(/\s/g, "") + "/" + t.replace(/\s/g, ""));
                     },
                     "/(\\w+)": {
-                        on: function(e, t, r) {
-                            events.emit("content.loading", "/" + e.replace(/\s/g, "") + "/" + t.replace(/\s/g, "") + "/" + r.replace(/\s/g, ""));
+                        on: function(e, t, n) {
+                            events.emit("content.loading", "/" + e.replace(/\s/g, "") + "/" + t.replace(/\s/g, "") + "/" + n.replace(/\s/g, ""));
                         },
                         "/(\\w+)": {
-                            on: function(e, t, r, n) {
-                                events.emit("content.loading", "/" + e.replace(/\s/g, "") + "/" + t.replace(/\s/g, "") + "/" + r.replace(/\s/g, "") + "/" + n.replace(/\s/g, ""));
+                            on: function(e, t, n, o) {
+                                events.emit("content.loading", "/" + e.replace(/\s/g, "") + "/" + t.replace(/\s/g, "") + "/" + n.replace(/\s/g, "") + "/" + o.replace(/\s/g, ""));
                             }
                         }
                     }
@@ -7438,7 +7258,7 @@
             });
         }), events.on("content.loaded", function(e) {
             var t = e.d;
-            return t ? t.Link ? (window.open(t.Link, "_blank"), !1) : (pages.current.set({
+            return t ? t.Link ? (window.open(t.Link, "_blank"), !1) : (pages.current = pages.current.reset({
                 id: t.ID,
                 title: t.Title || "",
                 _title: t.Title || "",
@@ -7462,8 +7282,9 @@
                 listItemType: t.__metadata.type,
                 timestamp: Date && Date.now() || new Date(),
                 level: Number(Boolean(t.Section)) + Number(Boolean(t.Program)) + Number(Boolean(t.Page)) + Number(Boolean(t.rabbitHole)) || 0
-            }), inTransition.output = !1, DOM.update(), DOM.renderOut(pages.current.text, pages.current.type), 
-            void (document.title = pages.current.title)) : (router.setRoute("/"), !1);
+            }), inTransition.output = !1, DOM.update(), window.pageYOffset > DOM.content.offsetTop && window.scroll(0, DOM.content.offsetTop), 
+            DOM.renderOut(pages.current.text, pages.current.type), void (document.title = pages.current.title)) : (router.setRoute("/"), 
+            !1);
         }), events.on("tab.change", function(e) {
             var t = {};
             t[pages.current._type] = pages.current.text, t.type = e, t._type = e.replace(/\s/g, "").toLowerCase().trim(), 
@@ -7471,20 +7292,17 @@
             DOM.update(), DOM.renderOut(t.text, t.type);
         }), pageInit();
     }, {
-        "./data": 129,
-        "./dom": 130,
-        "./events": 131,
-        "./helpers": 132,
-        "./pages": 136,
+        "./data": 94,
+        "./dom": 95,
+        "./events": 96,
+        "./helpers": 97,
+        "./pages": 101,
         "director/build/director": 1,
-        horsey: 7,
-        reqwest: 94,
-        sweetalert: 95,
-        "virtual-dom/diff": 97,
-        "virtual-dom/h": 98,
-        "virtual-dom/patch": 106
+        horsey: 4,
+        sweetalert: 92,
+        "virtual-dom/dist/virtual-dom": 93
     } ],
-    134: [ function(require, module, exports) {
+    99: [ function(require, module, exports) {
         function renderLink(e) {
             var i = e.href.indexOf(a), n = {
                 style: {}
@@ -7522,18 +7340,18 @@
                 href: "#/contact"
             }, [ "Address Book" ]) ]) ]), h("ul.nav", i) ]);
         }
-        var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), hashArray, level, a;
+        var h = require("virtual-dom/dist/virtual-dom").h, pages = require("./pages"), events = require("./events"), hashArray, level, a;
         module.exports = renderNav;
     }, {
-        "./events": 131,
-        "./pages": 136,
-        "virtual-dom/h": 98
+        "./events": 96,
+        "./pages": 101,
+        "virtual-dom/dist/virtual-dom": 93
     } ],
-    135: [ function(require, module, exports) {
+    100: [ function(require, module, exports) {
         function renderAddContent() {
             return h("fieldset", [ h("legend", [ "Many things to be added soon" ]), h("label", [ "Title", h("input.ph-title-input", {
                 oninput: function(e) {
-                    return e;
+                    return this.value = pages.current.modified.toLocaleString(), e;
                 }
             }) ]), h("label", [ "Name", h("input.ph-name-input", {
                 oninput: function(e) {
@@ -7578,8 +7396,8 @@
                     if (e = e.trim(), pages.current.set({
                         title: e
                     }), e !== pages.current._title) {
-                        if (inTransition.title || !pages.options.saveTitleAfterEdit) return !1;
-                        inTransition.title = !0, this.contentEditable = !1, this.className += " loading", 
+                        if (misc.inTransition.title || !pages.options.saveTitleAfterEdit) return !1;
+                        misc.inTransition.title = !0, this.contentEditable = !1, this.className += " loading", 
                         events.emit("title.saving", e, this);
                     }
                 }
@@ -7588,7 +7406,7 @@
                 title: "Save",
                 onclick: function(e) {
                     e = e || window.event, e.preventDefault ? e.preventDefault() : e.returnValue = !1, 
-                    inTransition.tempSaveText || pages.current.savePage(this);
+                    misc.inTransition.tempSaveText || pages.current.savePage(this);
                 }
             }, [ h("i.icon.icon-diskette", [ "Save" ]) ]) ]), h("#ph-contentWrap", [ h("#ph-input", [ h("textarea#ph-textarea", [ String(pages.current.text || "") ]) ]), h("#ph-output") ]), h(".clearfix"), h("small.ph-modified-date", [ "Last updated: " + pages.current.modified.toLocaleDateString() ]) ]);
         }
@@ -7607,29 +7425,28 @@
                 placeholder: pages.options.searchPlaceholder
             }) ]) ]), h("#ph-side-nav", [ e ]), misc.codeMirror ? renderEditor(t, n) : renderDefault(t) ]);
         }
-        var h = require("virtual-dom/h"), createElement = require("virtual-dom/create-element"), pages = require("./pages"), events = require("./events"), misc = require("./helpers"), inTransition = misc.inTransition;
+        var h = require("virtual-dom/dist/virtual-dom").h, misc = require("./helpers"), inTransition = misc.inTransition, pages = require("./pages"), events = require("./events");
         module.exports = renderPage;
     }, {
-        "./events": 131,
-        "./helpers": 132,
-        "./pages": 136,
-        "virtual-dom/create-element": 96,
-        "virtual-dom/h": 98
+        "./events": 96,
+        "./helpers": 97,
+        "./pages": 101,
+        "virtual-dom/dist/virtual-dom": 93
     } ],
-    136: [ function(require, module, exports) {
-        function Content() {
+    101: [ function(require, module, exports) {
+        function Content(t) {
             return this instanceof Content ? (this.id = -1, this.title = "", this._title = "", 
             this.keywords = [], this.references = [], this.icon = "", this.text = "", this.overview = "", 
             this.policy = "", this.training = "", this.resources = "", this.tools = "", this.contributions = "", 
             this.section = "", this.program = "", this.page = "", this.rabbitHole = "", this.type = "Overview", 
             this._type = "overview", this.modified = new Date(), this.listItemType = "", this.timestamp = null, 
-            void (this.level = -1)) : new Content();
+            this.level = -1, t ? this.set(t) : void 0) : new Content(t);
         }
         function Pages() {
             return this instanceof Pages ? (this.current = new Content(), void (this.options = {
                 hideEmptyTabs: !0,
                 searchPlaceholder: "Search using keywords, AFIs or titles...",
-                emptyTabsNotify: !1,
+                emptyTabsNotify: !0,
                 images: "/kj/kx7/PublicHealth/SiteAssets/Images",
                 contribPOCName: "Jane Dizoe",
                 contribPOCEmail: "joe.dirt@example.com",
@@ -7640,11 +7457,12 @@
                 saveTitleAfterEdit: !0
             })) : new Pages();
         }
-        var events = require("./events"), misc = require("./helpers");
+        var misc = require("./helpers"), events = require("./events");
         Content.prototype.set = function(t) {
-            var e;
-            for (e in t) this.hasOwnProperty(e) && ("string" == typeof t[e] ? this[e] = t[e].trim() : this[e] = t[e]);
+            for (var e in t) this.hasOwnProperty(e) && (this[e] = "string" == typeof t[e] ? t[e].trim() : this[e] = t[e]);
             return this;
+        }, Content.prototype.reset = function(t) {
+            return new Content(t);
         }, Content.prototype.savePage = function(t) {
             this.set({
                 text: this.text.trim(),
@@ -7666,45 +7484,43 @@
             t.className += " loading";
             var i = t.children[0];
             events.emit("content.save", e, i);
-        }, Pages.prototype.set = function(t) {
-            var e;
-            for (e in t) this.hasOwnProperty(e) && (this[e] = t[e]);
-            return this;
+        }, Pages.prototype.set = function(t, e) {
+            var i = e || this;
+            for (var s in t) i.hasOwnProperty(s) && (e ? i[s] = "yes" === t[s] || "true" === t[s] ? !0 : "no" === t[s] || "false" === t[s] ? !1 : t[s] : i[s] = t[s]);
         }, Pages.prototype.setOption = function(t) {
-            var e;
-            for (e in t) this.options.hasOwnProperty(e) && (this.options[e] = "yes" === t[e] || "true" === t[e] ? !0 : "no" === t[e] || "false" === t[e] ? !1 : t[e]);
+            this.set(t, this.options);
         }, Pages.prototype.init = function(t) {
-            var e, i = [], s = 0, r = t.d.results.length, o = {}, n = {};
-            for (this.sections = {}; r > s; ++s) e = t.d.results[s], e.Section = e.Section ? e.Section.replace(/\s/g, "") : "", 
+            var e, i = /-dev/gi, s = [], r = 0, o = t.d.results.length, n = {}, a = {};
+            for (this.sections = {}; o > r; ++r) e = t.d.results[r], e.Section = e.Section ? e.Section.replace(/\s/g, "") : "", 
             e.Program = e.Program ? e.Program.replace(/\s/g, "") : "", e.Page = e.Page ? e.Page.replace(/\s/g, "") : "", 
-            e.rabbitHole = e.rabbitHole ? e.rabbitHole.replace(/\s/g, "") : "", (misc.codeMirror || !/-dev/gi.test(e.Section + e.Program + e.Page + e.rabbitHole)) && (e.Path = "/" + ("" !== e.Section ? e.Section + ("" !== e.Program ? "/" + e.Program + ("" !== e.Page ? "/" + e.Page + ("" !== e.rabbitHole ? "/" + e.rabbitHole : "") : "") : "") : ""), 
-            e.Level = e.Path.split("/").length - 1, this[e.Path] = e, i[s] = e.Path, "" !== e.Section && "" === e.Program && (this.sections[e.Section] = {
+            e.rabbitHole = e.rabbitHole ? e.rabbitHole.replace(/\s/g, "") : "", (misc.codeMirror || !i.test(e.Section + e.Program + e.Page + e.rabbitHole)) && (e.Path = "/" + ("" !== e.Section ? e.Section + ("" !== e.Program ? "/" + e.Program + ("" !== e.Page ? "/" + e.Page + ("" !== e.rabbitHole ? "/" + e.rabbitHole : "") : "") : "") : ""), 
+            e.Level = e.Path.split("/").length - 1, this[e.Path] = e, s[r] = e.Path, "" !== e.Section && "" === e.Program && (this.sections[e.Section] = {
                 path: e.Link ? e.Link : "/" + e.Section,
                 title: e.Title,
                 id: e.ID,
                 links: []
-            }), "" !== e.rabbitHole ? n["/" + e.Section + "/" + e.Program + "/" + e.Page] = ".ph-sub-parent.ph-page.link" : "" !== e.Page && (o["/" + e.Section + "/" + e.Program] = ".ph-parent.ph-program.link"));
-            for (i.sort(), s = 0, this.titles = []; r > s; ++s) {
-                var a, h = this[i[s]], l = !1, c = h.rabbitHole || h.Page || h.Program, p = h.Keywords && h.Keywords.results || [], g = h.References && h.References.results || [];
-                p = p.map(function(t) {
+            }), "" !== e.rabbitHole ? a["/" + e.Section + "/" + e.Program + "/" + e.Page] = ".ph-sub-parent.ph-page.link" : "" !== e.Page && (n["/" + e.Section + "/" + e.Program] = ".ph-parent.ph-program.link"));
+            for (s.sort(), r = 0, this.titles = []; o > r; ++r) {
+                var h, l = this[s[r]], c = !1, p = l.rabbitHole || l.Page || l.Program, g = l.Keywords && l.Keywords.results || [], P = l.References && l.References.results || [];
+                g = g.map(function(t) {
                     return t.Label;
-                }), g = g.map(function(t) {
+                }), P = P.map(function(t) {
                     return t.Label;
-                }), this.titles[s] = {
-                    text: h.Title + " " + p.join(" ") + g.join(" "),
-                    value: h.Path,
-                    renderText: h.Title
-                }, "" !== h.rabbitHole ? (l = !0, a = ".ph-rabbit-hole.link") : "" !== h.Page ? (l = !0, 
-                a = n[h.Path] || ".ph-page.link") : "" !== h.Program && (a = o[h.Path] || ".ph-program.link"), 
-                "" !== h.Program && this.sections[h.Section].links.push({
-                    path: h.Path,
-                    href: h.Link ? h.Link : "#" + h.Path,
-                    title: h.Title,
-                    level: h.Level,
-                    className: a,
-                    name: c,
-                    id: h.ID,
-                    icon: h.Icon || ""
+                }), this.titles[r] = {
+                    text: l.Title + " " + g.join(" ") + P.join(" "),
+                    value: l.Path,
+                    renderText: l.Title
+                }, "" !== l.rabbitHole ? (c = !0, h = ".ph-rabbit-hole.link") : "" !== l.Page ? (c = !0, 
+                h = a[l.Path] || ".ph-page.link") : "" !== l.Program && (h = n[l.Path] || ".ph-program.link"), 
+                "" !== l.Program && this.sections[l.Section].links.push({
+                    path: l.Path,
+                    href: l.Link ? l.Link : "#" + l.Path,
+                    title: l.Title,
+                    level: l.Level,
+                    className: h,
+                    name: p,
+                    id: l.ID,
+                    icon: l.Icon || ""
                 });
             }
         }, Pages.prototype.createContent = function(t, e, i) {
@@ -7727,31 +7543,31 @@
         var pages = new Pages();
         module.exports = pages;
     }, {
-        "./events": 131,
-        "./helpers": 132
+        "./events": 96,
+        "./helpers": 97
     } ],
-    137: [ function(require, module, exports) {
+    102: [ function(require, module, exports) {
         function renderTabs() {
-            var e = "" !== pages.current.program ? null : {
+            var t = "" !== pages.current.program ? null : {
                 style: {
                     display: "none"
                 }
-            }, t = tabs.map(function(e) {
-                var t = e.title.replace(/\s/g, "").toLowerCase().trim(), n = ".ph-tab-" + t + (pages.options.hideEmptyTabs === !0 && pages.current[t].length < 1 && "contributions" !== t ? ".tab-empty" : "") + (pages.current._type === t ? ".tab-current" : "");
-                return h("li" + n, [ h("div.ph-tab-box", [ h("a.icon.icon-" + e.icon, {
+            }, e = tabs.map(function(t) {
+                var e = t.title.replace(/\s/g, "").toLowerCase().trim(), i = ".ph-tab-" + e + (pages.options.hideEmptyTabs === !0 && pages.current[e].length < 1 && "contributions" !== e ? ".tab-empty" : "") + (pages.current._type === e ? ".tab-current" : "");
+                return h("li" + i, [ h("div.ph-tab-box", [ h("a.icon.icon-" + t.icon, {
                     href: "#",
-                    onclick: function(t) {
-                        return t = t || window.event, t.preventDefault ? t.preventDefault() : t.returnValue = !1, 
-                        events.emit("tab.change", e.title), !1;
+                    onclick: function(e) {
+                        return e = e || window.event, e.preventDefault ? e.preventDefault() : e.returnValue = !1, 
+                        events.emit("tab.change", t.title), !1;
                     }
-                }, [ h("span", [ String(e.title) ]) ]) ]), pages.options.contribPOCEmail && "contributions" === t ? h("a.ph-contrib-poc", {
+                }, [ h("span", [ String(t.title) ]) ]) ]), pages.options.contribPOCEmail && "contributions" === e ? h("a.ph-contrib-poc", {
                     href: "mailto:" + pages.options.contribPOCEmail,
                     title: "POC: " + pages.options.contribPOCName
                 }, [ "Submit your own!" ]) : null ]);
             });
-            return h("nav", [ h("ul", e, t) ]);
+            return h("nav", [ h("ul", t, e) ]);
         }
-        var h = require("virtual-dom/h"), pages = require("./pages"), events = require("./events"), tabs = [ {
+        var h = require("virtual-dom/dist/virtual-dom").h, pages = require("./pages"), events = require("./events"), tabs = [ {
             title: "Overview",
             icon: "home"
         }, {
@@ -7772,8 +7588,9 @@
         } ];
         module.exports = renderTabs;
     }, {
-        "./events": 131,
-        "./pages": 136,
-        "virtual-dom/h": 98
+        "./events": 96,
+        "./pages": 101,
+        "virtual-dom/dist/virtual-dom": 93
     } ]
-}, {}, [ 133 ]);
+}, {}, [ 98 ]);
+//# sourceMappingURL=main.js.map

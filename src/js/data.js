@@ -5,7 +5,8 @@ var reqwest = require("reqwest"),
 	DOM = require("./dom"),
 	misc = require("./helpers"),
 	inTransition = misc.inTransition,
-	clicked = misc.clicked;
+	clicked = misc.clicked,
+	regLoading = / ?loading/gi;
 
 function init () {
 	reqwest({
@@ -20,11 +21,10 @@ function init () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			var options = {};
-			data.d.results.forEach(function ( option ) {
-				options[option.Variable] = option.Value;
-			});
-			pages.setOption(options);
+			pages.setOption(data.d.results.reduce(function ( obj, option ) {
+				obj[option.Variable] = option.Value;
+				return obj;
+			}, {}));
 		},
 		error: function ( error ) {
 			console.log("Error loading settings, will go with defaults.  Error: ", error);
@@ -77,7 +77,7 @@ events.on("page.loading", function () {
 			if ( pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror ) {
 				sweetAlert({
 					title: "Tabs missing?",
-					text: misc.md.render("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
+					text: misc.md.renderInline("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
 					type: "info",
 					html: true,
 					showCancelButton: false,
@@ -105,6 +105,7 @@ events.on("content.loading", function ( path ) {
 
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
+
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
 		method: "GET",
@@ -155,7 +156,7 @@ events.on("content.create", function ( data, path, title ) {
 				success: function () {
 					sweetAlert({
 						title: "Success!",
-						text: misc.md.render(title + " was created at [" + path + "](#" + path + ")"),
+						text: misc.md.renderInline(title + " was created at [" + path + "](#" + path + ")"),
 						type: "success",
 						showConfirmButton: false,
 						showCancelButton: false,
@@ -165,7 +166,7 @@ events.on("content.create", function ( data, path, title ) {
 				error: function ( error ) {
 					sweetAlert({
 						title: "Failure",
-						text: misc.md.render(title + " **was not** created at *" + path + "*"),
+						text: misc.md.renderInline(title + " **was not** created at *" + path + "*"),
 						type: "fail",
 						showCancelButton: false,
 						html: true
@@ -177,7 +178,7 @@ events.on("content.create", function ( data, path, title ) {
 		error: function ( error ) {
 			sweetAlert({
 				title: "Failure",
-				text: misc.md.render(title + " **was not** created at *" + path + "*"),
+				text: misc.md.renderInline(title + " **was not** created at *" + path + "*"),
 				type: "fail",
 				showCancelButton: false,
 				html: true
@@ -223,36 +224,40 @@ events.on("title.saving", function ( title, el ) {
 					pages.current.set({
 						_title: title
 					});
-					document.title = title;
-					el.className = el.className.replace(/ ?loading/gi, "");
-					DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
+					el.className = el.className.replace(regLoading, "");
 					el.style.borderBottomColor = "#00B16A";
+					DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
+					el.contentEditable = true;
+					document.title = title;
 				},
 				error: function ( error ) {
-					el.className = el.className.replace(/ ?loading/gi, "");
+					el.className = el.className.replace(regLoading, "");
 					el.style.border = "2px dashed #FF2222";
 					el.style.fontWeight = "bold";
 					console.log("Error saving title: ", error);
 				},
 				complete: function () {
 					inTransition.title = false;
+					if ( inTransition.titleBorder ) {
+						clearTimeout(inTransition.titleBorder);
+					}
 					inTransition.titleBorder = setTimeout(function () {
 						el.removeAttribute("style");
-						el.contentEditable = true;
 						inTransition.titleBorder = null;
 					}, 1000);
 				}
 			});
 		},
 		error: function ( error ) {
-			el.className = el.className.replace(/ ?loading/gi, "");
+			el.className = el.className.replace(regLoading, "");
 			el.style.border = "2px dashed #FF2222";
 			el.style.fontWeight = "bold";
+			el.contentEditable = true;
 			console.log("Error getting new digest: ", error);
 			inTransition.title = false;
 			inTransition.titleBorder = setTimeout(function () {
 				el.removeAttribute("style");
-				el.contentEditable = true;
+				inTransition.titleBorder = null;
 			}, 1000);
 		}
 	});
@@ -288,12 +293,12 @@ events.on("content.save", function ( data, btnText ) {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+					btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
 					btnText.style.fontWeight = "bold";
 					btnText.innerHTML = "Saved!";
 				},
 				error: function ( error ) {
-					btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+					btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
 					btnText.style.color = "#FF2222";
 					btnText.style.fontWeight = "bold";
 					btnText.innerHTML = "Connection error (press F12 for Console)";
@@ -309,7 +314,7 @@ events.on("content.save", function ( data, btnText ) {
 			});
 		},
 		error: function ( error ) {
-			btnText.parentNode.className = btnText.parentNode.className.replace(/ ?loading/gi, "");
+			btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
 			btnText.style.color = "#FF2222";
 			btnText.style.fontWeight = "bold";
 			btnText.innerHTML = "Digest error (press F12 for Console)";

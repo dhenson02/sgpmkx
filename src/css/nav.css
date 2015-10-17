@@ -54,7 +54,8 @@
 }
 
 #ph-nav a:not(.active):active {
-	color: #81B3D7;
+	/*color: #81B3D7;*/
+	color: #C7C7C7;
 }
 
 .link .icon::before,

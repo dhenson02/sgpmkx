@@ -50,8 +50,19 @@ app.get("/opt", function ( req, res ) {
 		clearTimeout(cmTimer);
 	}
 	cmTimer = setTimeout(function () {
-		res.send({ d: { results: [
-			{Variable: "hideSearchWhileEditing", Value: "false"}, { Variable: "images", Value: "img" }] } });
+		res.send({
+			d: {
+				results: [
+					{
+						Variable: "hideSearchWhileEditing",
+						Value: "false"
+					}, {
+						Variable: "images",
+						Value: "img"
+					}
+				]
+			}
+		});
 	}, 120);
 });
 
@@ -125,5 +136,5 @@ var server = app.listen(3000, function () {
 	var host = server.address().address;
 	var port = server.address().port;
 
-	console.log('Example app listening at http://%s:%s', host, port);
+	console.log('Local development server listening at http://%s:%s', host, port);
 });

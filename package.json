@@ -5,6 +5,7 @@
     "animate.css": "^3.4.0",
     "director": "^1.2.8",
     "dom2hscript": "^0.2.3",
+    "event": "git://github.com/wilsonpage/event",
     "eventemitter2": "^0.4.14",
     "horsey": "^2.6.1",
     "lodash": "^3.10.1",
