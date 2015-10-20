@@ -72,6 +72,10 @@
 	border-spacing: 0;
 }
 
+#ph-wrapper fieldset {
+	border: 0;
+}
+
 #ph-output a {
 	color: #0645AD;
 }

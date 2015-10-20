@@ -78,9 +78,9 @@ module.exports = function ( grunt ) {
 				css: [
 					'src/css/init.css',
 					'src/css/main.css',
+					'src/css/generic.css',
 					'src/css/icons.css',
 					'src/css/buttons.css',
-					'src/css/generic.css',
 					'src/css/codemirror.css',
 					'src/css/nav.css',
 					'src/css/tabs.css',
@@ -97,9 +97,9 @@ module.exports = function ( grunt ) {
 				css: [
 					'src/css/init-dev.css',
 					'src/css/main.css',
+					'src/css/generic.css',
 					'src/css/icons.css',
 					'src/css/buttons.css',
-					'src/css/generic.css',
 					'src/css/codemirror.css',
 					'src/css/nav.css',
 					'src/css/tabs.css',
