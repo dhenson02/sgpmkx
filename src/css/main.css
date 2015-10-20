@@ -39,8 +39,25 @@ body {
 	cursor: default;
 }
 
+#ph-wrapper {
+	font-size: 20px;
+	max-width: 1440px;
+	margin: 50px auto;
+	position: relative;
+	padding-left: 20px;
+	padding-right: 20px;
+	color: #000000;
+	line-height: 1;
+}
+
+#ph-wrapper strong {
+	font-weight: bold;
+	font-weight: 700;
+}
+
 #ph-wrapper, #ph-wrapper h1, #ph-wrapper h2, #ph-wrapper h3, #ph-wrapper h4, #ph-wrapper h5, #ph-wrapper h6 {
 	font-family: "Roboto", "Segoe UI Light", "Segoe UI", "Segoe", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", sans-serif;
+	color: #333333;
 }
 
 #ph-wrapper a {
@@ -57,17 +74,6 @@ body {
 /*#ph-wrapper a:active {
 	transition: color .075s ease-out;
 }*/
-
-#ph-wrapper {
-	font-size: 20px;
-	max-width: 1440px;
-	margin: 50px auto;
-	position: relative;
-	padding-left: 20px;
-	padding-right: 20px;
-	color: #000;
-	line-height: 1;
-}
 
 #ph-content {
 	position: relative;

@@ -9,26 +9,26 @@ module.exports = function ( grunt ) {
 			},
 			dist: {
 				files: {
-					'.tmp/main.min.js': 'src/js/main.js'
+					'dist/js/main.min.js': 'src/js/main.js'
 				}
 			},
 			dev: {
 				files: {
-					'.tmp/main.js': 'src/js/main.js'
+					'dist/js/main.js': 'src/js/main.js'
 				}
 			}
 		},
 		uglify: {
 			dist: {
 				options: {
-					beautify: {
+					/*beautify: {
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
 						max_line_len: 4000,
 						bracketize: true,
 						semicolons: true
-					},
+					},*/
 					compress: {
 						unsafe: true,
 						drop_console: true,
@@ -190,7 +190,7 @@ module.exports = function ( grunt ) {
 				],
 				tasks: [
 					'browserify:dev',
-					'uglify:dev',
+					//'uglify:dev',
 					'purifycss:dev',
 				    'postcss:dev'
 					//'cssmin:dev'
@@ -215,7 +215,7 @@ module.exports = function ( grunt ) {
 	]);
 	grunt.registerTask('dev', [
 		'browserify:dev',
-		'uglify:dev',
+		//'uglify:dev',
 		'purifycss:dev',
 	    'postcss:dev'
 		//'cssmin:dev'
