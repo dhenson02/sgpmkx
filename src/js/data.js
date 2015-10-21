@@ -58,7 +58,7 @@ events.on("page.loading", function () {
 	clicked = parseInt(timestamp, 10);
 
 	reqwest({
-		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Pubs,Tags,Link,Created,Modified",
+		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Pubs,Tags,Link,Created,Modified,Published",
 		method: "GET",
 		type: "json",
 		contentType: "application/json",

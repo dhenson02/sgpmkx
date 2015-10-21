@@ -126,7 +126,9 @@ Pages.prototype.init = function ( data ) {
 	this.sections = {};
 	for ( ; i < count; ++i ) {
 		result = data.d.results[i];
-
+		if ( !misc.codeMirror && !result.Published ) {
+			continue;
+		}
 		/**
 		 * These come down as null if they're empty so let's standardize
 		 * em all as empty strings instead.  Then we can concat to other
@@ -137,9 +139,6 @@ Pages.prototype.init = function ( data ) {
 		result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
 		result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
-		if ( !misc.codeMirror && regDev.test(result.Section + result.Program + result.Page + result.rabbitHole) ) {
-			continue;
-		}
 		/**
 		 * This creates a new property `Path` and cascades down the
 		 * logical chain of categories.

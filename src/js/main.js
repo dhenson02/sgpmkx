@@ -38,11 +38,11 @@ var vdom = require("virtual-dom/dist/virtual-dom"),
 				events.emit("content.loading", "/");
 			}
 		},
-		'/(\\w+-dev)': {
+		/*'/(\\w+-dev)': {
 			on: function ( dev ) {
 				events.emit("content.loading", "/" + (codeMirror ? dev : dev.slice(0,-4)));
 			}
-		},
+		},*/
 		'/(\\w+)': {
 			on: function ( section ) {
 				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
@@ -88,7 +88,12 @@ sweetAlert.setDefaults({
 
 events.on("page.loaded", function () {
 	DOM.init();
-	router.init();
+	if ( window.location.hash ) {
+		router.init();
+	}
+	else {
+		router.init("/");
+	}
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,
