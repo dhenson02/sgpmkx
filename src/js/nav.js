@@ -31,13 +31,13 @@ function renderSection ( section ) {
 	});
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
-			h("p", [
-				h("a" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
+			//h("p", [
+				h("a.ph-level-1" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
 					"href": "#" + section.path
 				}, [
 					h("span.link-title", [String(section.title)])
-				])
-			]),
+				]),
+			//]),
 			h("ul", links)
 		])
 	);
@@ -58,11 +58,11 @@ function renderNav () {
 	}
 	return (
 		h("#ph-nav", [
-			h(".header", [
+			h(".ph-header", [
 				h("a" + ( window.location.hash === "#/" ? ".active" : "" ), {
 					"href": "#/"
 				}, [
-					h(".logo", [
+					h(".ph-header-logo", [
 						h("img", {
 							"src": pages.options.images + "/phLogo64.png",
 							"alt": "Public Health Home",
@@ -70,14 +70,14 @@ function renderNav () {
 							"width": "64"
 						})
 					]),
-					h("p.text", [
+					h("p.ph-header-text", [
 						"Public Health",
 						h("br"),
 						h("small", ["US Air Force"])
 					])
 				])
 			]),
-			h("#ph-site-pages", [
+			h(".ph-site-pages", [
 				h("div", [
 					h("a.site-page", {
 						href: "#/leaders"
