@@ -13,37 +13,37 @@ function renderLink ( link ) {
 	return (
 		h("li#ph-link-" + link.id + link.className,
 			attr, [
-			h("a.ph-level-" + link.level + ( link.href === window.location.hash ? ".active" : "" ), {
-				href: link.href,
-				target: ( link.href.charAt(0) !== "#" ? "_blank" : "" )
-			}, [
-				( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
-				h("span.link-title", [String(link.title)]),
-				h("span.place")
+				h("a.ph-level-" + link.level + ( link.href === window.location.hash ? ".active" : "" ), {
+					href: link.href,
+					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" )
+				}, [
+					( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
+					h("span.link-title", [String(link.title)]),
+					h("span.place")
+				])
 			])
-		])
 	);
 }
 
 function renderSection ( section ) {
-	var links = section.links.map(function( link ) {
+	var links = section.links.map(function ( link ) {
 		return renderLink(link);
 	});
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
-			//h("p", [
-				h("a.ph-level-1" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
+			h("p", [
+				h("a" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
 					"href": "#" + section.path
 				}, [
 					h("span.link-title", [String(section.title)])
-				]),
-			//]),
+				])
+			]),
 			h("ul", links)
 		])
 	);
 }
 
-function renderNav ( DOM ) {
+function renderNav () {
 	var links = [],
 		name;
 
@@ -58,11 +58,11 @@ function renderNav ( DOM ) {
 	}
 	return (
 		h("#ph-nav", [
-			h(".ph-header", [
+			h(".header", [
 				h("a" + ( window.location.hash === "#/" ? ".active" : "" ), {
 					"href": "#/"
 				}, [
-					h(".ph-header-logo", [
+					h(".logo", [
 						h("img", {
 							"src": pages.options.images + "/phLogo64.png",
 							"alt": "Public Health Home",
@@ -70,14 +70,14 @@ function renderNav ( DOM ) {
 							"width": "64"
 						})
 					]),
-					h("p.ph-header-text", [
+					h("p.text", [
 						"Public Health",
 						h("br"),
 						h("small", ["US Air Force"])
 					])
 				])
 			]),
-			h(".ph-site-pages", [
+			h("#ph-site-pages", [
 				h("div", [
 					h("a.site-page", {
 						href: "#/leaders"
