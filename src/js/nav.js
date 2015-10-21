@@ -26,12 +26,9 @@ function renderLink ( link ) {
 }
 
 function renderSection ( section ) {
-	var links = [],
-		i = 0,
-		count = section.links.length;
-	for ( ; i < count; ++i ) {
-		links[i] = renderLink(section.links[i]);
-	}
+	var links = section.links.map(function( link ) {
+		return renderLink(link);
+	});
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
 			h("p", [
