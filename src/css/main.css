@@ -117,6 +117,16 @@ body {
 	border-bottom-color: #F62459;
 }
 
+.ph-tags small {
+	margin-right: 7px;
+	border: 1px solid #CCC;
+	padding: 3px 6px;
+}
+
+.fullPage .ph-tags {
+	display: none;
+}
+
 #ph-contentWrap {
 	opacity: 1;
 	position: relative;

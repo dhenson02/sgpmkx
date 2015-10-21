@@ -1,5 +1,6 @@
 var misc = require("./helpers"),
-	events = require("./events");
+	events = require("./events"),
+	regSplit = misc.regSplit;
 
 function Content ( data ) {
 	if ( !(this instanceof Content) ) {
@@ -116,7 +117,6 @@ Pages.prototype.setOption = function ( data ) {
 
 Pages.prototype.init = function ( data ) {
 	var regDev = /-dev/gi,
-		regSplit = /;|,/g,
 		urls = [],
 		i = 0,
 		count = data.d.results.length,

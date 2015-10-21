@@ -20,7 +20,8 @@ var markdownit = require("markdown-it"),
 		tab: false
 	},
 	clicked = -1,
-	codeMirror = CodeMirror;
+	codeMirror = CodeMirror,
+	regSplit = /; *|, */g;
 /*
 try {
 	codeMirror = CodeMirror;
@@ -34,5 +35,6 @@ module.exports = {
 	md: md,
 	inTransition: inTransition,
 	clicked: clicked,
-	codeMirror: codeMirror
+	codeMirror: codeMirror,
+	regSplit: regSplit
 };

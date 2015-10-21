@@ -1,7 +1,8 @@
 var h = require("virtual-dom/dist/virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
-	events = require("./events");
+	events = require("./events"),
+	regSplit = misc.regSplit;
 
 /*
 function renderLoader() {
@@ -107,10 +108,10 @@ function renderEditor ( tabsDOM, DOM ) {
 				onblur: function () {
 					var title = this.textContent || this.innerText;
 					title = title.trim();
-					pages.current.set({
-						title: title
-					});
 					if ( title !== pages.current._title ) {
+						pages.current.set({
+							title: title
+						});
 						if ( misc.inTransition.title || !pages.options.saveTitleAfterEdit ) {
 							return false;
 						}
@@ -121,6 +122,13 @@ function renderEditor ( tabsDOM, DOM ) {
 					}
 				}
 			}, [String(pages.current.title || "")]),
+
+
+			h("h3.ph-tags", [
+				( pages.current.tags ? pages.current.tags.split(regSplit).map(function ( tag ) {
+					return tag.trim() ? h("small", [String(tag)]) : null;
+				}) : null )
+			]),
 
 
 			h("#ph-tabs.ph-tabs", [tabsDOM]),

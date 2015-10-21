@@ -88,20 +88,7 @@ sweetAlert.setDefaults({
 
 events.on("page.loaded", function () {
 	DOM.init();
-	if ( window.location.hash ) {
-		/**
-		 * Example:  copy + paste URL to
-		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]/#/FH/TravelMedicine
-		 */
-		router.init();
-	}
-	else {
-		/**
-		 * Example:  copy + paste URL to
-		 * https://kx.afms.mil/kj/kx7/PublicHealth/[...]
-		 */
-		router.init("/");
-	}
+	router.init();
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,

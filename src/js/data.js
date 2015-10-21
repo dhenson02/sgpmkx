@@ -226,7 +226,7 @@ events.on("title.saving", function ( title, el ) {
 					});
 					el.className = el.className.replace(regLoading, "");
 					el.style.borderBottomColor = "#00B16A";
-					DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
+					//DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
 					el.contentEditable = true;
 					document.title = title;
 				},
