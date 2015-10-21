@@ -103,6 +103,12 @@ events.on("content.loading", function ( path ) {
 	inTransition.output = true;
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
+	/*DOM.state.hashArray = window.location.hash.slice(1).split(/\//g);
+	DOM.state.truncPath = DOM.state.hashArray.slice(0, 3).join("/");
+	DOM.state.level = DOM.state.hashArray.length - 1;*/
+	DOM.state.path = path;
+	DOM.state.subMenu = path.split("/").slice(0,-1).join("/");
+
 	var timestamp = (Date && Date.now() || new Date());
 	clicked = parseInt(timestamp, 10);
 

@@ -192,6 +192,7 @@ Pages.prototype.init = function ( data ) {
 	this.titles = [];
 	for ( ; i < count; ++i ) {
 		var page = this[urls[i]],
+			//parent = "",
 			isPage = false,
 			className,
 			name = page.rabbitHole || page.Page || page.Program,
@@ -216,14 +217,17 @@ Pages.prototype.init = function ( data ) {
 
 		if ( page.rabbitHole !== "" ) {
 			isPage = true;
-			className = ".ph-rabbit-hole.link";
+			//parent = page.Page;
+			className = ".ph-rabbit-hole";
 		}
 		else if ( page.Page !== "" ) {
 			isPage = true;
-			className = subParents[page.Path] || ".ph-page.link";
+			//parent = page.Program;
+			className = subParents[page.Path] || ".ph-page";
 		}
 		else if ( page.Program !== "" ) {
-			className = parents[page.Path] || ".ph-program.link";
+			//parent = page.Section;
+			className = parents[page.Path] || ".ph-program";
 		}
 
 		if ( page.Program !== "" ) {
@@ -234,6 +238,7 @@ Pages.prototype.init = function ( data ) {
 				level: page.Level,
 				className: className,
 				name: name,
+				parent: page.Path.split("/").slice(0,-1).join("/"),
 				id: page.ID,
 				icon: page.Icon || ""
 			});

@@ -18,15 +18,11 @@ function DOM () {
 		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
-		level: 0
+		level: 0,
+		path: "/",
+		subMenu: ""
 	};
 }
-
-DOM.prototype.preRender = function () {
-	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav() : null;
-	this.tabsDOM = renderTabs();
-	return renderPage(this.navDOM, this.tabsDOM, this);
-};
 
 DOM.prototype.init = function () {
 	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
@@ -46,6 +42,12 @@ DOM.prototype.init = function () {
 	if ( misc.codeMirror ) {
 		this.initEditor();
 	}
+};
+
+DOM.prototype.preRender = function () {
+	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null;
+	this.tabsDOM = renderTabs(this);
+	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
 DOM.prototype.set = function ( data, ctx ) {

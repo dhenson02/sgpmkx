@@ -3,32 +3,33 @@ module.exports = function ( grunt ) {
 		browserify: {
 			options: {
 				plugin: ["minifyify"],
+				sourceMap: true,
 				browserifyOptions: {
 					debug: true
 				}
 			},
 			dist: {
 				files: {
-					'dist/js/main.min.js': 'src/js/main.js'
+					'.tmp/main.min.js': 'src/js/main.js'
 				}
 			},
 			dev: {
 				files: {
-					'dist/js/main.js': 'src/js/main.js'
+					'.tmp/main.js': 'src/js/main.js'
 				}
 			}
 		},
 		uglify: {
 			dist: {
 				options: {
-					/*beautify: {
+					beautify: {
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
 						max_line_len: 4000,
 						bracketize: true,
 						semicolons: true
-					},*/
+					},
 					compress: {
 						unsafe: true,
 						drop_console: true,
@@ -171,12 +172,10 @@ module.exports = function ( grunt ) {
 					'src/css/*.css',
 					'node_modules/sweetalert/dist/*.css',
 					'node_modules/horsey/dist/*.css'
-					/*'node_modules/animate.css/!*.min.css'*/
 				],
 				tasks: [
 					'purifycss:dev',
 				    'postcss:dev'
-					//'cssmin:dev'
 				]
 			},
 			scripts: {
@@ -190,10 +189,9 @@ module.exports = function ( grunt ) {
 				],
 				tasks: [
 					'browserify:dev',
-					//'uglify:dev',
+					'uglify:dev',
 					'purifycss:dev',
 				    'postcss:dev'
-					//'cssmin:dev'
 				]
 			}
 		}
@@ -202,7 +200,6 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-purifycss');
 	grunt.loadNpmTasks('grunt-postcss');
-	//grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -211,13 +208,11 @@ module.exports = function ( grunt ) {
 		'uglify:dist',
 		'purifycss:dist',
 	    'postcss:dist'
-		//'cssmin:dist'
 	]);
 	grunt.registerTask('dev', [
 		'browserify:dev',
-		//'uglify:dev',
+		'uglify:dev',
 		'purifycss:dev',
 	    'postcss:dev'
-		//'cssmin:dev'
 	]);
 };
