@@ -116,15 +116,13 @@ Pages.prototype.setOption = function ( data ) {
 };
 
 Pages.prototype.init = function ( data ) {
-	var regDev = /-dev/gi,
-		urls = [],
+	var urls = [],
 		i = 0,
-		count = data.d.results.length,
 		result,
 		parents = {},
 		subParents = {};
 	this.sections = {};
-	for ( ; i < count; ++i ) {
+	for ( ; i < data.d.results.length; ++i ) {
 		result = data.d.results[i];
 		if ( !misc.codeMirror && !result.Published ) {
 			continue;
@@ -170,7 +168,7 @@ Pages.prototype.init = function ( data ) {
 		 * anything (aside from whitespace removal) or search/test for a match.
  		 */
 		this[result.Path] = result;
-		urls[i] = result.Path;
+		urls.push(result.Path);
 
 		if ( result.Section !== "" && result.Program === "" ) {
 			this.sections[result.Section] = {
@@ -192,7 +190,7 @@ Pages.prototype.init = function ( data ) {
 	urls.sort();
 	i = 0;
 	this.titles = [];
-	for ( ; i < count; ++i ) {
+	for ( ; i < urls.length; ++i ) {
 		var page = this[urls[i]],
 			isPage = false,
 			className,
@@ -235,6 +233,7 @@ Pages.prototype.init = function ( data ) {
 			});
 		}
 	}
+	events.emit("page.loaded");
 };
 
 Pages.prototype.createContent = function ( path, title, newName ) {

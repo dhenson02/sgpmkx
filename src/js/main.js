@@ -88,6 +88,9 @@ sweetAlert.setDefaults({
 
 events.on("page.loaded", function () {
 	DOM.init();
+});
+
+events.on("dom.loaded", function () {
 	if ( window.location.hash ) {
 		router.init();
 	}

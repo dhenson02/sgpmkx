@@ -32,7 +32,7 @@ DOM.prototype.preRender = function ( navOld, tabsOld ) {
 DOM.prototype.init = function () {
 	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
 
-	this.dirtyDOM = this.preRender(true, true);
+	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
@@ -47,6 +47,7 @@ DOM.prototype.init = function () {
 	if ( misc.codeMirror ) {
 		this.initEditor();
 	}
+	events.emit("dom.loaded");
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -110,14 +111,6 @@ DOM.prototype.renderOut = function ( text, type ) {
 	type = ( this.state.level > 1 ) ? "## " + type + "\n" : "";
 	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
 };
-
-/*DOM.prototype.resetEditor = function () {
-	if ( this.editor ) {
-		var wrap = this.editor.getWrapperElement();
-		wrap.parentNode.removeChild(wrap);
-	}
-	this.editor = null;
-};*/
 
 var dom = new DOM();
 

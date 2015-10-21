@@ -73,7 +73,6 @@ events.on("page.loading", function () {
 				return false;
 			}
 			pages.init(data);
-			events.emit("page.loaded");
 			if ( pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror ) {
 				sweetAlert({
 					title: "Tabs missing?",
