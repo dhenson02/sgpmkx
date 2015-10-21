@@ -18,13 +18,14 @@ function DOM () {
 		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
-		level: 0
+		level: 0,
+		path: ""
 	};
 }
 
 DOM.prototype.preRender = function () {
-	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav() : null;
-	this.tabsDOM = renderTabs();
+	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null;
+	this.tabsDOM = renderTabs(this);
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
@@ -106,7 +107,7 @@ DOM.prototype.initEditor = function () {
 
 DOM.prototype.renderOut = function ( text, type ) {
 	var regLink = /<a (href="https?:\/\/)/gi;
-	type = ( pages.current.level > 1 ) ? "## " + type + "\n" : "";
+	type = ( this.state.level > 1 ) ? "## " + type + "\n" : "";
 	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
 };
 

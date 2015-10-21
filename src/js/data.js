@@ -122,7 +122,7 @@ events.on("content.loading", function ( path ) {
 				// Prevent accidental load of previously clicked destination
 				return false;
 			}
-			events.emit("content.loaded", data);
+			events.emit("content.loaded", data, path);
 		},
 		error: function ( error ) {
 			console.log("error connecting:", error);

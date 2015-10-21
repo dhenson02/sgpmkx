@@ -28,7 +28,7 @@ var h = require("virtual-dom/dist/virtual-dom").h,
 		}
 	];
 
-function renderTabs () {
+function renderTabs ( DOM ) {
 	var style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } },
 		group = tabs.map(function ( tab ) {
 			var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();

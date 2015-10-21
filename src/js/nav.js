@@ -43,7 +43,7 @@ function renderSection ( section ) {
 	);
 }
 
-function renderNav () {
+function renderNav ( DOM ) {
 	var links = [],
 		name;
 

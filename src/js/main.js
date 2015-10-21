@@ -136,7 +136,7 @@ events.on("missing", function ( path ) {
 	});
 });
 
-events.on("content.loaded", function ( data ) {
+events.on("content.loaded", function ( data, path ) {
 	var obj = data.d;
 	if ( !obj ) {
 		router.setRoute("/");
@@ -169,17 +169,21 @@ events.on("content.loaded", function ( data ) {
 		_type: "overview",
 		modified: new Date(obj.Modified || obj.Created),
 		listItemType: obj.__metadata.type,
-		timestamp: (Date && Date.now() || new Date()),
-		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
+		timestamp: (Date && Date.now() || new Date())
 	});
 
 	inTransition.output = false;
-	DOM.update();
 	if ( window.pageYOffset > DOM.content.offsetTop ) {
 		window.scroll(0, DOM.content.offsetTop);
 	}
-	DOM.renderOut(pages.current.text, pages.current.type);
 	document.title = pages.current.title;
+	DOM.setState({
+		path: path,
+		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
+	});
+	if ( !codeMirror ) {
+		DOM.renderOut(pages.current.text, pages.current.type);
+	}
 });
 
 events.on("tab.change", function ( page ) {
@@ -192,7 +196,9 @@ events.on("tab.change", function ( page ) {
 
 	inTransition.output = false;
 	DOM.update();
-	DOM.renderOut(content.text, content.type);
+	if ( !codeMirror ) {
+		DOM.renderOut(content.text, content.type);
+	}
 });
 
 pageInit();
