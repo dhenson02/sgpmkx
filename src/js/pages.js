@@ -8,8 +8,8 @@ function Content ( data ) {
 	this.id = -1;
 	this.title = "";
 	this._title = "";
-	this.keywords = [];
-	this.references = [];
+	this.pubs = "";
+	this.tags = "";
 	this.icon = "";
 	this.text = "";
 	this.overview = "";
@@ -49,7 +49,8 @@ Content.prototype.reset = function ( data ) {
 Content.prototype.savePage = function ( self ) {
 	this.set({
 		text: this.text.trim(),
-		keywords: this.keywords,
+		pubs: this.pubs,
+		tags: this.tags,
 		modified: new Date()
 	});
 	this[this._type] = this.text;
@@ -58,9 +59,8 @@ Content.prototype.savePage = function ( self ) {
 			'type': this.listItemType
 		},
 		'Title': this.title,
-		/*'Keywords': {
-		 results: this.keywords
-		 },*/
+		'Pubs': this.pubs,
+		'Tags': this.tags,
 		'Overview': this.overview,
 		'Policy': this.policy,
 		'Training': this.training,
@@ -116,6 +116,7 @@ Pages.prototype.setOption = function ( data ) {
 
 Pages.prototype.init = function ( data ) {
 	var regDev = /-dev/gi,
+		regSplit = /;|,/g,
 		urls = [],
 		i = 0,
 		count = data.d.results.length,
@@ -136,7 +137,9 @@ Pages.prototype.init = function ( data ) {
 		result.Page = ( result.Page ) ? result.Page.replace(/\s/g, "") : "";
 		result.rabbitHole = ( result.rabbitHole ) ? result.rabbitHole.replace(/\s/g, "") : "";
 
-		if ( !misc.codeMirror && regDev.test(result.Section + result.Program + result.Page + result.rabbitHole) ) continue;
+		if ( !misc.codeMirror && regDev.test(result.Section + result.Program + result.Page + result.rabbitHole) ) {
+			continue;
+		}
 		/**
 		 * This creates a new property `Path` and cascades down the
 		 * logical chain of categories.
@@ -180,10 +183,10 @@ Pages.prototype.init = function ( data ) {
 		}
 
 		if ( result.rabbitHole !== "" ) {
-			subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page.link";
+			subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page";
 		}
 		else if ( result.Page !== "" ) {
-			parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program.link";
+			parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program";
 		}
 	}
 
@@ -195,35 +198,29 @@ Pages.prototype.init = function ( data ) {
 			isPage = false,
 			className,
 			name = page.rabbitHole || page.Page || page.Program,
-			keywords = (page.Keywords && page.Keywords.results) || [],
-			references = (page.References && page.References.results) || [];
+			tags = page.Tags && page.Tags.split(regSplit) || [],
+			pubs = page.Pubs && page.Pubs.split(regSplit) || [];
 
 		/**
 		 * Used for searching the site quick and easy using Horsey.
 		 */
-		keywords = keywords.map(function ( obj ) {
-			return obj.Label;
-		});
-		references = references.map(function ( obj ) {
-			return obj.Label;
-		});
 		this.titles[i] = {
-			//text: page.Title + " " + pluck(keywords, "Label").join(" ") + pluck(references, "Label").join(" "),
-			text: page.Title + " " + keywords.join(" ") + references.join(" "),
+			//text: page.Title + " " + pluck(tags, "Label").join(" ") + pluck(pubs, "Label").join(" "),
+			text: page.Title + " " + tags.join(" ") + pubs.join(" "),
 			value: page.Path,
 			renderText: page.Title
 		};
 
 		if ( page.rabbitHole !== "" ) {
 			isPage = true;
-			className = ".ph-rabbit-hole.link";
+			className = ".ph-rabbit-hole";
 		}
 		else if ( page.Page !== "" ) {
 			isPage = true;
-			className = subParents[page.Path] || ".ph-page.link";
+			className = subParents[page.Path] || ".ph-page";
 		}
 		else if ( page.Program !== "" ) {
-			className = parents[page.Path] || ".ph-program.link";
+			className = parents[page.Path] || ".ph-program";
 		}
 
 		if ( page.Program !== "" ) {
@@ -249,14 +246,14 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	var firstTry = title.replace(regNormalize, "");
 	path += "/" + newName.replace(regNormalize, "");
 	var pathArray = path.slice(1).split("/");
-	//var keywords = { results: [] };
+	//var tags = { results: [] };
 
 	var data = {
 		'__metadata': {
 			'type': self.current.listItemType
 		},
 		'Title': title,
-		//'Keywords': keywords,
+		//'Keywords': tags,
 		'Overview': '### New Page :)\n#### Joy',
 		'Section': pathArray.shift() || "",
 		'Program': pathArray.shift() || "",
@@ -308,14 +305,14 @@ Pages.prototype.createContent = function ( path ) {
 
 			path += "/" + newName.replace(regNormalize, "");
 			var pathArray = path.slice(1).split("/");
-			var keywords = null;
+			var tags = null;
 
 			var data = {
 				'__metadata': {
 					'type': self.current.listItemType
 				},
 				'Title': title,
-				//'Keywords': keywords || [],
+				//'Tags': tags || [],
 				'Overview': '### New Page :)\n#### Joy',
 				'Section': pathArray.shift() || "",
 				'Program': pathArray.shift() || "",

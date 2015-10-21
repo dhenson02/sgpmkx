@@ -5,13 +5,13 @@ var h = require("virtual-dom/dist/virtual-dom").h,
 
 function renderLink ( link ) {
 	var c = link.href.indexOf(a),
-		attr = { style: {} };
+		attr = {};
 
 	if ( link.level > 2 && ( c < 0 || level < 2 ) ) {
-		attr.style = { display: "none" };
+		attr = { style: {display: "none"} };
 	}
 	return (
-		h("li#ph-link-" + link.id + link.className,
+		h("li.link#ph-link-" + link.id + link.className,
 			attr, [
 				h("a.ph-level-" + link.level + ( link.href === window.location.hash ? ".active" : "" ), {
 					href: link.href,

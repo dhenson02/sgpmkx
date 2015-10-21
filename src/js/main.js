@@ -151,8 +151,8 @@ events.on("content.loaded", function ( data, path ) {
 		id: obj.ID,
 		title: obj.Title || "",
 		_title: obj.Title || "",
-		keywords: (obj.Keywords && obj.Keywords.results) || [],
-		references: (obj.References && obj.References.results) || [],
+		pubs: obj.Pubs || "",
+		tags: obj.Tags || "",
 		icon: obj.Icon || "",
 		text: obj.Overview || "",
 		overview: obj.Overview || "",
@@ -174,7 +174,7 @@ events.on("content.loaded", function ( data, path ) {
 
 	inTransition.output = false;
 	if ( window.pageYOffset > DOM.content.offsetTop ) {
-		window.scroll(0, DOM.content.offsetTop);
+		window.scrollTo(0, DOM.content.offsetTop);
 	}
 	document.title = pages.current.title;
 	DOM.setState({
@@ -195,7 +195,7 @@ events.on("tab.change", function ( page ) {
 	pages.current.set(content);
 
 	inTransition.output = false;
-	DOM.update();
+	DOM.update(true, false);
 	if ( !codeMirror ) {
 		DOM.renderOut(content.text, content.type);
 	}

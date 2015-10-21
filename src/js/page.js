@@ -1,6 +1,5 @@
 var h = require("virtual-dom/dist/virtual-dom").h,
 	misc = require("./helpers"),
-	inTransition = misc.inTransition,
 	pages = require("./pages"),
 	events = require("./events");
 

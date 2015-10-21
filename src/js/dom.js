@@ -23,16 +23,16 @@ function DOM () {
 	};
 }
 
-DOM.prototype.preRender = function () {
-	this.navDOM = ( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null;
-	this.tabsDOM = renderTabs(this);
+DOM.prototype.preRender = function ( navOld, tabsOld ) {
+	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null);
+	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	return renderPage(this.navDOM, this.tabsDOM, this);
 };
 
 DOM.prototype.init = function () {
 	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
 
-	this.dirtyDOM = this.preRender();
+	this.dirtyDOM = this.preRender(true, true);
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
@@ -58,13 +58,13 @@ DOM.prototype.set = function ( data, ctx ) {
 	}
 };
 
-DOM.prototype.setState = function ( data ) {
+DOM.prototype.setState = function ( data, nav, tabs ) {
 	this.set(data, this.state);
-	this.update();
+	this.update(nav, tabs);
 };
 
-DOM.prototype.update = function () {
-	var refreshDOM = this.preRender(),
+DOM.prototype.update = function ( nav, tabs ) {
+	var refreshDOM = this.preRender(nav, tabs),
 		patches = diff(this.dirtyDOM, refreshDOM);
 
 	this.rootNode = patch(this.rootNode, patches);
