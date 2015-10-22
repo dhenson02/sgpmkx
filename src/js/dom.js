@@ -1,4 +1,4 @@
-var vdom = require("virtual-dom/dist/virtual-dom"),
+var vdom = require("virtual-dom"),
 	h = vdom.h,
 	diff = vdom.diff,
 	patch = vdom.patch,
@@ -22,7 +22,13 @@ function DOM () {
 		path: ""
 	};
 }
-
+/**
+ * Begins rendering the virtual-dom VTree.  Determines what needs to render
+ * and what doesn't.
+ * @param navOld - BOOLEAN: if old navDOM tree should still be used
+ * @param tabsOld - BOOLEAN: if old tabsDOM tree should still be used
+ * @returns {*} - VTree, VNode or...null?
+ */
 DOM.prototype.preRender = function ( navOld, tabsOld ) {
 	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null);
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
@@ -71,7 +77,7 @@ DOM.prototype.update = function ( nav, tabs ) {
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor ) {
+	if ( this.editor && ( !nav || !tabs ) ) {
 		this.editor.setValue(pages.current.text);
 	}
 };

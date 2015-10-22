@@ -1,6 +1,5 @@
 var misc = require("./helpers"),
-	events = require("./events"),
-	regSplit = misc.regSplit;
+	events = require("./events");
 
 function Content ( data ) {
 	if ( !(this instanceof Content) ) {
@@ -29,6 +28,7 @@ function Content ( data ) {
 	this.listItemType = "";
 	this.timestamp = null;
 	this.level = -1;
+	this.path = "";
 	if ( data ) {
 		return this.set(data);
 	}
@@ -47,11 +47,16 @@ Content.prototype.reset = function ( data ) {
 	return new Content(data);
 };
 
-Content.prototype.savePage = function ( self ) {
+Content.prototype.savePage = function () {
+	var pubs = [], pub;
+	while ( pub = misc.regPubs.exec(this.policy) ) {
+		pubs.push(pub);
+	}
 	this.set({
 		text: this.text.trim(),
-		pubs: this.pubs,
-		tags: this.tags,
+		title: this.title.trim(),
+		pubs: pubs.join(" "),
+		tags: this.tags.trim(),
 		modified: new Date()
 	});
 	this[this._type] = this.text;
@@ -69,9 +74,9 @@ Content.prototype.savePage = function ( self ) {
 		'Tools': this.tools,
 		'Contributions': this.contributions
 	};
-	self.className += " loading";
-	var el = self.children[0];
-	events.emit("content.save", data, el);
+	//self.className += " loading";
+	//var el = self.children[0];
+	events.emit("content.save", data);
 };
 
 function Pages () {
@@ -82,7 +87,7 @@ function Pages () {
 	this.options = {
 		hideEmptyTabs: true,
 		searchPlaceholder: "Search using keywords, AFIs or titles...",
-		emptyTabsNotify: true,
+		emptyTabsNotify: false,
 		images: "/kj/kx7/PublicHealth/SiteAssets/Images",
 		contribPOCName: "Jane Dizoe",
 		contribPOCEmail: "joe.dirt@example.com",
@@ -116,16 +121,15 @@ Pages.prototype.setOption = function ( data ) {
 };
 
 Pages.prototype.init = function ( data ) {
-	var urls = [],
-		i = 0,
-		result,
-		parents = {},
-		subParents = {};
+	var self = this;
+	this.urls = [];
+	this.parents = {};
+	this.subParents = {};
 	this.sections = {};
-	for ( ; i < data.d.results.length; ++i ) {
-		result = data.d.results[i];
+	this.titles = [];
+	data.d.results.forEach(function ( result ) {
 		if ( !misc.codeMirror && !result.Published ) {
-			continue;
+			return false;
 		}
 		/**
 		 * These come down as null if they're empty so let's standardize
@@ -161,79 +165,91 @@ Pages.prototype.init = function ( data ) {
 		 * of the first `/`.
 		 * @type {number}
 		 */
-		result.Level = result.Path.split("/").length - 1;
+		result.Level = result.Path.split(/\/\w+/g).length - 1;
 
 		/**
 		 * This allows direct access using the URI without having to manipulate
 		 * anything (aside from whitespace removal) or search/test for a match.
  		 */
-		this[result.Path] = result;
-		urls.push(result.Path);
+		self[result.Path] = result;
+		self.urls.push(result.Path);
 
-		if ( result.Section !== "" && result.Program === "" ) {
-			this.sections[result.Section] = {
+		var tags = result.Tags && result.Tags.replace(misc.regSplit, " ") || "",
+			pubs = [],
+			pub;
+
+		while ( pub = misc.regPubs.exec(result.Policy) ) {
+			pubs.push(pub);
+		}
+
+		/**
+		 * Used for searching the site quick and easy using Horsey.
+		 */
+		self.titles.push({
+			text: result.Title + " " + tags + pubs.join(" "),
+			value: result.Path,
+			renderText: result.Title
+		});
+	});
+	this.navPrep();
+	events.emit("page.loaded");
+};
+
+Pages.prototype.navPrep = function () {
+	var self = this;
+	var _urls = self.urls.slice(0);
+	var url, result;
+	while ( url = _urls.shift() ) {
+		result = self[url];
+		if ( result.Level === 1 ) {
+			self.sections[result.Section] = {
 				path: ( !result.Link ) ? "/" + result.Section : result.Link,
 				title: result.Title,
 				id: result.ID,
 				links: []
 			};
 		}
-
 		if ( result.rabbitHole !== "" ) {
-			subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page";
+			self.subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page";
 		}
 		else if ( result.Page !== "" ) {
-			parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program";
+			self.parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program";
 		}
 	}
-
-	urls.sort();
-	i = 0;
-	this.titles = [];
-	for ( ; i < urls.length; ++i ) {
-		var page = this[urls[i]],
-			isPage = false,
+	url = null;
+	result = null;
+	self.urls.sort();
+	self.urls.forEach(function ( url ) {
+		var page = self[url],
 			className,
-			name = page.rabbitHole || page.Page || page.Program,
-			tags = page.Tags && page.Tags.split(regSplit) || [],
-			pubs = page.Pubs && page.Pubs.split(regSplit) || [];
+			name = url.split(/\//).pop();
 
-		/**
-		 * Used for searching the site quick and easy using Horsey.
-		 */
-		this.titles[i] = {
-			//text: page.Title + " " + pluck(tags, "Label").join(" ") + pluck(pubs, "Label").join(" "),
-			text: page.Title + " " + tags.join(" ") + pubs.join(" "),
-			value: page.Path,
-			renderText: page.Title
-		};
-
-		if ( page.rabbitHole !== "" ) {
-			isPage = true;
-			className = ".ph-rabbit-hole";
-		}
-		else if ( page.Page !== "" ) {
-			isPage = true;
-			className = subParents[page.Path] || ".ph-page";
-		}
-		else if ( page.Program !== "" ) {
-			className = parents[page.Path] || ".ph-program";
+		switch ( page.Level ) {
+			case 2:
+				className = self.parents[page.Path] || ".ph-program";
+				break;
+			case 3:
+				className = self.subParents[page.Path] || ".ph-page";
+				break;
+			case 4:
+				className = ".ph-rabbit-hole";
+				break;
 		}
 
-		if ( page.Program !== "" ) {
-			this.sections[page.Section].links.push({
+		if ( page.Level > 1 ) {
+			self.sections[page.Section].links.push({
 				path: page.Path,
 				href: ( !page.Link ) ? "#" + page.Path : page.Link,
 				title: page.Title,
 				level: page.Level,
 				className: className,
 				name: name,
+				parent: url.split(/\//).slice(-2, -1),
 				id: page.ID,
 				icon: page.Icon || ""
 			});
 		}
-	}
-	events.emit("page.loaded");
+	});
 };
 
 Pages.prototype.createContent = function ( path, title, newName ) {
@@ -244,7 +260,7 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	var firstTry = title.replace(regNormalize, "");
 	path += "/" + newName.replace(regNormalize, "");
 	var pathArray = path.slice(1).split("/");
-	//var tags = { results: [] };
+	//var tags = ;
 
 	var data = {
 		'__metadata': {

@@ -1,9 +1,9 @@
 #ph-buttons {
-	width: 100%;
+	/*width: 100%;*/
 /*	max-width: 960px;
 	max-width: calc(100% - 320px);*/
-	margin: 50px auto 0;
-	text-align: center;
+	margin-top: 50px;
+	text-align: left;
 	position: relative;
 	display: block;
 }
@@ -15,18 +15,9 @@
 }
 
 .ph-toggle-editor {
-	/*position: absolute;*/
-	/**** 390px - 5px padding left ****/
-	/*left: 385px;*/
-	/*top: 0;*/
 	cursor: pointer;
-	/*display: inline-block;*/
-	/*padding-left: 5px;*/
 	border: none;
-	/*width: 160px;*/
-	/*text-align: center;*/
 	font-weight: 200;
-	/*text-decoration: underline!important;*/
 	border-bottom: 2px solid transparent;
 	margin-bottom: 20px;
 }
@@ -36,7 +27,7 @@
 }
 
 .ph-edit-btn {
-	margin: 10px;
+	/*margin: 10px;*/
 	padding: 10px 20px;
 }
 
@@ -51,8 +42,11 @@
 
 .ph-edit-btn.ph-save {
 	/*background-color: #454545;*/
-	color: #00B16A!important;
+	background-color: #00B16A;
+	/*color: #FFFFFF;*/
 	border: 1px solid;
+	font-weight: 700;
+	border-radius: 6px;
 }
 
 .ph-edit-btn.ph-cheatsheet i.icon {

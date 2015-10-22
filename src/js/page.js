@@ -1,4 +1,4 @@
-var h = require("virtual-dom/dist/virtual-dom").h,
+var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events"),
@@ -58,6 +58,38 @@ function renderAddContent () {
 }
 
 function renderEditor ( tabsDOM, DOM ) {
+
+	var addTag = function ( event ) {
+		event = event || window.event;
+		if ( event.preventDefault ) event.preventDefault();
+		else event.returnValue = false;
+
+		var addTag = document.querySelector("input[name='ph-add-tag']"),
+			val = addTag.value.trim(),
+			regVal = new RegExp(" ?\\b" + val + "\\b ?", "i");
+		if ( val && !regVal.test(pages.current.tags) ) {
+			pages.current.set({
+				tags: ( pages.current.tags ? pages.current.tags + " " + val : val)
+			});
+			DOM.update(true, true);
+			addTag.focus();
+		}
+	};
+
+	var removeTag = function ( event ) {
+		event = event || window.event;
+		if ( event.preventDefault ) event.preventDefault();
+		else event.returnValue = false;
+
+		var val = this.textContent || this.innerText || this.innerHTML;
+		val = val.trim();
+		var regVal = new RegExp(" ?\\b" + val + "\\b ?", "i");
+		pages.current.set({
+			tags: pages.current.tags.replace(regVal, "")
+		});
+		DOM.update(true, true);
+	};
+
 	return (
 		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
 
@@ -97,8 +129,9 @@ function renderEditor ( tabsDOM, DOM ) {
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
 
 
-			h("h1#ph-title.ph-cm", {
-				contentEditable: true,
+			h("h1#ph-title.ph-cm" + ( !misc.inTransition.title ? "" : ".loading" ), {
+				contentEditable: !misc.inTransition.title,
+				style: ( misc.inTransition.titleBorder ? { borderBottomColor: "#00B16A" } : {} ),
 				onkeypress: function ( e ) {
 					if ( e.which == 13 || e.keyCode == 13 ) {
 						this.blur();
@@ -116,80 +149,81 @@ function renderEditor ( tabsDOM, DOM ) {
 							return false;
 						}
 						misc.inTransition.title = true;
-						this.contentEditable = false;
-						this.className += " loading";
-						events.emit("title.saving", title, this);
+						DOM.update(false, true);
+						//this.contentEditable = false;
+						//this.className += " loading";
+						events.emit("title.saving", title);
 					}
 				}
 			}, [String(pages.current.title || "")]),
 
 
+			h("#ph-tabs.ph-tabs", [tabsDOM]),
+
+
 			h("h3.ph-tags", [
+				h("input.ph-add-tag", {
+					type: "text",
+					name: "ph-add-tag",
+					value: "",
+					placeholder: "Add keyword(s)",
+					autofocus: true,
+					onkeypress: function ( e ) {
+						if ( e.which == 13 || e.keyCode == 13 ) {
+							addTag(e);
+							return false;
+						}
+					}
+				}),
+				h("a.icon.icon-plus", {
+					href: "#",
+					onclick: addTag
+				}),
 				( pages.current.tags ? pages.current.tags.split(regSplit).map(function ( tag ) {
-					return tag.trim() ? h("small", [String(tag)]) : null;
+					return ( tag.trim() ?
+						h("small", {
+							onclick: removeTag
+						}, [String(tag)]) :
+						null );
 				}) : null )
 			]),
 
 
-			h("#ph-tabs.ph-tabs", [tabsDOM]),
-
-
 			h("#ph-buttons", [
-				h("a#ph-save.ph-edit-btn.ph-save", {
+				h("a#ph-save.ph-edit-btn.ph-save" + ( !misc.inTransition.tempSaveText ? "" : ".loading" ), {
 					href: "#",
 					title: "Save",
+					style: ( misc.inTransition.tempSaveStyle ? {
+						color: "#00B16A",
+						backgroundColor: "#FFFFFF"
+					} : {
+						backgroundColor: "#00B16A",
+						color: "#FFFFFF"
+					}),
 					onclick: function ( event ) {
 						event = event || window.event;
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
 						if ( !misc.inTransition.tempSaveText ) {
-							pages.current.savePage(this);
+							misc.inTransition.tempSaveText = "...saving...";
+							DOM.update(true, true);
+							pages.current.savePage();
 						}
 					}
-				}, [ h("i.icon.icon-diskette", ["Save"]) ])
-				/*h("a.ph-edit-btn.ph-cheatsheet", {
-					href: "#",
-					onclick: function ( event ) {
-						event = event || window.event;
-						if ( event.preventDefault ) event.preventDefault();
-						else event.returnValue = false;
-
-						DOM.setState({
-							cheatSheet: !DOM.state.cheatSheet
-						});
-						return false;
-					}
-				}, [
-					h("i.icon.icon-pen", ["Markdown help"])
-				])*/
+				}, [h("i.icon.icon-diskette", [!misc.inTransition.tempSaveText ? "Save" : misc.inTransition.tempSaveText])])
 			]),
 
-			/*h("#cheatSheet", ( !DOM.state.cheatSheet ? { style: { display: "none" } } : null ), [
-				"This will be a cheat-sheet for markdown.  For now, go to one of these two sites for help:",
-				h("p", [
-					h("a", {
-						target: "_blank",
-						href: "http://jbt.github.io/markdown-editor"
-					}, ["http://jbt.github.io/markdown-editor"])
-				]),
-				h("p", [
-					h("a", {
-						target: "_blank",
-						href: "http://stackedit.io"
-					}, ["http://stackedit.io"])
-				])
-			]),*/
 
 			h("#ph-contentWrap", [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [String(pages.current.text || "")])
 				]),
-				h("#ph-output")
-			]),
-			h(".clearfix"),
-			h("small.ph-modified-date", [
-				"Last updated: " + pages.current.modified.toLocaleDateString()
+				h("#ph-output"),
+				h(".clearfix"),
+				h("small.ph-modified-date", [
+					"Last updated: " + pages.current.modified.toLocaleDateString()
+				])
 			])
 		])
 	);

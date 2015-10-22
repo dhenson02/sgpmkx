@@ -58,7 +58,7 @@ events.on("page.loading", function () {
 	clicked = parseInt(timestamp, 10);
 
 	reqwest({
-		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Pubs,Tags,Link,Created,Modified,Published",
+		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Policy,Tags,Link,Created,Modified,Published",
 		method: "GET",
 		type: "json",
 		contentType: "application/json",
@@ -187,9 +187,9 @@ events.on("content.create", function ( data, path, title ) {
 	});
 });
 
-events.on("title.saving", function ( title, el ) {
-	if ( inTransition.titleBorder ) {
-		clearTimeout(inTransition.titleBorder);
+events.on("title.saving", function ( title ) {
+	if ( misc.inTransition.titleBorder ) {
+		clearTimeout(misc.inTransition.titleBorder);
 	}
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
@@ -223,50 +223,71 @@ events.on("title.saving", function ( title, el ) {
 					pages.current.set({
 						_title: title
 					});
-					el.className = el.className.replace(regLoading, "");
-					el.style.borderBottomColor = "#00B16A";
-					//DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
-					el.contentEditable = true;
+					pages[pages.current.path].Title = title;
 					document.title = title;
+					//el.className = el.className.replace(regLoading, "");
+
+					//el.style.borderBottomColor = "#00B16A";
+
+					//DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
+					//el.contentEditable = true;
 				},
 				error: function ( error ) {
-					el.className = el.className.replace(regLoading, "");
-					el.style.border = "2px dashed #FF2222";
-					el.style.fontWeight = "bold";
-					console.log("Error saving title: ", error);
+					sweetAlert({
+						title: "Failure",
+						text: misc.md.renderInline(title + " **was not** able to be saved"),
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
+					console.log("Title save error: ", error);
 				},
 				complete: function () {
-					inTransition.title = false;
-					if ( inTransition.titleBorder ) {
-						clearTimeout(inTransition.titleBorder);
+					if ( misc.inTransition.titleBorder ) {
+						clearTimeout(misc.inTransition.titleBorder);
 					}
-					inTransition.titleBorder = setTimeout(function () {
-						el.removeAttribute("style");
-						inTransition.titleBorder = null;
-					}, 1000);
+					misc.inTransition.titleBorder = setTimeout(function () {
+						//el.removeAttribute("style");
+						pages.navPrep();
+						misc.inTransition.title = false;
+						misc.inTransition.titleBorder = null;
+						DOM.update();
+					}, 350);
+					DOM.update();
 				}
 			});
 		},
 		error: function ( error ) {
-			el.className = el.className.replace(regLoading, "");
-			el.style.border = "2px dashed #FF2222";
-			el.style.fontWeight = "bold";
-			el.contentEditable = true;
-			console.log("Error getting new digest: ", error);
-			inTransition.title = false;
-			inTransition.titleBorder = setTimeout(function () {
-				el.removeAttribute("style");
-				inTransition.titleBorder = null;
-			}, 1000);
+			//el.className = el.className.replace(regLoading, "");
+			//el.style.border = "2px dashed #FF2222";
+			//el.contentEditable = true;
+			sweetAlert({
+				title: "Failure",
+				text: misc.md.renderInline(title + " **was not** able to be saved"),
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
+			console.log("Title save error (couldn't get digest): ", error);
+			if ( misc.inTransition.titleBorder ) {
+				clearTimeout(misc.inTransition.titleBorder);
+			}
+			misc.inTransition.titleBorder = setTimeout(function () {
+				//el.removeAttribute("style");
+				misc.inTransition.title = false;
+				misc.inTransition.titleBorder = null;
+				DOM.update();
+			}, 350);
+			DOM.update();
 		}
 	});
 });
 
-events.on("content.save", function ( data, btnText ) {
-	btnText.removeAttribute("style");
-	btnText.innerHTML = "...saving...";
-	if ( inTransition.tempSaveText ) {
-		clearTimeout(inTransition.tempSaveText);
+events.on("content.save", function ( data ) {
+	//btnText.removeAttribute("style");
+	//btnText.innerHTML = "...saving...";
+	if ( misc.inTransition.tempSaveStyle ) {
+		clearTimeout(misc.inTransition.tempSaveStyle);
 	}
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
@@ -292,37 +313,64 @@ events.on("content.save", function ( data, btnText ) {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-					btnText.style.fontWeight = "bold";
-					btnText.innerHTML = "Saved!";
+					//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
+					//btnText.style.fontWeight = "bold";
+					//btnText.innerHTML = "Saved!";
+					misc.inTransition.tempSaveText = "Saved!";
 				},
 				error: function ( error ) {
-					btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-					btnText.style.color = "#FF2222";
-					btnText.style.fontWeight = "bold";
-					btnText.innerHTML = "Connection error (press F12 for Console)";
-					console.log("Couldn't save due to error: ", error.response);
+					//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
+					//btnText.style.color = "#FF2222";
+					//btnText.style.fontWeight = "bold";
+					//btnText.innerHTML = "Connection error (press F12 for Console)";
+					sweetAlert({
+						title: "Failure",
+						text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
+					console.log("Content save error: ", error);
 				},
 				complete: function () {
-					inTransition.tempSaveText = setTimeout(function () {
-						btnText.removeAttribute("style");
-						btnText.innerHTML = "Save";
-						inTransition.tempSaveText = null;
-					}, 1000);
+					if ( misc.inTransition.tempSaveStyle ) {
+						clearTimeout(misc.inTransition.tempSaveStyle);
+					}
+					misc.inTransition.tempSaveStyle = setTimeout(function () {
+						//btnText.removeAttribute("style");
+						//btnText.innerHTML = "Save";
+						misc.inTransition.tempSaveText = null;
+						misc.inTransition.tempSaveStyle = null;
+						DOM.update();
+					}, 500);
+					DOM.update();
 				}
 			});
 		},
 		error: function ( error ) {
-			btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-			btnText.style.color = "#FF2222";
-			btnText.style.fontWeight = "bold";
-			btnText.innerHTML = "Digest error (press F12 for Console)";
-			console.log("Error getting new digest: ", error);
-			inTransition.tempSaveText = setTimeout(function () {
-				btnText.removeAttribute("style");
-				btnText.innerHTML = "Save";
-				inTransition.tempSaveText = null;
-			}, 1000);
+			//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
+			//btnText.style.color = "#FF2222";
+			//btnText.style.fontWeight = "bold";
+			//btnText.innerHTML = "Digest error (press F12 for Console)";
+			sweetAlert({
+				title: "Failure",
+				text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
+			console.log("Content save error: ", error);
+			if ( misc.inTransition.tempSaveStyle ) {
+				clearTimeout(misc.inTransition.tempSaveStyle);
+			}
+			misc.inTransition.tempSaveStyle = setTimeout(function () {
+				//btnText.removeAttribute("style");
+				//btnText.innerHTML = "Save";
+				misc.inTransition.tempSaveText = null;
+				misc.inTransition.tempSaveStyle = null;
+				DOM.update();
+			}, 500);
+			DOM.update();
 		}
 	});
 });

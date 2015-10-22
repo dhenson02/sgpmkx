@@ -1,4 +1,4 @@
-var h = require("virtual-dom/dist/virtual-dom").h,
+var h = require("virtual-dom").h, 
 	pages = require("./pages"),
 	events = require("./events"),
 	tabs = [

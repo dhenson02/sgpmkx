@@ -51,6 +51,22 @@ body {
 	line-height: 1;
 }
 
+#ph-wrapper input[type="text"],
+#ph-wrapper select {
+	/*background-color: #FAFCFE;*/
+	color: #555555;
+	font-size: 1em;
+	border: none;
+	border-bottom: 2px solid #CCCCCC;
+	padding: .5em .33em;
+	outline: 0;
+	float: none;
+	font-family: inherit;
+	display: block;
+	width: 400px;
+	font-weight: 200;
+}
+
 #ph-wrapper strong {
 	font-weight: bold;
 	font-weight: 700;
@@ -117,14 +133,34 @@ body {
 	border-bottom-color: #F62459;
 }
 
-.ph-tags small {
+#ph-wrapper .ph-tags small {
+	position: relative;
 	margin-right: 7px;
-	border: 1px solid #CCC;
+	border: 1px solid #DDD;
+	border-radius: 4px;
 	padding: 3px 6px;
+	cursor: pointer;
 }
 
-.fullPage .ph-tags {
-	display: none;
+#ph-wrapper .ph-tags small:hover::before {
+	content: "\274C";
+	position: absolute;
+	left: 0;
+	display: inline-block;
+}
+
+#ph-wrapper .ph-tags .ph-add-tag {
+	display: inline-block;
+}
+
+#ph-wrapper .ph-tags .ph-add-tag:focus {
+	color: #222222;
+	border-color: #444444;
+}
+
+#ph-wrapper .ph-tags .icon {
+	display: inline-block;
+	vertical-align: middle;
 }
 
 #ph-contentWrap {
@@ -150,29 +186,8 @@ body {
 	width: auto;
 }
 
-#ph-wrapper input[type="text"],
-#ph-wrapper select {
-	/*background-color: #FAFCFE;*/
-	color: #555555;
-	font-size: 1em;
-	border: none;
-	border-bottom: 2px solid #CCCCCC;
-	padding: .5em .33em;
-	outline: 0;
-	float: none;
-	font-family: inherit;
-	display: block;
-	width: 400px;
-	font-weight: 200;
-}
-
-#cheatSheet {
-	height: 300px;
-	padding: 20px 0;
-}
-
 .fullPage #ph-input,
-.fullPage #cheatSheet {
+.fullPage .ph-tags {
 	display: none;
 }
 
@@ -221,8 +236,13 @@ body {
 
 .ph-modified-date {
 	float: right;
-	font-style: italic;
-	color: #777777;
+	margin-top: -24px;
+	/*font-style: italic;*/
+	color: #BBBBBB;
+}
+
+.fullPage .ph-modified-date {
+	margin-top: 0;
 }
 
 .fullPage #ph-contentWrap {

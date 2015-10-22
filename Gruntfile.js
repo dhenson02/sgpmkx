@@ -1,15 +1,15 @@
 module.exports = function ( grunt ) {
 	grunt.initConfig({
 		browserify: {
-			options: {
+			/*options: {
 				plugin: ["minifyify"],
 				browserifyOptions: {
 					debug: true
 				}
-			},
+			},*/
 			dist: {
 				files: {
-					'dist/js/main.min.js': 'src/js/main.js'
+					'.tmp/main.min.js': 'src/js/main.js'
 				}
 			},
 			dev: {
@@ -21,14 +21,14 @@ module.exports = function ( grunt ) {
 		uglify: {
 			dist: {
 				options: {
-					/*beautify: {
+					beautify: {
 						indent_level: 4,
 						width: 80,
 						quote_style: 0,
 						max_line_len: 4000,
 						bracketize: true,
 						semicolons: true
-					},*/
+					},
 					compress: {
 						unsafe: true,
 						drop_console: true,

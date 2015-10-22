@@ -1,21 +1,8 @@
 /**
  * @license
- * Test
+ * Test but it'd be MIT if anything.
  */
-/**
- * Test2
- * @license
- */
-
-/**
- * @preserve
- * TestP
- */
-/**
- * TestP2
- * @preserve
- */
-var vdom = require("virtual-dom/dist/virtual-dom"),
+var vdom = require("virtual-dom"),
 	h = vdom.h,
 	diff = vdom.diff,
 	patch = vdom.patch,
@@ -38,11 +25,6 @@ var vdom = require("virtual-dom/dist/virtual-dom"),
 				events.emit("content.loading", "/");
 			}
 		},
-		/*'/(\\w+-dev)': {
-			on: function ( dev ) {
-				events.emit("content.loading", "/" + (codeMirror ? dev : dev.slice(0,-4)));
-			}
-		},*/
 		'/(\\w+)': {
 			on: function ( section ) {
 				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
@@ -142,12 +124,17 @@ events.on("content.loaded", function ( data, path ) {
 		return false;
 	}
 
+	var pubs = [], pub;
+	while ( pub = misc.regPubs.exec(obj.Policy) ) {
+		pubs.push(pub);
+	}
+
 	pages.current = pages.current.reset({
 		id: obj.ID,
 		title: obj.Title || "",
 		_title: obj.Title || "",
-		pubs: obj.Pubs || "",
-		tags: obj.Tags || "",
+		pubs: pubs.join(" ") || "",
+		tags: obj.Tags && obj.Tags.replace(misc.regSplit, " ") || "",
 		icon: obj.Icon || "",
 		text: obj.Overview || "",
 		overview: obj.Overview || "",
@@ -164,20 +151,19 @@ events.on("content.loaded", function ( data, path ) {
 		_type: "overview",
 		modified: new Date(obj.Modified || obj.Created),
 		listItemType: obj.__metadata.type,
-		timestamp: (Date && Date.now() || new Date())
-	});
-
-	inTransition.output = false;
-	if ( window.pageYOffset > DOM.content.offsetTop ) {
-		window.scrollTo(0, DOM.content.offsetTop);
-	}
-	document.title = pages.current.title;
-	DOM.setState({
+		timestamp: (Date && Date.now() || new Date()),
 		path: path,
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
+
+	inTransition.output = false;
+	document.title = pages.current.title;
+	DOM.update();
 	if ( !codeMirror ) {
 		DOM.renderOut(pages.current.text, pages.current.type);
+	}
+	if ( window.pageYOffset > DOM.content.offsetTop ) {
+		window.scrollTo(0, DOM.content.offsetTop);
 	}
 });
 

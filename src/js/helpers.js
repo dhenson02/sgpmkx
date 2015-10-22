@@ -21,13 +21,9 @@ var markdownit = require("markdown-it"),
 	},
 	clicked = -1,
 	codeMirror = CodeMirror,
-	regSplit = /; *|, */g;
-/*
-try {
-	codeMirror = CodeMirror;
-} catch (e) {
-	codeMirror = null;
-}*/
+	regSplit = /; *|, *| \b|\b /g,
+	//regSplit = /\s/g,
+	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
 	addEvent: addEvent,
@@ -36,5 +32,6 @@ module.exports = {
 	inTransition: inTransition,
 	clicked: clicked,
 	codeMirror: codeMirror,
-	regSplit: regSplit
+	regSplit: regSplit,
+	regPubs: regPubs
 };
