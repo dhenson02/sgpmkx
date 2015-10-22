@@ -8,7 +8,8 @@ var vdom = require("virtual-dom"),
 	events = require("./events"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
-	renderPage = require("./page");
+	renderPage = require("./page"),
+	regLink = /<a (href="https?:\/\/)/gi;
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -113,7 +114,6 @@ DOM.prototype.initEditor = function () {
 };
 
 DOM.prototype.renderOut = function ( text, type ) {
-	var regLink = /<a (href="https?:\/\/)/gi;
 	type = ( this.state.level > 1 ) ? "## " + type + "\n" : "";
 	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
 };

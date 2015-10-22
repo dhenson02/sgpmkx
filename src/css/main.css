@@ -187,6 +187,7 @@ body {
 }
 
 .fullPage #ph-input,
+.fullPage #ph-buttons,
 .fullPage .ph-tags {
 	display: none;
 }

@@ -174,7 +174,7 @@ Pages.prototype.init = function ( data ) {
 		self[result.Path] = result;
 		self.urls.push(result.Path);
 
-		var tags = result.Tags && result.Tags.replace(misc.regSplit, " ") || "",
+		var tags = result.Tags && result.Tags.split(misc.regSplit) || [],
 			pubs = [],
 			pub;
 
@@ -186,7 +186,7 @@ Pages.prototype.init = function ( data ) {
 		 * Used for searching the site quick and easy using Horsey.
 		 */
 		self.titles.push({
-			text: result.Title + " " + tags + pubs.join(" "),
+			text: result.Title + " " + tags.join(" ") + pubs.join(" "),
 			value: result.Path,
 			renderText: result.Title
 		});

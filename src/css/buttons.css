@@ -10,8 +10,9 @@
 
 .ph-btn,
 .ph-edit-btn {
+	padding: 10px 20px;
 	font-style: normal;
-	border-radius: 3px;
+	border-radius: 6px;
 }
 
 .ph-toggle-editor {
@@ -28,16 +29,11 @@
 
 .ph-edit-btn {
 	/*margin: 10px;*/
-	padding: 10px 20px;
 }
 
 .ph-edit-btn i {
 	display: inline-block;
 	font-style: normal;
-}
-
-.fullPage #ph-buttons {
-	display: none;
 }
 
 .ph-edit-btn.ph-save {
@@ -46,21 +42,18 @@
 	/*color: #FFFFFF;*/
 	border: 1px solid;
 	font-weight: 700;
-	border-radius: 6px;
-}
-
-.ph-edit-btn.ph-cheatsheet i.icon {
-	color: #454545;
+	padding: 10px 20px;
 }
 
 .ph-btn.ph-create {
 	display: block;
 	position: relative;
-	/*margin-left: auto;
-	margin-right: auto;*/
 	border: 1px solid;
 	max-width: 160px;
 	text-align: center;
-	padding: 10px 20px;
 	margin-bottom: 10px;
+}
+
+.fullPage #ph-buttons {
+	display: none;
 }

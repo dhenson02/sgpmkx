@@ -11,7 +11,6 @@ var vdom = require("virtual-dom"),
 	horsey = require("horsey"),
 
 	misc = require("./helpers"),
-	inTransition = misc.inTransition,
 	codeMirror = misc.codeMirror,
 
 	pages = require("./pages"),
@@ -134,7 +133,7 @@ events.on("content.loaded", function ( data, path ) {
 		title: obj.Title || "",
 		_title: obj.Title || "",
 		pubs: pubs.join(" ") || "",
-		tags: obj.Tags && obj.Tags.replace(misc.regSplit, " ") || "",
+		tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
 		icon: obj.Icon || "",
 		text: obj.Overview || "",
 		overview: obj.Overview || "",
@@ -156,7 +155,7 @@ events.on("content.loaded", function ( data, path ) {
 		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
 	});
 
-	inTransition.output = false;
+	misc.inTransition.output = false;
 	document.title = pages.current.title;
 	DOM.update();
 	if ( !codeMirror ) {
@@ -175,7 +174,7 @@ events.on("tab.change", function ( page ) {
 	content.text = pages.current[content._type];
 	pages.current.set(content);
 
-	inTransition.output = false;
+	misc.inTransition.output = false;
 	DOM.update(true, false);
 	if ( !codeMirror ) {
 		DOM.renderOut(content.text, content.type);

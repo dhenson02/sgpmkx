@@ -17,11 +17,13 @@ var markdownit = require("markdown-it"),
 	inTransition = {
 		output: false,
 		tempSaveText: null,
+		tempSaveStyle: null,
 		tab: false
 	},
 	clicked = -1,
 	codeMirror = CodeMirror,
 	regSplit = /; *|, *| \b|\b /g,
+	regSplit2 = /\b; ?|\b /g,
 	//regSplit = /\s/g,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
@@ -33,5 +35,6 @@ module.exports = {
 	clicked: clicked,
 	codeMirror: codeMirror,
 	regSplit: regSplit,
+	regSplit2: regSplit2,
 	regPubs: regPubs
 };

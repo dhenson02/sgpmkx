@@ -4,9 +4,7 @@ var reqwest = require("reqwest"),
 	events = require("./events"),
 	DOM = require("./dom"),
 	misc = require("./helpers"),
-	inTransition = misc.inTransition,
-	clicked = misc.clicked,
-	regLoading = / ?loading/gi;
+	clicked = misc.clicked;
 
 function init () {
 	reqwest({
@@ -95,11 +93,12 @@ events.on("content.loading", function ( path ) {
 		events.emit("missing", path);
 		return false;
 	}
-	if ( inTransition.output ) {
+	if ( misc.inTransition.output ) {
 		return false;
 	}
 
-	inTransition.output = true;
+	misc.inTransition.output = true;
+	DOM.update();
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	var timestamp = (Date && Date.now() || new Date());
@@ -225,12 +224,6 @@ events.on("title.saving", function ( title ) {
 					});
 					pages[pages.current.path].Title = title;
 					document.title = title;
-					//el.className = el.className.replace(regLoading, "");
-
-					//el.style.borderBottomColor = "#00B16A";
-
-					//DOM.rootNode.querySelector("#ph-link-" + pages.current.id + " .link-title").innerHTML = title;
-					//el.contentEditable = true;
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -247,7 +240,6 @@ events.on("title.saving", function ( title ) {
 						clearTimeout(misc.inTransition.titleBorder);
 					}
 					misc.inTransition.titleBorder = setTimeout(function () {
-						//el.removeAttribute("style");
 						pages.navPrep();
 						misc.inTransition.title = false;
 						misc.inTransition.titleBorder = null;
@@ -258,9 +250,6 @@ events.on("title.saving", function ( title ) {
 			});
 		},
 		error: function ( error ) {
-			//el.className = el.className.replace(regLoading, "");
-			//el.style.border = "2px dashed #FF2222";
-			//el.contentEditable = true;
 			sweetAlert({
 				title: "Failure",
 				text: misc.md.renderInline(title + " **was not** able to be saved"),
@@ -273,7 +262,6 @@ events.on("title.saving", function ( title ) {
 				clearTimeout(misc.inTransition.titleBorder);
 			}
 			misc.inTransition.titleBorder = setTimeout(function () {
-				//el.removeAttribute("style");
 				misc.inTransition.title = false;
 				misc.inTransition.titleBorder = null;
 				DOM.update();
@@ -284,8 +272,6 @@ events.on("title.saving", function ( title ) {
 });
 
 events.on("content.save", function ( data ) {
-	//btnText.removeAttribute("style");
-	//btnText.innerHTML = "...saving...";
 	if ( misc.inTransition.tempSaveStyle ) {
 		clearTimeout(misc.inTransition.tempSaveStyle);
 	}
@@ -313,16 +299,9 @@ events.on("content.save", function ( data ) {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-					//btnText.style.fontWeight = "bold";
-					//btnText.innerHTML = "Saved!";
 					misc.inTransition.tempSaveText = "Saved!";
 				},
 				error: function ( error ) {
-					//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-					//btnText.style.color = "#FF2222";
-					//btnText.style.fontWeight = "bold";
-					//btnText.innerHTML = "Connection error (press F12 for Console)";
 					sweetAlert({
 						title: "Failure",
 						text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
@@ -337,8 +316,6 @@ events.on("content.save", function ( data ) {
 						clearTimeout(misc.inTransition.tempSaveStyle);
 					}
 					misc.inTransition.tempSaveStyle = setTimeout(function () {
-						//btnText.removeAttribute("style");
-						//btnText.innerHTML = "Save";
 						misc.inTransition.tempSaveText = null;
 						misc.inTransition.tempSaveStyle = null;
 						DOM.update();
@@ -348,10 +325,6 @@ events.on("content.save", function ( data ) {
 			});
 		},
 		error: function ( error ) {
-			//btnText.parentNode.className = btnText.parentNode.className.replace(regLoading, "");
-			//btnText.style.color = "#FF2222";
-			//btnText.style.fontWeight = "bold";
-			//btnText.innerHTML = "Digest error (press F12 for Console)";
 			sweetAlert({
 				title: "Failure",
 				text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
@@ -364,8 +337,6 @@ events.on("content.save", function ( data ) {
 				clearTimeout(misc.inTransition.tempSaveStyle);
 			}
 			misc.inTransition.tempSaveStyle = setTimeout(function () {
-				//btnText.removeAttribute("style");
-				//btnText.innerHTML = "Save";
 				misc.inTransition.tempSaveText = null;
 				misc.inTransition.tempSaveStyle = null;
 				DOM.update();

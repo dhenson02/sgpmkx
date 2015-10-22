@@ -4,8 +4,7 @@ var h = require("virtual-dom").h,
 	events = require("./events"),
 	regSplit = misc.regSplit;
 
-/*
-function renderLoader() {
+/*function renderLoader() {
 	return (
 		h("#ph-loader.loader-group", [
 			h(".bigSqr", [
@@ -17,8 +16,7 @@ function renderLoader() {
 			h(".text", ["loading..."])
 		])
 	);
-}
-*/
+}*/
 
 function renderAddContent () {
 	return (
@@ -66,11 +64,14 @@ function renderEditor ( tabsDOM, DOM ) {
 
 		var addTag = document.querySelector("input[name='ph-add-tag']"),
 			val = addTag.value.trim(),
-			regVal = new RegExp(" ?\\b" + val + "\\b ?", "i");
+			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
 		if ( val && !regVal.test(pages.current.tags) ) {
+
+			console.log(pages.current.tags);
 			pages.current.set({
-				tags: ( pages.current.tags ? pages.current.tags + " " + val : val)
+				tags: ( pages.current.tags ? pages.current.tags + ", " + val : val)
 			});
+			console.log(pages.current.tags);
 			DOM.update(true, true);
 			addTag.focus();
 		}
@@ -83,10 +84,12 @@ function renderEditor ( tabsDOM, DOM ) {
 
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
-		var regVal = new RegExp(" ?\\b" + val + "\\b ?", "i");
+		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
+		console.log(pages.current.tags);
 		pages.current.set({
 			tags: pages.current.tags.replace(regVal, "")
 		});
+		console.log(pages.current.tags);
 		DOM.update(true, true);
 	};
 
@@ -150,8 +153,6 @@ function renderEditor ( tabsDOM, DOM ) {
 						}
 						misc.inTransition.title = true;
 						DOM.update(false, true);
-						//this.contentEditable = false;
-						//this.className += " loading";
 						events.emit("title.saving", title);
 					}
 				}
