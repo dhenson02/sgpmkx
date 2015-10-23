@@ -16,11 +16,11 @@ var markdownit = require("markdown-it"),
 	}),
 	inTransition = {
 		output: false,
-		tempSaveText: null,
+		//saveText: "Save",
 		tempSaveStyle: null,
-		tab: false
+		errorDlg: false,
+		tagChange: false
 	},
-	clicked = -1,
 	codeMirror = CodeMirror,
 	regSplit = /; *|, *| \b|\b /g,
 	regSplit2 = /\b; ?|\b /g,
@@ -32,7 +32,6 @@ module.exports = {
 	removeEvent: removeEvent,
 	md: md,
 	inTransition: inTransition,
-	clicked: clicked,
 	codeMirror: codeMirror,
 	regSplit: regSplit,
 	regSplit2: regSplit2,

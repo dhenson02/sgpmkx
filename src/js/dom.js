@@ -20,7 +20,16 @@ function DOM () {
 		cheatSheet: false,
 		addingContent: false,
 		level: 0,
-		path: ""
+		path: "/",
+		nextPath: "",
+		opened: {},
+		parent: "",
+		tab: "Overview",
+		revertScroll: 254,
+		tagsChanging: false,
+		titleChanging: false,
+		contentChanging: false,
+		saveText: "Save"
 	};
 }
 /**
@@ -78,7 +87,7 @@ DOM.prototype.update = function ( nav, tabs ) {
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor && ( !nav || !tabs ) ) {
+	if ( this.editor && ( !nav || !tabs ) && !this.state.fullPage ) {
 		this.editor.setValue(pages.current.text);
 	}
 };
@@ -96,9 +105,10 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				var saveButton = document.getElementById("ph-save");
 				if ( !misc.inTransition.tempSaveText ) {
-					pages.current.savePage(saveButton);
+					misc.inTransition.tempSaveText = "...saving...";
+					self.update(true, true);
+					events.emit("content.save");
 				}
 			}
 		}

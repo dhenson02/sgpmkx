@@ -3,8 +3,7 @@ var reqwest = require("reqwest"),
 	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
-	misc = require("./helpers"),
-	clicked = misc.clicked;
+	misc = require("./helpers");
 
 function init () {
 	reqwest({
@@ -52,9 +51,6 @@ function init () {
 });*/
 
 events.on("page.loading", function () {
-	var timestamp = (Date && Date.now() || new Date());
-	clicked = parseInt(timestamp, 10);
-
 	reqwest({
 		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Policy,Tags,Link,Created,Modified,Published",
 		method: "GET",
@@ -67,11 +63,11 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			if ( clicked !== parseInt(timestamp, 10) ) {
+			if ( DOM.state.nextPath !== "" ) {
 				return false;
 			}
 			pages.init(data);
-			if ( pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true && misc.codeMirror ) {
+			if ( misc.codeMirror && pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true ) {
 				sweetAlert({
 					title: "Tabs missing?",
 					text: misc.md.renderInline("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
@@ -93,16 +89,12 @@ events.on("content.loading", function ( path ) {
 		events.emit("missing", path);
 		return false;
 	}
-	if ( misc.inTransition.output ) {
+	/*if ( misc.inTransition.output ) {
 		return false;
-	}
+	}*/
 
 	misc.inTransition.output = true;
-	DOM.update();
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
-
-	var timestamp = (Date && Date.now() || new Date());
-	clicked = parseInt(timestamp, 10);
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
@@ -116,7 +108,7 @@ events.on("content.loading", function ( path ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			if ( clicked !== parseInt(timestamp, 10) ) {
+			if ( DOM.state.nextPath !== path ) {
 				// Prevent accidental load of previously clicked destination
 				return false;
 			}
@@ -186,9 +178,41 @@ events.on("content.create", function ( data, path, title ) {
 	});
 });
 
-events.on("title.saving", function ( title ) {
-	if ( misc.inTransition.titleBorder ) {
-		clearTimeout(misc.inTransition.titleBorder);
+events.on("content.save", function () {
+	DOM.setState({
+		saveText: "...saving..."
+	}, true, true);
+	var current = pages.current,
+		pubs = [],
+		pub;
+	while ( pub = misc.regPubs.exec(current.Policy) ) {
+		pubs.push(pub);
+	}
+	var content = {
+		text: current.text.trim(),
+		Title: current.Title.trim(),
+		Pubs: pubs.join(" "),
+		Tags: current.Tags.trim(),
+		Modified: new Date()
+	};
+	content[current.type] = current.text;
+
+	var data = {
+		'__metadata': {
+			'type': current.listItemType
+		},
+		'Title': current.Title,
+		'Pubs': current.Pubs,
+		'Tags': current.Tags,
+		'Overview': current.Overview,
+		'Policy': current.Policy,
+		'Training': current.Training,
+		'Resources': current.Resources,
+		'Tools': current.Tools,
+		'Contributions': current.Contributions
+	};
+	if ( misc.inTransition.tempSaveStyle ) {
+		clearTimeout(misc.inTransition.tempSaveStyle);
 	}
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
@@ -200,7 +224,91 @@ events.on("title.saving", function ( title ) {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + pages.current.id + ")",
+				url: sitePath + "/items(" + current.ID + ")",
+				method: "POST",
+				data: JSON.stringify(data),
+				type: "json",
+				withCredentials: phLive,
+				headers: {
+					"X-HTTP-Method": "MERGE",
+					"Accept": "application/json;odata=verbose",
+					"text-Type": "application/json;odata=verbose",
+					"Content-Type": "application/json;odata=verbose",
+					"X-RequestDigest": ctx.d.GetContextWebInformation.FormDigestValue,
+					"IF-MATCH": "*"
+				},
+				success: function () {
+					current.set(content);
+					if ( document.title !== current.Title ) {
+						document.title = current.Title;
+					}
+				},
+				error: function ( error ) {
+					sweetAlert({
+						title: "Failure",
+						text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
+					console.log("Content save error: ", error);
+				},
+				complete: function () {
+					if ( misc.inTransition.tempSaveStyle ) {
+						clearTimeout(misc.inTransition.tempSaveStyle);
+					}
+					DOM.setState({
+						saveText: "Saved!"
+					}, true, true);
+					misc.inTransition.tempSaveStyle = setTimeout(function () {
+						misc.inTransition.tempSaveStyle = null;
+						DOM.setState({
+							saveText: "Save"
+						}, true, true);
+					}, 500);
+				}
+			});
+		},
+		error: function ( error ) {
+			sweetAlert({
+				title: "Failure",
+				text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
+			console.log("Content save error: ", error);
+			if ( misc.inTransition.tempSaveStyle ) {
+				clearTimeout(misc.inTransition.tempSaveStyle);
+			}
+			misc.inTransition.tempSaveStyle = setTimeout(function () {
+				misc.inTransition.tempSaveStyle = null;
+				DOM.setState({
+					saveText: "Save"
+				}, true, true);
+			}, 500);
+		}
+	});
+});
+
+events.on("title.save", function ( title ) {
+	if ( misc.inTransition.titleBorder ) {
+		clearTimeout(misc.inTransition.titleBorder);
+	}
+	DOM.setState({
+		titleChanging: true
+	}, false, true);
+	reqwest({
+		url: baseURL + phContext + "/_api/contextinfo",
+		method: "POST",
+		withCredentials: phLive,
+		headers: {
+			"Accept": "application/json;odata=verbose",
+			"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+		},
+		success: function ( ctx ) {
+			reqwest({
+				url: sitePath + "/items(" + pages.current.ID + ")",
 				method: "POST",
 				data: JSON.stringify({
 					'__metadata': {
@@ -220,9 +328,9 @@ events.on("title.saving", function ( title ) {
 				},
 				success: function () {
 					pages.current.set({
+						Title: title,
 						_title: title
 					});
-					pages[pages.current.path].Title = title;
 					document.title = title;
 				},
 				error: function ( error ) {
@@ -240,12 +348,12 @@ events.on("title.saving", function ( title ) {
 						clearTimeout(misc.inTransition.titleBorder);
 					}
 					misc.inTransition.titleBorder = setTimeout(function () {
-						pages.navPrep();
-						misc.inTransition.title = false;
 						misc.inTransition.titleBorder = null;
-						DOM.update();
+						DOM.setState({
+							titleChanging: false
+						}, false, true);
 					}, 350);
-					DOM.update();
+					DOM.update(false, true);
 				}
 			});
 		},
@@ -262,19 +370,23 @@ events.on("title.saving", function ( title ) {
 				clearTimeout(misc.inTransition.titleBorder);
 			}
 			misc.inTransition.titleBorder = setTimeout(function () {
-				misc.inTransition.title = false;
 				misc.inTransition.titleBorder = null;
-				DOM.update();
+				DOM.setState({
+					titleChanging: false
+				}, false, true);
 			}, 350);
-			DOM.update();
+			DOM.update(false, true);
 		}
 	});
 });
 
-events.on("content.save", function ( data ) {
-	if ( misc.inTransition.tempSaveStyle ) {
-		clearTimeout(misc.inTransition.tempSaveStyle);
-	}
+events.on("tags.save", function ( tags ) {
+	/*if ( misc.inTransition.titleBorder ) {
+		clearTimeout(misc.inTransition.titleBorder);
+	}*/
+	DOM.setState({
+		tagsChanging: true
+	}, true, true);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -285,9 +397,14 @@ events.on("content.save", function ( data ) {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + pages.current.id + ")",
+				url: sitePath + "/items(" + pages.current.ID + ")",
 				method: "POST",
-				data: JSON.stringify(data),
+				data: JSON.stringify({
+					'__metadata': {
+						'type': pages.current.listItemType
+					},
+					'Tags': tags
+				}),
 				type: "json",
 				withCredentials: phLive,
 				headers: {
@@ -299,49 +416,53 @@ events.on("content.save", function ( data ) {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					misc.inTransition.tempSaveText = "Saved!";
+					pages.current.set({
+						Tags: tags
+					});
 				},
 				error: function ( error ) {
-					sweetAlert({
-						title: "Failure",
-						text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
-						type: "fail",
-						showCancelButton: false,
-						html: true
-					});
-					console.log("Content save error: ", error);
+					if ( !misc.inTransition.errorDlg ) {
+						// So we can lazy save it.
+						misc.inTransition.errorDlg = true;
+						sweetAlert({
+							title: "Failure",
+							text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+							type: "fail",
+							showCancelButton: false,
+							html: true
+						}, function() {
+							misc.inTransition.errorDlg = false;
+						});
+					}
+					console.log("Tags save error: ", error);
+					console.log("Tags: ", tags);
 				},
 				complete: function () {
-					if ( misc.inTransition.tempSaveStyle ) {
-						clearTimeout(misc.inTransition.tempSaveStyle);
-					}
-					misc.inTransition.tempSaveStyle = setTimeout(function () {
-						misc.inTransition.tempSaveText = null;
-						misc.inTransition.tempSaveStyle = null;
-						DOM.update();
-					}, 500);
-					DOM.update();
+					DOM.setState({
+						tagsChanging: false
+					}, true, true);
 				}
 			});
 		},
 		error: function ( error ) {
-			sweetAlert({
-				title: "Failure",
-				text: misc.md.renderInline(pages.current.title + " **was not** able to be saved"),
-				type: "fail",
-				showCancelButton: false,
-				html: true
-			});
-			console.log("Content save error: ", error);
-			if ( misc.inTransition.tempSaveStyle ) {
-				clearTimeout(misc.inTransition.tempSaveStyle);
+			if ( !misc.inTransition.errorDlg ) {
+				// So we can lazy save it.
+				misc.inTransition.errorDlg = true;
+				sweetAlert({
+					title: "Failure",
+					text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+					type: "fail",
+					showCancelButton: false,
+					html: true
+				}, function () {
+					misc.inTransition.errorDlg = false;
+				});
 			}
-			misc.inTransition.tempSaveStyle = setTimeout(function () {
-				misc.inTransition.tempSaveText = null;
-				misc.inTransition.tempSaveStyle = null;
-				DOM.update();
-			}, 500);
-			DOM.update();
+			console.log("Tags save error (couldn't get digest): ", error);
+			console.log("Tags: ", tags);
+			DOM.setState({
+				tagsChanging: false
+			}, true, true);
 		}
 	});
 });

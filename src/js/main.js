@@ -21,24 +21,53 @@ var vdom = require("virtual-dom"),
 	router = Router({
 		'/': {
 			on: function () {
+				DOM.setState({
+					nextPath: "/",
+					level: 0,
+					parent: ""
+				});
 				events.emit("content.loading", "/");
 			}
 		},
 		'/(\\w+)': {
 			on: function ( section ) {
-				events.emit("content.loading", "/" + section.replace(/\s/g, ""));
+				var path = "/" + section.replace(/\s/g, "");
+				DOM.setState({
+					nextPath: path,
+					level: 1,
+					parent: ""
+				});
+				events.emit("content.loading", path);
 			},
 			'/(\\w+)': {
 				on: function ( section, program ) {
-					events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""));
+					var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "");
+					DOM.setState({
+						nextPath: path,
+						level: 2,
+						parent: path
+					});
+					events.emit("content.loading", path);
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page ) {
-						events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, ""));
+						var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "");
+						DOM.setState({
+							nextPath: path,
+							level: 3,
+							parent: "/" + section + "/" + program
+						});
+						events.emit("content.loading", path);
 					},
 					'/(\\w+)': {
 						on: function ( section, program, page, rabbitHole ) {
-							events.emit("content.loading", "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, ""));
+							var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
+							DOM.setState({
+								nextPath: path,
+								level: 4,
+								parent: "/" + section + "/" + program
+							});
+							events.emit("content.loading", path);
 						}
 					}
 				}
@@ -97,6 +126,13 @@ events.on("dom.loaded", function () {
 			li.innerText = li.textContent = item.renderText;
 		}
 	});
+	DOM.setState({
+		revertScroll: DOM.rootNode.getBoundingClientRect().top,
+		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
+			paths[path] = (DOM.state.parent === path);
+			return paths;
+		}, {})
+	})
 });
 
 events.on("missing", function ( path ) {
@@ -129,26 +165,25 @@ events.on("content.loaded", function ( data, path ) {
 	}
 
 	pages.current = pages.current.reset({
-		id: obj.ID,
-		title: obj.Title || "",
+		ID: obj.ID,
+		Title: obj.Title || "",
 		_title: obj.Title || "",
-		pubs: pubs.join(" ") || "",
-		tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
-		icon: obj.Icon || "",
+		Pubs: pubs.join(" ") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
+		Icon: obj.Icon || "",
 		text: obj.Overview || "",
-		overview: obj.Overview || "",
-		policy: obj.Policy || "",
-		training: obj.Training || "",
-		resources: obj.Resources || "",
-		tools: obj.Tools || "",
-		contributions: obj.Contributions || "",
-		section: obj.Section || "",
-		program: obj.Program || "",
-		page: obj.Page || "",
+		Overview: obj.Overview || "",
+		Policy: obj.Policy || "",
+		Training: obj.Training || "",
+		Resources: obj.Resources || "",
+		Tools: obj.Tools || "",
+		Contributions: obj.Contributions || "",
+		Section: obj.Section || "",
+		Program: obj.Program || "",
+		Page: obj.Page || "",
 		rabbitHole: obj.rabbitHole || "",
 		type: "Overview",
-		_type: "overview",
-		modified: new Date(obj.Modified || obj.Created),
+		Modified: new Date(obj.Modified || obj.Created),
 		listItemType: obj.__metadata.type,
 		timestamp: (Date && Date.now() || new Date()),
 		path: path,
@@ -156,29 +191,35 @@ events.on("content.loaded", function ( data, path ) {
 	});
 
 	misc.inTransition.output = false;
-	document.title = pages.current.title;
-	DOM.update();
-	if ( !codeMirror ) {
-		DOM.renderOut(pages.current.text, pages.current.type);
-	}
-	if ( window.pageYOffset > DOM.content.offsetTop ) {
-		window.scrollTo(0, DOM.content.offsetTop);
+	document.title = pages.current.Title;
+	DOM.setState({
+		path: path,
+		nextPath: "",
+		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
+			paths[path] = ( DOM.state.parent === path || DOM.state.opened[path] );
+			return paths;
+		}, {})
+	});
+	DOM.renderOut(pages.current.text, pages.current.type);
+	if ( pages.options.scrollOnNav ) {
+		window.scrollBy(0, DOM.content.getBoundingClientRect().top);
 	}
 });
 
 events.on("tab.change", function ( page ) {
 	var content = {};
-	content[pages.current._type] = pages.current.text;
+	content[pages.current.type] = pages.current.text;
 	content.type = page;
-	content._type = page.replace(/\s/g, "").toLowerCase().trim();
-	content.text = pages.current[content._type];
+	content.text = pages.current[page];
 	pages.current.set(content);
 
 	misc.inTransition.output = false;
-	DOM.update(true, false);
-	if ( !codeMirror ) {
+	DOM.setState({
+		tab: page
+	}, true, false);
+	//if ( !codeMirror ) {
 		DOM.renderOut(content.text, content.type);
-	}
+	//}
 });
 
 pageInit();

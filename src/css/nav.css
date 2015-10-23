@@ -59,23 +59,11 @@
 	color: #C7C7C7;
 }
 
-.link .icon::before,
-.ph-btn .icon::before {
+#ph-nav .link .icon::before {
 	margin: 0;
 	position: absolute;
 	/*top: 50%;
 	transform: translateY(-50%);*/
-}
-
-.ph-section .btn-title,
-.ph-program .link-title,
-.ph-program .btn-title {
-	padding-left: 24px;
-}
-
-#ph-nav .btn-title {
-	display: inline-block;
-	text-align: center;
 }
 
 /***Special site links***/
@@ -104,29 +92,26 @@
 	position: relative;
 }
 
-#ph-nav .ph-btn a:hover {
+/*#ph-nav .ph-btn a:hover {
 	text-decoration: none;
-}
-
-#ph-nav .ph-section p {
-	color: #FFFFFF;
-	font-size: 25px;
-	margin: 0;
-	line-height: 1.3;
-}
-
-#ph-nav .ph-section.link p a {
-	padding: 15px 20px 15px 40px;
-}
+}*/
 
 #ph-nav .ph-page,
 #ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
 }
 
+#ph-nav .ph-level-1 {
+	color: #FFFFFF;
+	font-size: 25px;
+	margin: 0;
+	line-height: 1.3;
+	padding: 15px 20px 15px 40px;
+}
+
 #ph-nav .ph-level-2 {
 	font-size: 15px;
-	padding: 5px 20px;
+	padding: 5px 45px 5px 20px;
 	line-height: 1.6;
 }
 
@@ -175,24 +160,44 @@
 	display: none;
 }
 
-#ph-nav :hover > .place:after {
-	text-decoration: none;
-}
-
-#ph-nav .active > .place:after {
-	visibility: hidden;
-	opacity: 0;
-}
-
-#ph-nav .ph-parent a .place:after {
+#ph-nav .ph-parent a .dropper:after {
+	/*content: "\2235";*/
+	/*content: "\23F7";*/
 	position: absolute;
-	content: "\2235";
-	right: 1em;
+	right: 35px;
+	text-shadow: 0 1px 0 #133E6F;
+}
+
+#ph-nav .toggle-menu {
+	position: absolute;
+	right: 35px;
+	color: #FFFFFF;
+	vertical-align: middle;
+}
+
+#ph-nav .toggle-menu::before {
+	width: 24px;
+	height: 24px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#ph-nav .toggle-menu::before,
+#ph-nav a:active .toggle-menu::before {
+	border: 1px solid transparent;
+	border-radius: 3px;
+	font-weight: bold;
+	text-shadow: none;
+}
+
+#ph-nav .toggle-menu:hover::before {
+	border-color: #FFFFFF;
 	text-shadow: 0 1px 0 #133E6F;
 }
 
 #ph-nav .ph-sub-parent {
 	background: transparent;
+	font-variant: small-caps;
 }
 
 #ph-nav .ph-sub-parent .active,
@@ -203,3 +208,12 @@
 #ph-nav .ph-opened {
 	display: initial;
 }
+
+#ph-nav .link-title {
+	display: inline-block;
+}
+
+#ph-nav .ph-program .link-title {
+	padding-left: 20px;
+}
+

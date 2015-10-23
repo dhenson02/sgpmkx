@@ -30,7 +30,7 @@ function renderAddContent () {
 				"Title",
 				h("input.ph-title-input", {
 					oninput: function ( e ) {
-						this.value = pages.current.modified.toLocaleString();
+						this.value = pages.current.Modified.toLocaleString();
 						return e;
 					}
 				})
@@ -57,72 +57,71 @@ function renderAddContent () {
 
 function renderEditor ( tabsDOM, DOM ) {
 
-	var addTag = function ( event ) {
-		event = event || window.event;
-		if ( event.preventDefault ) event.preventDefault();
-		else event.returnValue = false;
+	var addTag = function ( e ) {
+		e = e || window.event;
+		if ( e.stopPropagation ) e.stopPropagation();
+		else if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.preventDefault ) e.preventDefault();
+		else e.returnValue = false;
 
 		var addTag = document.querySelector("input[name='ph-add-tag']"),
 			val = addTag.value.trim(),
 			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
-		if ( val && !regVal.test(pages.current.tags) ) {
-
-			console.log(pages.current.tags);
-			pages.current.set({
-				tags: ( pages.current.tags ? pages.current.tags + ", " + val : val)
-			});
-			console.log(pages.current.tags);
-			DOM.update(true, true);
+		if ( val && !regVal.test(pages.current.Tags) ) {
 			addTag.focus();
+			events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
 		}
 	};
 
-	var removeTag = function ( event ) {
-		event = event || window.event;
-		if ( event.preventDefault ) event.preventDefault();
-		else event.returnValue = false;
+	var removeTag = function ( e ) {
+		e = e || window.event;
+		if ( e.stopPropagation ) e.stopPropagation();
+		else if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.preventDefault ) e.preventDefault();
+		else e.returnValue = false;
 
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
 		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
-		console.log(pages.current.tags);
-		pages.current.set({
-			tags: pages.current.tags.replace(regVal, "")
-		});
-		console.log(pages.current.tags);
-		DOM.update(true, true);
+		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
 	};
 
 	return (
 		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
 
 
-			h("#ph-create-wrap", [DOM.state.addingContent ? renderAddContent() : null]),
+			h("#ph-create-wrap", [!DOM.state.addingContent ? null : renderAddContent()]),
 
 
 			h("a.ph-btn.ph-create", {
 				href: "#",
 				title: "New section",
 				style: (( phAddClass ) ? { display: "none" } : {}),
-				onclick: function ( event ) {
-					event = event || window.event;
-					if ( event.preventDefault ) event.preventDefault();
-					else event.returnValue = false;
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.stopPropagation ) e.stopPropagation();
+					else if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
 
-					DOM.setState({ addingContent: !DOM.state.addingContent });
+					DOM.setState({
+						addingContent: !DOM.state.addingContent
+					}, true, true);
 				}
-			}, [h("span.btn-title", [DOM.state.addingContent ? "Cancel" : "Add content"])]),
+			}, [h("span.btn-title", [!DOM.state.addingContent ? "Add content" : "Cancel"])]),
 
 
 			h("a.ph-toggle-editor", {
 				href: "#",
 				role: "button",
-				onclick: function ( event ) {
-					event = event || window.event;
-					if ( event.preventDefault ) event.preventDefault();
-					else event.returnValue = false;
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.stopPropagation ) e.stopPropagation();
+					else if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
 
-					if ( DOM.state.fullPage && !pages.current[pages.current._type] && pages.current._type !== "contributions" ) {
+					if ( DOM.state.fullPage && !pages.current[DOM.state.tab] && DOM.state.tab !== "Contributions" ) {
 						events.emit("tab.change", "Overview");
 					}
 					DOM.setState({
@@ -132,9 +131,9 @@ function renderEditor ( tabsDOM, DOM ) {
 			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
 
 
-			h("h1#ph-title.ph-cm" + ( !misc.inTransition.title ? "" : ".loading" ), {
-				contentEditable: !misc.inTransition.title,
-				style: ( misc.inTransition.titleBorder ? { borderBottomColor: "#00B16A" } : {} ),
+			h("h1#ph-title.ph-cm" + ( !DOM.state.titleChanging ? "" : ".loading" ), {
+				contentEditable: !DOM.state.titleChanging,
+				style: ( DOM.state.titleBorder ? { borderBottomColor: "#00B16A" } : {} ),
 				onkeypress: function ( e ) {
 					if ( e.which == 13 || e.keyCode == 13 ) {
 						this.blur();
@@ -145,24 +144,18 @@ function renderEditor ( tabsDOM, DOM ) {
 					var title = this.textContent || this.innerText;
 					title = title.trim();
 					if ( title !== pages.current._title ) {
-						pages.current.set({
-							title: title
-						});
-						if ( misc.inTransition.title || !pages.options.saveTitleAfterEdit ) {
-							return false;
+						if ( !DOM.state.titleChanging && pages.options.saveTitleAfterEdit ) {
+							events.emit("title.save", title);
 						}
-						misc.inTransition.title = true;
-						DOM.update(false, true);
-						events.emit("title.saving", title);
 					}
 				}
-			}, [String(pages.current.title || "")]),
+			}, [String(pages.current.Title || "")]),
 
 
 			h("#ph-tabs.ph-tabs", [tabsDOM]),
 
 
-			h("h3.ph-tags", [
+			h("h3.ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
 				h("input.ph-add-tag", {
 					type: "text",
 					name: "ph-add-tag",
@@ -180,7 +173,8 @@ function renderEditor ( tabsDOM, DOM ) {
 					href: "#",
 					onclick: addTag
 				}),
-				( pages.current.tags ? pages.current.tags.split(regSplit).map(function ( tag ) {
+				h(".clearfix", { style: {padding: "5px"}}),
+				( pages.current.Tags ? pages.current.Tags.split(regSplit).map(function ( tag ) {
 					return ( tag.trim() ?
 						h("small", {
 							onclick: removeTag
@@ -191,10 +185,10 @@ function renderEditor ( tabsDOM, DOM ) {
 
 
 			h("#ph-buttons", [
-				h("a#ph-save.ph-edit-btn.ph-save" + ( !misc.inTransition.tempSaveText ? "" : ".loading" ), {
+				h("a#ph-save.ph-edit-btn.ph-save" + ( DOM.state.saveText !== "Save" ? "" : ".loading" ), {
 					href: "#",
 					title: "Save",
-					style: ( misc.inTransition.tempSaveStyle ? {
+					style: ( DOM.state.tempSaveStyle ? {
 						color: "#00B16A",
 						backgroundColor: "#FFFFFF"
 					} : {
@@ -206,13 +200,11 @@ function renderEditor ( tabsDOM, DOM ) {
 						if ( event.preventDefault ) event.preventDefault();
 						else event.returnValue = false;
 
-						if ( !misc.inTransition.tempSaveText ) {
-							misc.inTransition.tempSaveText = "...saving...";
-							DOM.update(true, true);
-							pages.current.savePage();
+						if ( DOM.state.saveText === "Save" ) {
+							events.emit("content.save");
 						}
 					}
-				}, [h("i.icon.icon-diskette", [!misc.inTransition.tempSaveText ? "Save" : misc.inTransition.tempSaveText])])
+				}, [h("i.icon.icon-diskette", [DOM.state.saveText])])
 			]),
 
 
@@ -223,7 +215,7 @@ function renderEditor ( tabsDOM, DOM ) {
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
-					"Last updated: " + pages.current.modified.toLocaleDateString()
+					"Last updated: " + pages.current.Modified.toLocaleDateString()
 				])
 			])
 		])
@@ -233,10 +225,14 @@ function renderEditor ( tabsDOM, DOM ) {
 function renderDefault ( tabsDOM ) {
 	return (
 		h("#ph-content.fullPage", [
-			h("h1#ph-title", [String(pages.current.title || "")]),
+			h("h1#ph-title", [String(pages.current.Title || "")]),
 			h("#ph-tabs.ph-tabs", [tabsDOM]),
 			h("#ph-contentWrap", [
-				h("#ph-output")
+				h("#ph-output"),
+				h(".clearfix"),
+				h("small.ph-modified-date", [
+					"Last updated: " + pages.current.Modified.toLocaleDateString()
+				])
 			])
 		])
 	);
@@ -246,7 +242,7 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", {
-				style: ( pages.options.hideSearchWhileEditing && !DOM.state.fullPage ? { display: "none" } : {} )
+				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
 			}, [
 				h("label", [
 					h("input#ph-search", {
@@ -258,7 +254,7 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 				])
 			]),
 			h("#ph-side-nav", [navDOM]),
-			( ( misc.codeMirror ) ? renderEditor(tabsDOM, DOM) : renderDefault(tabsDOM) )
+			( !misc.codeMirror ? renderDefault(tabsDOM) : renderEditor(tabsDOM, DOM) )
 		])
 	);
 }

@@ -133,6 +133,11 @@ body {
 	border-bottom-color: #F62459;
 }
 
+#ph-wrapper .ph-tags {
+	margin: 0 auto;
+	text-align: center;
+}
+
 #ph-wrapper .ph-tags small {
 	position: relative;
 	margin-right: 7px;
@@ -161,6 +166,7 @@ body {
 #ph-wrapper .ph-tags .icon {
 	display: inline-block;
 	vertical-align: middle;
+	font-weight: bold;
 }
 
 #ph-contentWrap {

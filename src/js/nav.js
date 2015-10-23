@@ -1,65 +1,82 @@
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
-	events = require("./events"),
-	hashArray, level, a;
+	events = require("./events");
 
-function renderLink ( link ) {
-	var c = link.href.indexOf(a),
-		attr = {};
+function renderLink ( link, DOM ) {
+	var attr = {},
+		handleClick = function ( e ) {
+			if ( e.stopPropagation ) e.stopPropagation();
+			else if ( e.cancelBubble ) e.cancelBubble();
+		},
+		opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] );
 
-	if ( link.level > 2 && ( c < 0 || level < 2 ) ) {
-		attr = { style: {display: "none"} };
+	if ( link.level > 2 && !opened ) {
+		attr = { style: { display: "none" } };
 	}
 	return (
-		h("li.link#ph-link-" + link.id + link.className,
+		h("li.link#ph-link-" + /*link.id +*/ link.className,
 			attr, [
-				h("a.ph-level-" + link.level + ( link.href === window.location.hash ? ".active" : "" ), {
+				h("a.ph-level-" + link.level + ( link.path !== DOM.state.path ? "" : ".active" ), {
 					href: link.href,
-					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" )
+					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" ),
+					onclick: handleClick
 				}, [
-					( !link.icon ) ? null : h("i.icon.icon-" + link.icon),
-					h("span.link-title", [String(link.title)]),
+					( !link.icon ? null : h("i.icon.icon-" + link.icon) ),
+					h("span.link-title", [
+						String(link.title)
+					]),
+					( !link.children ?
+						null :
+						h("i.icon.icon-angle-" + ( !opened ? 'down' : 'up' ) + ".toggle-menu", {
+							onclick: function ( e ) {
+								e = e || window.event;
+								if ( e.stopPropagation ) e.stopPropagation();
+								else if ( e.cancelBubble ) e.cancelBubble();
+								if ( e.preventDefault ) e.preventDefault();
+								else e.returnValue = false;
+
+								var openState = Object.create(DOM.state.opened);
+								openState[link.path] = !opened;
+								DOM.setState({
+									opened: openState
+								}, false, true);
+							}
+						}) ),
 					h("span.place")
 				])
 			])
 	);
 }
 
-function renderSection ( section ) {
+function renderSection ( section, DOM ) {
 	var links = section.links.map(function ( link ) {
-		return renderLink(link);
+		return renderLink(link, DOM);
 	});
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
-			h("p", [
-				h("a" + ( "#" + section.path === window.location.hash ? ".active" : "" ), {
-					"href": "#" + section.path
-				}, [
-					h("span.link-title", [String(section.title)])
-				])
+			h("a.ph-level-1" + ( section.path !== DOM.state.path ? "" : ".active" ), {
+				"href": "#" + section.path
+			}, [
+				h("span.link-title", [String(section.title)])
 			]),
 			h("ul", links)
 		])
 	);
 }
 
-function renderNav () {
+function renderNav ( DOM ) {
 	var links = [],
 		name;
 
-	hashArray = window.location.hash.slice(1).split(/\//g);
-	level = hashArray.length - 1;
-	a = hashArray.slice(0, 3).join("/");
-
 	for ( name in pages.sections ) {
 		if ( pages.sections.hasOwnProperty(name) ) {
-			links.push(renderSection(pages.sections[name]));
+			links.push(renderSection(pages.sections[name], DOM));
 		}
 	}
 	return (
 		h("#ph-nav", [
 			h(".header", [
-				h("a" + ( window.location.hash === "#/" ? ".active" : "" ), {
+				h("a" + ( DOM.state.path !== "/" ? "" : ".active" ), {
 					"href": "#/"
 				}, [
 					h(".logo", [
@@ -77,7 +94,7 @@ function renderNav () {
 					])
 				])
 			]),
-			h("#ph-site-pages", [
+			/*h("#ph-site-pages", [
 				h("div", [
 					h("a.site-page", {
 						href: "#/leaders"
@@ -95,7 +112,7 @@ function renderNav () {
 						"Address Book"
 					])
 				])
-			]),
+			]),*/
 			h("ul.nav", links)
 		])
 	);

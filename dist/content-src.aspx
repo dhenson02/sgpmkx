@@ -9,7 +9,9 @@ body { opacity: 1; }
 <div id="ph-root"></div>
 <script type="text/javascript">
 //<![CDATA[
-
+	$(document.body).off("click").removeClass("ms-backgroundImage");
+	$(window).off("click");
+	$("form").off("submit");
 	var	baseURL = _spPageContextInfo.webAbsoluteUrl,
 		sitePath = baseURL + "/_api/lists/getByTitle('Content')",
 		phCMCheckURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups(419)/users/getById(" + _spPageContextInfo.userId + ")",
@@ -20,11 +22,20 @@ body { opacity: 1; }
 		phAddClass = ".loading",
 		CodeMirror = null,
 		leftNav = document.getElementById("leftnav"),
+		s4Workspace = document.getElementById("s4-workspace"),
 		phWrapper = document.createElement("div"),
         phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div");
 
     /* Get rid of the ugly nav on the left if it's there */
-    if ( leftNav ) leftNav.parentNode.removeChild(leftNav);
+    if ( leftNav ) {
+        leftNav.parentNode.removeChild(leftNav);
+    }
+    if ( s4Workspace ) {
+        s4Workspace.removeAttribute("class");
+        s4Workspace.removeAttribute("style");
+        s4Workspace.removeAttribute("id");
+    }
+
     phWrapper.id = "wrapper";
 	phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
     if ( phWrapperTemp ) {

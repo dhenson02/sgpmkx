@@ -5,6 +5,7 @@ var map = require("lodash/collection/map");
 var mapValues = require("lodash/object/mapValues");
 var reduce = require("lodash/collection/reduce");
 var assign = require("lodash/object/assign");
+var timeout = 400;
 
 var bp = require("body-parser");
 var cors = require("cors");
@@ -27,7 +28,7 @@ app.get("/items", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send(db);
-	}, 120);
+	}, timeout);
 });
 
 app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
@@ -42,7 +43,7 @@ app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 				}
 			}
 		});
-	}, 120);
+	}, timeout);
 });
 
 app.get("/opt", function ( req, res ) {
@@ -63,7 +64,7 @@ app.get("/opt", function ( req, res ) {
 				]
 			}
 		});
-	}, 120);
+	}, timeout);
 });
 
 app.get("/check/true", function ( req, res ) {
@@ -72,7 +73,7 @@ app.get("/check/true", function ( req, res ) {
 	}
 	cmTimer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 120);
+	}, timeout);
 });
 
 app.get("/items(:id)", function ( req, res ) {
@@ -82,7 +83,7 @@ app.get("/items(:id)", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send(db_[id]);
-	}, 120);
+	}, timeout);
 });
 
 // Save
@@ -110,7 +111,7 @@ app.post("/items(:id)", function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 120);
+	}, timeout);
 });
 
 // Create
@@ -129,7 +130,7 @@ app.post('/items', function ( req, res ) {
 	}
 	timer = setTimeout(function () {
 		res.send({ status: "success" });
-	}, 120);
+	}, timeout);
 });
 
 var server = app.listen(3000, function () {

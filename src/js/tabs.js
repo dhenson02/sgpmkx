@@ -1,4 +1,4 @@
-var h = require("virtual-dom").h, 
+var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events"),
 	tabs = [
@@ -29,12 +29,12 @@ var h = require("virtual-dom").h,
 	];
 
 function renderTabs ( DOM ) {
-	var style = ( pages.current.program !== "" ) ? null : { style: { display: "none" } },
+	var style = ( DOM.state.level > 1 ) ? null : { style: { display: "none" } },
 		group = tabs.map(function ( tab ) {
-			var tabName = tab.title.replace(/\s/g, "").toLowerCase().trim();
-			var className = ".ph-tab-" + tabName + (
-				( pages.options.hideEmptyTabs === true && pages.current[tabName].length < 1 && tabName !== "contributions" ) ? ".tab-empty" : "" ) + (
-				( pages.current._type === tabName ) ? ".tab-current" : "" );
+			var tabName = tab.title.replace(/\s/g, "");
+			var className = ".ph-tab-" + tabName.toLowerCase() + (
+					( pages.options.hideEmptyTabs && pages.current[tabName].length < 1 && tabName !== "Contributions" ) ? ".tab-empty" : "" ) + (
+					( pages.current.type === tabName ) ? ".tab-current" : "" );
 
 			return (
 				h("li" + className, [
@@ -43,15 +43,17 @@ function renderTabs ( DOM ) {
 							href: "#",
 							onclick: function ( e ) {
 								e = e || window.event;
+								if ( e.stopPropagation ) e.stopPropagation();
+								else if ( e.cancelBubble ) e.cancelBubble();
 								if ( e.preventDefault ) e.preventDefault();
 								else e.returnValue = false;
 
 								events.emit("tab.change", tab.title);
 								return false;
 							}
-						}, [ h("span", [ String(tab.title) ]) ])
+						}, [h("span", [String(tab.title)])])
 					]),
-					( pages.options.contribPOCEmail && tabName === "contributions" ) ?
+					( pages.options.contribPOCEmail && tabName === "Contributions" ) ?
 						h("a.ph-contrib-poc", {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName
