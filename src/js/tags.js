@@ -39,7 +39,7 @@ function renderTags ( DOM ) {
 		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
 	return (
-		h("div", [
+		h( ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
 			h("label.ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
@@ -66,7 +66,7 @@ function renderTags ( DOM ) {
 			]),
 			(
 				pages.current.Tags ?
-					h(".ph-tag-container" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
+					h(".ph-tag-container", [
 						h("i.icon.icon-lock", {
 							role: "button",
 							onclick: function () {

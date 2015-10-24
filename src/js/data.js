@@ -95,7 +95,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		nextParent: parent,
 		contentChanging: true
 	});
-	DOM.output.innerHTML = "<div class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	//DOM.output.innerHTML = "<div id='ph-loader' class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",

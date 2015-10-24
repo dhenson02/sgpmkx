@@ -3,21 +3,25 @@ var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
 
-/*function renderLoader () {
- return (
- h("#ph-loader", [
- h(".loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", [ "loading..." ])
- ])
- ])
- );
- }*/
+function renderLoader ( DOM ) {
+	return (
+		h("#ph-loader.ph-loader", {
+			style: ( !DOM.state.contentChanging && !DOM.state.contentSaving && DOM.state.path ?
+				{ display: "none" } : {}
+			)
+		}, [
+			h(".loader-group", [
+				h(".bigSqr", [
+					h(".square.first"),
+					h(".square.second"),
+					h(".square.third"),
+					h(".square.fourth")
+				]),
+				h(".text", [ "loading..." ])
+			])
+		])
+	);
+}
 
 function renderAddContent ( DOM ) {
 	return (
@@ -103,6 +107,8 @@ function renderPage ( DOM ) {
 
 	return (
 		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
+
+			renderLoader(DOM),
 
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )

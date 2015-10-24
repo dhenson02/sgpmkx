@@ -21,7 +21,7 @@
 	display: inline-block;
 	vertical-align: middle;
 	height: 100%;
-	max-width: 45%;
+	max-width: 50%;
 	width: 100%;
 }
 
@@ -53,7 +53,7 @@
 	display: inline-block;
 	vertical-align: middle;
 	height: 100%;
-	max-width: 48%;
+	max-width: 45%;
 	right: 0;
 	width: 100%;
 
@@ -70,7 +70,7 @@
 	right: 0;
 }
 
-#ph-tags .ph-tag-container.locked .ph-tag-wrapper {
+#ph-tags .locked .ph-tag-wrapper {
 	opacity: .6;
 	pointer-events: none;
 	cursor: default;
@@ -89,27 +89,27 @@
 	font-weight: 300;
 }
 
-#ph-tags .ph-tag-container.locked small {
+#ph-tags .locked small {
 	border: none;
 	margin-left: 0;
 	padding: 3px 1px 3px;
 }
 
-#ph-tags .ph-tag-container.locked small::after {
+#ph-tags .locked small::after {
 	content: ', ';
 	display: inline;
 }
 
-#ph-tags .ph-tag-container.locked small:last-of-type::after {
+#ph-tags .locked small:last-of-type::after {
 	content: '';
 }
 
-#ph-tags .ph-tag-container.unlocked small:hover {
+#ph-tags .unlocked small:hover {
 	color: #F64747;
 	border-color: #F1A9A0;
 }
 
-#ph-tags .ph-tag-container.unlocked small:hover::before {
+#ph-tags .unlocked small:hover::before {
 	content: "\274C";
 	position: absolute;
 	display: inline-block;
@@ -134,32 +134,32 @@
 	font-weight: 700;
 }
 
-#ph-tags .ph-tag-container.unlocked .icon-lock::before {
+#ph-tags .unlocked .icon-lock::before {
 	color: #2ECC71;
 	opacity: 1;
 	font-weight: 700;
 }
 
-#ph-tags .ph-tag-container.unlocked .icon-lock:hover::before {
+#ph-tags .unlocked .icon-lock:hover::before {
 	color: #454545;
 	opacity: 1;
 }
 
-#ph-tags .ph-tag-container.locked .icon-lock::before {
+#ph-tags .locked .icon-lock::before {
 	color: #454545;
 	opacity: .5;
 	font-weight: 700;
 }
 
-#ph-tags .ph-tag-container:hover > .ph-tag-wrapper {
+#ph-tags .locked .ph-tag-container:hover > .ph-tag-wrapper {
 	border-color: gold;
 }
 
-#ph-tags .ph-tag-container.locked:hover > .icon-lock::before {
+#ph-tags .locked:hover > .icon-lock::before {
 	color: gold;
 }
 
-#ph-tags .ph-tag-container.locked > .icon-lock:hover::before {
+#ph-tags .locked > .icon-lock:hover::before {
 	color: #FFB000;
 }
 
