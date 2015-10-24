@@ -3,6 +3,7 @@ var vdom = require("virtual-dom"),
 	diff = vdom.diff,
 	patch = vdom.patch,
 	createElement = vdom.create,
+	fastdom = require("fastdom"),
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events"),
@@ -12,8 +13,7 @@ var vdom = require("virtual-dom"),
 	renderButtons = require("./buttons"),
 	renderSearch = require("./search"),
 	renderPage = require("./page"),
-	regLink = /<a (href=["']https?:\/\/)/gi,
-	fastdom = require("fastdom");
+	regLink = /<a (href=["']https?:\/\/)/gi;
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {

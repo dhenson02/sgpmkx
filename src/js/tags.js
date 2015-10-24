@@ -18,7 +18,7 @@ function renderTags ( DOM ) {
 			val = addTag.value.trim().split(misc.regSplit).filter(function ( tag ) {
 				var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
 				return !regVal.test(pages.current.Tags);
-			}).join(", ");
+			}).join(",");
 		addTag.focus();
 		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
 	};

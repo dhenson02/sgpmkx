@@ -188,4 +188,9 @@ events.on("tab.change", function ( tab ) {
 	DOM.renderOut();
 });
 
+events.on("content.found", function ( path ) {
+	router.setRoute(path);
+});
+
 pageInit();
+

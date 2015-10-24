@@ -1,6 +1,6 @@
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
-	//events = require("./events"),
+	events = require("./events"),
 	horsey = require("horsey");
 
 function SearchHook () {}
@@ -17,7 +17,7 @@ SearchHook.prototype.hook = function ( node /*, name, prev*/ ) {
 			return item.text;
 		},
 		set: function ( item ) {
-			router.setRoute(item);
+			events.emit("content.found", item);
 			node.value = "";
 			return false;
 		},
