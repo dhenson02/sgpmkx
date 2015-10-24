@@ -27,6 +27,9 @@ function renderTags ( DOM ) {
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
+		if ( DOM.state.tagsLocked ) {
+			return false;
+		}
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
 		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
@@ -61,17 +64,27 @@ function renderTags ( DOM ) {
 			]),
 			(
 				pages.current.Tags ?
-				h("h4.ph-tag-wrapper", [
-					pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
-						return ( tag.trim() ?
-							h("small", {
-								role: "button",
-								onclick: removeTag
-							}, [ tag.trim() ]) :
-							null );
-					})
-				]) :
-				null
+					h("div", [
+						h("i.icon.icon-lock" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), {
+							role: "button",
+							onclick: function () {
+								DOM.setState({
+									tagsLocked: !DOM.state.tagsLocked
+								}, true, true, false, true);
+							}
+						}),
+						h("h4.ph-tag-wrapper" + ( DOM.state.tagsLocked ? ".loading" : "" ), [
+							pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
+								return ( tag.trim() ?
+									h("small", {
+										role: "button",
+										onclick: removeTag
+									}, [ tag.trim() ]) :
+									null );
+							})
+						])
+					]) :
+					null
 			)
 		])
 	);

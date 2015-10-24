@@ -172,8 +172,9 @@ events.on("content.loaded", function ( data ) {
 		nextPath: "",
 		nextLevel: null,
 		nextParent: "",
+		opened: opened,
 		contentChanging: false,
-		opened: opened
+		tagsLocked: true
 	});
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {

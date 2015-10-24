@@ -129,7 +129,7 @@ body {
 	border: none;
 	border-bottom: 4px dashed transparent;
 	outline: 0;
-	padding: 10px 0;
+	padding: 10px 20px;
 	text-align: center;
 	margin: 20px auto;
 }
@@ -146,6 +146,7 @@ body {
 .fullPage #ph-title {
 	text-align: left;
 	font-size: 2.5em;
+	padding: 0;
 }
 
 #ph-contentWrap {

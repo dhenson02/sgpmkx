@@ -32,7 +32,7 @@
 	border-color: #444444;
 }
 
-#ph-wrapper #ph-tags .ph-tag-wrapper {
+#ph-wrapper .ph-tag-wrapper {
 	float: left;
 	clear: none;
 	margin: 5px 5px 5px 0;
@@ -40,12 +40,16 @@
 	white-space: normal;
 }
 
+#ph-wrapper .ph-tag-wrapper.loading {
+	padding: 3px 8px;
+}
+
 #ph-tags small {
 	position: relative;
 	float: left;
 	color: #333333;
 	margin: 7px 7px 7px 0;
-	border: 1px solid #DDDDDD;
+	border: 1px dashed #DDDDDD;
 	border-radius: 4px;
 	padding: 3px 8px;
 	cursor: pointer;
@@ -53,7 +57,7 @@
 }
 
 #ph-tags small:hover {
-	color: rgba(0, 0, 0, .3);
+	color: rgba(0, 0, 0, .6);
 }
 
 #ph-tags small:hover::before {
@@ -65,4 +69,40 @@
 	left: 50%;
 	top: -10px;
 	font-size: 1em;
+}
+
+#ph-tags .loading {
+	border: 1px solid;
+}
+
+#ph-tags .loading small {
+	border: none;
+	margin-right: 0;
+	padding: 3px;
+}
+
+#ph-tags .loading small::after {
+	content: ', ';
+	display: inline;
+}
+
+#ph-tags .loading small:last-of-type::after {
+	content: '';
+}
+
+#ph-tags .icon-lock::before {
+	cursor: pointer;
+	opacity: 1;
+	font-style: normal;
+	font-weight: 700;
+}
+
+#ph-tags .icon-lock.unlocked::before {
+	opacity: 1;
+	font-weight: 700;
+}
+
+#ph-tags .icon-lock.locked::before {
+	opacity: .5;
+	font-weight: 300;
 }

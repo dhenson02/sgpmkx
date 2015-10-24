@@ -7,6 +7,7 @@
     "dom2hscript": "^0.2.3",
     "event": "git://github.com/wilsonpage/event",
     "eventemitter2": "^0.4.14",
+    "fastdom": "^0.8.6",
     "horsey": "^2.6.1",
     "lodash": "^3.10.1",
     "markdown-it": "^5.0.0",

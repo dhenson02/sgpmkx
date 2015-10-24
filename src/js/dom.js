@@ -11,7 +11,8 @@ var vdom = require("virtual-dom"),
 	renderTags = require("./tags"),
 	renderButtons = require("./buttons"),
 	renderPage = require("./page"),
-	regLink = /<a (href=["']https?:\/\/)/gi;
+	regLink = /<a (href=["']https?:\/\/)/gi,
+	fastdom = require("fastdom");
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -21,13 +22,13 @@ function DOM () {
 		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
-		level: null,
 		path: "",
+		level: null,
+		parent: "",
 		nextPath: "",
 		nextLevel: null,
 		nextParent: "",
 		opened: {},
-		parent: "",
 		tab: "",
 		revertScroll: 254,
 		tagsChanging: false,
@@ -35,7 +36,8 @@ function DOM () {
 		titleStyle: {},
 		contentChanging: false,
 		saveText: "Save",
-		saveStyle: {}
+		saveStyle: {},
+		tagsLocked: true
 	};
 }
 /**
@@ -59,21 +61,23 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 };
 
 DOM.prototype.init = function () {
-	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root"),
+		self = this;
 
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
 	this.editor = null;
-	this.searchInput = document.getElementById("ph-search");
-	this.content = document.getElementById("ph-content");
-	this.title = document.getElementById("ph-title");
-	this.cheatSheet = document.getElementById("cheatSheet");
-	this.textarea = document.getElementById("ph-textarea");
-	this.output = document.getElementById("ph-output");
-
-	events.emit("dom.loaded");
+	fastdom.read(function() {
+		self.searchInput = document.getElementById("ph-search");
+		self.content = document.getElementById("ph-content");
+		self.title = document.getElementById("ph-title");
+		self.cheatSheet = document.getElementById("cheatSheet");
+		self.textarea = document.getElementById("ph-textarea");
+		self.output = document.getElementById("ph-output");
+		events.emit("dom.loaded");
+	});
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -92,16 +96,21 @@ DOM.prototype.setState = function ( data, nav, tabs, tags, buttons ) {
 
 DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 	var refreshDOM = this.preRender(nav, tabs, tags, buttons),
-		patches = diff(this.dirtyDOM, refreshDOM);
+		patches = diff(this.dirtyDOM, refreshDOM),
+		self = this;
 
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
 	if ( !this.state.fullPage && !this.editor && misc.codeMirror ) {
-		this.initEditor();
+		fastdom.write(function () {
+			self.initEditor();
+		});
 	}
 	else if ( !this.state.fullPage && this.editor && ( !tabs || !buttons ) ) {
-		this.editor.setValue(pages.current[this.state.tab]);
+		fastdom.write(function() {
+			self.editor.setValue(pages.current[ self.state.tab ]);
+		});
 	}
 };
 

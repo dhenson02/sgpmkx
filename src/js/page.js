@@ -58,7 +58,7 @@ function renderAddContent ( DOM ) {
 
 function renderEditor ( DOM ) {
 	return (
-		h("#ph-content", [
+		h("#ph-content" + (!DOM.state.contentChanging ? "" : ".loading"), [
 
 			h("#ph-buttons", [ DOM.buttonsDOM ]),
 
