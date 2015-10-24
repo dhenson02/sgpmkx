@@ -40,7 +40,6 @@ function renderButtons ( DOM ) {
 				}
 			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "New" : "Cancel" ]) ]),
 
-
 			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
 				style: DOM.state.titleStyle,
@@ -64,6 +63,7 @@ function renderButtons ( DOM ) {
 
 			h("a#ph-toggle-editor.ph-btn", {
 				href: "#",
+				style: ( !DOM.state.path ? { display: "none" } : {}),
 				onclick: function ( e ) {
 					e = e || window.event;
 					if ( e.stopPropagation ) e.stopPropagation();

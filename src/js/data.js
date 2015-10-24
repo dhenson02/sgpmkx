@@ -86,7 +86,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		events.emit("missing", path);
 		return false;
 	}
-	if ( DOM.state.path === path || DOM.state.nextPath === path ) {
+	if ( DOM.state.contentSaving || DOM.state.contentChanging || DOM.state.path === path || DOM.state.nextPath === path ) {
 		return false;
 	}
 	DOM.setState({
