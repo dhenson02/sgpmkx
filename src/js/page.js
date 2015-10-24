@@ -55,12 +55,10 @@ function renderAddContent () {
 	);
 }
 
-function renderEditor ( tabsDOM, DOM ) {
+function renderEditor ( DOM ) {
 
 	var addTag = function ( e ) {
 		e = e || window.event;
-		if ( e.stopPropagation ) e.stopPropagation();
-		else if ( e.cancelBubble ) e.cancelBubble();
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
@@ -75,8 +73,6 @@ function renderEditor ( tabsDOM, DOM ) {
 
 	var removeTag = function ( e ) {
 		e = e || window.event;
-		if ( e.stopPropagation ) e.stopPropagation();
-		else if ( e.cancelBubble ) e.cancelBubble();
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
@@ -93,14 +89,12 @@ function renderEditor ( tabsDOM, DOM ) {
 			h("#ph-create-wrap", [!DOM.state.addingContent ? null : renderAddContent()]),
 
 
-			h("a.ph-btn.ph-create", {
+			h("a#ph-create.ph-btn", {
 				href: "#",
-				title: "New section",
-				style: (( phAddClass ) ? { display: "none" } : {}),
+				title: "New content page",
+				style: ( phAddClass ? { display: "none" } : {}),
 				onclick: function ( e ) {
 					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
 					if ( e.preventDefault ) e.preventDefault();
 					else e.returnValue = false;
 
@@ -108,16 +102,13 @@ function renderEditor ( tabsDOM, DOM ) {
 						addingContent: !DOM.state.addingContent
 					}, true, true);
 				}
-			}, [h("span.btn-title", [!DOM.state.addingContent ? "Add content" : "Cancel"])]),
+			}, [ h("span.btn-title", [!DOM.state.addingContent ? "Add content" : "Cancel"]) ]),
 
 
 			h("a.ph-toggle-editor", {
 				href: "#",
-				role: "button",
 				onclick: function ( e ) {
 					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
 					if ( e.preventDefault ) e.preventDefault();
 					else e.returnValue = false;
 
@@ -133,7 +124,7 @@ function renderEditor ( tabsDOM, DOM ) {
 
 			h("h1#ph-title.ph-cm" + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: !DOM.state.titleChanging,
-				style: ( DOM.state.titleBorder ? { borderBottomColor: "#00B16A" } : {} ),
+				style: DOM.state.titleStyle,
 				onkeypress: function ( e ) {
 					if ( e.which == 13 || e.keyCode == 13 ) {
 						this.blur();
@@ -141,18 +132,31 @@ function renderEditor ( tabsDOM, DOM ) {
 					}
 				},
 				onblur: function () {
-					var title = this.textContent || this.innerText;
+					var title = this.textContent || this.innerText || this.innerHTML;
 					title = title.trim();
-					if ( title !== pages.current._title ) {
-						if ( !DOM.state.titleChanging && pages.options.saveTitleAfterEdit ) {
-							events.emit("title.save", title);
-						}
-					}
+					events.emit("title.save", title);
 				}
-			}, [String(pages.current.Title || "")]),
+			}, [ pages.current.Title ]),
 
 
-			h("#ph-tabs.ph-tabs", [tabsDOM]),
+			h("#ph-tabs.ph-tabs", [ DOM.tabsDOM ]),
+
+
+			h("#ph-buttons", [
+				h("a#ph-save.ph-edit-btn" + (
+						( DOM.state.saveText === "Save" ) ? "" : ".loading"
+					), {
+					href: "#",
+					title: "Save",
+					style: DOM.state.saveStyle,
+					onclick: function ( e ) {
+						e = e || window.event;
+						if ( e.preventDefault ) e.preventDefault();
+						else e.returnValue = false;
+						events.emit("content.save");
+					}
+				}, [h("i.icon.icon-diskette", [DOM.state.saveText])])
+			]),
 
 
 			h("h3.ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
@@ -173,7 +177,7 @@ function renderEditor ( tabsDOM, DOM ) {
 					href: "#",
 					onclick: addTag
 				}),
-				h(".clearfix", { style: {padding: "5px"}}),
+				h(".clearfix", { style: { padding: "5px" } }),
 				( pages.current.Tags ? pages.current.Tags.split(regSplit).map(function ( tag ) {
 					return ( tag.trim() ?
 						h("small", {
@@ -184,34 +188,11 @@ function renderEditor ( tabsDOM, DOM ) {
 			]),
 
 
-			h("#ph-buttons", [
-				h("a#ph-save.ph-edit-btn.ph-save" + ( DOM.state.saveText !== "Save" ? "" : ".loading" ), {
-					href: "#",
-					title: "Save",
-					style: ( DOM.state.tempSaveStyle ? {
-						color: "#00B16A",
-						backgroundColor: "#FFFFFF"
-					} : {
-						backgroundColor: "#00B16A",
-						color: "#FFFFFF"
-					}),
-					onclick: function ( event ) {
-						event = event || window.event;
-						if ( event.preventDefault ) event.preventDefault();
-						else event.returnValue = false;
-
-						if ( DOM.state.saveText === "Save" ) {
-							events.emit("content.save");
-						}
-					}
-				}, [h("i.icon.icon-diskette", [DOM.state.saveText])])
-			]),
-
-
 			h("#ph-contentWrap", [
 				h("#ph-input", [
-					h("textarea#ph-textarea", [String(pages.current.text || "")])
+					h("textarea#ph-textarea", [ pages.current[DOM.state.tab] ])
 				]),
+				//( (DOM.state.fullPage && DOM.state.level > 1) ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
@@ -222,12 +203,13 @@ function renderEditor ( tabsDOM, DOM ) {
 	);
 }
 
-function renderDefault ( tabsDOM ) {
+function renderDefault ( DOM ) {
 	return (
 		h("#ph-content.fullPage", [
-			h("h1#ph-title", [String(pages.current.Title || "")]),
-			h("#ph-tabs.ph-tabs", [tabsDOM]),
+			h("h1#ph-title", [ pages.current.Title ]),
+			h("#ph-tabs.ph-tabs", [ DOM.tabsDOM ]),
 			h("#ph-contentWrap", [
+				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
@@ -238,7 +220,7 @@ function renderDefault ( tabsDOM ) {
 	);
 }
 
-function renderPage ( navDOM, tabsDOM, DOM ) {
+function renderPage ( DOM ) {
 	return (
 		h("#ph-wrapper", [
 			h("#ph-search-wrap", {
@@ -253,8 +235,8 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [navDOM]),
-			( !misc.codeMirror ? renderDefault(tabsDOM) : renderEditor(tabsDOM, DOM) )
+			h("#ph-side-nav", [ DOM.navDOM ]),
+			( !misc.codeMirror ? renderDefault(DOM) : renderEditor(DOM) )
 		])
 	);
 }

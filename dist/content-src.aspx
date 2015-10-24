@@ -24,7 +24,33 @@ body { opacity: 1; }
 		leftNav = document.getElementById("leftnav"),
 		s4Workspace = document.getElementById("s4-workspace"),
 		phWrapper = document.createElement("div"),
-        phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div");
+        phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div"),
+        			phTabs = [
+        				{
+        					title: "Overview",
+        					icon: "home"
+        				},
+        				{
+        					title: "Policy",
+        					icon: "notebook"
+        				},
+        				{
+        					title: "Training",
+        					icon: "display1"
+        				},
+        				{
+        					title: "Resources",
+        					icon: "cloud-upload"
+        				},
+        				{
+        					title: "Tools",
+        					icon: "tools"
+        				},
+        				{
+        					title: "Contributions",
+        					icon: "users"
+        				}
+        			];
 
     /* Get rid of the ugly nav on the left if it's there */
     if ( leftNav ) {
@@ -37,7 +63,7 @@ body { opacity: 1; }
     }
 
     phWrapper.id = "wrapper";
-	phWrapper.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	phWrapper.innerHTML = "<div id='ph-loader' class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
     if ( phWrapperTemp ) {
         phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
     }

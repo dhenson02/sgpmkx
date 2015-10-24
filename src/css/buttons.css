@@ -3,7 +3,7 @@
 /*	max-width: 960px;
 	max-width: calc(100% - 320px);*/
 	margin-top: 50px;
-	text-align: left;
+	text-align: right;
 	position: relative;
 	display: block;
 }
@@ -25,7 +25,7 @@
 }
 
 .ph-toggle-editor:hover {
-	border-bottom-color: inherit;
+	border-bottom-color: #0072C6;
 }
 
 .ph-edit-btn {
@@ -37,16 +37,16 @@
 	font-style: normal;
 }
 
-.ph-edit-btn.ph-save {
+#ph-buttons #ph-save {
 	/*background-color: #454545;*/
 	background-color: #00B16A;
-	/*color: #FFFFFF;*/
+	color: #FFFFFF;
 	border: 1px solid;
 	font-weight: 700;
 	padding: 10px 20px;
 }
 
-.ph-btn.ph-create {
+#ph-create {
 	display: block;
 	position: relative;
 	border: 1px solid;

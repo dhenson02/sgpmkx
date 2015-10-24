@@ -11,8 +11,6 @@ var vdom = require("virtual-dom"),
 	horsey = require("horsey"),
 
 	misc = require("./helpers"),
-	codeMirror = misc.codeMirror,
-
 	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
@@ -21,53 +19,31 @@ var vdom = require("virtual-dom"),
 	router = Router({
 		'/': {
 			on: function () {
-				DOM.setState({
-					nextPath: "/",
-					level: 0,
-					parent: ""
-				});
-				events.emit("content.loading", "/");
+				events.emit("content.loading", "/", 0, "");
 			}
 		},
 		'/(\\w+)': {
 			on: function ( section ) {
 				var path = "/" + section.replace(/\s/g, "");
-				DOM.setState({
-					nextPath: path,
-					level: 1,
-					parent: ""
-				});
-				events.emit("content.loading", path);
+				events.emit("content.loading", path, 1, "");
 			},
 			'/(\\w+)': {
 				on: function ( section, program ) {
 					var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "");
-					DOM.setState({
-						nextPath: path,
-						level: 2,
-						parent: path
-					});
-					events.emit("content.loading", path);
+					events.emit("content.loading", path, 2, path);
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page ) {
-						var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "");
-						DOM.setState({
-							nextPath: path,
-							level: 3,
-							parent: "/" + section + "/" + program
-						});
-						events.emit("content.loading", path);
+
+						var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
+							path = parent + "/" + page.replace(/\s/g, "");
+						events.emit("content.loading", path, 3, parent);
 					},
 					'/(\\w+)': {
 						on: function ( section, program, page, rabbitHole ) {
-							var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
-							DOM.setState({
-								nextPath: path,
-								level: 4,
-								parent: "/" + section + "/" + program
-							});
-							events.emit("content.loading", path);
+							var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
+								path = parent + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
+							events.emit("content.loading", path, 4, parent);
 						}
 					}
 				}
@@ -110,7 +86,7 @@ events.on("dom.loaded", function () {
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,
-		limit: 8,
+		limit: 6,
 		getValue: function ( item ) {
 			return item.value;
 		},
@@ -126,13 +102,15 @@ events.on("dom.loaded", function () {
 			li.innerText = li.textContent = item.renderText;
 		}
 	});
-	DOM.setState({
-		revertScroll: DOM.rootNode.getBoundingClientRect().top,
-		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
-			paths[path] = (DOM.state.parent === path);
-			return paths;
-		}, {})
-	})
+	if ( pages.options.scrollOnNav ) {
+		DOM.setState({
+			revertScroll: DOM.rootNode.getBoundingClientRect().top
+			/*opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
+			 paths[path] = (DOM.state.parent === path);
+			 return paths;
+			 }, {})*/
+		})
+	}
 });
 
 events.on("missing", function ( path ) {
@@ -148,7 +126,7 @@ events.on("missing", function ( path ) {
 	});
 });
 
-events.on("content.loaded", function ( data, path ) {
+events.on("content.loaded", function ( data ) {
 	var obj = data.d;
 	if ( !obj ) {
 		router.setRoute("/");
@@ -159,19 +137,18 @@ events.on("content.loaded", function ( data, path ) {
 		return false;
 	}
 
-	var pubs = [], pub;
+	var pubs = "", pub;
 	while ( pub = misc.regPubs.exec(obj.Policy) ) {
-		pubs.push(pub);
+		pubs += ", " + pub;
 	}
 
 	pages.current = pages.current.reset({
 		ID: obj.ID,
 		Title: obj.Title || "",
 		_title: obj.Title || "",
-		Pubs: pubs.join(" ") || "",
+		Pubs: pubs || "",
 		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
 		Icon: obj.Icon || "",
-		text: obj.Overview || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
 		Training: obj.Training || "",
@@ -182,44 +159,41 @@ events.on("content.loaded", function ( data, path ) {
 		Program: obj.Program || "",
 		Page: obj.Page || "",
 		rabbitHole: obj.rabbitHole || "",
-		type: "Overview",
-		Modified: new Date(obj.Modified || obj.Created),
+		Modified: new Date(obj.Modified),
 		listItemType: obj.__metadata.type,
-		timestamp: (Date && Date.now() || new Date()),
-		path: path,
-		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
+		path: DOM.state.nextPath,
+		level: DOM.state.nextLevel,
+		parent: DOM.state.nextParent
 	});
-
-	misc.inTransition.output = false;
-	document.title = pages.current.Title;
+	var opened = Object.keys(pages.parents).reduce(function ( paths, path ) {
+		paths[path] = ( (pages.options.scrollOnNav && pages.options.resetOpenOnNav) ? (DOM.state.nextParent === path) : DOM.state.opened[path] );
+		return paths;
+	}, {});
 	DOM.setState({
-		path: path,
+		path: DOM.state.nextPath,
+		level: DOM.state.nextLevel,
+		parent: DOM.state.nextParent,
 		nextPath: "",
-		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
-			paths[path] = ( DOM.state.parent === path || DOM.state.opened[path] );
-			return paths;
-		}, {})
+		nextLevel: null,
+		nextParent: "",
+		contentChanging: false,
+		opened: opened
 	});
-	DOM.renderOut(pages.current.text, pages.current.type);
+	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
 		window.scrollBy(0, DOM.content.getBoundingClientRect().top);
 	}
+	events.emit("tab.change", "Overview");
+	if ( misc.codeMirror ) {
+		DOM.initEditor();
+	}
 });
 
-events.on("tab.change", function ( page ) {
-	var content = {};
-	content[pages.current.type] = pages.current.text;
-	content.type = page;
-	content.text = pages.current[page];
-	pages.current.set(content);
-
-	misc.inTransition.output = false;
+events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: page
-	}, true, false);
-	//if ( !codeMirror ) {
-		DOM.renderOut(content.text, content.type);
-	//}
+		tab: tab
+	});
+	DOM.renderOut();
 });
 
 pageInit();

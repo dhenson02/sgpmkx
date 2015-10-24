@@ -1,11 +1,8 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
-var map = require("lodash/collection/map");
 var mapValues = require("lodash/object/mapValues");
-var reduce = require("lodash/collection/reduce");
 var assign = require("lodash/object/assign");
-var timeout = 400;
 
 var bp = require("body-parser");
 var cors = require("cors");
@@ -15,13 +12,15 @@ app.use(cors());
 
 var timer = null;
 var cmTimer = null;
+var timeout = 250;
 
 var db = {d: { results: JSON.parse(fs.readFileSync(__dirname + "/db.json", { charset: "utf8" })) } };
-var db_ = reduce(db.d.results, function ( obj, item ) {
+var db_ = db.d.results.reduce(function ( obj, item ) {
 	obj[item.ID] = { d: item };
 	return obj;
 }, {});
 
+// GET LIST
 app.get("/items", function ( req, res ) {
 	if ( timer ) {
 		clearTimeout(timer);
@@ -31,6 +30,7 @@ app.get("/items", function ( req, res ) {
 	}, timeout);
 });
 
+// DO THE CONTEXT THINGY
 app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 	if ( timer ) {
 		clearTimeout(timer);
@@ -46,6 +46,7 @@ app.post("/Pages/content/_api/contextinfo", function ( req, res ) {
 	}, timeout);
 });
 
+// OPTIONS
 app.get("/opt", function ( req, res ) {
 	if ( cmTimer ) {
 		clearTimeout(cmTimer);
@@ -56,10 +57,16 @@ app.get("/opt", function ( req, res ) {
 				results: [
 					{
 						Variable: "hideSearchWhileEditing",
-						Value: "false"
+						Value: false
 					}, {
 						Variable: "images",
 						Value: "img"
+					}, {
+						Variable: "scrollOnNav",
+						Value: true
+					}, {
+						Variable: "resetOpenOnNav",
+						Value: false
 					}
 				]
 			}
@@ -67,15 +74,7 @@ app.get("/opt", function ( req, res ) {
 	}, timeout);
 });
 
-app.get("/check/true", function ( req, res ) {
-	if ( cmTimer ) {
-		clearTimeout(cmTimer);
-	}
-	cmTimer = setTimeout(function () {
-		res.send({ status: "success" });
-	}, timeout);
-});
-
+// GET ITEM
 app.get("/items(:id)", function ( req, res ) {
 	var id = req.params.id.slice(1,-1);
 	if ( timer ) {
@@ -86,7 +85,7 @@ app.get("/items(:id)", function ( req, res ) {
 	}, timeout);
 });
 
-// Save
+// SAVE ITEM
 app.post("/items(:id)", function ( req, res ) {
 	var id = req.params.id.slice(1, -1);
 	var data = mapValues(req.body, function ( val, key ) {
@@ -98,7 +97,7 @@ app.post("/items(:id)", function ( req, res ) {
 	data.ID = id;
 	data.Id = id;
 	db_[id].d = assign(db_[id].d, data);
-	db.d.results = map(db.d.results, function ( item ) {
+	db.d.results = db.d.results.map(function ( item ) {
 		if ( item.ID === id ) {
 			item = db_[id].d;
 		}
@@ -114,7 +113,7 @@ app.post("/items(:id)", function ( req, res ) {
 	}, timeout);
 });
 
-// Create
+// CREATE ITEM
 app.post('/items', function ( req, res ) {
 	var id = Number(Object.keys(db_).sort(function ( x, y ) { return x - y; }).pop()) + 1;
 	var data = mapValues(req.body, function ( val ) {
@@ -129,6 +128,16 @@ app.post('/items', function ( req, res ) {
 		clearTimeout(timer);
 	}
 	timer = setTimeout(function () {
+		res.send({ status: "success" });
+	}, timeout);
+});
+
+// IS CONTENT MANAGER?
+app.get("/check/true", function ( req, res ) {
+	if ( cmTimer ) {
+		clearTimeout(cmTimer);
+	}
+	cmTimer = setTimeout(function () {
 		res.send({ status: "success" });
 	}, timeout);
 });

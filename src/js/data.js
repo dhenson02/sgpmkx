@@ -63,9 +63,6 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			if ( DOM.state.nextPath !== "" ) {
-				return false;
-			}
 			pages.init(data);
 			if ( misc.codeMirror && pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true ) {
 				sweetAlert({
@@ -84,17 +81,21 @@ events.on("page.loading", function () {
 	});
 });
 
-events.on("content.loading", function ( path ) {
+events.on("content.loading", function ( path, level, parent ) {
 	if ( !pages[path] ) {
 		events.emit("missing", path);
 		return false;
 	}
-	/*if ( misc.inTransition.output ) {
+	if ( DOM.state.path === path ) {
 		return false;
-	}*/
-
-	misc.inTransition.output = true;
-	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	}
+	DOM.setState({
+		nextPath: path,
+		nextLevel: level,
+		nextParent: parent,
+		contentChanging: true
+	});
+	DOM.output.innerHTML = "<div id='ph-loader' class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
@@ -108,18 +109,26 @@ events.on("content.loading", function ( path ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
+			console.log(DOM.state.nextPath, path);
 			if ( DOM.state.nextPath !== path ) {
 				// Prevent accidental load of previously clicked destination
 				return false;
 			}
-			events.emit("content.loaded", data, path);
+			events.emit("content.loaded", data);
 		},
 		error: function ( error ) {
+			DOM.setState({
+				nextPath: "",
+				nextLevel: null,
+				nextParent: "",
+				contentChanging: false
+			});
 			console.log("error connecting:", error);
 		}
 	});
 });
 
+/*
 events.on("content.create", function ( data, path, title ) {
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
@@ -177,43 +186,33 @@ events.on("content.create", function ( data, path, title ) {
 		}
 	});
 });
+*/
 
 events.on("content.save", function () {
-	DOM.setState({
-		saveText: "...saving..."
-	}, true, true);
-	var current = pages.current,
-		pubs = [],
-		pub;
-	while ( pub = misc.regPubs.exec(current.Policy) ) {
-		pubs.push(pub);
+	if ( DOM.state.saveText !== "Save" ) {
+		return false;
 	}
-	var content = {
-		text: current.text.trim(),
-		Title: current.Title.trim(),
-		Pubs: pubs.join(" "),
-		Tags: current.Tags.trim(),
-		Modified: new Date()
-	};
-	content[current.type] = current.text;
-
+	DOM.setState({
+		saveText: "...saving...",
+		saveStyle: {
+			color: "#00B16A",
+			backgroundColor: "#FFFFFF"
+		}
+	}, true, true);
 	var data = {
 		'__metadata': {
-			'type': current.listItemType
+			'type': pages.current.listItemType
 		},
-		'Title': current.Title,
-		'Pubs': current.Pubs,
-		'Tags': current.Tags,
-		'Overview': current.Overview,
-		'Policy': current.Policy,
-		'Training': current.Training,
-		'Resources': current.Resources,
-		'Tools': current.Tools,
-		'Contributions': current.Contributions
+		'Title': pages.current.Title,
+		'Pubs': pages.current.Pubs,
+		'Tags': pages.current.Tags,
+		'Overview': pages.current.Overview,
+		'Policy': pages.current.Policy,
+		'Training': pages.current.Training,
+		'Resources': pages.current.Resources,
+		'Tools': pages.current.Tools,
+		'Contributions': pages.current.Contributions
 	};
-	if ( misc.inTransition.tempSaveStyle ) {
-		clearTimeout(misc.inTransition.tempSaveStyle);
-	}
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -224,7 +223,7 @@ events.on("content.save", function () {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + current.ID + ")",
+				url: sitePath + "/items(" + pages.current.ID + ")",
 				method: "POST",
 				data: JSON.stringify(data),
 				type: "json",
@@ -238,32 +237,48 @@ events.on("content.save", function () {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					current.set(content);
-					if ( document.title !== current.Title ) {
-						document.title = current.Title;
+					DOM.setState({
+						saveText: "Saved!",
+						saveStyle: {
+							backgroundColor: "#00B16A",
+							color: "#FFFFFF"
+						}
+					}, true, true);
+
+					var pubs = "", pub;
+					while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
+						pubs += " " + pub;
 					}
+					pages.current.set({
+						Pubs: pubs,
+						Modified: new Date()
+					});
 				},
 				error: function ( error ) {
 					sweetAlert({
 						title: "Failure",
-						text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+						text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
 						type: "fail",
 						showCancelButton: false,
 						html: true
 					});
+					DOM.setState({
+						saveText: "Failed :(",
+						saveStyle: {
+							backgroundColor: "#ec6c62",
+							color: "#FFFFFF"
+						}
+					}, true, true);
 					console.log("Content save error: ", error);
 				},
 				complete: function () {
-					if ( misc.inTransition.tempSaveStyle ) {
-						clearTimeout(misc.inTransition.tempSaveStyle);
-					}
-					DOM.setState({
-						saveText: "Saved!"
-					}, true, true);
-					misc.inTransition.tempSaveStyle = setTimeout(function () {
-						misc.inTransition.tempSaveStyle = null;
+					setTimeout(function () {
 						DOM.setState({
-							saveText: "Save"
+							saveText: "Save",
+							saveStyle: {
+								color: "#FFFFFF",
+								backgroundColor: "#00B16A"
+							}
 						}, true, true);
 					}, 500);
 				}
@@ -272,19 +287,26 @@ events.on("content.save", function () {
 		error: function ( error ) {
 			sweetAlert({
 				title: "Failure",
-				text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+				text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
 				type: "fail",
 				showCancelButton: false,
 				html: true
 			});
-			console.log("Content save error: ", error);
-			if ( misc.inTransition.tempSaveStyle ) {
-				clearTimeout(misc.inTransition.tempSaveStyle);
-			}
-			misc.inTransition.tempSaveStyle = setTimeout(function () {
-				misc.inTransition.tempSaveStyle = null;
+			DOM.setState({
+				saveText: "Failed :(",
+				saveStyle: {
+					backgroundColor: "#ec6c62",
+					color: "#FFFFFF"
+				}
+			}, true, true);
+			console.log("Content save error (couldn't get digest): ", error);
+			setTimeout(function () {
 				DOM.setState({
-					saveText: "Save"
+					saveText: "Save",
+					saveStyle: {
+						color: "#FFFFFF",
+						backgroundColor: "#00B16A"
+					}
 				}, true, true);
 			}, 500);
 		}
@@ -292,12 +314,16 @@ events.on("content.save", function () {
 });
 
 events.on("title.save", function ( title ) {
-	if ( misc.inTransition.titleBorder ) {
-		clearTimeout(misc.inTransition.titleBorder);
+	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
+		return false;
 	}
 	DOM.setState({
-		titleChanging: true
-	}, false, true);
+		titleChanging: true,
+		titleStyle: {
+			borderBottomColor: "#FF9000",
+			color: "#FF9000"
+		}
+	}, true, true);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -332,6 +358,12 @@ events.on("title.save", function ( title ) {
 						_title: title
 					});
 					document.title = title;
+					DOM.setState({
+						titleStyle: {
+							borderBottomColor: "#00B16A",
+							color: "#00B16A"
+						}
+					}, false, true);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -341,19 +373,21 @@ events.on("title.save", function ( title ) {
 						showCancelButton: false,
 						html: true
 					});
+					DOM.setState({
+						titleStyle: {
+							borderBottomColor: "#EC6C62",
+							color: "#EC6C62"
+						}
+					}, true, true);
 					console.log("Title save error: ", error);
 				},
 				complete: function () {
-					if ( misc.inTransition.titleBorder ) {
-						clearTimeout(misc.inTransition.titleBorder);
-					}
-					misc.inTransition.titleBorder = setTimeout(function () {
-						misc.inTransition.titleBorder = null;
+					setTimeout(function () {
 						DOM.setState({
-							titleChanging: false
-						}, false, true);
-					}, 350);
-					DOM.update(false, true);
+							titleChanging: false,
+							titleStyle: {}
+						}, true, true);
+					}, 500);
 				}
 			});
 		},
@@ -366,24 +400,23 @@ events.on("title.save", function ( title ) {
 				html: true
 			});
 			console.log("Title save error (couldn't get digest): ", error);
-			if ( misc.inTransition.titleBorder ) {
-				clearTimeout(misc.inTransition.titleBorder);
-			}
-			misc.inTransition.titleBorder = setTimeout(function () {
-				misc.inTransition.titleBorder = null;
+			DOM.setState({
+				titleStyle: {
+					borderBottomColor: "#EC6C62",
+					color: "#EC6C62"
+				}
+			}, true, true);
+			setTimeout(function () {
 				DOM.setState({
-					titleChanging: false
-				}, false, true);
-			}, 350);
-			DOM.update(false, true);
+					titleChanging: false,
+					titleStyle: {}
+				}, true, true);
+			}, 500);
 		}
 	});
 });
 
 events.on("tags.save", function ( tags ) {
-	/*if ( misc.inTransition.titleBorder ) {
-		clearTimeout(misc.inTransition.titleBorder);
-	}*/
 	DOM.setState({
 		tagsChanging: true
 	}, true, true);
@@ -421,19 +454,13 @@ events.on("tags.save", function ( tags ) {
 					});
 				},
 				error: function ( error ) {
-					if ( !misc.inTransition.errorDlg ) {
-						// So we can lazy save it.
-						misc.inTransition.errorDlg = true;
-						sweetAlert({
-							title: "Failure",
-							text: misc.md.renderInline("Tag(s) **not** able to be saved"),
-							type: "fail",
-							showCancelButton: false,
-							html: true
-						}, function() {
-							misc.inTransition.errorDlg = false;
-						});
-					}
+					sweetAlert({
+						title: "Failure",
+						text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
 					console.log("Tags save error: ", error);
 					console.log("Tags: ", tags);
 				},
@@ -445,19 +472,14 @@ events.on("tags.save", function ( tags ) {
 			});
 		},
 		error: function ( error ) {
-			if ( !misc.inTransition.errorDlg ) {
-				// So we can lazy save it.
-				misc.inTransition.errorDlg = true;
-				sweetAlert({
-					title: "Failure",
-					text: misc.md.renderInline("Tag(s) **not** able to be saved"),
-					type: "fail",
-					showCancelButton: false,
-					html: true
-				}, function () {
-					misc.inTransition.errorDlg = false;
-				});
-			}
+			// So we can lazy save it.
+			sweetAlert({
+				title: "Failure",
+				text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
 			console.log("Tags save error (couldn't get digest): ", error);
 			console.log("Tags: ", tags);
 			DOM.setState({

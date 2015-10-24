@@ -41,16 +41,17 @@
 	font-size: .65em;
 }
 
-#ph-nav a,
-#ph-nav a:hover {
+#ph-nav a {
+	transition: font .03s ease-out;
 	color: #FAFAFA;
 }
 
-#ph-nav a:hover {
+#ph-nav a:hover > .link-title {
+	color: #FAFAFA;
 	text-decoration: underline;
 }
 
-#ph-nav a.active:hover {
+#ph-nav a.active:hover > .link-title {
 	text-decoration: none;
 }
 
@@ -96,7 +97,7 @@
 	text-decoration: none;
 }*/
 
-#ph-nav .ph-page,
+/*#ph-nav .ph-page,*/
 #ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
 }
@@ -140,6 +141,7 @@
 }
 
 #ph-nav .active {
+	transition: font .03s ease-out;
 	font-weight: bold;
 	text-shadow: 0 1px 1px #222222;
 }

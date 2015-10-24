@@ -5,10 +5,10 @@ function Content ( data ) {
 	if ( !(this instanceof Content) ) {
 		return new Content( data );
 	}
-	this.ID = -1;
+	this.ID = null;
 	this.Title = "";
 	this._title = "";
-	this.text = "";
+	//this.text = "";
 	this.Pubs = "";
 	this.Tags = "";
 	this.Icon = "";
@@ -22,29 +22,35 @@ function Content ( data ) {
 	this.Program = "";
 	this.Page = "";
 	this.rabbitHole = "";
-	this.type = "Overview";
+	//this.type = "";
 	this.Modified = new Date();
 	this.listItemType = "";
-	this.timestamp = null;
-	this.level = -1;
-	this.path = "/";
+	this.level = null;
+	this.path = "";
+	this.parent = "";
 	if ( data ) {
 		return this.set(data);
 	}
 }
 
-Content.prototype.set = function ( data ) {
-	var i = 0;
-	for ( var name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
-			if ( pages[this.path].hasOwnProperty(name) ) {
-				pages[this.path][name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
-				++i;
+Content.prototype.set = function () {
+	if ( arguments.length === 2 && this.hasOwnProperty(arguments[0]) ) {
+		this[arguments[0]] = arguments[1];
+	}
+	else {
+		var i = 0,
+			data = arguments[0];
+		for ( var name in data ) {
+			if ( this.hasOwnProperty(name) ) {
+				this[name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
+				if ( this.path && pages[this.path].hasOwnProperty(name) ) {
+					pages[this.path][name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
+					++i;
+				}
 			}
 		}
+		if ( i > 0 ) pages.navPrep();
 	}
-	if ( i > 0 ) pages.navPrep();
 	return this;
 };
 
@@ -70,7 +76,8 @@ function Pages () {
 		hideNavWhileEditing: true,
 		saveTitleAfterEdit: true,
 		saveTagsAfterEdit: true,
-		scrollOnNav: false
+		scrollOnNav: false,
+		resetOpenOnNav: true
 	};
 }
 
@@ -155,46 +162,30 @@ Pages.prototype.init = function ( data ) {
 };
 
 Pages.prototype.navPrep = function () {
-	var self = this;
-	var _urls = self.urls.slice(0);
-	var url, result;
-	while ( url = _urls.shift() ) {
-		result = self[url];
-		if ( result.level === 1 ) {
-			self.sections[result.Section] = {
-				path: ( !result.Link ) ? "/" + result.Section : result.Link,
-				title: result.Title,
-				id: result.ID,
+	var self = this,
+		_urls = self.urls.slice(0),
+		_url,
+		_result;
+	while ( _url = _urls.shift() ) {
+		_result = self[_url];
+		if ( _result.level === 1 ) {
+			self.sections[_result.Section] = {
+				path: ( !_result.Link ) ? _result.path : _result.Link,
+				title: _result.Title,
+				id: _result.ID,
 				links: []
 			};
 		}
-		if ( result.level === 4 ) {
-			self.subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page";
+		if ( _result.level === 4 ) {
+			self.subParents["/" + _result.Section + "/" + _result.Program + "/" + _result.Page] = ".ph-sub-parent.ph-page";
 		}
-		else if ( result.level === 3 ) {
-			self.parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program";
+		else if ( _result.level === 3 ) {
+			self.parents["/" + _result.Section + "/" + _result.Program] = ".ph-parent.ph-program";
 		}
 	}
 
-	var tags = result.Tags && result.Tags.split(misc.regSplit) || [],
-		pubs = [],
-		pub;
-
-	while ( pub = misc.regPubs.exec(result.Policy) ) {
-		pubs.push(pub);
-	}
-
-	/**
-	 * Used for searching the site quick and easy using Horsey.
-	 */
-	self.titles.push({
-		text: result.Title + " " + tags.join(" ") + pubs.join(" "),
-		value: result.path,
-		renderText: result.Title
-	});
-
-	url = null;
-	result = null;
+	_url = null;
+	_result = null;
 	self.urls.sort();
 	self.urls.forEach(function ( url ) {
 		var page = self[url],
@@ -202,8 +193,18 @@ Pages.prototype.navPrep = function () {
 			path = url.split(/\//),
 			name = path.slice(-1),
 			parent = path.slice(0, -1).join("/"),
-			grandParent = path.slice(0, -2).join("/");
+			grandParent = path.slice(0, -2).join("/"),
+			tags = page.Tags && page.Tags.replace(misc.regSplit, " ") || "",
+			pubs = page.Pubs && page.Pubs.replace(misc.regSplit, " ") || "";
 
+		/**
+		 * Used for searching the site quick and easy using Horsey.
+		 */
+		self.titles.push({
+			text: page.Title + " " + tags + " " + pubs,
+			value: page.path,
+			renderText: page.Title
+		});
 		switch ( page.level ) {
 			case 2:
 				className = self.parents[page.path] || ".ph-program";
@@ -233,6 +234,7 @@ Pages.prototype.navPrep = function () {
 	});
 };
 
+/*
 Pages.prototype.createContent = function ( path, title, newName ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this,
@@ -256,6 +258,7 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	};
 	events.emit("content.create", data, path, title);
 };
+*/
 
 /*
 

@@ -14,24 +14,15 @@ var markdownit = require("markdown-it"),
 		xhtmlOut: true,
 		quotes: '“”‘’'
 	}),
-	inTransition = {
-		output: false,
-		//saveText: "Save",
-		tempSaveStyle: null,
-		errorDlg: false,
-		tagChange: false
-	},
 	codeMirror = CodeMirror,
 	regSplit = /; *|, *| \b|\b /g,
 	regSplit2 = /\b; ?|\b /g,
-	//regSplit = /\s/g,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	md: md,
-	inTransition: inTransition,
 	codeMirror: codeMirror,
 	regSplit: regSplit,
 	regSplit2: regSplit2,

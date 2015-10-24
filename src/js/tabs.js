@@ -1,44 +1,19 @@
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
-	events = require("./events"),
-	tabs = [
-		{
-			title: "Overview",
-			icon: "home"
-		},
-		{
-			title: "Policy",
-			icon: "notebook"
-		},
-		{
-			title: "Training",
-			icon: "display1"
-		},
-		{
-			title: "Resources",
-			icon: "cloud-upload"
-		},
-		{
-			title: "Tools",
-			icon: "tools"
-		},
-		{
-			title: "Contributions",
-			icon: "users"
-		}
-	];
+	events = require("./events");
 
 function renderTabs ( DOM ) {
-	var style = ( DOM.state.level > 1 ) ? null : { style: { display: "none" } },
-		group = tabs.map(function ( tab ) {
-			var tabName = tab.title.replace(/\s/g, "");
+	var style = ( DOM.state.level > 1 ) ? {} : { display: "none" },
+		group = phTabs.map(function ( tab ) {
+			var tabName = tab.title.replace(/\s/g, ""); // Kinda future-proofing
 			var className = ".ph-tab-" + tabName.toLowerCase() + (
 					( pages.options.hideEmptyTabs && pages.current[tabName].length < 1 && tabName !== "Contributions" ) ? ".tab-empty" : "" ) + (
-					( pages.current.type === tabName ) ? ".tab-current" : "" );
+					( DOM.state.tab !== tabName ) ? "" : ".tab-current"
+				);
 
 			return (
 				h("li" + className, [
-					h("div.ph-tab-box", [
+					h(".ph-tab-box", [
 						h("a.icon.icon-" + tab.icon, {
 							href: "#",
 							onclick: function ( e ) {
@@ -51,9 +26,9 @@ function renderTabs ( DOM ) {
 								events.emit("tab.change", tab.title);
 								return false;
 							}
-						}, [h("span", [String(tab.title)])])
+						}, [ h("span", [tab.title]) ])
 					]),
-					( pages.options.contribPOCEmail && tabName === "Contributions" ) ?
+					( tabName === "Contributions" && pages.options.contribPOCEmail ) ?
 						h("a.ph-contrib-poc", {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName
@@ -64,7 +39,7 @@ function renderTabs ( DOM ) {
 		});
 	return (
 		h("nav", [
-			h("ul", style, group)
+			h("ul", { style: style }, group)
 		])
 	);
 }

@@ -2,20 +2,19 @@ var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
 
-function renderLink ( link, DOM ) {
-	var attr = {},
-		handleClick = function ( e ) {
-			if ( e.stopPropagation ) e.stopPropagation();
-			else if ( e.cancelBubble ) e.cancelBubble();
-		},
-		opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] );
+function handleClick ( e ) {
+	e = e || window.event;
+	if ( e.stopPropagation ) e.stopPropagation();
+	else if ( e.cancelBubble ) e.cancelBubble();
+}
 
-	if ( link.level > 2 && !opened ) {
-		attr = { style: { display: "none" } };
-	}
+function renderLink ( link, DOM ) {
+	var opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] ),
+		attr = ( link.level > 2 && !opened ? { display: "none" } : {} );
 	return (
-		h("li.link#ph-link-" + /*link.id +*/ link.className,
-			attr, [
+		h("li.link#ph-link-" + link.id + link.className,
+			{ style: attr },
+			[
 				h("a.ph-level-" + link.level + ( link.path !== DOM.state.path ? "" : ".active" ), {
 					href: link.href,
 					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" ),
@@ -55,9 +54,10 @@ function renderSection ( section, DOM ) {
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
 			h("a.ph-level-1" + ( section.path !== DOM.state.path ? "" : ".active" ), {
-				"href": "#" + section.path
+				"href": "#" + section.path,
+				onclick: handleClick
 			}, [
-				h("span.link-title", [String(section.title)])
+				h("span.link-title", [ section.title ])
 			]),
 			h("ul", links)
 		])
@@ -77,7 +77,8 @@ function renderNav ( DOM ) {
 		h("#ph-nav", [
 			h(".header", [
 				h("a" + ( DOM.state.path !== "/" ? "" : ".active" ), {
-					"href": "#/"
+					"href": "#/",
+					onclick: handleClick
 				}, [
 					h(".logo", [
 						h("img", {

@@ -9,7 +9,7 @@ var vdom = require("virtual-dom"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
 	renderPage = require("./page"),
-	regLink = /<a (href="https?:\/\/)/gi;
+	regLink = /<a (href=["']https?:\/\/)/gi;
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -19,17 +19,21 @@ function DOM () {
 		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
-		level: 0,
-		path: "/",
+		level: null,
+		path: "",
 		nextPath: "",
+		nextLevel: null,
+		nextParent: "",
 		opened: {},
 		parent: "",
-		tab: "Overview",
+		tab: "",
 		revertScroll: 254,
 		tagsChanging: false,
 		titleChanging: false,
+		titleStyle: {},
 		contentChanging: false,
-		saveText: "Save"
+		saveText: "Save",
+		saveStyle: {}
 	};
 }
 /**
@@ -40,13 +44,15 @@ function DOM () {
  * @returns {*} - VTree, VNode or...null?
  */
 DOM.prototype.preRender = function ( navOld, tabsOld ) {
-	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null);
+	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( this.state.fullPage && pages.options.hideNavWhileEditing ) ? renderNav(this) : null);
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
-	return renderPage(this.navDOM, this.tabsDOM, this);
+	this.inputDOM = null;
+	this.outputDOM = null;
+	return renderPage(this);
 };
 
 DOM.prototype.init = function () {
-	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
 
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
@@ -60,9 +66,6 @@ DOM.prototype.init = function () {
 	this.textarea = document.getElementById("ph-textarea");
 	this.output = document.getElementById("ph-output");
 
-	if ( misc.codeMirror ) {
-		this.initEditor();
-	}
 	events.emit("dom.loaded");
 };
 
@@ -87,8 +90,8 @@ DOM.prototype.update = function ( nav, tabs ) {
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor && ( !nav || !tabs ) && !this.state.fullPage ) {
-		this.editor.setValue(pages.current.text);
+	if ( this.editor && ( !tabs ) ) {
+		this.editor.setValue(pages.current[this.state.tab]);
 	}
 };
 
@@ -105,27 +108,22 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( !misc.inTransition.tempSaveText ) {
-					misc.inTransition.tempSaveText = "...saving...";
-					self.update(true, true);
+				if ( self.state.saveText === "Save" ) {
 					events.emit("content.save");
 				}
 			}
 		}
 	});
 	this.editor.on("change", function ( e ) {
-		var val = e.getValue();
-		pages.current.set({
-			text: val
-		});
-		self.renderOut(val, pages.current.type);
+		pages.current.set(self.state.tab, e.getValue());
+		self.renderOut();
 	});
 	this.editor.refresh();
 };
 
-DOM.prototype.renderOut = function ( text, type ) {
-	type = ( this.state.level > 1 ) ? "## " + type + "\n" : "";
-	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
+DOM.prototype.renderOut = function () {
+	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
+	this.output.innerHTML = misc.md.render(pages.current[this.state.tab]).replace(regLink, "<a target='_blank' $1");
 };
 
 var dom = new DOM();
