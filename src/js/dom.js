@@ -20,7 +20,7 @@ function DOM () {
 		return new DOM();
 	}
 	this.state = {
-		fullPage: false,
+		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
 		path: "",
@@ -60,26 +60,20 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 
 	this.searchDOM = this.searchDOM || renderSearch();
 
-	/*this.inputDOM = null;
-	this.outputDOM = null;*/
 	return renderPage(this);
 };
 
 DOM.prototype.init = function () {
 	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
 
-	this.editor = null;
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
+	this.editor = null;
 	this.searchInput = document.getElementById("ph-search");
-	this.content = document.getElementById("ph-content");
-	this.title = document.getElementById("ph-title");
-	this.cheatSheet = document.getElementById("cheatSheet");
 	this.textarea = document.getElementById("ph-textarea");
 	this.output = document.getElementById("ph-output");
-	events.emit("dom.rendered");
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -101,7 +95,9 @@ DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 		patches = diff(this.dirtyDOM, refreshDOM),
 		self = this;
 
-	this.rootNode = patch(this.rootNode, patches);
+	fastdom.write(function () {
+		self.rootNode = patch(self.rootNode, patches);
+	});
 	this.dirtyDOM = refreshDOM;
 
 	if ( !this.state.fullPage && !this.editor && misc.codeMirror ) {
@@ -110,7 +106,7 @@ DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 		});
 	}
 	else if ( !this.state.fullPage && this.editor && ( !tabs || !buttons ) ) {
-		fastdom.write(function() {
+		fastdom.write(function () {
 			self.editor.setValue(pages.current[ self.state.tab ]);
 		});
 	}
@@ -129,7 +125,7 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( self.state.saveText === "Save" ) {
+				if ( !self.state.contentSaving ) {
 					events.emit("content.save");
 				}
 			}

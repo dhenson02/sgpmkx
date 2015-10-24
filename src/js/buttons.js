@@ -7,7 +7,7 @@ function renderButtons ( DOM ) {
 	return (
 		h("div", [
 
-			h("a#ph-save.ph-edit-btn" + ( DOM.state.saveText === "Save" ? "" : ".loading" ), {
+			h("a#ph-save.ph-edit-btn" + ( !DOM.state.contentSaving ? "" : ".loading" ), {
 				href: "#",
 				title: "Save",
 				style: DOM.state.saveStyle,
@@ -40,7 +40,7 @@ function renderButtons ( DOM ) {
 				}
 			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "New" : "Cancel" ]) ]),
 
-			
+
 			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
 				style: DOM.state.titleStyle,
@@ -76,11 +76,11 @@ function renderButtons ( DOM ) {
 					}
 					DOM.setState({
 						fullPage: !DOM.state.fullPage
-					}, false, false, true, false);
+					});
 				}
 			}, [ DOM.state.fullPage ? "edit" : "preview" ]),
 
-			h("hr.hr-divider"),
+			h("hr.hr-divider")
 		])
 	);
 }

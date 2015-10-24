@@ -62,8 +62,6 @@ function renderEditor ( DOM ) {
 
 			h("#ph-buttons", [ DOM.buttonsDOM ]),
 
-
-
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
 			h("#ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [

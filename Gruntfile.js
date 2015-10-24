@@ -14,6 +14,7 @@ module.exports = function ( grunt ) {
 			},
 			dev: {
 				files: {
+					//'dist/js/main.min.js': 'src/js/main.js',
 					'dist/js/main.js': 'src/js/main.js'
 				}
 			}
@@ -72,7 +73,7 @@ module.exports = function ( grunt ) {
 			}
 		},
 		purifycss: {
-			options: { rejected: true },
+			options: {},
 			dist: {
 				src: ['dist/main_template.html', 'dist/js/main.min.js'],
 				css: [

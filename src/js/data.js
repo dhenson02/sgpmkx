@@ -188,7 +188,7 @@ events.on("content.create", function ( data, path, title ) {
 */
 
 events.on("content.save", function () {
-	if ( DOM.state.saveText !== "Save" ) {
+	if ( DOM.state.contentSaving ) {
 		return false;
 	}
 	DOM.setState({

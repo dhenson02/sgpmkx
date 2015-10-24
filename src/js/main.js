@@ -74,9 +74,6 @@ sweetAlert.setDefaults({
 
 events.on("page.loaded", function () {
 	DOM.init();
-});
-
-events.on("dom.rendered", function () {
 	if ( window.location.hash ) {
 		router.init();
 	}
@@ -155,16 +152,15 @@ events.on("content.loaded", function ( data ) {
 		nextParent: "",
 		opened: opened,
 		contentChanging: false,
-		tagsLocked: true
+		tagsLocked: (pages.current.Tags.length > 1)
 	});
+	console.log(pages.current.Tags.length);
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
-		var scrollTop;
-		fastdom.read(function() {
-			scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
-		});
+		var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		fastdom.write(function () {
 			window.scrollBy(0, scrollTop);
+			//window.scrollTo(0, scrollTop || 254);
 		});
 		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		var interval = 300 / scrollTop;

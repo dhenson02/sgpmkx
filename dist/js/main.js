@@ -12882,7 +12882,7 @@ function renderButtons ( DOM ) {
 	return (
 		h("div", [
 
-			h("a#ph-save.ph-edit-btn" + ( DOM.state.saveText === "Save" ? "" : ".loading" ), {
+			h("a#ph-save.ph-edit-btn" + ( !DOM.state.contentSaving ? "" : ".loading" ), {
 				href: "#",
 				title: "Save",
 				style: DOM.state.saveStyle,
@@ -12913,7 +12913,49 @@ function renderButtons ( DOM ) {
 						addingContent: !DOM.state.addingContent
 					}, true, true, true, false);
 				}
-			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "New" : "Cancel" ]) ])
+			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "New" : "Cancel" ]) ]),
+
+
+			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
+				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
+				style: DOM.state.titleStyle,
+				onkeypress: function ( e ) {
+					if ( e.which == 13 || e.keyCode == 13 ) {
+						e = e || window.event;
+						if ( e.stopPropagation ) e.stopPropagation();
+						else if ( e.cancelBubble ) e.cancelBubble();
+						if ( e.preventDefault ) e.preventDefault();
+						else e.returnValue = false;
+						this.blur();
+						return false;
+					}
+				},
+				onblur: function () {
+					var title = this.textContent || this.innerText || this.innerHTML;
+					title = title.trim();
+					events.emit("title.save", title);
+				}
+			}, [ pages.current.Title ]),
+
+			h("a#ph-toggle-editor.ph-btn", {
+				href: "#",
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.stopPropagation ) e.stopPropagation();
+					else if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
+
+					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
+						events.emit("tab.change", "Overview");
+					}
+					DOM.setState({
+						fullPage: !DOM.state.fullPage
+					});
+				}
+			}, [ DOM.state.fullPage ? "edit" : "preview" ]),
+
+			h("hr.hr-divider")
 		])
 	);
 }
@@ -13111,7 +13153,7 @@ events.on("content.create", function ( data, path, title ) {
 */
 
 events.on("content.save", function () {
-	if ( DOM.state.saveText !== "Save" ) {
+	if ( DOM.state.contentSaving ) {
 		return false;
 	}
 	DOM.setState({
@@ -13119,7 +13161,8 @@ events.on("content.save", function () {
 		saveStyle: {
 			color: "#00B16A",
 			backgroundColor: "#FFFFFF"
-		}
+		},
+		contentSaving: true
 	}, true, true, true, false);
 	var data = {
 		'__metadata': {
@@ -13164,7 +13207,8 @@ events.on("content.save", function () {
 						saveStyle: {
 							backgroundColor: "#00B16A",
 							color: "#FFFFFF"
-						}
+						},
+						contentSaving: false
 					}, true, true, true, false);
 
 					var pubs = "", pub;
@@ -13189,7 +13233,8 @@ events.on("content.save", function () {
 						saveStyle: {
 							backgroundColor: "#ec6c62",
 							color: "#FFFFFF"
-						}
+						},
+						contentSaving: false
 					}, true, true, true, false);
 					console.log("Content save error: ", error);
 				},
@@ -13219,7 +13264,8 @@ events.on("content.save", function () {
 				saveStyle: {
 					backgroundColor: "#ec6c62",
 					color: "#FFFFFF"
-				}
+				},
+				contentSaving: false
 			}, true, true, true, false);
 			console.log("Content save error (couldn't get digest): ", error);
 			setTimeout(function () {
@@ -13246,7 +13292,7 @@ events.on("title.save", function ( title ) {
 			borderBottomColor: "#FF9000",
 			color: "#FF9000"
 		}
-	}, true, true);
+	}, true, true, true, false);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -13286,7 +13332,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#00B16A",
 							color: "#00B16A"
 						}
-					}, false, true, true, true);
+					}, false, true, true, false);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -13301,7 +13347,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#EC6C62",
 							color: "#EC6C62"
 						}
-					}, true, true, true, true);
+					}, true, true, true, false);
 					console.log("Title save error: ", error);
 				},
 				complete: function () {
@@ -13309,7 +13355,7 @@ events.on("title.save", function ( title ) {
 						DOM.setState({
 							titleChanging: false,
 							titleStyle: {}
-						}, true, true, true, true);
+						}, true, true, true, false);
 					}, 500);
 				}
 			});
@@ -13328,12 +13374,12 @@ events.on("title.save", function ( title ) {
 					borderBottomColor: "#EC6C62",
 					color: "#EC6C62"
 				}
-			}, true, true, true, true);
+			}, true, true, true, false);
 			setTimeout(function () {
 				DOM.setState({
 					titleChanging: false,
 					titleStyle: {}
-				}, true, true, true, true);
+				}, true, true, true, false);
 			}, 500);
 		}
 	});
@@ -13419,6 +13465,7 @@ var vdom = require("virtual-dom"),
 	diff = vdom.diff,
 	patch = vdom.patch,
 	createElement = vdom.create,
+	fastdom = require("fastdom"),
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events"),
@@ -13426,9 +13473,9 @@ var vdom = require("virtual-dom"),
 	renderTabs = require("./tabs"),
 	renderTags = require("./tags"),
 	renderButtons = require("./buttons"),
+	renderSearch = require("./search"),
 	renderPage = require("./page"),
-	regLink = /<a (href=["']https?:\/\/)/gi,
-	fastdom = require("fastdom");
+	regLink = /<a (href=["']https?:\/\/)/gi;
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -13451,6 +13498,7 @@ function DOM () {
 		titleChanging: false,
 		titleStyle: {},
 		contentChanging: false,
+		contentSaving: false,
 		saveText: "Save",
 		saveStyle: {},
 		tagsLocked: true
@@ -13471,29 +13519,23 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
 	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
-	/*this.inputDOM = null;
-	this.outputDOM = null;*/
+
+	this.searchDOM = this.searchDOM || renderSearch();
+
 	return renderPage(this);
 };
 
 DOM.prototype.init = function () {
-	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root"),
-		self = this;
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
 
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
 	this.editor = null;
-	fastdom.read(function() {
-		self.searchInput = document.getElementById("ph-search");
-		self.content = document.getElementById("ph-content");
-		self.title = document.getElementById("ph-title");
-		self.cheatSheet = document.getElementById("cheatSheet");
-		self.textarea = document.getElementById("ph-textarea");
-		self.output = document.getElementById("ph-output");
-		events.emit("dom.loaded");
-	});
+	this.searchInput = document.getElementById("ph-search");
+	this.textarea = document.getElementById("ph-textarea");
+	this.output = document.getElementById("ph-output");
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -13515,7 +13557,9 @@ DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 		patches = diff(this.dirtyDOM, refreshDOM),
 		self = this;
 
-	this.rootNode = patch(this.rootNode, patches);
+	fastdom.write(function () {
+		self.rootNode = patch(self.rootNode, patches);
+	});
 	this.dirtyDOM = refreshDOM;
 
 	if ( !this.state.fullPage && !this.editor && misc.codeMirror ) {
@@ -13524,7 +13568,7 @@ DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 		});
 	}
 	else if ( !this.state.fullPage && this.editor && ( !tabs || !buttons ) ) {
-		fastdom.write(function() {
+		fastdom.write(function () {
 			self.editor.setValue(pages.current[ self.state.tab ]);
 		});
 	}
@@ -13543,7 +13587,7 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( self.state.saveText === "Save" ) {
+				if ( !self.state.contentSaving ) {
 					events.emit("content.save");
 				}
 			}
@@ -13558,14 +13602,17 @@ DOM.prototype.initEditor = function () {
 
 DOM.prototype.renderOut = function () {
 	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
-	this.output.innerHTML = misc.md.render(pages.current[this.state.tab]).replace(regLink, "<a target='_blank' $1");
+	var self = this;
+	fastdom.write(function () {
+		self.output.innerHTML = misc.md.render(pages.current[ self.state.tab ]).replace(regLink, "<a target='_blank' $1");
+	});
 };
 
 var dom = new DOM();
 
 module.exports = dom;
 
-},{"./buttons":129,"./events":132,"./helpers":133,"./nav":135,"./page":136,"./pages":137,"./tabs":138,"./tags":139,"fastdom":3,"virtual-dom":98}],132:[function(require,module,exports){
+},{"./buttons":129,"./events":132,"./helpers":133,"./nav":135,"./page":136,"./pages":137,"./search":138,"./tabs":139,"./tags":140,"fastdom":3,"virtual-dom":98}],132:[function(require,module,exports){
 var Events = require("event");
 Events.prototype.emit = Events.prototype.fire;
 var events = new Events({});
@@ -13589,10 +13636,10 @@ var markdownit = require("markdown-it"),
 		quotes: '“”‘’'
 	}),
 	codeMirror = CodeMirror,
-	regSplit = /[^a-z0-9]+/gi,
-	regSplit2 = /[^a-z0-9-_]+/gi,
+	regSplit = /[^a-zA-Z0-9]+/g,
+	regSplit2 = /[^a-zA-Z0-9-_]+/g,
 	//regSplit2 = /\b; ?|\b /g,
-	regSanitize = /([^a-z0-9-_.&\s])/gi,
+	regSanitize = /([^a-zA-Z0-9-_.&\s]+)/g,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
@@ -13617,7 +13664,7 @@ var vdom = require("virtual-dom"),
 	patch = vdom.patch,
 	Router = require("director/build/director").Router,
 	sweetAlert = require("sweetalert"),
-	horsey = require("horsey"),
+	fastdom = require("fastdom"),
 
 	misc = require("./helpers"),
 	pages = require("./pages"),
@@ -13683,28 +13730,6 @@ sweetAlert.setDefaults({
 
 events.on("page.loaded", function () {
 	DOM.init();
-});
-
-events.on("dom.loaded", function () {
-	horsey(DOM.searchInput, {
-		suggestions: pages.titles,
-		autoHideOnBlur: false,
-		limit: 8,
-		getValue: function ( item ) {
-			return item.value;
-		},
-		getText: function ( item ) {
-			return item.text;
-		},
-		set: function ( item ) {
-			router.setRoute(item);
-			DOM.searchInput.value = "";
-			return false;
-		},
-		render: function ( li, item ) {
-			li.innerText = li.textContent = item.renderText;
-		}
-	});
 	if ( window.location.hash ) {
 		router.init();
 	}
@@ -13783,11 +13808,16 @@ events.on("content.loaded", function ( data ) {
 		nextParent: "",
 		opened: opened,
 		contentChanging: false,
-		tagsLocked: true
+		tagsLocked: (pages.current.Tags.length > 1)
 	});
+	console.log(pages.current.Tags.length);
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
-		window.scrollBy(0, DOM.rootNode.getBoundingClientRect().top - 50);
+		var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
+		fastdom.write(function () {
+			window.scrollBy(0, scrollTop);
+			//window.scrollTo(0, scrollTop || 254);
+		});
 		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		var interval = 300 / scrollTop;
 		var positive = ( scrollTop > 0 );
@@ -13805,14 +13835,19 @@ events.on("content.loaded", function ( data ) {
 
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: /*( pages.current[ tab ].length < 2 ) ? "Overview" :*/ tab
+		tab: tab
 	}, true, false, true, true);
 	DOM.renderOut();
 });
 
+events.on("content.found", function ( path ) {
+	router.setRoute(path);
+});
+
 pageInit();
 
-},{"./data":130,"./dom":131,"./events":132,"./helpers":133,"./pages":137,"director/build/director":1,"horsey":6,"sweetalert":94,"virtual-dom":98}],135:[function(require,module,exports){
+
+},{"./data":130,"./dom":131,"./events":132,"./helpers":133,"./pages":137,"director/build/director":1,"fastdom":3,"sweetalert":94,"virtual-dom":98}],135:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
@@ -13846,6 +13881,7 @@ function renderLink ( link, DOM ) {
 								DOM.setState({
 									opened: openedObj
 								}, false, true, true, true);
+								return false;
 							}
 						}
 					} )
@@ -13869,6 +13905,7 @@ function renderLink ( link, DOM ) {
 								DOM.setState({
 									opened: openState
 								}, false, true, true, true);
+								return false;
 							}
 						}) ),
 					h("span.place")
@@ -14012,48 +14049,9 @@ function renderAddContent ( DOM ) {
 
 function renderEditor ( DOM ) {
 	return (
-		h("#ph-content" + (!DOM.state.contentChanging ? "" : ".loading"), [
+		h("#ph-content", [
 
 			h("#ph-buttons", [ DOM.buttonsDOM ]),
-
-			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
-				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
-				style: DOM.state.titleStyle,
-				onkeypress: function ( e ) {
-					if ( e.which == 13 || e.keyCode == 13 ) {
-						e = e || window.event;
-						if ( e.stopPropagation ) e.stopPropagation();
-						else if ( e.cancelBubble ) e.cancelBubble();
-						if ( e.preventDefault ) e.preventDefault();
-						else e.returnValue = false;
-						this.blur();
-						return false;
-					}
-				},
-				onblur: function () {
-					var title = this.textContent || this.innerText || this.innerHTML;
-					title = title.trim();
-					events.emit("title.save", title);
-				}
-			}, [ pages.current.Title ]),
-
-			h("a#ph-toggle-editor.ph-btn", {
-				href: "#",
-				onclick: function ( e ) {
-					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
-					if ( e.preventDefault ) e.preventDefault();
-					else e.returnValue = false;
-
-					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
-						events.emit("tab.change", "Overview");
-					}
-					DOM.setState({
-						fullPage: !DOM.state.fullPage
-					}, false, false, true, false);
-				}
-			}, [ DOM.state.fullPage ? "edit" : "preview" ]),
 
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
@@ -14061,7 +14059,7 @@ function renderEditor ( DOM ) {
 				DOM.tagsDOM
 			]),
 
-			h("#ph-contentWrap", [
+			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
@@ -14097,20 +14095,11 @@ function renderPage ( DOM ) {
 	return (
 		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
 
-			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent(DOM) ]),
-
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
-			}, [
-				h("label", [
-					h("input#ph-search", {
-						type: "text",
-						name: "ph-search",
-						"tab-index": 1,
-						placeholder: pages.options.searchPlaceholder
-					})
-				])
-			]),
+			}, [ DOM.searchDOM ]),
+
+			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent(DOM) ]),
 
 			h("#ph-side-nav", [ DOM.navDOM ]),
 
@@ -14471,6 +14460,57 @@ module.exports = pages;
 },{"./events":132,"./helpers":133}],138:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
+	events = require("./events"),
+	horsey = require("horsey");
+
+/*function SearchHook () {}
+
+SearchHook.prototype.hook = function ( node /!*, name, prev*!/ ) {
+	console.log(node);
+
+};*/
+
+function renderSearch () {
+	return (
+		h("label", [
+			h("input#ph-search", {
+				//horsey: new SearchHook(),
+				type: "text",
+				name: "ph-search",
+				"tab-index": 1,
+				onclick: function () {
+					var self = this;
+					horsey(self, {
+						suggestions: pages.titles,
+						autoHideOnBlur: false,
+						limit: 8,
+						getValue: function ( item ) {
+							return item.value;
+						},
+						getText: function ( item ) {
+							return item.text;
+						},
+						set: function ( item ) {
+							events.emit("content.found", item);
+							self.value = "";
+							return false;
+						},
+						render: function ( li, item ) {
+							li.innerText = li.textContent = item.renderText;
+						}
+					});
+				},
+				placeholder: pages.options.searchPlaceholder
+			})
+		])
+	);
+}
+
+module.exports = renderSearch;
+
+},{"./events":132,"./pages":137,"horsey":6,"virtual-dom":98}],139:[function(require,module,exports){
+var h = require("virtual-dom").h,
+	pages = require("./pages"),
 	events = require("./events");
 
 function renderTabs ( DOM ) {
@@ -14515,7 +14555,7 @@ function renderTabs ( DOM ) {
 
 module.exports = renderTabs;
 
-},{"./events":132,"./pages":137,"virtual-dom":98}],139:[function(require,module,exports){
+},{"./events":132,"./pages":137,"virtual-dom":98}],140:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
@@ -14529,13 +14569,16 @@ function renderTags ( DOM ) {
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
-		var addTag = document.querySelector("input[name='ph-add-tag']"),
-			val = addTag.value.trim().replace(misc.regSplit, " "),
-			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
-		if ( val && !regVal.test(pages.current.Tags) ) {
-			addTag.focus();
-			events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
+		if ( DOM.state.tagsLocked ) {
+			return false;
 		}
+		var addTag = document.querySelector("input[name='ph-add-tag']"),
+			val = addTag.value.trim().split(misc.regSplit).filter(function ( tag ) {
+				var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
+				return !regVal.test(pages.current.Tags);
+			}).join(",");
+		addTag.focus();
+		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
 	};
 
 	var removeTag = function ( e ) {
@@ -14551,15 +14594,14 @@ function renderTags ( DOM ) {
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
 		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
-		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
+		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
 	return (
 		h("div", [
-			h(".ph-input-wrap", [
+			h("label.ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
 					name: "ph-add-tag",
-					value: "",
 					placeholder: "Add keyword(s)",
 					autofocus: true,
 					onkeypress: function ( e ) {
@@ -14582,7 +14624,7 @@ function renderTags ( DOM ) {
 			]),
 			(
 				pages.current.Tags ?
-					h("div", [
+					h(".ph-tag-container", [
 						h("i.icon.icon-lock" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), {
 							role: "button",
 							onclick: function () {
