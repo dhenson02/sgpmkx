@@ -19,7 +19,7 @@
 	position: relative;
 	text-align: left;
 	display: inline-block;
-	vertical-align: middle;
+	bottom: 0;
 	height: 100%;
 	max-width: 45%;
 	width: 100%;
@@ -28,6 +28,10 @@
 #ph-tags .ph-input-wrap .ph-add-tag {
 	display: inline-block;
 	width: calc(100% - 44px);
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag {
+	border-bottom-color: #00B16A;
 }
 
 #ph-tags .locked .ph-input-wrap {
@@ -44,6 +48,7 @@
 
 #ph-tags .locked .ph-input-wrap .ph-add-tag-btn {
 	display: inline-block;
+	vertical-align: middle;
 	color: #454545;
 	border-color: #454545;
 	pointer-events: none;
@@ -67,6 +72,7 @@
 	max-width: 48%;
 	width: 100%;
 	float: right;
+	bottom: 0;
 }
 
 #ph-tags .ph-tag-wrapper {
@@ -96,8 +102,11 @@
 	margin: 4px 7px 4px 0;
 	border: 1px dashed #CCCCCC;
 	padding: 3px 8px;
-	cursor: pointer;
 	font-weight: 300;
+}
+
+#ph-tags .unlocked .ph-tag-container small {
+	cursor: pointer;
 }
 
 #ph-tags .locked small {
@@ -186,4 +195,20 @@
 		display: block;
 		margin: 20px auto;
 	}
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag::-webkit-input-placeholder {
+	color: #90C695;
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag:-moz-placeholder {
+	color: #90C695;
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag::-moz-placeholder {
+	color: #90C695;
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag:-ms-input-placeholder {
+	color: #90C695;
 }
