@@ -1,23 +1,24 @@
 #ph-buttons {
-	width: 100%;
-	/*max-width: 960px;
-	max-width: calc(100% - 320px);
-	margin-top: 50px;*/
-	/*text-align: right;*/
 	position: relative;
-	display: block;
+	float: right;
+	clear: right;
 	overflow: hidden;
+	margin: 10px 0;
 }
 
 .ph-edit-btn,
 .ph-btn {
 	position: relative;
+	display: inline-block;
+	vertical-align: middle;
 	clear: none;
-	margin: 10px 0;
+	margin: 0 0 0 20px;
 	border: 1px solid;
-	border-radius: 6px;
 	font-weight: 700;
 	font-style: normal;
+	/*font-size: 1em;*/
+	/*border-radius: 6px;*/
+	/*font-size: 15px;*/
 	padding: 10px 20px;
 	text-align: center;
 }
@@ -27,14 +28,18 @@
 	font-style: normal;
 }
 
-#ph-buttons #ph-toggle-editor {
-	float: left;
+#ph-wrapper #ph-toggle-editor {
+	/*border-radius: 5px;*/
+	font-weight: 300;
+	font-size: 15px;
+	padding: 5px 10px;
+	/*float: left;*/
 	color: #454545;
 	/*border-color: transparent;*/
 	background-color: #FFFFFF;
 }
 
-#ph-buttons #ph-toggle-editor:active {
+#ph-wrapper #ph-toggle-editor:active {
 	color: #FFFFFF;
 	background-color: #454545;
 	/*border-color: #454545;*/

@@ -8,8 +8,7 @@ function renderTabs ( DOM ) {
 		var tabName = tab.title.replace(/\s/g, ""); // Kinda future-proofing
 		var className = ".ph-tab-" + tabName.toLowerCase() + (
 				( pages.current[ tabName ].length < 1 && pages.options.hideEmptyTabs ) ? ".ph-tab-empty" : "" ) + (
-				( DOM.state.tab !== tabName ) ? "" : ".ph-tab-current"
-			);
+				( DOM.state.tab !== tabName ) ? "" : ".ph-tab-current" );
 		return (
 			h("li" + className, [
 				h(".ph-tab-box", [

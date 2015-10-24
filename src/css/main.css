@@ -123,15 +123,15 @@ body {
 
 #ph-title {
 	display: inline-block;
+	vertical-align: middle;
 	opacity: 1;
 	font-size: 1.5em;
 	border: none;
 	border-bottom: 4px dashed transparent;
 	outline: 0;
 	padding: 10px 0;
-	margin-left: auto;
-	margin-right: auto;
 	text-align: center;
+	margin: 20px auto;
 }
 
 #ph-title.ph-cm:hover {
@@ -144,10 +144,8 @@ body {
 }
 
 .fullPage #ph-title {
-	display: block;
-	font-size: 3.5em;
-	padding: 40px 0;
 	text-align: left;
+	font-size: 2.5em;
 }
 
 #ph-contentWrap {

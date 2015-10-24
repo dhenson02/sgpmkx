@@ -60,7 +60,7 @@ function renderEditor ( DOM ) {
 	return (
 		h("#ph-content", [
 
-			DOM.buttonsDOM,
+			h("#ph-buttons", [ DOM.buttonsDOM ]),
 
 			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
@@ -83,15 +83,34 @@ function renderEditor ( DOM ) {
 				}
 			}, [ pages.current.Title ]),
 
+			h("a#ph-toggle-editor.ph-btn", {
+				href: "#",
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.stopPropagation ) e.stopPropagation();
+					else if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
+
+					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
+						events.emit("tab.change", "Overview");
+					}
+					DOM.setState({
+						fullPage: !DOM.state.fullPage
+					}, false, false, true, false);
+				}
+			}, [ DOM.state.fullPage ? "edit" : "preview" ]),
+
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
-			DOM.tagsDOM,
+			h("#ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
+				DOM.tagsDOM
+			]),
 
 			h("#ph-contentWrap", [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
-				//( (DOM.state.fullPage && DOM.state.level > 1) ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
@@ -104,7 +123,7 @@ function renderEditor ( DOM ) {
 
 function renderDefault ( DOM ) {
 	return (
-		h("#ph-content.fullPage", [
+		h("#ph-content", [
 			h("h1#ph-title", [ pages.current.Title ]),
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 			h("#ph-contentWrap", [

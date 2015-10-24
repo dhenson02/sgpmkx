@@ -33,7 +33,7 @@ function renderTags ( DOM ) {
 		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
 	};
 	return (
-		h("#ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
+		h("div", [
 			h(".ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
@@ -59,8 +59,8 @@ function renderTags ( DOM ) {
 					onclick: addTag
 				})
 			]),
-			//h(".clearfix", { style: { padding: "5px" } }),
-			( pages.current.Tags ?
+			(
+				pages.current.Tags ?
 				h("h4.ph-tag-wrapper", [
 					pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
 						return ( tag.trim() ?
@@ -70,7 +70,9 @@ function renderTags ( DOM ) {
 							}, [ tag.trim() ]) :
 							null );
 					})
-				]) : null )
+				]) :
+				null
+			)
 		])
 	);
 }

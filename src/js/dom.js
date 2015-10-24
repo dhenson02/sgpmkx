@@ -49,7 +49,7 @@ function DOM () {
  * @returns {*} - VTree, VNode or...null?
  */
 DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
-	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( this.state.fullPage && pages.options.hideNavWhileEditing ) ? renderNav(this) : null);
+	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( !this.state.fullPage && pages.options.hideNavWhileEditing ) ? null : renderNav(this) );
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
 	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
@@ -97,7 +97,10 @@ DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor && ( !tabs || !buttons ) ) {
+	if ( !this.state.fullPage && !this.editor && misc.codeMirror ) {
+		this.initEditor();
+	}
+	else if ( !this.state.fullPage && this.editor && ( !tabs || !buttons ) ) {
 		this.editor.setValue(pages.current[this.state.tab]);
 	}
 };

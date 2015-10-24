@@ -156,8 +156,13 @@ events.on("content.loaded", function ( data ) {
 		level: DOM.state.nextLevel,
 		parent: DOM.state.nextParent
 	});
+
 	var opened = Object.keys(pages.parents).reduce(function ( paths, path ) {
-		paths[path] = ( (DOM.state.nextParent === path) ? true : ( !pages.options.resetOpenOnNav ? DOM.state.opened[path] : false ) );
+		paths[ path ] = (
+			DOM.state.nextParent === path ? true : (
+				!pages.options.resetOpenOnNav ? DOM.state.opened[ path ] : false
+			)
+		);
 		return paths;
 	}, {});
 	DOM.setState({
@@ -186,14 +191,11 @@ events.on("content.loaded", function ( data ) {
 		})(scrollTop);*/
 	}
 	events.emit("tab.change", "Overview");
-	if ( misc.codeMirror && !DOM.editor ) {
-		DOM.initEditor();
-	}
 });
 
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: tab
+		tab: /*( pages.current[ tab ].length < 2 ) ? "Overview" :*/ tab
 	}, true, false, true, true);
 	DOM.renderOut();
 });

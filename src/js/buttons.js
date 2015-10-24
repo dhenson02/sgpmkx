@@ -5,26 +5,7 @@ var h = require("virtual-dom").h,
 
 function renderButtons ( DOM ) {
 	return (
-		h("#ph-buttons", [
-
-			h("a#ph-toggle-editor.ph-btn", {
-				href: "#",
-				onclick: function ( e ) {
-					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
-					if ( e.preventDefault ) e.preventDefault();
-					else e.returnValue = false;
-
-					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
-						events.emit("tab.change", "Overview");
-					}
-					DOM.setState({
-						fullPage: !DOM.state.fullPage
-					}, false, false, true, false);
-				}
-			}, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]),
-
+		h("div", [
 
 			h("a#ph-save.ph-edit-btn" + ( DOM.state.saveText === "Save" ? "" : ".loading" ), {
 				href: "#",
