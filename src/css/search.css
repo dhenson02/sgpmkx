@@ -8,8 +8,7 @@
 @media screen and (max-width: 768px) {
 	#ph-search-wrap {
 		position: relative;
-		margin-right: auto;
-		margin-left: auto;
 		width: 80%;
+		margin: 0 auto 20px;
 	}
 }

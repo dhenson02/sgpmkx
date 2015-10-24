@@ -73,3 +73,9 @@
 .fullPage .ph-edit-btn {
 	display: none;
 }
+
+@media screen and (max-width: 768px) {
+	#ph-wrapper #ph-toggle-editor {
+		margin: 10px auto;
+	}
+}

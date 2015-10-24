@@ -98,6 +98,7 @@
 #ph-tabs .icon::before {
 	display: block;
 	margin: 0;
+	font-size: 1.3em;
 }
 
 .no-flexbox nav ul {
