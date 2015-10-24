@@ -4,6 +4,7 @@ var h = require("virtual-dom").h,
 	events = require("./events");
 
 function renderTags ( DOM ) {
+
 	var addTag = function ( e ) {
 		e = e || window.event;
 		if ( e.stopPropagation ) e.stopPropagation();
@@ -11,16 +12,17 @@ function renderTags ( DOM ) {
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
-		if ( DOM.state.tagsLocked ) {
+		var addTag = document.querySelector("input[name='ph-add-tag']");
+		if ( DOM.state.tagsLocked || !addTag.value.trim() ) {
 			return false;
 		}
-		var addTag = document.querySelector("input[name='ph-add-tag']"),
-			val = addTag.value.trim().split(misc.regSplit).filter(function ( tag ) {
-				var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
-				return !regVal.test(pages.current.Tags);
-			}).join(",");
+		var val = addTag.value.trim().replace(misc.regPubs, "").replace(misc.regSplit, ",").split(/,/g).filter(function ( tag ) {
+			var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
+			return !regVal.test(pages.current.Tags);
+		}).join(",");
+		addTag.value = "";
 		addTag.focus();
-		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
+		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + "," + val : val ));
 	};
 
 	var removeTag = function ( e ) {
@@ -38,14 +40,15 @@ function renderTags ( DOM ) {
 		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
 		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
+
 	return (
-		h( ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
+		h(( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
 			h("label.ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
 					name: "ph-add-tag",
 					placeholder: "Add keyword(s)",
-					autofocus: true,
+					autofocus: !DOM.state.tagsLocked,
 					onkeypress: function ( e ) {
 						if ( e.which == 13 || e.keyCode == 13 ) {
 							e = e || window.event;
@@ -58,7 +61,7 @@ function renderTags ( DOM ) {
 						}
 					}
 				}),
-				h("a.ph-add-tag-btn.icon.icon-plus", {
+				h("a.ph-add-tag-btn.icon.icon-right-arrow", {
 					href: "#",
 					role: "button",
 					onclick: addTag
@@ -75,14 +78,15 @@ function renderTags ( DOM ) {
 								}, true, true, false, true);
 							}
 						}),
-						h("h4.ph-tag-wrapper", [
-							pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
+						h(".ph-tag-wrapper", [
+							pages.current.Tags.split(/,/g).map(function ( tag ) {
 								return ( tag.trim() ?
-									h("small", {
-										role: "button",
-										onclick: removeTag
-									}, [ tag.trim() ]) :
-									null );
+										h("small", {
+											role: "button",
+											onclick: removeTag
+										}, [ tag.trim() ]) :
+										null
+								);
 							})
 						])
 					]) :

@@ -4,7 +4,7 @@
 	text-align: left;
 	clear: both;
 	max-width: 100%;
-	/*overflow: hidden;*/
+	overflow: hidden;
 }
 
 .fullPage #ph-tags {
@@ -21,60 +21,71 @@
 	display: inline-block;
 	vertical-align: middle;
 	height: 100%;
-	max-width: 50%;
+	max-width: 45%;
 	width: 100%;
 }
 
 #ph-tags .ph-input-wrap .ph-add-tag {
 	display: inline-block;
-	width: 80%;
+	width: calc(100% - 44px);
 }
 
-#ph-tags .ph-input-wrap .ph-add-tag-btn {
+#ph-tags .locked .ph-input-wrap {
+	pointer-events: none;
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag-btn {
 	display: inline-block;
 	vertical-align: middle;
-	font-weight: bold;
 	color: #00B16A;
 	border-color: #00B16A;
+	font-weight: bold;
 }
 
-#ph-tags .ph-input-wrap .ph-add-tag-btn:hover {
+#ph-tags .locked .ph-input-wrap .ph-add-tag-btn {
+	display: inline-block;
+	color: #454545;
+	border-color: #454545;
+	pointer-events: none;
+	font-weight: bold;
+}
+
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag-btn:hover {
 	color: #2ECC71;
 	border-color: #2ECC71;
 }
 
-#ph-tags .ph-input-wrap .ph-add-tag-btn:active {
+#ph-tags .unlocked .ph-input-wrap .ph-add-tag-btn:active {
 	color: #26A65B;
 	border-color: #26A65B;
 }
 
 #ph-tags .ph-tag-container {
 	position: relative;
-	display: inline-block;
 	vertical-align: middle;
 	height: 100%;
-	max-width: 45%;
-	right: 0;
+	max-width: 48%;
 	width: 100%;
-
+	float: right;
 }
 
 #ph-tags .ph-tag-wrapper {
 	position: relative;
+	opacity: 1;
 	white-space: normal;
-	display: inline-block;
+	float: right;
 	overflow: hidden;
-	padding: 2px 6px;
-	margin: 5px;
+	padding: 2px 5px;
+	margin: 2px;
 	width: 100%;
-	right: 0;
+	border: 1px solid transparent;
 }
 
 #ph-tags .locked .ph-tag-wrapper {
 	opacity: .6;
 	pointer-events: none;
 	cursor: default;
-	border: 1px solid #999999;
+	border-color:  #999999;
 }
 
 #ph-tags .ph-tag-container small {
@@ -90,12 +101,13 @@
 }
 
 #ph-tags .locked small {
-	border: none;
-	margin-left: 0;
-	padding: 3px 1px 3px;
+	border-color: transparent;
+	/*margin-left: 0;*/
+	/*padding: 3px 1px 3px;*/
 }
 
 #ph-tags .locked small::after {
+	position: absolute;
 	content: ', ';
 	display: inline;
 }
@@ -121,9 +133,11 @@
 }
 
 #ph-tags .icon-lock {
-	display: inline-block;
+	/*display: inline-block;*/
+	/*float: right;*/
 	cursor: pointer;
-	font-weight: 700;
+	font-weight: 900;
+	font-size: 1.3em;
 	font-style: normal;
 }
 
@@ -131,13 +145,13 @@
 	cursor: pointer;
 	opacity: 1;
 	font-style: normal;
-	font-weight: 700;
+	font-weight: 900;
 }
 
 #ph-tags .unlocked .icon-lock::before {
 	color: #2ECC71;
 	opacity: 1;
-	font-weight: 700;
+	font-weight: 900;
 }
 
 #ph-tags .unlocked .icon-lock:hover::before {
@@ -148,14 +162,14 @@
 #ph-tags .locked .icon-lock::before {
 	color: #454545;
 	opacity: .5;
-	font-weight: 700;
+	font-weight: 900;
 }
 
-#ph-tags .locked .ph-tag-container:hover > .ph-tag-wrapper {
+#ph-tags .unlocked .ph-tag-container:hover > .ph-tag-wrapper {
 	border-color: gold;
 }
 
-#ph-tags .locked:hover > .icon-lock::before {
+#ph-tags:hover .locked .ph-tag-container > .icon-lock::before {
 	color: gold;
 }
 

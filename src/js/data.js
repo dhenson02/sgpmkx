@@ -215,9 +215,9 @@ events.on("content.save", function () {
 		'__metadata': {
 			'type': pages.current.listItemType
 		},
-		//'Title': pages.current.Title, // Is saved on its own
+		'Title': pages.current.Title,
 		'Pubs': pages.current.Pubs,
-		//'Tags': pages.current.Tags,   // No need to waste bandwidth or arrive at a conflict somehow
+		'Tags': pages.current.Tags,
 		'Overview': pages.current.Overview,
 		'Policy': pages.current.Policy,
 		'Training': pages.current.Training,

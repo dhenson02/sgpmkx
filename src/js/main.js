@@ -118,7 +118,7 @@ events.on("content.loaded", function ( data ) {
 		Title: obj.Title || "",
 		_title: obj.Title || "",
 		Pubs: pubs || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ",") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regPubs, "").replace(misc.regSplit, ",") || "",
 		Icon: obj.Icon || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",

@@ -63,7 +63,6 @@ body { opacity: 1; }
     }
 
     phWrapper.id = "wrapper";
-	phWrapper.innerHTML = "<div id='ph-loader' class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
     if ( phWrapperTemp ) {
         phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
     }

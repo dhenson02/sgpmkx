@@ -18,7 +18,7 @@ var markdownit = require("markdown-it"),
 	regSplit = /[^a-zA-Z0-9]+/g,
 	regSplit2 = /[^a-zA-Z0-9-_]+/g,
 	regSanitize = /([^a-zA-Z0-9-_.&\s]+)/g,
-	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
+	regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
 	addEvent: addEvent,
