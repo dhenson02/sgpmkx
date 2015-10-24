@@ -72,7 +72,7 @@ module.exports = function ( grunt ) {
 			}
 		},
 		purifycss: {
-			options: {},
+			options: { rejected: true },
 			dist: {
 				src: ['dist/main_template.html', 'dist/js/main.min.js'],
 				css: [

@@ -4,6 +4,7 @@
 	clear: right;
 	overflow: hidden;
 	margin: 10px 0;
+	width: 100%;
 }
 
 .ph-edit-btn,
@@ -29,14 +30,15 @@
 }
 
 #ph-wrapper #ph-toggle-editor {
-	/*border-radius: 5px;*/
 	font-weight: 300;
 	font-size: 15px;
 	padding: 5px 10px;
-	/*float: left;*/
 	color: #454545;
-	/*border-color: transparent;*/
 	background-color: #FFFFFF;
+}
+
+#ph-wrapper #ph-toggle-editor:hover {
+	color: #00B16A;
 }
 
 #ph-wrapper #ph-toggle-editor:active {
@@ -47,15 +49,18 @@
 
 #ph-buttons #ph-create {
 	float: right;
-	/*color: #FF9000;*/
 	border-color: transparent;
 	background-color: #FFFFFF;
+	color: #454545;
+	position: relative;
 	text-align: center;
+	/*float: none;*/
+	/*color: #FF9000;*/
 	margin-right: 10px;
 }
 
 #ph-buttons #ph-create:active {
-	border-color: #0072C6;
+	border-color: #454545;
 }
 
 #ph-buttons #ph-save {

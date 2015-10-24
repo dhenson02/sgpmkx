@@ -11,13 +11,16 @@ function renderTags ( DOM ) {
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
-		var addTag = document.querySelector("input[name='ph-add-tag']"),
-			val = addTag.value.trim().replace(misc.regSplit, " "),
-			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
-		if ( val && !regVal.test(pages.current.Tags) ) {
-			addTag.focus();
-			events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
+		if ( DOM.state.tagsLocked ) {
+			return false;
 		}
+		var addTag = document.querySelector("input[name='ph-add-tag']"),
+			val = addTag.value.trim().split(misc.regSplit).filter(function ( tag ) {
+				var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
+				return !regVal.test(pages.current.Tags);
+			}).join(", ");
+		addTag.focus();
+		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
 	};
 
 	var removeTag = function ( e ) {
@@ -33,15 +36,14 @@ function renderTags ( DOM ) {
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
 		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
-		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
+		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
 	return (
 		h("div", [
-			h(".ph-input-wrap", [
+			h("label.ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
 					name: "ph-add-tag",
-					value: "",
 					placeholder: "Add keyword(s)",
 					autofocus: true,
 					onkeypress: function ( e ) {
@@ -64,7 +66,7 @@ function renderTags ( DOM ) {
 			]),
 			(
 				pages.current.Tags ?
-					h("div", [
+					h(".ph-tag-container", [
 						h("i.icon.icon-lock" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), {
 							role: "button",
 							onclick: function () {

@@ -32,9 +32,9 @@ body {
 	position: relative;
 	color: #000000;
 	font-size: 20px;
-	max-width: 100%;
 	padding: 20px;
 	margin: 0 auto;
+	max-width: 100%;
 	line-height: 1;
 }
 
@@ -117,15 +117,15 @@ body {
 
 #ph-title {
 	display: inline-block;
-	vertical-align: middle;
 	opacity: 1;
+	vertical-align: middle;
+	outline: 0;
 	font-size: 1.5em;
 	border: none;
 	border-bottom: 4px dashed transparent;
-	outline: 0;
 	padding: 10px 20px;
 	text-align: center;
-	margin: 20px auto;
+	margin: 0 auto;
 }
 
 #ph-title.ph-cm:hover {
@@ -141,6 +141,7 @@ body {
 	text-align: left;
 	font-size: 2.5em;
 	padding: 0;
+	margin: 20px auto;
 }
 
 #ph-contentWrap {
@@ -213,10 +214,11 @@ body {
 
 .ph-modified-date {
 	text-align: right;
-	/*float: right;*/
-	/*margin-top: -24px;*/
+	float: right;
+	clear: both;
+	margin-top: -24px;
 	/*font-style: italic;*/
-	color: #BBBBBB;
+	color: #CCCCCC;
 }
 
 .fullPage .ph-modified-date {

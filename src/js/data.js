@@ -196,7 +196,8 @@ events.on("content.save", function () {
 		saveStyle: {
 			color: "#00B16A",
 			backgroundColor: "#FFFFFF"
-		}
+		},
+		contentSaving: true
 	}, true, true, true, false);
 	var data = {
 		'__metadata': {
@@ -241,7 +242,8 @@ events.on("content.save", function () {
 						saveStyle: {
 							backgroundColor: "#00B16A",
 							color: "#FFFFFF"
-						}
+						},
+						contentSaving: false
 					}, true, true, true, false);
 
 					var pubs = "", pub;
@@ -266,7 +268,8 @@ events.on("content.save", function () {
 						saveStyle: {
 							backgroundColor: "#ec6c62",
 							color: "#FFFFFF"
-						}
+						},
+						contentSaving: false
 					}, true, true, true, false);
 					console.log("Content save error: ", error);
 				},
@@ -296,7 +299,8 @@ events.on("content.save", function () {
 				saveStyle: {
 					backgroundColor: "#ec6c62",
 					color: "#FFFFFF"
-				}
+				},
+				contentSaving: false
 			}, true, true, true, false);
 			console.log("Content save error (couldn't get digest): ", error);
 			setTimeout(function () {
@@ -323,7 +327,7 @@ events.on("title.save", function ( title ) {
 			borderBottomColor: "#FF9000",
 			color: "#FF9000"
 		}
-	}, true, true);
+	}, true, true, true, false);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -363,7 +367,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#00B16A",
 							color: "#00B16A"
 						}
-					}, false, true, true, true);
+					}, false, true, true, false);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -378,7 +382,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#EC6C62",
 							color: "#EC6C62"
 						}
-					}, true, true, true, true);
+					}, true, true, true, false);
 					console.log("Title save error: ", error);
 				},
 				complete: function () {
@@ -386,7 +390,7 @@ events.on("title.save", function ( title ) {
 						DOM.setState({
 							titleChanging: false,
 							titleStyle: {}
-						}, true, true, true, true);
+						}, true, true, true, false);
 					}, 500);
 				}
 			});
@@ -405,12 +409,12 @@ events.on("title.save", function ( title ) {
 					borderBottomColor: "#EC6C62",
 					color: "#EC6C62"
 				}
-			}, true, true, true, true);
+			}, true, true, true, false);
 			setTimeout(function () {
 				DOM.setState({
 					titleChanging: false,
 					titleStyle: {}
-				}, true, true, true, true);
+				}, true, true, true, false);
 			}, 500);
 		}
 	});

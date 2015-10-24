@@ -58,48 +58,11 @@ function renderAddContent ( DOM ) {
 
 function renderEditor ( DOM ) {
 	return (
-		h("#ph-content" + (!DOM.state.contentChanging ? "" : ".loading"), [
+		h("#ph-content", [
 
 			h("#ph-buttons", [ DOM.buttonsDOM ]),
 
-			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
-				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
-				style: DOM.state.titleStyle,
-				onkeypress: function ( e ) {
-					if ( e.which == 13 || e.keyCode == 13 ) {
-						e = e || window.event;
-						if ( e.stopPropagation ) e.stopPropagation();
-						else if ( e.cancelBubble ) e.cancelBubble();
-						if ( e.preventDefault ) e.preventDefault();
-						else e.returnValue = false;
-						this.blur();
-						return false;
-					}
-				},
-				onblur: function () {
-					var title = this.textContent || this.innerText || this.innerHTML;
-					title = title.trim();
-					events.emit("title.save", title);
-				}
-			}, [ pages.current.Title ]),
 
-			h("a#ph-toggle-editor.ph-btn", {
-				href: "#",
-				onclick: function ( e ) {
-					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
-					if ( e.preventDefault ) e.preventDefault();
-					else e.returnValue = false;
-
-					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
-						events.emit("tab.change", "Overview");
-					}
-					DOM.setState({
-						fullPage: !DOM.state.fullPage
-					}, false, false, true, false);
-				}
-			}, [ DOM.state.fullPage ? "edit" : "preview" ]),
 
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
@@ -107,7 +70,7 @@ function renderEditor ( DOM ) {
 				DOM.tagsDOM
 			]),
 
-			h("#ph-contentWrap", [
+			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				h("#ph-input", [
 					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
@@ -143,20 +106,11 @@ function renderPage ( DOM ) {
 	return (
 		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
 
-			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent(DOM) ]),
-
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
-			}, [
-				h("label", [
-					h("input#ph-search", {
-						type: "text",
-						name: "ph-search",
-						"tab-index": 1,
-						placeholder: pages.options.searchPlaceholder
-					})
-				])
-			]),
+			}, [ DOM.searchDOM ]),
+
+			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent(DOM) ]),
 
 			h("#ph-side-nav", [ DOM.navDOM ]),
 

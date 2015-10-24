@@ -22,3 +22,7 @@
 #ph-create-wrap label {
 	display: block;
 }
+
+.fullPage #ph-create-wrap {
+	display: none;
+}

@@ -15,10 +15,10 @@ var markdownit = require("markdown-it"),
 		quotes: '“”‘’'
 	}),
 	codeMirror = CodeMirror,
-	regSplit = /[^a-z0-9]+/gi,
-	regSplit2 = /[^a-z0-9-_]+/gi,
+	regSplit = /[^a-zA-Z0-9]+/g,
+	regSplit2 = /[^a-zA-Z0-9-_]+/g,
 	//regSplit2 = /\b; ?|\b /g,
-	regSanitize = /([^a-z0-9-_.&\s])/gi,
+	regSanitize = /([^a-zA-Z0-9-_.&\s]+)/g,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {

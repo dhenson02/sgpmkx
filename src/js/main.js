@@ -8,7 +8,6 @@ var vdom = require("virtual-dom"),
 	patch = vdom.patch,
 	Router = require("director/build/director").Router,
 	sweetAlert = require("sweetalert"),
-	horsey = require("horsey"),
 	fastdom = require("fastdom"),
 
 	misc = require("./helpers"),
@@ -78,25 +77,6 @@ events.on("page.loaded", function () {
 });
 
 events.on("dom.rendered", function () {
-	horsey(DOM.searchInput, {
-		suggestions: pages.titles,
-		autoHideOnBlur: false,
-		limit: 8,
-		getValue: function ( item ) {
-			return item.value;
-		},
-		getText: function ( item ) {
-			return item.text;
-		},
-		set: function ( item ) {
-			router.setRoute(item);
-			DOM.searchInput.value = "";
-			return false;
-		},
-		render: function ( li, item ) {
-			li.innerText = li.textContent = item.renderText;
-		}
-	});
 	if ( window.location.hash ) {
 		router.init();
 	}
@@ -203,7 +183,7 @@ events.on("content.loaded", function ( data ) {
 
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: /*( pages.current[ tab ].length < 2 ) ? "Overview" :*/ tab
+		tab: tab
 	}, true, false, true, true);
 	DOM.renderOut();
 });

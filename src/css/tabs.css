@@ -6,7 +6,7 @@
 #ph-tabs {
 	position: relative;
 	overflow: hidden;
-	margin:0 auto;
+	margin: 50px auto 0;
 	width: 60%;
 	font-weight: 300;
 	font-size: 1em;
@@ -194,17 +194,16 @@
 	/*font-weight: 700;*/
 }
 #ph-tabs .ph-tab-contributions a.ph-contrib-poc {
-	pointer-events: none;
+	/*pointer-events: none;
 	opacity: 0;
-	visibility: hidden;
+	visibility: hidden;*/
+	display: none;
 	padding: 5px;
 	font-size: .6em;
 }
 
 #ph-tabs .ph-tab-contributions.ph-tab-current a.ph-contrib-poc {
-	pointer-events: auto;
-	opacity: 1;
-	visibility: visible;
+	display: block;
 	color: #00B16A;
 }
 

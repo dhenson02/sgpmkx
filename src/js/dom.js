@@ -10,6 +10,7 @@ var vdom = require("virtual-dom"),
 	renderTabs = require("./tabs"),
 	renderTags = require("./tags"),
 	renderButtons = require("./buttons"),
+	renderSearch = require("./search"),
 	renderPage = require("./page"),
 	regLink = /<a (href=["']https?:\/\/)/gi,
 	fastdom = require("fastdom");
@@ -19,7 +20,7 @@ function DOM () {
 		return new DOM();
 	}
 	this.state = {
-		fullPage: true,
+		fullPage: false,
 		cheatSheet: false,
 		addingContent: false,
 		path: "",
@@ -35,6 +36,7 @@ function DOM () {
 		titleChanging: false,
 		titleStyle: {},
 		contentChanging: false,
+		contentSaving: false,
 		saveText: "Save",
 		saveStyle: {},
 		tagsLocked: true
@@ -55,6 +57,9 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
 	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
+
+	this.searchDOM = this.searchDOM || renderSearch();
+
 	/*this.inputDOM = null;
 	this.outputDOM = null;*/
 	return renderPage(this);
@@ -139,7 +144,10 @@ DOM.prototype.initEditor = function () {
 
 DOM.prototype.renderOut = function () {
 	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
-	this.output.innerHTML = misc.md.render(pages.current[this.state.tab]).replace(regLink, "<a target='_blank' $1");
+	var self = this;
+	fastdom.write(function () {
+		self.output.innerHTML = misc.md.render(pages.current[ self.state.tab ]).replace(regLink, "<a target='_blank' $1");
+	});
 };
 
 var dom = new DOM();
