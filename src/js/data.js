@@ -188,7 +188,7 @@ events.on("content.create", function ( data, path, title ) {
 */
 
 events.on("content.save", function () {
-	if ( DOM.state.contentSaving ) {
+	if ( DOM.state.contentSaving || DOM.state.contentChanging ) {
 		return false;
 	}
 	DOM.setState({
@@ -198,14 +198,26 @@ events.on("content.save", function () {
 			backgroundColor: "#FFFFFF"
 		},
 		contentSaving: true
-	}, true, true, true, false);
+	}, true, true, false, false);
+
+	var pubs = "", pub;
+	while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
+		pubs = ( pubs ) ?
+		pubs + "," + pub :
+			pub;
+	}
+
+	pages.current.set({
+		Pubs: pubs,
+		Modified: new Date()
+	});
 	var data = {
 		'__metadata': {
 			'type': pages.current.listItemType
 		},
-		'Title': pages.current.Title,
+		//'Title': pages.current.Title, // Is saved on its own
 		'Pubs': pages.current.Pubs,
-		'Tags': pages.current.Tags,
+		//'Tags': pages.current.Tags,   // No need to waste bandwidth or arrive at a conflict somehow
 		'Overview': pages.current.Overview,
 		'Policy': pages.current.Policy,
 		'Training': pages.current.Training,
@@ -244,16 +256,7 @@ events.on("content.save", function () {
 							color: "#FFFFFF"
 						},
 						contentSaving: false
-					}, true, true, true, false);
-
-					var pubs = "", pub;
-					while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
-						pubs += " " + pub;
-					}
-					pages.current.set({
-						Pubs: pubs,
-						Modified: new Date()
-					});
+					}, true, true, false, false);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -270,7 +273,7 @@ events.on("content.save", function () {
 							color: "#FFFFFF"
 						},
 						contentSaving: false
-					}, true, true, true, false);
+					}, true, true, false, false);
 					console.log("Content save error: ", error);
 				},
 				complete: function () {
@@ -281,7 +284,7 @@ events.on("content.save", function () {
 								color: "#FFFFFF",
 								backgroundColor: "#00B16A"
 							}
-						}, true, true, true, false);
+						}, true, true, false, false);
 					}, 500);
 				}
 			});
@@ -301,7 +304,7 @@ events.on("content.save", function () {
 					color: "#FFFFFF"
 				},
 				contentSaving: false
-			}, true, true, true, false);
+			}, true, true, false, false);
 			console.log("Content save error (couldn't get digest): ", error);
 			setTimeout(function () {
 				DOM.setState({
@@ -310,7 +313,7 @@ events.on("content.save", function () {
 						color: "#FFFFFF",
 						backgroundColor: "#00B16A"
 					}
-				}, true, true, true, false);
+				}, true, true, false, false);
 			}, 500);
 		}
 	});

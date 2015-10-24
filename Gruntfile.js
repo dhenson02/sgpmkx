@@ -64,8 +64,8 @@ module.exports = function ( grunt ) {
 					mangle: false,
 					wrap: false,
 					reserved: "CodeMirror",
-					sourceMap: true,
-					preserveComments: "all"
+					sourceMap: false,
+					preserveComments: false//"all"
 				},
 				files: {
 					'dist/js/main.js': '.tmp/main.js'

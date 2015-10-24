@@ -87,7 +87,7 @@ function renderDefault ( DOM ) {
 		h("#ph-content", [
 			h("h1#ph-title", [ pages.current.Title ]),
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
-			h("#ph-contentWrap", [
+			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),

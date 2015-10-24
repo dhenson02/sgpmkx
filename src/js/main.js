@@ -108,7 +108,9 @@ events.on("content.loaded", function ( data ) {
 
 	var pubs = "", pub;
 	while ( pub = misc.regPubs.exec(obj.Policy) ) {
-		pubs += ", " + pub;
+		pubs = ( pubs ) ?
+			pubs + "," + pub :
+			pub;
 	}
 
 	pages.current = pages.current.reset({
@@ -160,7 +162,6 @@ events.on("content.loaded", function ( data ) {
 		var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		fastdom.write(function () {
 			window.scrollBy(0, scrollTop);
-			//window.scrollTo(0, scrollTop || 254);
 		});
 		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		var interval = 300 / scrollTop;

@@ -66,8 +66,8 @@ function renderTags ( DOM ) {
 			]),
 			(
 				pages.current.Tags ?
-					h(".ph-tag-container", [
-						h("i.icon.icon-lock" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), {
+					h(".ph-tag-container" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
+						h("i.icon.icon-lock", {
 							role: "button",
 							onclick: function () {
 								DOM.setState({
@@ -75,7 +75,7 @@ function renderTags ( DOM ) {
 								}, true, true, false, true);
 							}
 						}),
-						h("h4.ph-tag-wrapper" + ( DOM.state.tagsLocked ? ".loading" : "" ), [
+						h("h4.ph-tag-wrapper", [
 							pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
 								return ( tag.trim() ?
 									h("small", {

@@ -17,8 +17,6 @@
 #ph-tags .ph-input-wrap {
 	position: relative;
 	text-align: left;
-	/*float: left;
-	clear: none;*/
 	display: inline-block;
 	vertical-align: middle;
 	height: 100%;
@@ -48,7 +46,7 @@
 	border-color: #26A65B;
 }
 
-#ph-wrapper .ph-tag-container {
+#ph-tags .ph-tag-container {
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
@@ -62,12 +60,19 @@
 	white-space: normal;
 	display: inline-block;
 	overflow: hidden;
-	padding: 3px 8px;
-	margin: 5px 0 5px 5px;
+	padding: 2px 6px;
+	margin: 5px;
 	width: 100%;
 }
 
-#ph-tags small {
+#ph-tags .ph-tag-container.locked .ph-tag-wrapper {
+	opacity: .6;
+	pointer-events: none;
+	cursor: default;
+	border: 1px solid #999999;
+}
+
+#ph-tags .ph-tag-container small {
 	position: relative;
 	float: left;
 	clear: none;
@@ -79,46 +84,42 @@
 	font-weight: 300;
 }
 
-#ph-tags small:hover {
+#ph-tags .ph-tag-container.locked small {
+	border: none;
+	margin-left: 0;
+	padding: 3px 1px 3px;
+}
+
+#ph-tags .ph-tag-container.locked small::after {
+	content: ', ';
+	display: inline;
+}
+
+#ph-tags .ph-tag-container.locked small:last-of-type::after {
+	content: '';
+}
+
+#ph-tags .ph-tag-container.unlocked small:hover {
 	color: #F64747;
 	border-color: #F1A9A0;
 }
 
-#ph-tags small:hover::before {
+#ph-tags .ph-tag-container.unlocked small:hover::before {
 	content: "\274C";
 	position: absolute;
 	display: inline-block;
 	transform: translateX(-50%);
-	color: #CF000F;/*#000000;*/
+	color: #CF000F;
 	left: 50%;
 	top: -10px;
 	font-size: .8em;
 }
 
-#ph-tags .loading {
-	opacity: .6;
-	border: 1px solid gold;
-}
-
-#ph-tags .loading small {
-	border: none;
-	margin-left: 0;
-	padding: 3px;
-}
-
-#ph-tags .loading small::after {
-	content: ', ';
-	display: inline;
-}
-
-#ph-tags .loading small:last-of-type::after {
-	content: '';
-}
-
 #ph-tags .icon-lock {
-	/*float: right;
-	clear: none;*/
 	display: inline-block;
+	cursor: pointer;
+	font-weight: 700;
+	font-style: normal;
 }
 
 #ph-tags .icon-lock::before {
@@ -128,45 +129,33 @@
 	font-weight: 700;
 }
 
-#ph-tags .icon-lock.unlocked::before {
-	color: #454545;
-	/*text-shadow: 0 1px 1px #333;*/
-	/*color: gold;
-	text-shadow: 0 1px 1px #FF9000;*/
+#ph-tags .ph-tag-container.unlocked .icon-lock::before {
+	color: #2ECC71;
 	opacity: 1;
 	font-weight: 700;
 }
 
-#ph-tags .icon-lock.unlocked:hover::before {
-	color: gold;
-	/*text-shadow: 0 1px 1px #FF9000;*/
-	/*color: gold;
-	text-shadow: 0 1px 1px #FF9000;*/
+#ph-tags .ph-tag-container.unlocked .icon-lock:hover::before {
+	color: #454545;
 	opacity: 1;
 }
 
-#ph-tags .icon-lock.locked::before {
-	/*color: #00B16A;
-	text-shadow: 0 1px 1px #00B16A;*/
-	color: gold;
-	/*text-shadow: 0 1px 1px #FF9000;*/
+#ph-tags .ph-tag-container.locked .icon-lock::before {
+	color: #454545;
 	opacity: .5;
 	font-weight: 700;
 }
 
 #ph-tags .ph-tag-container:hover > .ph-tag-wrapper {
-	/*border-color: #2ECC71;*/
-	border-color: #2ECC71;
+	border-color: gold;
 }
 
-#ph-tags .ph-tag-container:hover > .icon-lock.locked::before {
-	color: #2ECC71;
-	/*text-shadow: 0 1px 1px #00B16A;*/
+#ph-tags .ph-tag-container.locked:hover > .icon-lock::before {
+	color: gold;
 }
 
-#ph-tags .ph-tag-container > .icon-lock.locked:hover::before {
-	color: #2ECC71;
-	/*text-shadow: 0 1px 1px #2ECC71;*/
+#ph-tags .ph-tag-container.locked > .icon-lock:hover::before {
+	color: #FFB000;
 }
 
 @media screen and (max-width: 1140px) {
