@@ -1,19 +1,21 @@
 #ph-create-wrap {
+	transform: translateZ(1px);
 	position: fixed;
 	top: 0;
 	left: 0;
+	right: 0;
 	width: 100%;
 	height: 100%;
-	transform: translateZ(1px);
 }
 
 #ph-create-wrap fieldset {
 	display: block;
-	position: absolute;
+	position: relative;
 	padding: 60px;
 	top: 20px;
 	width: 80%;
 	height: 50%;
+	max-width: 640px;
 	margin: 0 auto;
 }
 

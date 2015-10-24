@@ -9,7 +9,7 @@ function handleClick ( e ) {
 }
 
 function renderLink ( link, DOM ) {
-	var opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] ),
+	var opened = ( !link.children ? DOM.state.opened[ link.parent ] : DOM.state.opened[ link.path ] ),
 		attr = ( link.level > 2 && !opened ? { display: "none" } : {} );
 	return (
 		h("li.link#ph-link-" + link.id + link.className + ( link.children && opened ? ".ph-opened" : "" ),
@@ -30,7 +30,7 @@ function renderLink ( link, DOM ) {
 								openedObj[ link.path ] = !openedObj[ link.path ];
 								DOM.setState({
 									opened: openedObj
-								});
+								}, false, true, true, true);
 							}
 						}
 					} )
@@ -50,10 +50,10 @@ function renderLink ( link, DOM ) {
 								else e.returnValue = false;
 
 								var openState = Object.create(DOM.state.opened);
-								openState[link.path] = !opened;
+								openState[ link.path ] = !opened;
 								DOM.setState({
 									opened: openState
-								}, false, true);
+								}, false, true, true, true);
 							}
 						}) ),
 					h("span.place")
@@ -85,7 +85,7 @@ function renderNav ( DOM ) {
 
 	for ( name in pages.sections ) {
 		if ( pages.sections.hasOwnProperty(name) ) {
-			links.push(renderSection(pages.sections[name], DOM));
+			links.push(renderSection(pages.sections[ name ], DOM));
 		}
 	}
 	return (
@@ -106,29 +106,29 @@ function renderNav ( DOM ) {
 					h("p.text", [
 						"Public Health",
 						h("br"),
-						h("small", ["US Air Force"])
+						h("small", [ "US Air Force" ])
 					])
 				])
 			]),
 			/*h("#ph-site-pages", [
-				h("div", [
-					h("a.site-page", {
-						href: "#/leaders"
-					}, [
-						"Leaders"
-					]),
-					h("a.site-page", {
-						href: "#/news"
-					}, [
-						"News"
-					]),
-					h("a.site-page", {
-						href: "#/contact"
-					}, [
-						"Address Book"
-					])
-				])
-			]),*/
+			 h("div", [
+			 h("a.site-page", {
+			 href: "#/leaders"
+			 }, [
+			 "Leaders"
+			 ]),
+			 h("a.site-page", {
+			 href: "#/news"
+			 }, [
+			 "News"
+			 ]),
+			 h("a.site-page", {
+			 href: "#/contact"
+			 }, [
+			 "Address Book"
+			 ])
+			 ])
+			 ]),*/
 			h("ul.nav", links)
 		])
 	);

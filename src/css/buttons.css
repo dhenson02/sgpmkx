@@ -3,7 +3,7 @@
 	/*max-width: 960px;
 	max-width: calc(100% - 320px);
 	margin-top: 50px;*/
-	text-align: right;
+	/*text-align: right;*/
 	position: relative;
 	display: block;
 	overflow: hidden;
@@ -19,6 +19,7 @@
 	font-weight: 700;
 	font-style: normal;
 	padding: 10px 20px;
+	text-align: center;
 }
 
 .ph-edit-btn i {
@@ -41,15 +42,15 @@
 
 #ph-buttons #ph-create {
 	float: right;
-	color: #FF9000;
+	/*color: #FF9000;*/
 	border-color: transparent;
 	background-color: #FFFFFF;
 	text-align: center;
-	margin-left: 10px;
+	margin-right: 10px;
 }
 
 #ph-buttons #ph-create:active {
-	border-color: #FF9000;
+	border-color: #0072C6;
 }
 
 #ph-buttons #ph-save {

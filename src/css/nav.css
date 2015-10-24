@@ -204,7 +204,7 @@
 }
 
 #ph-nav .ph-opened > a {
-	text-shadow: 0 1px 1px #222222;
+	text-shadow: 0 2px 1px #000;
 }
 
 #ph-nav .link-title {
@@ -215,7 +215,7 @@
 	padding-left: 20px;
 }
 
-#ph-nav .ph-level-3 .link-title {
+#ph-nav .ph-page:not(.ph-sub-parent) .link-title {
 	border-left: 1px solid #FAFAFA;
 	padding-left: 7px;
 }

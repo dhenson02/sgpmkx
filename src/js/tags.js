@@ -6,8 +6,8 @@ var h = require("virtual-dom").h,
 function renderTags ( DOM ) {
 	var addTag = function ( e ) {
 		e = e || window.event;
-		if ( e.preventDefault ) e.preventDefault();
-		if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.stopPropagation ) e.stopPropagation();
+		else if ( e.cancelBubble ) e.cancelBubble();
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
@@ -22,8 +22,8 @@ function renderTags ( DOM ) {
 
 	var removeTag = function ( e ) {
 		e = e || window.event;
-		if ( e.preventDefault ) e.preventDefault();
-		if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.stopPropagation ) e.stopPropagation();
+		else if ( e.cancelBubble ) e.cancelBubble();
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
@@ -33,7 +33,7 @@ function renderTags ( DOM ) {
 		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
 	};
 	return (
-		h(".ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
+		h("#ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
 			h(".ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
@@ -44,8 +44,8 @@ function renderTags ( DOM ) {
 					onkeypress: function ( e ) {
 						if ( e.which == 13 || e.keyCode == 13 ) {
 							e = e || window.event;
-							if ( e.preventDefault ) e.preventDefault();
-							if ( e.cancelBubble ) e.cancelBubble();
+							if ( e.stopPropagation ) e.stopPropagation();
+							else if ( e.cancelBubble ) e.cancelBubble();
 							if ( e.preventDefault ) e.preventDefault();
 							else e.returnValue = false;
 							addTag(e);
@@ -55,6 +55,7 @@ function renderTags ( DOM ) {
 				}),
 				h("a.ph-add-tag-btn.icon.icon-plus", {
 					href: "#",
+					role: "button",
 					onclick: addTag
 				})
 			]),
@@ -64,6 +65,7 @@ function renderTags ( DOM ) {
 					pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
 						return ( tag.trim() ?
 							h("small", {
+								role: "button",
 								onclick: removeTag
 							}, [ tag.trim() ]) :
 							null );

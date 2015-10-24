@@ -3,11 +3,11 @@ var h = require("virtual-dom").h,
 	events = require("./events");
 
 function renderTabs ( DOM ) {
-	//var style = ( DOM.state.level > 1 ) ? {} : { display: "none" },
 	var group = phTabs.map(function ( tab ) {
+
 		var tabName = tab.title.replace(/\s/g, ""); // Kinda future-proofing
 		var className = ".ph-tab-" + tabName.toLowerCase() + (
-				( pages.options.hideEmptyTabs && pages.current[ tabName ].length < 1 && tabName !== "Contributions" ) ? ".ph-tab-empty" : "" ) + (
+				( pages.current[ tabName ].length < 1 && pages.options.hideEmptyTabs ) ? ".ph-tab-empty" : "" ) + (
 				( DOM.state.tab !== tabName ) ? "" : ".ph-tab-current"
 			);
 		return (
@@ -38,7 +38,7 @@ function renderTabs ( DOM ) {
 	});
 	return (
 		h("nav", [
-			h("ul", /*{ style: style },*/ group)
+			h("ul", group)
 		])
 	);
 }

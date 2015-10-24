@@ -15,8 +15,9 @@ var markdownit = require("markdown-it"),
 		quotes: '“”‘’'
 	}),
 	codeMirror = CodeMirror,
-	regSplit = /[^a-z0-9-_]+/gi,
-	regSplit2 = /\b; ?|\b /g,
+	regSplit = /[^a-z0-9]+/gi,
+	regSplit2 = /[^a-z0-9-_]+/gi,
+	//regSplit2 = /\b; ?|\b /g,
 	regSanitize = /([^a-z0-9-_.&\s])/gi,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 

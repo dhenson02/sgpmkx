@@ -138,7 +138,7 @@ events.on("content.loaded", function ( data ) {
 		Title: obj.Title || "",
 		_title: obj.Title || "",
 		Pubs: pubs || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ",") || "",
 		Icon: obj.Icon || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
@@ -168,8 +168,7 @@ events.on("content.loaded", function ( data ) {
 		nextLevel: null,
 		nextParent: "",
 		contentChanging: false,
-		opened: opened,
-		scroller: null
+		opened: opened
 	});
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {

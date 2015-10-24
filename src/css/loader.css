@@ -12,6 +12,10 @@
 	height: 100%;
 }
 
+.ph-loader {
+	padding: 50px;
+}
+
 .loader-group {
 	position: absolute;
 	display: block;

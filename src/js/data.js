@@ -95,7 +95,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		nextParent: parent,
 		contentChanging: true
 	});
-	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	DOM.output.innerHTML = "<div class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
@@ -197,7 +197,7 @@ events.on("content.save", function () {
 			color: "#00B16A",
 			backgroundColor: "#FFFFFF"
 		}
-	}, true, true);
+	}, true, true, true, false);
 	var data = {
 		'__metadata': {
 			'type': pages.current.listItemType
@@ -242,7 +242,7 @@ events.on("content.save", function () {
 							backgroundColor: "#00B16A",
 							color: "#FFFFFF"
 						}
-					}, true, true);
+					}, true, true, true, false);
 
 					var pubs = "", pub;
 					while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
@@ -267,7 +267,7 @@ events.on("content.save", function () {
 							backgroundColor: "#ec6c62",
 							color: "#FFFFFF"
 						}
-					}, true, true);
+					}, true, true, true, false);
 					console.log("Content save error: ", error);
 				},
 				complete: function () {
@@ -278,7 +278,7 @@ events.on("content.save", function () {
 								color: "#FFFFFF",
 								backgroundColor: "#00B16A"
 							}
-						}, true, true);
+						}, true, true, true, false);
 					}, 500);
 				}
 			});
@@ -297,7 +297,7 @@ events.on("content.save", function () {
 					backgroundColor: "#ec6c62",
 					color: "#FFFFFF"
 				}
-			}, true, true);
+			}, true, true, true, false);
 			console.log("Content save error (couldn't get digest): ", error);
 			setTimeout(function () {
 				DOM.setState({
@@ -306,14 +306,14 @@ events.on("content.save", function () {
 						color: "#FFFFFF",
 						backgroundColor: "#00B16A"
 					}
-				}, true, true);
+				}, true, true, true, false);
 			}, 500);
 		}
 	});
 });
 
 events.on("title.save", function ( title ) {
-	title = title.replace(misc.regSanitize, " ");
+	title = title.replace(misc.regSanitize, "");
 	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
 		return false;
 	}
@@ -363,7 +363,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#00B16A",
 							color: "#00B16A"
 						}
-					}, false, true);
+					}, false, true, true, true);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -378,7 +378,7 @@ events.on("title.save", function ( title ) {
 							borderBottomColor: "#EC6C62",
 							color: "#EC6C62"
 						}
-					}, true, true);
+					}, true, true, true, true);
 					console.log("Title save error: ", error);
 				},
 				complete: function () {
@@ -386,7 +386,7 @@ events.on("title.save", function ( title ) {
 						DOM.setState({
 							titleChanging: false,
 							titleStyle: {}
-						}, true, true);
+						}, true, true, true, true);
 					}, 500);
 				}
 			});
@@ -405,12 +405,12 @@ events.on("title.save", function ( title ) {
 					borderBottomColor: "#EC6C62",
 					color: "#EC6C62"
 				}
-			}, true, true);
+			}, true, true, true, true);
 			setTimeout(function () {
 				DOM.setState({
 					titleChanging: false,
 					titleStyle: {}
-				}, true, true);
+				}, true, true, true, true);
 			}, 500);
 		}
 	});
@@ -419,7 +419,7 @@ events.on("title.save", function ( title ) {
 events.on("tags.save", function ( tags ) {
 	DOM.setState({
 		tagsChanging: true
-	}, true, true);
+	}, true, true, false, true);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -467,12 +467,11 @@ events.on("tags.save", function ( tags ) {
 				complete: function () {
 					DOM.setState({
 						tagsChanging: false
-					}, true, true);
+					}, true, true, false, true);
 				}
 			});
 		},
 		error: function ( error ) {
-			// So we can lazy save it.
 			sweetAlert({
 				title: "Failure",
 				text: misc.md.renderInline("Tag(s) **not** able to be saved"),
@@ -484,7 +483,7 @@ events.on("tags.save", function ( tags ) {
 			console.log("Tags: ", tags);
 			DOM.setState({
 				tagsChanging: false
-			}, true, true);
+			}, true, true, false, true);
 		}
 	});
 });

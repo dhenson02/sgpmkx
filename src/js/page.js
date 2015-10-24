@@ -4,22 +4,22 @@ var h = require("virtual-dom").h,
 	events = require("./events");
 
 /*function renderLoader () {
-	return (
-		h("#ph-loader", [
-			h(".loader-group", [
-				h(".bigSqr", [
-					h(".square.first"),
-					h(".square.second"),
-					h(".square.third"),
-					h(".square.fourth")
-				]),
-				h(".text", [ "loading..." ])
-			])
-		])
-	);
-}*/
+ return (
+ h("#ph-loader", [
+ h(".loader-group", [
+ h(".bigSqr", [
+ h(".square.first"),
+ h(".square.second"),
+ h(".square.third"),
+ h(".square.fourth")
+ ]),
+ h(".text", [ "loading..." ])
+ ])
+ ])
+ );
+ }*/
 
-function renderAddContent () {
+function renderAddContent ( DOM ) {
 	return (
 		h("fieldset", [
 			h("legend", [ "Many things to be added soon" ]),
@@ -60,17 +60,16 @@ function renderEditor ( DOM ) {
 	return (
 		h("#ph-content", [
 
-			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent() ]),
+			DOM.buttonsDOM,
 
-
-			h("h1#ph-title.ph-cm" + ( !DOM.state.titleChanging ? "" : ".loading" ), {
-				contentEditable: !DOM.state.titleChanging,
+			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
+				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
 				style: DOM.state.titleStyle,
 				onkeypress: function ( e ) {
 					if ( e.which == 13 || e.keyCode == 13 ) {
 						e = e || window.event;
-						if ( e.preventDefault ) e.preventDefault();
-						if ( e.cancelBubble ) e.cancelBubble();
+						if ( e.stopPropagation ) e.stopPropagation();
+						else if ( e.cancelBubble ) e.cancelBubble();
 						if ( e.preventDefault ) e.preventDefault();
 						else e.returnValue = false;
 						this.blur();
@@ -84,9 +83,7 @@ function renderEditor ( DOM ) {
 				}
 			}, [ pages.current.Title ]),
 
-			h("#ph-tabs.ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
-
-			DOM.buttonsDOM,
+			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
 			DOM.tagsDOM,
 
@@ -109,7 +106,7 @@ function renderDefault ( DOM ) {
 	return (
 		h("#ph-content.fullPage", [
 			h("h1#ph-title", [ pages.current.Title ]),
-			h("#ph-tabs.ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
+			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 			h("#ph-contentWrap", [
 				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
@@ -126,6 +123,9 @@ function renderPage ( DOM ) {
 
 	return (
 		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
+
+			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent(DOM) ]),
+
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
 			}, [
@@ -138,7 +138,9 @@ function renderPage ( DOM ) {
 					})
 				])
 			]),
+
 			h("#ph-side-nav", [ DOM.navDOM ]),
+
 			( !misc.codeMirror ? renderDefault(DOM) : renderEditor(DOM) )
 		])
 	);
