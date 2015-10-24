@@ -89,10 +89,6 @@
 	position: relative;
 }
 
-/*#ph-nav .ph-btn a:hover {
-	text-decoration: none;
-}*/
-
 /*#ph-nav .ph-page,*/
 #ph-nav .ph-rabbit-hole {
 	background-color: #133E6F;
@@ -108,15 +104,16 @@
 
 #ph-nav .ph-level-2 {
 	font-size: 15px;
-	padding: 5px 45px 5px 20px;
+	padding: 7px 45px 7px 20px;
 	line-height: 1.6;
 }
 
 #ph-nav .ph-level-3 {
 	color: #FAFCFE;
+	text-shadow: 0 2px 1px #000;
 	font-size: 13px;
 	line-height: 1.6;
-	padding: 7px 30px 7px 60px;
+	padding: 3px 30px 3px 60px;
 }
 
 #ph-nav .ph-rabbit-hole {
@@ -137,14 +134,12 @@
 }
 
 #ph-nav .active {
-	transition: font .03s ease-out;
 	font-weight: bold;
-	text-shadow: 0 1px 1px #222222;
 }
 
 #ph-nav .active > .place {
 	position: absolute;
-	right: 0; /*17px;*/
+	right: 0;
 	display: inline-block;
 	width: 0;
 	height: 0;
@@ -159,11 +154,9 @@
 }
 
 #ph-nav .ph-parent a .dropper:after {
-	/*content: "\2235";*/
-	/*content: "\23F7";*/
 	position: absolute;
 	right: 35px;
-	text-shadow: 0 1px 0 #133E6F;
+	text-shadow: 0 2px 1px #222222;
 }
 
 #ph-nav .toggle-menu {
@@ -183,14 +176,12 @@
 #ph-nav .toggle-menu::before,
 #ph-nav a:active .toggle-menu::before {
 	border: 1px solid transparent;
-	border-radius: 3px;
+	border-radius: 15px;
 	font-weight: bold;
-	text-shadow: none;
 }
 
 #ph-nav .toggle-menu:hover::before {
 	border-color: #FFFFFF;
-	text-shadow: 0 1px 0 #133E6F;
 }
 
 #ph-nav .ph-sub-parent {
@@ -203,9 +194,9 @@
 	text-decoration: underline;
 }
 
-#ph-nav .ph-opened > a {
+/*#ph-nav .ph-opened > a {
 	text-shadow: 0 2px 1px #000;
-}
+}*/
 
 #ph-nav .link-title {
 	display: inline-block;
@@ -213,14 +204,4 @@
 
 #ph-nav .ph-program .link-title {
 	padding-left: 20px;
-}
-
-#ph-nav .ph-page:not(.ph-sub-parent) .link-title {
-	border-left: 1px solid #FAFAFA;
-	padding-left: 7px;
-}
-
-#ph-nav .ph-level-3.active .link-title {
-	/*border-left-color: #FAFAFA;*/
-	border-left-width: 2px;
 }
