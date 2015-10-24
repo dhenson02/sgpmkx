@@ -61,23 +61,20 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 };
 
 DOM.prototype.init = function () {
-	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root"),
-		self = this;
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
 
+	this.editor = null;
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
-	this.editor = null;
-	fastdom.read(function() {
-		self.searchInput = document.getElementById("ph-search");
-		self.content = document.getElementById("ph-content");
-		self.title = document.getElementById("ph-title");
-		self.cheatSheet = document.getElementById("cheatSheet");
-		self.textarea = document.getElementById("ph-textarea");
-		self.output = document.getElementById("ph-output");
-		events.emit("dom.loaded");
-	});
+	this.searchInput = document.getElementById("ph-search");
+	this.content = document.getElementById("ph-content");
+	this.title = document.getElementById("ph-title");
+	this.cheatSheet = document.getElementById("cheatSheet");
+	this.textarea = document.getElementById("ph-textarea");
+	this.output = document.getElementById("ph-output");
+	events.emit("dom.rendered");
 };
 
 DOM.prototype.set = function ( data, ctx ) {

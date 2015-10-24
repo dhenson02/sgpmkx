@@ -1,5 +1,8 @@
 
 #ph-wrapper .CodeMirror.CodeMirror {
+	backface-visibility: hidden;
+	perspective: 1000px;
+	transform: translate3d(0, 0, 1px);
 	position: absolute;
 	border: 1px solid #CCCCCC;
 	top: 0;

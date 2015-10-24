@@ -70,7 +70,7 @@
 
 #ph-tabs nav .ph-tab-current:not(.ph-tab-empty) .ph-tab-box {
 	background-color: #777777;
-	font-weight: 700;
+	/*font-weight: 700;*/
 }
 
 .fullPage #ph-tabs nav .ph-tab-current .ph-tab-box {
@@ -191,7 +191,7 @@
 }
 .fullPage #ph-tabs .ph-tab-current.ph-tab-contributions .ph-tab-box a {
 	color: #777777;
-	font-weight: 700;
+	/*font-weight: 700;*/
 }
 #ph-tabs .ph-tab-contributions a.ph-contrib-poc {
 	pointer-events: none;

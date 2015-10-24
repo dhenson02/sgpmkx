@@ -1,5 +1,8 @@
 #ph-side-nav {
-	transform: translateZ(0);
+	backface-visibility: hidden;
+	perspective: 1003px;
+	transform: translate3d(0,0,0);
+	opacity: 1;
 }
 
 #ph-nav {
@@ -41,7 +44,6 @@
 }
 
 #ph-nav a {
-	/*transition: font .03s ease-out;*/
 	color: #FAFAFA;
 }
 
@@ -49,11 +51,17 @@
 	text-decoration: underline;
 }
 
-#ph-nav a.active:hover > .link-title/*,
-#ph-nav a:not(.active):active > .link-title*/ {
-	/*color: #81B3D7;*/
-	/*color: #C7C7C7;*/
+#ph-nav a.active:hover > .link-title {
 	text-decoration: none;
+}
+
+#ph-nav a.active:hover > .toggle-menu::before {
+	border-color: #FFFFFF;
+}
+
+#ph-nav a.active:active > .toggle-menu::before {
+	border-color: #DDDDDD;
+	color: #DDDDDD;
 }
 
 #ph-nav .link .icon::before {
@@ -64,7 +72,7 @@
 }
 
 /***Special site links***/
-#ph-site-pages {
+/*#ph-site-pages {
 	width: 100%;
 	border: 1px solid #DB84E1;
 	margin: 5px auto 10px;
@@ -72,7 +80,7 @@
 	padding-right: 20px;
 	text-align: center;
 	display: none;
-}
+}*/
 
 #ph-nav ul {
 	margin: 0;
@@ -104,15 +112,21 @@
 
 #ph-nav .ph-level-2 {
 	font-size: 15px;
-	padding: 7px 45px 7px 20px;
-	line-height: 1.6;
+	padding: 6px 45px 6px 20px;
+	line-height: 1.3;
+}
+
+#ph-nav .ph-parent.ph-opened + .ph-page,
+#ph-nav .ph-parent.ph-opened ~ .ph-page + .ph-program,
+#ph-nav .ph-parent.ph-opened ~ .ph-rabbit-hole + .ph-program {
+	padding-top: 10px;
 }
 
 #ph-nav .ph-level-3 {
-	color: #FAFCFE;
-	text-shadow: 0 2px 1px #000;
+	color: #FAFAFA;
+	text-shadow: 0 1px 0 #222;
 	font-size: 13px;
-	line-height: 1.6;
+	line-height: 1.3;
 	padding: 3px 30px 3px 60px;
 }
 
@@ -161,9 +175,11 @@
 
 #ph-nav .toggle-menu {
 	position: absolute;
-	right: 35px;
+	right: 40px;
 	color: #FFFFFF;
 	vertical-align: middle;
+	border: 1px solid transparent;
+	line-height: 1.6;
 }
 
 #ph-nav .toggle-menu::before {
@@ -171,17 +187,18 @@
 	height: 24px;
 	text-align: center;
 	vertical-align: middle;
-}
-
-#ph-nav .toggle-menu::before,
-#ph-nav a:active .toggle-menu::before {
-	border: 1px solid transparent;
 	border-radius: 15px;
 	font-weight: bold;
+	border: 1px solid transparent;
 }
 
 #ph-nav .toggle-menu:hover::before {
 	border-color: #FFFFFF;
+}
+
+#ph-nav .toggle-menu:active::before {
+	color: #DDDDDD;
+	border-color: #DDDDDD;
 }
 
 #ph-nav .ph-sub-parent {

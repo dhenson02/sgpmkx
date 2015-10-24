@@ -13,6 +13,9 @@
 }
 
 .ph-loader {
+	backface-visibility: hidden;
+	perspective: 1001px;
+	transform: translate3d(0,0,2px);
 	padding: 50px;
 }
 

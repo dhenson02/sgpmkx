@@ -9,6 +9,7 @@ var vdom = require("virtual-dom"),
 	Router = require("director/build/director").Router,
 	sweetAlert = require("sweetalert"),
 	horsey = require("horsey"),
+	fastdom = require("fastdom"),
 
 	misc = require("./helpers"),
 	pages = require("./pages"),
@@ -76,7 +77,7 @@ events.on("page.loaded", function () {
 	DOM.init();
 });
 
-events.on("dom.loaded", function () {
+events.on("dom.rendered", function () {
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,
@@ -178,7 +179,13 @@ events.on("content.loaded", function ( data ) {
 	});
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
-		window.scrollBy(0, DOM.rootNode.getBoundingClientRect().top - 50);
+		var scrollTop;
+		fastdom.read(function() {
+			scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
+		});
+		fastdom.write(function () {
+			window.scrollBy(0, scrollTop);
+		});
 		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		var interval = 300 / scrollTop;
 		var positive = ( scrollTop > 0 );

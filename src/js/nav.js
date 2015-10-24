@@ -31,6 +31,7 @@ function renderLink ( link, DOM ) {
 								DOM.setState({
 									opened: openedObj
 								}, false, true, true, true);
+								return false;
 							}
 						}
 					} )
@@ -54,6 +55,7 @@ function renderLink ( link, DOM ) {
 								DOM.setState({
 									opened: openState
 								}, false, true, true, true);
+								return false;
 							}
 						}) ),
 					h("span.place")
