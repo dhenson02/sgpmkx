@@ -25,32 +25,32 @@ body { opacity: 1; }
 		s4Workspace = document.getElementById("s4-workspace"),
 		phWrapper = document.createElement("div"),
         phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div"),
-        			phTabs = [
-        				{
-        					title: "Overview",
-        					icon: "home"
-        				},
-        				{
-        					title: "Policy",
-        					icon: "notebook"
-        				},
-        				{
-        					title: "Training",
-        					icon: "display1"
-        				},
-        				{
-        					title: "Resources",
-        					icon: "cloud-upload"
-        				},
-        				{
-        					title: "Tools",
-        					icon: "tools"
-        				},
-        				{
-        					title: "Contributions",
-        					icon: "users"
-        				}
-        			];
+        phTabs = [
+            {
+                title: "Overview",
+                icon: "home"
+            },
+            {
+                title: "Policy",
+                icon: "notebook"
+            },
+            {
+                title: "Training",
+                icon: "display1"
+            },
+            {
+                title: "Resources",
+                icon: "cloud-upload"
+            },
+            {
+                title: "Tools",
+                icon: "tools"
+            },
+            {
+                title: "Contributions",
+                icon: "users"
+            }
+        ];
 
     /* Get rid of the ugly nav on the left if it's there */
     if ( leftNav ) {
