@@ -77,16 +77,10 @@ events.on("page.loaded", function () {
 });
 
 events.on("dom.loaded", function () {
-	if ( window.location.hash ) {
-		router.init();
-	}
-	else {
-		router.init("/");
-	}
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,
-		limit: 6,
+		limit: 8,
 		getValue: function ( item ) {
 			return item.value;
 		},
@@ -102,14 +96,11 @@ events.on("dom.loaded", function () {
 			li.innerText = li.textContent = item.renderText;
 		}
 	});
-	if ( pages.options.scrollOnNav ) {
-		DOM.setState({
-			revertScroll: DOM.rootNode.getBoundingClientRect().top
-			/*opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
-			 paths[path] = (DOM.state.parent === path);
-			 return paths;
-			 }, {})*/
-		})
+	if ( window.location.hash ) {
+		router.init();
+	}
+	else {
+		router.init("/");
 	}
 });
 
@@ -147,7 +138,7 @@ events.on("content.loaded", function ( data ) {
 		Title: obj.Title || "",
 		_title: obj.Title || "",
 		Pubs: pubs || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ") || "",
 		Icon: obj.Icon || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
@@ -166,7 +157,7 @@ events.on("content.loaded", function ( data ) {
 		parent: DOM.state.nextParent
 	});
 	var opened = Object.keys(pages.parents).reduce(function ( paths, path ) {
-		paths[path] = ( (pages.options.scrollOnNav && pages.options.resetOpenOnNav) ? (DOM.state.nextParent === path) : DOM.state.opened[path] );
+		paths[path] = ( (DOM.state.nextParent === path) ? true : ( !pages.options.resetOpenOnNav ? DOM.state.opened[path] : false ) );
 		return paths;
 	}, {});
 	DOM.setState({
@@ -177,14 +168,26 @@ events.on("content.loaded", function ( data ) {
 		nextLevel: null,
 		nextParent: "",
 		contentChanging: false,
-		opened: opened
+		opened: opened,
+		scroller: null
 	});
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
-		window.scrollBy(0, DOM.content.getBoundingClientRect().top);
+		window.scrollBy(0, DOM.rootNode.getBoundingClientRect().top - 50);
+		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
+		var interval = 300 / scrollTop;
+		var positive = ( scrollTop > 0 );
+		(function phScroller( top ) {
+			setTimeout(function () {
+				window.scrollBy(0, interval);
+				top = top - interval;
+				return ( ( positive && top < scrollTop ) || ( !positive && top > scrollTop ) ? phScroller(top) : false);
+			}, 16);
+			console.log(top);
+		})(scrollTop);*/
 	}
 	events.emit("tab.change", "Overview");
-	if ( misc.codeMirror ) {
+	if ( misc.codeMirror && !DOM.editor ) {
 		DOM.initEditor();
 	}
 });
@@ -192,7 +195,7 @@ events.on("content.loaded", function ( data ) {
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
 		tab: tab
-	});
+	}, true, false);
 	DOM.renderOut();
 });
 

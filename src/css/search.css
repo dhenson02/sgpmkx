@@ -1,11 +1,8 @@
 #ph-search-wrap {
-	/*float: right;*/
-	position: absolute;
-	right: 0;
-}
-
-#ph-search {
 	float: right;
+	position: relative;
+	right: 0;
+	clear: none;
 }
 
 @media screen and (max-width: 768px) {

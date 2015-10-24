@@ -87,6 +87,7 @@ module.exports = function ( grunt ) {
 					'src/css/loader.css',
 					'src/css/search.css',
 					'src/css/create.css',
+					'src/css/tags.css',
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.min.css'
 				],
@@ -106,6 +107,7 @@ module.exports = function ( grunt ) {
 					'src/css/loader.css',
 					'src/css/search.css',
 					'src/css/create.css',
+					'src/css/tags.css',
 					'node_modules/sweetalert/dist/sweetalert.css',
 					'node_modules/horsey/dist/horsey.css'
 				],

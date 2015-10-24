@@ -8,6 +8,8 @@ var vdom = require("virtual-dom"),
 	events = require("./events"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
+	renderTags = require("./tags"),
+	renderButtons = require("./buttons"),
 	renderPage = require("./page"),
 	regLink = /<a (href=["']https?:\/\/)/gi;
 
@@ -37,17 +39,22 @@ function DOM () {
 	};
 }
 /**
+ *
  * Begins rendering the virtual-dom VTree.  Determines what needs to render
  * and what doesn't.
  * @param navOld - BOOLEAN: if old navDOM tree should still be used
  * @param tabsOld - BOOLEAN: if old tabsDOM tree should still be used
+ * @param tagsOld - BOOLEAN: if old tagsDOM tree should still be used
+ * @param buttonsOld - BOOLEAN: if old buttonsDOM tree should still be used
  * @returns {*} - VTree, VNode or...null?
  */
-DOM.prototype.preRender = function ( navOld, tabsOld ) {
+DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( this.state.fullPage && pages.options.hideNavWhileEditing ) ? renderNav(this) : null);
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
-	this.inputDOM = null;
-	this.outputDOM = null;
+	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
+	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
+	/*this.inputDOM = null;
+	this.outputDOM = null;*/
 	return renderPage(this);
 };
 
@@ -78,19 +85,19 @@ DOM.prototype.set = function ( data, ctx ) {
 	}
 };
 
-DOM.prototype.setState = function ( data, nav, tabs ) {
+DOM.prototype.setState = function ( data, nav, tabs, tags, buttons ) {
 	this.set(data, this.state);
-	this.update(nav, tabs);
+	this.update(nav, tabs, tags, buttons);
 };
 
-DOM.prototype.update = function ( nav, tabs ) {
-	var refreshDOM = this.preRender(nav, tabs),
+DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
+	var refreshDOM = this.preRender(nav, tabs, tags, buttons),
 		patches = diff(this.dirtyDOM, refreshDOM);
 
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor && ( !tabs ) ) {
+	if ( this.editor && ( !tabs || !buttons ) ) {
 		this.editor.setValue(pages.current[this.state.tab]);
 	}
 };

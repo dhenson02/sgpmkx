@@ -8,7 +8,6 @@ function Content ( data ) {
 	this.ID = null;
 	this.Title = "";
 	this._title = "";
-	//this.text = "";
 	this.Pubs = "";
 	this.Tags = "";
 	this.Icon = "";
@@ -22,7 +21,6 @@ function Content ( data ) {
 	this.Program = "";
 	this.Page = "";
 	this.rabbitHole = "";
-	//this.type = "";
 	this.Modified = new Date();
 	this.listItemType = "";
 	this.level = null;
@@ -186,6 +184,7 @@ Pages.prototype.navPrep = function () {
 
 	_url = null;
 	_result = null;
+	self.titles = [];
 	self.urls.sort();
 	self.urls.forEach(function ( url ) {
 		var page = self[url],

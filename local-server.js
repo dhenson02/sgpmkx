@@ -57,7 +57,7 @@ app.get("/opt", function ( req, res ) {
 				results: [
 					{
 						Variable: "hideSearchWhileEditing",
-						Value: false
+						Value: true
 					}, {
 						Variable: "images",
 						Value: "img"

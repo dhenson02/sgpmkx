@@ -1,0 +1,62 @@
+.ph-tags {
+	margin: 0 auto;
+	text-align: left;
+	clear: both;
+	overflow: hidden;
+}
+
+.fullPage .ph-tags {
+	display: none;
+}
+
+.ph-tags .ph-input-wrap {
+	text-align: right;
+	float: right;
+	clear: none;
+}
+
+#ph-wrapper .ph-tags .ph-add-tag {
+	display: inline-block;
+}
+
+#ph-wrapper .ph-tags .ph-add-tag-btn {
+	display: inline-block;
+	vertical-align: middle;
+	font-weight: bold;
+}
+
+#ph-wrapper .ph-tags .ph-add-tag-btn:active {
+	color: #222222;
+	border-color: #444444;
+}
+
+#ph-wrapper .ph-tags .ph-tag-wrapper {
+	float: left;
+	clear: none;
+	margin: 10px 7px 10px 0;
+}
+
+.ph-tags small {
+	position: relative;
+	color: #333333;
+	margin: 7px 7px 7px 0;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	padding: 3px 8px;
+	cursor: pointer;
+	font-weight: 300;
+}
+
+.ph-tags small:hover {
+	color: rgba(0, 0, 0, .3);
+}
+
+.ph-tags small:hover::before {
+	content: "\274C";
+	position: absolute;
+	display: inline-block;
+	color: #000000;
+	right: -10px;
+	top: -10px;
+	font-size: 1em;
+}

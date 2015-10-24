@@ -39,7 +39,7 @@ function renderTabs ( DOM ) {
 		});
 	return (
 		h("nav", [
-			h("ul", { style: style }, group)
+			h("ul", /*{ style: style },*/ group)
 		])
 	);
 }

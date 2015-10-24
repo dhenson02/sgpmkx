@@ -1,14 +1,13 @@
 .icon::before {
-	/*z-index: 5;*/
 	display: inline-block;
 
 	/* Enable Ligatures ================ */
 	letter-spacing: 0;
-	/*-webkit-font-feature-settings: "liga";
+	-webkit-font-feature-settings: "liga";
 	-moz-font-feature-settings: "liga=1";
 	-moz-font-feature-settings: "liga";
 	-ms-font-feature-settings: "liga" 1;
-	-o-font-feature-settings: "liga";*/
+	-o-font-feature-settings: "liga";
 	font-feature-settings: "liga";
 
 	/* Better Font Rendering =========== */

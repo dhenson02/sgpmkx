@@ -12,13 +12,28 @@ function renderLink ( link, DOM ) {
 	var opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] ),
 		attr = ( link.level > 2 && !opened ? { display: "none" } : {} );
 	return (
-		h("li.link#ph-link-" + link.id + link.className,
+		h("li.link#ph-link-" + link.id + link.className + ( link.children && opened ? ".ph-opened" : "" ),
 			{ style: attr },
 			[
 				h("a.ph-level-" + link.level + ( link.path !== DOM.state.path ? "" : ".active" ), {
 					href: link.href,
 					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" ),
-					onclick: handleClick
+					onclick: ( !link.children ? handleClick : function ( e ) {
+						e = e || window.event;
+						if ( e.stopPropagation ) e.stopPropagation();
+						else if ( e.cancelBubble ) e.cancelBubble();
+						if ( DOM.state.path === link.path ) {
+							if ( e.preventDefault ) e.preventDefault();
+							else e.returnValue = false;
+							if ( DOM.state.opened.hasOwnProperty(link.path) ) {
+								var openedObj = Object.create(DOM.state.opened);
+								openedObj[ link.path ] = !openedObj[ link.path ];
+								DOM.setState({
+									opened: openedObj
+								});
+							}
+						}
+					} )
 				}, [
 					( !link.icon ? null : h("i.icon.icon-" + link.icon) ),
 					h("span.link-title", [

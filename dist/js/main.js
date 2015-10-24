@@ -12455,6 +12455,71 @@ function appendPatch(apply, patch) {
 }
 
 },{"../vnode/handle-thunk":116,"../vnode/is-thunk":117,"../vnode/is-vnode":119,"../vnode/is-vtext":120,"../vnode/is-widget":121,"../vnode/vpatch":124,"./diff-props":126,"x-is-array":104}],128:[function(require,module,exports){
+var h = require("virtual-dom").h,
+	misc = require("./helpers"),
+	pages = require("./pages"),
+	events = require("./events");
+
+function renderButtons ( DOM ) {
+	return (
+		h("#ph-buttons", [
+
+			h("a#ph-toggle-editor.ph-btn", {
+				href: "#",
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.preventDefault ) e.preventDefault();
+					if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
+
+					if ( DOM.state.fullPage && !pages.current[ DOM.state.tab ] && DOM.state.tab !== "Contributions" ) {
+						events.emit("tab.change", "Overview");
+					}
+					DOM.setState({
+						fullPage: !DOM.state.fullPage
+					});
+				}
+			}, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]),
+
+			h("a#ph-create.ph-edit-btn", {
+				href: "#",
+				title: "New content page",
+				style: ( phAddClass ? { display: "none" } : {}),
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.preventDefault ) e.preventDefault();
+					if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
+
+					DOM.setState({
+						addingContent: !DOM.state.addingContent
+					}, true, true);
+				}
+			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "Add content" : "Cancel" ]) ]),
+
+			h("a#ph-save.ph-edit-btn" + ( DOM.state.saveText === "Save" ? "" : ".loading" ), {
+				href: "#",
+				title: "Save",
+				style: DOM.state.saveStyle,
+				onclick: function ( e ) {
+					e = e || window.event;
+					if ( e.preventDefault ) e.preventDefault();
+					if ( e.cancelBubble ) e.cancelBubble();
+					if ( e.preventDefault ) e.preventDefault();
+					else e.returnValue = false;
+
+					events.emit("content.save");
+				}
+			}, [ h("i.icon.icon-diskette", [ DOM.state.saveText ]) ])
+		])
+	);
+}
+
+module.exports = renderButtons;
+
+},{"./events":131,"./helpers":132,"./pages":136,"virtual-dom":97}],129:[function(require,module,exports){
 var reqwest = require("reqwest"),
 	sweetAlert = require("sweetalert"),
 	pages = require("./pages"),
@@ -12520,9 +12585,6 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			if ( DOM.state.nextPath !== "" ) {
-				return false;
-			}
 			pages.init(data);
 			if ( misc.codeMirror && pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true ) {
 				sweetAlert({
@@ -12541,16 +12603,20 @@ events.on("page.loading", function () {
 	});
 });
 
-events.on("content.loading", function ( path ) {
+events.on("content.loading", function ( path, level, parent ) {
 	if ( !pages[path] ) {
 		events.emit("missing", path);
 		return false;
 	}
-	/*if ( misc.inTransition.output ) {
+	if ( DOM.state.path === path || DOM.state.nextPath === path ) {
 		return false;
-	}*/
-
-	misc.inTransition.output = true;
+	}
+	DOM.setState({
+		nextPath: path,
+		nextLevel: level,
+		nextParent: parent,
+		contentChanging: true
+	});
 	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
@@ -12565,18 +12631,25 @@ events.on("content.loading", function ( path ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
+		// Prevent accidental load of previously clicked destination
 			if ( DOM.state.nextPath !== path ) {
-				// Prevent accidental load of previously clicked destination
 				return false;
 			}
-			events.emit("content.loaded", data, path);
+			events.emit("content.loaded", data);
 		},
 		error: function ( error ) {
+			DOM.setState({
+				nextPath: "",
+				nextLevel: null,
+				nextParent: "",
+				contentChanging: false
+			});
 			console.log("error connecting:", error);
 		}
 	});
 });
 
+/*
 events.on("content.create", function ( data, path, title ) {
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
@@ -12634,43 +12707,33 @@ events.on("content.create", function ( data, path, title ) {
 		}
 	});
 });
+*/
 
 events.on("content.save", function () {
-	DOM.setState({
-		saveText: "...saving..."
-	}, true, true);
-	var current = pages.current,
-		pubs = [],
-		pub;
-	while ( pub = misc.regPubs.exec(current.Policy) ) {
-		pubs.push(pub);
+	if ( DOM.state.saveText !== "Save" ) {
+		return false;
 	}
-	var content = {
-		text: current.text.trim(),
-		Title: current.Title.trim(),
-		Pubs: pubs.join(" "),
-		Tags: current.Tags.trim(),
-		Modified: new Date()
-	};
-	content[current.type] = current.text;
-
+	DOM.setState({
+		saveText: "...saving...",
+		saveStyle: {
+			color: "#00B16A",
+			backgroundColor: "#FFFFFF"
+		}
+	}, true, true);
 	var data = {
 		'__metadata': {
-			'type': current.listItemType
+			'type': pages.current.listItemType
 		},
-		'Title': current.Title,
-		'Pubs': current.Pubs,
-		'Tags': current.Tags,
-		'Overview': current.Overview,
-		'Policy': current.Policy,
-		'Training': current.Training,
-		'Resources': current.Resources,
-		'Tools': current.Tools,
-		'Contributions': current.Contributions
+		'Title': pages.current.Title,
+		'Pubs': pages.current.Pubs,
+		'Tags': pages.current.Tags,
+		'Overview': pages.current.Overview,
+		'Policy': pages.current.Policy,
+		'Training': pages.current.Training,
+		'Resources': pages.current.Resources,
+		'Tools': pages.current.Tools,
+		'Contributions': pages.current.Contributions
 	};
-	if ( misc.inTransition.tempSaveStyle ) {
-		clearTimeout(misc.inTransition.tempSaveStyle);
-	}
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -12681,7 +12744,7 @@ events.on("content.save", function () {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + current.ID + ")",
+				url: sitePath + "/items(" + pages.current.ID + ")",
 				method: "POST",
 				data: JSON.stringify(data),
 				type: "json",
@@ -12695,32 +12758,48 @@ events.on("content.save", function () {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					current.set(content);
-					if ( document.title !== current.Title ) {
-						document.title = current.Title;
+					DOM.setState({
+						saveText: "Saved!",
+						saveStyle: {
+							backgroundColor: "#00B16A",
+							color: "#FFFFFF"
+						}
+					}, true, true);
+
+					var pubs = "", pub;
+					while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
+						pubs += " " + pub;
 					}
+					pages.current.set({
+						Pubs: pubs,
+						Modified: new Date()
+					});
 				},
 				error: function ( error ) {
 					sweetAlert({
 						title: "Failure",
-						text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+						text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
 						type: "fail",
 						showCancelButton: false,
 						html: true
 					});
+					DOM.setState({
+						saveText: "Failed :(",
+						saveStyle: {
+							backgroundColor: "#ec6c62",
+							color: "#FFFFFF"
+						}
+					}, true, true);
 					console.log("Content save error: ", error);
 				},
 				complete: function () {
-					if ( misc.inTransition.tempSaveStyle ) {
-						clearTimeout(misc.inTransition.tempSaveStyle);
-					}
-					DOM.setState({
-						saveText: "Saved!"
-					}, true, true);
-					misc.inTransition.tempSaveStyle = setTimeout(function () {
-						misc.inTransition.tempSaveStyle = null;
+					setTimeout(function () {
 						DOM.setState({
-							saveText: "Save"
+							saveText: "Save",
+							saveStyle: {
+								color: "#FFFFFF",
+								backgroundColor: "#00B16A"
+							}
 						}, true, true);
 					}, 500);
 				}
@@ -12729,19 +12808,26 @@ events.on("content.save", function () {
 		error: function ( error ) {
 			sweetAlert({
 				title: "Failure",
-				text: misc.md.renderInline(current.Title + " **was not** able to be saved"),
+				text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
 				type: "fail",
 				showCancelButton: false,
 				html: true
 			});
-			console.log("Content save error: ", error);
-			if ( misc.inTransition.tempSaveStyle ) {
-				clearTimeout(misc.inTransition.tempSaveStyle);
-			}
-			misc.inTransition.tempSaveStyle = setTimeout(function () {
-				misc.inTransition.tempSaveStyle = null;
+			DOM.setState({
+				saveText: "Failed :(",
+				saveStyle: {
+					backgroundColor: "#ec6c62",
+					color: "#FFFFFF"
+				}
+			}, true, true);
+			console.log("Content save error (couldn't get digest): ", error);
+			setTimeout(function () {
 				DOM.setState({
-					saveText: "Save"
+					saveText: "Save",
+					saveStyle: {
+						color: "#FFFFFF",
+						backgroundColor: "#00B16A"
+					}
 				}, true, true);
 			}, 500);
 		}
@@ -12749,12 +12835,17 @@ events.on("content.save", function () {
 });
 
 events.on("title.save", function ( title ) {
-	if ( misc.inTransition.titleBorder ) {
-		clearTimeout(misc.inTransition.titleBorder);
+	title = title.replace(misc.regSanitize, " ");
+	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
+		return false;
 	}
 	DOM.setState({
-		titleChanging: true
-	}, false, true);
+		titleChanging: true,
+		titleStyle: {
+			borderBottomColor: "#FF9000",
+			color: "#FF9000"
+		}
+	}, true, true);
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -12789,6 +12880,12 @@ events.on("title.save", function ( title ) {
 						_title: title
 					});
 					document.title = title;
+					DOM.setState({
+						titleStyle: {
+							borderBottomColor: "#00B16A",
+							color: "#00B16A"
+						}
+					}, false, true);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -12798,19 +12895,21 @@ events.on("title.save", function ( title ) {
 						showCancelButton: false,
 						html: true
 					});
+					DOM.setState({
+						titleStyle: {
+							borderBottomColor: "#EC6C62",
+							color: "#EC6C62"
+						}
+					}, true, true);
 					console.log("Title save error: ", error);
 				},
 				complete: function () {
-					if ( misc.inTransition.titleBorder ) {
-						clearTimeout(misc.inTransition.titleBorder);
-					}
-					misc.inTransition.titleBorder = setTimeout(function () {
-						misc.inTransition.titleBorder = null;
+					setTimeout(function () {
 						DOM.setState({
-							titleChanging: false
-						}, false, true);
-					}, 350);
-					DOM.update(false, true);
+							titleChanging: false,
+							titleStyle: {}
+						}, true, true);
+					}, 500);
 				}
 			});
 		},
@@ -12823,24 +12922,23 @@ events.on("title.save", function ( title ) {
 				html: true
 			});
 			console.log("Title save error (couldn't get digest): ", error);
-			if ( misc.inTransition.titleBorder ) {
-				clearTimeout(misc.inTransition.titleBorder);
-			}
-			misc.inTransition.titleBorder = setTimeout(function () {
-				misc.inTransition.titleBorder = null;
+			DOM.setState({
+				titleStyle: {
+					borderBottomColor: "#EC6C62",
+					color: "#EC6C62"
+				}
+			}, true, true);
+			setTimeout(function () {
 				DOM.setState({
-					titleChanging: false
-				}, false, true);
-			}, 350);
-			DOM.update(false, true);
+					titleChanging: false,
+					titleStyle: {}
+				}, true, true);
+			}, 500);
 		}
 	});
 });
 
 events.on("tags.save", function ( tags ) {
-	/*if ( misc.inTransition.titleBorder ) {
-		clearTimeout(misc.inTransition.titleBorder);
-	}*/
 	DOM.setState({
 		tagsChanging: true
 	}, true, true);
@@ -12878,19 +12976,13 @@ events.on("tags.save", function ( tags ) {
 					});
 				},
 				error: function ( error ) {
-					if ( !misc.inTransition.errorDlg ) {
-						// So we can lazy save it.
-						misc.inTransition.errorDlg = true;
-						sweetAlert({
-							title: "Failure",
-							text: misc.md.renderInline("Tag(s) **not** able to be saved"),
-							type: "fail",
-							showCancelButton: false,
-							html: true
-						}, function() {
-							misc.inTransition.errorDlg = false;
-						});
-					}
+					sweetAlert({
+						title: "Failure",
+						text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+						type: "fail",
+						showCancelButton: false,
+						html: true
+					});
 					console.log("Tags save error: ", error);
 					console.log("Tags: ", tags);
 				},
@@ -12902,19 +12994,14 @@ events.on("tags.save", function ( tags ) {
 			});
 		},
 		error: function ( error ) {
-			if ( !misc.inTransition.errorDlg ) {
-				// So we can lazy save it.
-				misc.inTransition.errorDlg = true;
-				sweetAlert({
-					title: "Failure",
-					text: misc.md.renderInline("Tag(s) **not** able to be saved"),
-					type: "fail",
-					showCancelButton: false,
-					html: true
-				}, function () {
-					misc.inTransition.errorDlg = false;
-				});
-			}
+			// So we can lazy save it.
+			sweetAlert({
+				title: "Failure",
+				text: misc.md.renderInline("Tag(s) **not** able to be saved"),
+				type: "fail",
+				showCancelButton: false,
+				html: true
+			});
 			console.log("Tags save error (couldn't get digest): ", error);
 			console.log("Tags: ", tags);
 			DOM.setState({
@@ -12926,7 +13013,7 @@ events.on("tags.save", function ( tags ) {
 
 module.exports = init;
 
-},{"./dom":129,"./events":130,"./helpers":131,"./pages":135,"reqwest":92,"sweetalert":93}],129:[function(require,module,exports){
+},{"./dom":130,"./events":131,"./helpers":132,"./pages":136,"reqwest":92,"sweetalert":93}],130:[function(require,module,exports){
 var vdom = require("virtual-dom"),
 	h = vdom.h,
 	diff = vdom.diff,
@@ -12937,8 +13024,10 @@ var vdom = require("virtual-dom"),
 	events = require("./events"),
 	renderNav = require("./nav"),
 	renderTabs = require("./tabs"),
+	renderTags = require("./tags"),
+	renderButtons = require("./buttons"),
 	renderPage = require("./page"),
-	regLink = /<a (href="https?:\/\/)/gi;
+	regLink = /<a (href=["']https?:\/\/)/gi;
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -12948,34 +13037,45 @@ function DOM () {
 		fullPage: true,
 		cheatSheet: false,
 		addingContent: false,
-		level: 0,
-		path: "/",
+		level: null,
+		path: "",
 		nextPath: "",
+		nextLevel: null,
+		nextParent: "",
 		opened: {},
 		parent: "",
-		tab: "Overview",
+		tab: "",
 		revertScroll: 254,
 		tagsChanging: false,
 		titleChanging: false,
+		titleStyle: {},
 		contentChanging: false,
-		saveText: "Save"
+		saveText: "Save",
+		saveStyle: {}
 	};
 }
 /**
+ *
  * Begins rendering the virtual-dom VTree.  Determines what needs to render
  * and what doesn't.
  * @param navOld - BOOLEAN: if old navDOM tree should still be used
  * @param tabsOld - BOOLEAN: if old tabsDOM tree should still be used
+ * @param tagsOld - BOOLEAN: if old tagsDOM tree should still be used
+ * @param buttonsOld - BOOLEAN: if old buttonsDOM tree should still be used
  * @returns {*} - VTree, VNode or...null?
  */
-DOM.prototype.preRender = function ( navOld, tabsOld ) {
-	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( pages.options.hideNavWhileEditing && this.state.fullPage ) ? renderNav(this) : null);
+DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
+	this.navDOM = ( this.navDOM && navOld ) ? this.navDOM : (( this.state.fullPage && pages.options.hideNavWhileEditing ) ? renderNav(this) : null);
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
-	return renderPage(this.navDOM, this.tabsDOM, this);
+	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
+	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
+	/*this.inputDOM = null;
+	this.outputDOM = null;*/
+	return renderPage(this);
 };
 
 DOM.prototype.init = function () {
-	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper");
+	var wrapper = phWrapper || document.getElementById("wrapper") || document.getElementById("ph-wrapper") || document.getElementById("ph-root");
 
 	this.dirtyDOM = this.preRender();
 	this.rootNode = createElement(this.dirtyDOM);
@@ -12989,9 +13089,6 @@ DOM.prototype.init = function () {
 	this.textarea = document.getElementById("ph-textarea");
 	this.output = document.getElementById("ph-output");
 
-	if ( misc.codeMirror ) {
-		this.initEditor();
-	}
 	events.emit("dom.loaded");
 };
 
@@ -13004,20 +13101,20 @@ DOM.prototype.set = function ( data, ctx ) {
 	}
 };
 
-DOM.prototype.setState = function ( data, nav, tabs ) {
+DOM.prototype.setState = function ( data, nav, tabs, tags, buttons ) {
 	this.set(data, this.state);
-	this.update(nav, tabs);
+	this.update(nav, tabs, tags, buttons);
 };
 
-DOM.prototype.update = function ( nav, tabs ) {
-	var refreshDOM = this.preRender(nav, tabs),
+DOM.prototype.update = function ( nav, tabs, tags, buttons ) {
+	var refreshDOM = this.preRender(nav, tabs, tags, buttons),
 		patches = diff(this.dirtyDOM, refreshDOM);
 
 	this.rootNode = patch(this.rootNode, patches);
 	this.dirtyDOM = refreshDOM;
 
-	if ( this.editor && ( !nav || !tabs ) && !this.state.fullPage ) {
-		this.editor.setValue(pages.current.text);
+	if ( this.editor && ( !tabs || !buttons ) ) {
+		this.editor.setValue(pages.current[this.state.tab]);
 	}
 };
 
@@ -13034,40 +13131,35 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( !misc.inTransition.tempSaveText ) {
-					misc.inTransition.tempSaveText = "...saving...";
-					self.update(true, true);
+				if ( self.state.saveText === "Save" ) {
 					events.emit("content.save");
 				}
 			}
 		}
 	});
 	this.editor.on("change", function ( e ) {
-		var val = e.getValue();
-		pages.current.set({
-			text: val
-		});
-		self.renderOut(val, pages.current.type);
+		pages.current.set(self.state.tab, e.getValue());
+		self.renderOut();
 	});
 	this.editor.refresh();
 };
 
-DOM.prototype.renderOut = function ( text, type ) {
-	type = ( this.state.level > 1 ) ? "## " + type + "\n" : "";
-	this.output.innerHTML = misc.md.render(type + text).replace(regLink, "<a target='_blank' $1");
+DOM.prototype.renderOut = function () {
+	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
+	this.output.innerHTML = misc.md.render(pages.current[this.state.tab]).replace(regLink, "<a target='_blank' $1");
 };
 
 var dom = new DOM();
 
 module.exports = dom;
 
-},{"./events":130,"./helpers":131,"./nav":133,"./page":134,"./pages":135,"./tabs":136,"virtual-dom":97}],130:[function(require,module,exports){
+},{"./buttons":128,"./events":131,"./helpers":132,"./nav":134,"./page":135,"./pages":136,"./tabs":137,"./tags":138,"virtual-dom":97}],131:[function(require,module,exports){
 var Events = require("event");
 Events.prototype.emit = Events.prototype.fire;
 var events = new Events({});
 module.exports = events;
 
-},{"event":2}],131:[function(require,module,exports){
+},{"event":2}],132:[function(require,module,exports){
 function addEvent ( evt, element, fnc ) {
 	return ((element.addEventListener) ? element.addEventListener(evt, fnc, false) : element.attachEvent("on" + evt, fnc));
 }
@@ -13084,31 +13176,24 @@ var markdownit = require("markdown-it"),
 		xhtmlOut: true,
 		quotes: '“”‘’'
 	}),
-	inTransition = {
-		output: false,
-		//saveText: "Save",
-		tempSaveStyle: null,
-		errorDlg: false,
-		tagChange: false
-	},
 	codeMirror = CodeMirror,
-	regSplit = /; *|, *| \b|\b /g,
+	regSplit = /[^a-z0-9-_]+/gi,
 	regSplit2 = /\b; ?|\b /g,
-	//regSplit = /\s/g,
+	regSanitize = /([^a-z0-9-_.&\s])/gi,
 	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	md: md,
-	inTransition: inTransition,
 	codeMirror: codeMirror,
 	regSplit: regSplit,
 	regSplit2: regSplit2,
+	regSanitize: regSanitize,
 	regPubs: regPubs
 };
 
-},{"markdown-it":25}],132:[function(require,module,exports){
+},{"markdown-it":25}],133:[function(require,module,exports){
 /**
  * @license
  * Test but it'd be MIT if anything.
@@ -13122,8 +13207,6 @@ var vdom = require("virtual-dom"),
 	horsey = require("horsey"),
 
 	misc = require("./helpers"),
-	codeMirror = misc.codeMirror,
-
 	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
@@ -13132,53 +13215,31 @@ var vdom = require("virtual-dom"),
 	router = Router({
 		'/': {
 			on: function () {
-				DOM.setState({
-					nextPath: "/",
-					level: 0,
-					parent: ""
-				});
-				events.emit("content.loading", "/");
+				events.emit("content.loading", "/", 0, "");
 			}
 		},
 		'/(\\w+)': {
 			on: function ( section ) {
 				var path = "/" + section.replace(/\s/g, "");
-				DOM.setState({
-					nextPath: path,
-					level: 1,
-					parent: ""
-				});
-				events.emit("content.loading", path);
+				events.emit("content.loading", path, 1, "");
 			},
 			'/(\\w+)': {
 				on: function ( section, program ) {
 					var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "");
-					DOM.setState({
-						nextPath: path,
-						level: 2,
-						parent: path
-					});
-					events.emit("content.loading", path);
+					events.emit("content.loading", path, 2, path);
 				},
 				'/(\\w+)': {
 					on: function ( section, program, page ) {
-						var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "");
-						DOM.setState({
-							nextPath: path,
-							level: 3,
-							parent: "/" + section + "/" + program
-						});
-						events.emit("content.loading", path);
+
+						var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
+							path = parent + "/" + page.replace(/\s/g, "");
+						events.emit("content.loading", path, 3, parent);
 					},
 					'/(\\w+)': {
 						on: function ( section, program, page, rabbitHole ) {
-							var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "") + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
-							DOM.setState({
-								nextPath: path,
-								level: 4,
-								parent: "/" + section + "/" + program
-							});
-							events.emit("content.loading", path);
+							var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
+								path = parent + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
+							events.emit("content.loading", path, 4, parent);
 						}
 					}
 				}
@@ -13212,12 +13273,6 @@ events.on("page.loaded", function () {
 });
 
 events.on("dom.loaded", function () {
-	if ( window.location.hash ) {
-		router.init();
-	}
-	else {
-		router.init("/");
-	}
 	horsey(DOM.searchInput, {
 		suggestions: pages.titles,
 		autoHideOnBlur: false,
@@ -13237,13 +13292,12 @@ events.on("dom.loaded", function () {
 			li.innerText = li.textContent = item.renderText;
 		}
 	});
-	DOM.setState({
-		revertScroll: DOM.rootNode.getBoundingClientRect().top,
-		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
-			paths[path] = (DOM.state.parent === path);
-			return paths;
-		}, {})
-	})
+	if ( window.location.hash ) {
+		router.init();
+	}
+	else {
+		router.init("/");
+	}
 });
 
 events.on("missing", function ( path ) {
@@ -13259,7 +13313,7 @@ events.on("missing", function ( path ) {
 	});
 });
 
-events.on("content.loaded", function ( data, path ) {
+events.on("content.loaded", function ( data ) {
 	var obj = data.d;
 	if ( !obj ) {
 		router.setRoute("/");
@@ -13270,19 +13324,18 @@ events.on("content.loaded", function ( data, path ) {
 		return false;
 	}
 
-	var pubs = [], pub;
+	var pubs = "", pub;
 	while ( pub = misc.regPubs.exec(obj.Policy) ) {
-		pubs.push(pub);
+		pubs += ", " + pub;
 	}
 
 	pages.current = pages.current.reset({
 		ID: obj.ID,
 		Title: obj.Title || "",
 		_title: obj.Title || "",
-		Pubs: pubs.join(" ") || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ").replace(/,$/, "") || "",
+		Pubs: pubs || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ", ") || "",
 		Icon: obj.Icon || "",
-		text: obj.Overview || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
 		Training: obj.Training || "",
@@ -13293,71 +13346,94 @@ events.on("content.loaded", function ( data, path ) {
 		Program: obj.Program || "",
 		Page: obj.Page || "",
 		rabbitHole: obj.rabbitHole || "",
-		type: "Overview",
-		Modified: new Date(obj.Modified || obj.Created),
+		Modified: new Date(obj.Modified),
 		listItemType: obj.__metadata.type,
-		timestamp: (Date && Date.now() || new Date()),
-		path: path,
-		level: Number(Boolean(obj.Section)) + Number(Boolean(obj.Program)) + Number(Boolean(obj.Page)) + Number(Boolean(obj.rabbitHole)) || 0
+		path: DOM.state.nextPath,
+		level: DOM.state.nextLevel,
+		parent: DOM.state.nextParent
 	});
-
-	misc.inTransition.output = false;
-	document.title = pages.current.Title;
+	var opened = Object.keys(pages.parents).reduce(function ( paths, path ) {
+		paths[path] = ( (DOM.state.nextParent === path) ? true : ( !pages.options.resetOpenOnNav ? DOM.state.opened[path] : false ) );
+		return paths;
+	}, {});
 	DOM.setState({
-		path: path,
+		path: DOM.state.nextPath,
+		level: DOM.state.nextLevel,
+		parent: DOM.state.nextParent,
 		nextPath: "",
-		opened: Object.keys(pages.parents).reduce(function ( paths, path ) {
-			paths[path] = ( DOM.state.parent === path || DOM.state.opened[path] );
-			return paths;
-		}, {})
+		nextLevel: null,
+		nextParent: "",
+		contentChanging: false,
+		opened: opened,
+		scroller: null
 	});
-	DOM.renderOut(pages.current.text, pages.current.type);
+	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
-		window.scrollBy(0, DOM.content.getBoundingClientRect().top);
+		window.scrollBy(0, DOM.rootNode.getBoundingClientRect().top - 50);
+		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
+		var interval = 300 / scrollTop;
+		var positive = ( scrollTop > 0 );
+		(function phScroller( top ) {
+			setTimeout(function () {
+				window.scrollBy(0, interval);
+				top = top - interval;
+				return ( ( positive && top < scrollTop ) || ( !positive && top > scrollTop ) ? phScroller(top) : false);
+			}, 16);
+			console.log(top);
+		})(scrollTop);*/
+	}
+	events.emit("tab.change", "Overview");
+	if ( misc.codeMirror && !DOM.editor ) {
+		DOM.initEditor();
 	}
 });
 
-events.on("tab.change", function ( page ) {
-	var content = {};
-	content[pages.current.type] = pages.current.text;
-	content.type = page;
-	content.text = pages.current[page];
-	pages.current.set(content);
-
-	misc.inTransition.output = false;
+events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: page
+		tab: tab
 	}, true, false);
-	//if ( !codeMirror ) {
-		DOM.renderOut(content.text, content.type);
-	//}
+	DOM.renderOut();
 });
 
 pageInit();
 
-},{"./data":128,"./dom":129,"./events":130,"./helpers":131,"./pages":135,"director/build/director":1,"horsey":5,"sweetalert":93,"virtual-dom":97}],133:[function(require,module,exports){
+},{"./data":129,"./dom":130,"./events":131,"./helpers":132,"./pages":136,"director/build/director":1,"horsey":5,"sweetalert":93,"virtual-dom":97}],134:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
 
-function renderLink ( link, DOM ) {
-	var attr = {},
-		handleClick = function ( e ) {
-			if ( e.stopPropagation ) e.stopPropagation();
-			else if ( e.cancelBubble ) e.cancelBubble();
-		},
-		opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] );
+function handleClick ( e ) {
+	e = e || window.event;
+	if ( e.stopPropagation ) e.stopPropagation();
+	else if ( e.cancelBubble ) e.cancelBubble();
+}
 
-	if ( link.level > 2 && !opened ) {
-		attr = { style: { display: "none" } };
-	}
+function renderLink ( link, DOM ) {
+	var opened = ( !link.children ? DOM.state.opened[link.parent] : DOM.state.opened[link.path] ),
+		attr = ( link.level > 2 && !opened ? { display: "none" } : {} );
 	return (
-		h("li.link#ph-link-" + /*link.id +*/ link.className,
-			attr, [
+		h("li.link#ph-link-" + link.id + link.className + ( link.children && opened ? ".ph-opened" : "" ),
+			{ style: attr },
+			[
 				h("a.ph-level-" + link.level + ( link.path !== DOM.state.path ? "" : ".active" ), {
 					href: link.href,
 					target: ( link.href.charAt(0) !== "#" ? "_blank" : "" ),
-					onclick: handleClick
+					onclick: ( !link.children ? handleClick : function ( e ) {
+						e = e || window.event;
+						if ( e.stopPropagation ) e.stopPropagation();
+						else if ( e.cancelBubble ) e.cancelBubble();
+						if ( DOM.state.path === link.path ) {
+							if ( e.preventDefault ) e.preventDefault();
+							else e.returnValue = false;
+							if ( DOM.state.opened.hasOwnProperty(link.path) ) {
+								var openedObj = Object.create(DOM.state.opened);
+								openedObj[ link.path ] = !openedObj[ link.path ];
+								DOM.setState({
+									opened: openedObj
+								});
+							}
+						}
+					} )
 				}, [
 					( !link.icon ? null : h("i.icon.icon-" + link.icon) ),
 					h("span.link-title", [
@@ -13393,9 +13469,10 @@ function renderSection ( section, DOM ) {
 	return (
 		h("li#ph-link-" + section.id + ".ph-section.link", [
 			h("a.ph-level-1" + ( section.path !== DOM.state.path ? "" : ".active" ), {
-				"href": "#" + section.path
+				"href": "#" + section.path,
+				onclick: handleClick
 			}, [
-				h("span.link-title", [String(section.title)])
+				h("span.link-title", [ section.title ])
 			]),
 			h("ul", links)
 		])
@@ -13415,7 +13492,8 @@ function renderNav ( DOM ) {
 		h("#ph-nav", [
 			h(".header", [
 				h("a" + ( DOM.state.path !== "/" ? "" : ".active" ), {
-					"href": "#/"
+					"href": "#/",
+					onclick: handleClick
 				}, [
 					h(".logo", [
 						h("img", {
@@ -13458,23 +13536,24 @@ function renderNav ( DOM ) {
 
 module.exports = renderNav;
 
-},{"./events":130,"./pages":135,"virtual-dom":97}],134:[function(require,module,exports){
+},{"./events":131,"./pages":136,"virtual-dom":97}],135:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
-	events = require("./events"),
-	regSplit = misc.regSplit;
+	events = require("./events");
 
-/*function renderLoader() {
+/*function renderLoader () {
 	return (
-		h("#ph-loader.loader-group", [
-			h(".bigSqr", [
-				h(".square.first"),
-				h(".square.second"),
-				h(".square.third"),
-				h(".square.fourth")
-			]),
-			h(".text", ["loading..."])
+		h("#ph-loader", [
+			h(".loader-group", [
+				h(".bigSqr", [
+					h(".square.first"),
+					h(".square.second"),
+					h(".square.third"),
+					h(".square.fourth")
+				]),
+				h(".text", [ "loading..." ])
+			])
 		])
 	);
 }*/
@@ -13482,7 +13561,7 @@ var h = require("virtual-dom").h,
 function renderAddContent () {
 	return (
 		h("fieldset", [
-			h("legend", ["Many things to be added soon"]),
+			h("legend", [ "Many things to be added soon" ]),
 		/**
 		 * Iterate path into X number of horsey instances (use div)
 		 * Underneath show live view of what URI is going to be
@@ -13516,163 +13595,45 @@ function renderAddContent () {
 	);
 }
 
-function renderEditor ( tabsDOM, DOM ) {
-
-	var addTag = function ( e ) {
-		e = e || window.event;
-		if ( e.stopPropagation ) e.stopPropagation();
-		else if ( e.cancelBubble ) e.cancelBubble();
-		if ( e.preventDefault ) e.preventDefault();
-		else e.returnValue = false;
-
-		var addTag = document.querySelector("input[name='ph-add-tag']"),
-			val = addTag.value.trim(),
-			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
-		if ( val && !regVal.test(pages.current.Tags) ) {
-			addTag.focus();
-			events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
-		}
-	};
-
-	var removeTag = function ( e ) {
-		e = e || window.event;
-		if ( e.stopPropagation ) e.stopPropagation();
-		else if ( e.cancelBubble ) e.cancelBubble();
-		if ( e.preventDefault ) e.preventDefault();
-		else e.returnValue = false;
-
-		var val = this.textContent || this.innerText || this.innerHTML;
-		val = val.trim();
-		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
-		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
-	};
-
+function renderEditor ( DOM ) {
 	return (
-		h("#ph-content" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
+		h("#ph-content", [
 
-
-			h("#ph-create-wrap", [!DOM.state.addingContent ? null : renderAddContent()]),
-
-
-			h("a.ph-btn.ph-create", {
-				href: "#",
-				title: "New section",
-				style: (( phAddClass ) ? { display: "none" } : {}),
-				onclick: function ( e ) {
-					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
-					if ( e.preventDefault ) e.preventDefault();
-					else e.returnValue = false;
-
-					DOM.setState({
-						addingContent: !DOM.state.addingContent
-					}, true, true);
-				}
-			}, [h("span.btn-title", [!DOM.state.addingContent ? "Add content" : "Cancel"])]),
-
-
-			h("a.ph-toggle-editor", {
-				href: "#",
-				role: "button",
-				onclick: function ( e ) {
-					e = e || window.event;
-					if ( e.stopPropagation ) e.stopPropagation();
-					else if ( e.cancelBubble ) e.cancelBubble();
-					if ( e.preventDefault ) e.preventDefault();
-					else e.returnValue = false;
-
-					if ( DOM.state.fullPage && !pages.current[DOM.state.tab] && DOM.state.tab !== "Contributions" ) {
-						events.emit("tab.change", "Overview");
-					}
-					DOM.setState({
-						fullPage: !DOM.state.fullPage
-					});
-				}
-			}, [DOM.state.fullPage ? "Show editor" : "Hide editor"]),
+			h("#ph-create-wrap", [ !DOM.state.addingContent ? null : renderAddContent() ]),
 
 
 			h("h1#ph-title.ph-cm" + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: !DOM.state.titleChanging,
-				style: ( DOM.state.titleBorder ? { borderBottomColor: "#00B16A" } : {} ),
+				style: DOM.state.titleStyle,
 				onkeypress: function ( e ) {
 					if ( e.which == 13 || e.keyCode == 13 ) {
+						e = e || window.event;
+						if ( e.preventDefault ) e.preventDefault();
+						if ( e.cancelBubble ) e.cancelBubble();
+						if ( e.preventDefault ) e.preventDefault();
+						else e.returnValue = false;
 						this.blur();
 						return false;
 					}
 				},
 				onblur: function () {
-					var title = this.textContent || this.innerText;
+					var title = this.textContent || this.innerText || this.innerHTML;
 					title = title.trim();
-					if ( title !== pages.current._title ) {
-						if ( !DOM.state.titleChanging && pages.options.saveTitleAfterEdit ) {
-							events.emit("title.save", title);
-						}
-					}
+					events.emit("title.save", title);
 				}
-			}, [String(pages.current.Title || "")]),
+			}, [ pages.current.Title ]),
 
+			h("#ph-tabs.ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 
-			h("#ph-tabs.ph-tabs", [tabsDOM]),
+			DOM.buttonsDOM,
 
-
-			h("h3.ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
-				h("input.ph-add-tag", {
-					type: "text",
-					name: "ph-add-tag",
-					value: "",
-					placeholder: "Add keyword(s)",
-					autofocus: true,
-					onkeypress: function ( e ) {
-						if ( e.which == 13 || e.keyCode == 13 ) {
-							addTag(e);
-							return false;
-						}
-					}
-				}),
-				h("a.icon.icon-plus", {
-					href: "#",
-					onclick: addTag
-				}),
-				h(".clearfix", { style: {padding: "5px"}}),
-				( pages.current.Tags ? pages.current.Tags.split(regSplit).map(function ( tag ) {
-					return ( tag.trim() ?
-						h("small", {
-							onclick: removeTag
-						}, [String(tag)]) :
-						null );
-				}) : null )
-			]),
-
-
-			h("#ph-buttons", [
-				h("a#ph-save.ph-edit-btn.ph-save" + ( DOM.state.saveText !== "Save" ? "" : ".loading" ), {
-					href: "#",
-					title: "Save",
-					style: ( DOM.state.tempSaveStyle ? {
-						color: "#00B16A",
-						backgroundColor: "#FFFFFF"
-					} : {
-						backgroundColor: "#00B16A",
-						color: "#FFFFFF"
-					}),
-					onclick: function ( event ) {
-						event = event || window.event;
-						if ( event.preventDefault ) event.preventDefault();
-						else event.returnValue = false;
-
-						if ( DOM.state.saveText === "Save" ) {
-							events.emit("content.save");
-						}
-					}
-				}, [h("i.icon.icon-diskette", [DOM.state.saveText])])
-			]),
-
+			DOM.tagsDOM,
 
 			h("#ph-contentWrap", [
 				h("#ph-input", [
-					h("textarea#ph-textarea", [String(pages.current.text || "")])
+					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
+				//( (DOM.state.fullPage && DOM.state.level > 1) ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
@@ -13683,12 +13644,13 @@ function renderEditor ( tabsDOM, DOM ) {
 	);
 }
 
-function renderDefault ( tabsDOM ) {
+function renderDefault ( DOM ) {
 	return (
 		h("#ph-content.fullPage", [
-			h("h1#ph-title", [String(pages.current.Title || "")]),
-			h("#ph-tabs.ph-tabs", [tabsDOM]),
+			h("h1#ph-title", [ pages.current.Title ]),
+			h("#ph-tabs.ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 			h("#ph-contentWrap", [
+				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
 				h("#ph-output"),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
@@ -13699,9 +13661,10 @@ function renderDefault ( tabsDOM ) {
 	);
 }
 
-function renderPage ( navDOM, tabsDOM, DOM ) {
+function renderPage ( DOM ) {
+
 	return (
-		h("#ph-wrapper", [
+		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
 			}, [
@@ -13714,15 +13677,15 @@ function renderPage ( navDOM, tabsDOM, DOM ) {
 					})
 				])
 			]),
-			h("#ph-side-nav", [navDOM]),
-			( !misc.codeMirror ? renderDefault(tabsDOM) : renderEditor(tabsDOM, DOM) )
+			h("#ph-side-nav", [ DOM.navDOM ]),
+			( !misc.codeMirror ? renderDefault(DOM) : renderEditor(DOM) )
 		])
 	);
 }
 
 module.exports = renderPage;
 
-},{"./events":130,"./helpers":131,"./pages":135,"virtual-dom":97}],135:[function(require,module,exports){
+},{"./events":131,"./helpers":132,"./pages":136,"virtual-dom":97}],136:[function(require,module,exports){
 var misc = require("./helpers"),
 	events = require("./events");
 
@@ -13730,10 +13693,9 @@ function Content ( data ) {
 	if ( !(this instanceof Content) ) {
 		return new Content( data );
 	}
-	this.ID = -1;
+	this.ID = null;
 	this.Title = "";
 	this._title = "";
-	this.text = "";
 	this.Pubs = "";
 	this.Tags = "";
 	this.Icon = "";
@@ -13747,29 +13709,34 @@ function Content ( data ) {
 	this.Program = "";
 	this.Page = "";
 	this.rabbitHole = "";
-	this.type = "Overview";
 	this.Modified = new Date();
 	this.listItemType = "";
-	this.timestamp = null;
-	this.level = -1;
-	this.path = "/";
+	this.level = null;
+	this.path = "";
+	this.parent = "";
 	if ( data ) {
 		return this.set(data);
 	}
 }
 
-Content.prototype.set = function ( data ) {
-	var i = 0;
-	for ( var name in data ) {
-		if ( this.hasOwnProperty(name) ) {
-			this[name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
-			if ( pages[this.path].hasOwnProperty(name) ) {
-				pages[this.path][name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
-				++i;
+Content.prototype.set = function () {
+	if ( arguments.length === 2 && this.hasOwnProperty(arguments[0]) ) {
+		this[arguments[0]] = arguments[1];
+	}
+	else {
+		var i = 0,
+			data = arguments[0];
+		for ( var name in data ) {
+			if ( this.hasOwnProperty(name) ) {
+				this[name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
+				if ( this.path && pages[this.path].hasOwnProperty(name) ) {
+					pages[this.path][name] = ( typeof data[name] === "string" ) ? data[name].trim() : data[name];
+					++i;
+				}
 			}
 		}
+		if ( i > 0 ) pages.navPrep();
 	}
-	if ( i > 0 ) pages.navPrep();
 	return this;
 };
 
@@ -13795,7 +13762,8 @@ function Pages () {
 		hideNavWhileEditing: true,
 		saveTitleAfterEdit: true,
 		saveTagsAfterEdit: true,
-		scrollOnNav: false
+		scrollOnNav: false,
+		resetOpenOnNav: true
 	};
 }
 
@@ -13880,46 +13848,31 @@ Pages.prototype.init = function ( data ) {
 };
 
 Pages.prototype.navPrep = function () {
-	var self = this;
-	var _urls = self.urls.slice(0);
-	var url, result;
-	while ( url = _urls.shift() ) {
-		result = self[url];
-		if ( result.level === 1 ) {
-			self.sections[result.Section] = {
-				path: ( !result.Link ) ? "/" + result.Section : result.Link,
-				title: result.Title,
-				id: result.ID,
+	var self = this,
+		_urls = self.urls.slice(0),
+		_url,
+		_result;
+	while ( _url = _urls.shift() ) {
+		_result = self[_url];
+		if ( _result.level === 1 ) {
+			self.sections[_result.Section] = {
+				path: ( !_result.Link ) ? _result.path : _result.Link,
+				title: _result.Title,
+				id: _result.ID,
 				links: []
 			};
 		}
-		if ( result.level === 4 ) {
-			self.subParents["/" + result.Section + "/" + result.Program + "/" + result.Page] = ".ph-sub-parent.ph-page";
+		if ( _result.level === 4 ) {
+			self.subParents["/" + _result.Section + "/" + _result.Program + "/" + _result.Page] = ".ph-sub-parent.ph-page";
 		}
-		else if ( result.level === 3 ) {
-			self.parents["/" + result.Section + "/" + result.Program] = ".ph-parent.ph-program";
+		else if ( _result.level === 3 ) {
+			self.parents["/" + _result.Section + "/" + _result.Program] = ".ph-parent.ph-program";
 		}
 	}
 
-	var tags = result.Tags && result.Tags.split(misc.regSplit) || [],
-		pubs = [],
-		pub;
-
-	while ( pub = misc.regPubs.exec(result.Policy) ) {
-		pubs.push(pub);
-	}
-
-	/**
-	 * Used for searching the site quick and easy using Horsey.
-	 */
-	self.titles.push({
-		text: result.Title + " " + tags.join(" ") + pubs.join(" "),
-		value: result.path,
-		renderText: result.Title
-	});
-
-	url = null;
-	result = null;
+	_url = null;
+	_result = null;
+	self.titles = [];
 	self.urls.sort();
 	self.urls.forEach(function ( url ) {
 		var page = self[url],
@@ -13927,8 +13880,18 @@ Pages.prototype.navPrep = function () {
 			path = url.split(/\//),
 			name = path.slice(-1),
 			parent = path.slice(0, -1).join("/"),
-			grandParent = path.slice(0, -2).join("/");
+			grandParent = path.slice(0, -2).join("/"),
+			tags = page.Tags && page.Tags.replace(misc.regSplit, " ") || "",
+			pubs = page.Pubs && page.Pubs.replace(misc.regSplit, " ") || "";
 
+		/**
+		 * Used for searching the site quick and easy using Horsey.
+		 */
+		self.titles.push({
+			text: page.Title + " " + tags + " " + pubs,
+			value: page.path,
+			renderText: page.Title
+		});
 		switch ( page.level ) {
 			case 2:
 				className = self.parents[page.path] || ".ph-program";
@@ -13958,6 +13921,7 @@ Pages.prototype.navPrep = function () {
 	});
 };
 
+/*
 Pages.prototype.createContent = function ( path, title, newName ) {
 	var regNormalize = /[^a-zA-Z0-9_-]/g,
 		self = this,
@@ -13981,6 +13945,7 @@ Pages.prototype.createContent = function ( path, title, newName ) {
 	};
 	events.emit("content.create", data, path, title);
 };
+*/
 
 /*
 
@@ -14067,48 +14032,23 @@ module.exports = pages;
  *  Trackers
  */
 
-},{"./events":130,"./helpers":131}],136:[function(require,module,exports){
+},{"./events":131,"./helpers":132}],137:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
-	events = require("./events"),
-	tabs = [
-		{
-			title: "Overview",
-			icon: "home"
-		},
-		{
-			title: "Policy",
-			icon: "notebook"
-		},
-		{
-			title: "Training",
-			icon: "display1"
-		},
-		{
-			title: "Resources",
-			icon: "cloud-upload"
-		},
-		{
-			title: "Tools",
-			icon: "tools"
-		},
-		{
-			title: "Contributions",
-			icon: "users"
-		}
-	];
+	events = require("./events");
 
 function renderTabs ( DOM ) {
-	var style = ( DOM.state.level > 1 ) ? null : { style: { display: "none" } },
-		group = tabs.map(function ( tab ) {
-			var tabName = tab.title.replace(/\s/g, "");
+	var style = ( DOM.state.level > 1 ) ? {} : { display: "none" },
+		group = phTabs.map(function ( tab ) {
+			var tabName = tab.title.replace(/\s/g, ""); // Kinda future-proofing
 			var className = ".ph-tab-" + tabName.toLowerCase() + (
 					( pages.options.hideEmptyTabs && pages.current[tabName].length < 1 && tabName !== "Contributions" ) ? ".tab-empty" : "" ) + (
-					( pages.current.type === tabName ) ? ".tab-current" : "" );
+					( DOM.state.tab !== tabName ) ? "" : ".tab-current"
+				);
 
 			return (
 				h("li" + className, [
-					h("div.ph-tab-box", [
+					h(".ph-tab-box", [
 						h("a.icon.icon-" + tab.icon, {
 							href: "#",
 							onclick: function ( e ) {
@@ -14121,9 +14061,9 @@ function renderTabs ( DOM ) {
 								events.emit("tab.change", tab.title);
 								return false;
 							}
-						}, [h("span", [String(tab.title)])])
+						}, [ h("span", [tab.title]) ])
 					]),
-					( pages.options.contribPOCEmail && tabName === "Contributions" ) ?
+					( tabName === "Contributions" && pages.options.contribPOCEmail ) ?
 						h("a.ph-contrib-poc", {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName
@@ -14134,11 +14074,89 @@ function renderTabs ( DOM ) {
 		});
 	return (
 		h("nav", [
-			h("ul", style, group)
+			h("ul", /*{ style: style },*/ group)
 		])
 	);
 }
 
 module.exports = renderTabs;
 
-},{"./events":130,"./pages":135,"virtual-dom":97}]},{},[132]);
+},{"./events":131,"./pages":136,"virtual-dom":97}],138:[function(require,module,exports){
+var h = require("virtual-dom").h,
+	misc = require("./helpers"),
+	pages = require("./pages"),
+	events = require("./events");
+
+function renderTags ( DOM ) {
+	var addTag = function ( e ) {
+		e = e || window.event;
+		if ( e.preventDefault ) e.preventDefault();
+		if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.preventDefault ) e.preventDefault();
+		else e.returnValue = false;
+
+		var addTag = document.querySelector("input[name='ph-add-tag']"),
+			val = addTag.value.trim().replace(misc.regSplit, " "),
+			regVal = new RegExp(" ?\\b" + val + "\\b,? ?", "i");
+		if ( val && !regVal.test(pages.current.Tags) ) {
+			addTag.focus();
+			events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
+		}
+	};
+
+	var removeTag = function ( e ) {
+		e = e || window.event;
+		if ( e.preventDefault ) e.preventDefault();
+		if ( e.cancelBubble ) e.cancelBubble();
+		if ( e.preventDefault ) e.preventDefault();
+		else e.returnValue = false;
+
+		var val = this.textContent || this.innerText || this.innerHTML;
+		val = val.trim();
+		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
+		events.emit("tags.save", pages.current.Tags.replace(regVal, ""))
+	};
+	return (
+		h(".ph-tags" + ( !DOM.state.tagsChanging ? "" : ".loading" ), [
+			h(".ph-input-wrap", [
+				h("input.ph-add-tag", {
+					type: "text",
+					name: "ph-add-tag",
+					value: "",
+					placeholder: "Add keyword(s)",
+					autofocus: true,
+					onkeypress: function ( e ) {
+						if ( e.which == 13 || e.keyCode == 13 ) {
+							e = e || window.event;
+							if ( e.preventDefault ) e.preventDefault();
+							if ( e.cancelBubble ) e.cancelBubble();
+							if ( e.preventDefault ) e.preventDefault();
+							else e.returnValue = false;
+							addTag(e);
+							return false;
+						}
+					}
+				}),
+				h("a.ph-add-tag-btn.icon.icon-plus", {
+					href: "#",
+					onclick: addTag
+				})
+			]),
+			//h(".clearfix", { style: { padding: "5px" } }),
+			( pages.current.Tags ?
+				h("h4.ph-tag-wrapper", [
+					pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
+						return ( tag.trim() ?
+							h("small", {
+								onclick: removeTag
+							}, [ tag.trim() ]) :
+							null );
+					})
+				]) : null )
+		])
+	);
+}
+
+module.exports = renderTags;
+
+},{"./events":131,"./helpers":132,"./pages":136,"virtual-dom":97}]},{},[133]);

@@ -1,35 +1,24 @@
 #ph-buttons {
-	/*width: 100%;*/
-/*	max-width: 960px;
-	max-width: calc(100% - 320px);*/
-	margin-top: 50px;
+	width: 100%;
+	/*max-width: 960px;
+	max-width: calc(100% - 320px);
+	margin-top: 50px;*/
 	text-align: right;
 	position: relative;
 	display: block;
+	overflow: hidden;
 }
 
-.ph-btn,
-.ph-edit-btn {
-	padding: 10px 20px;
-	font-style: normal;
+.ph-edit-btn,
+.ph-btn {
+	position: relative;
+	clear: none;
+	margin: 10px 0;
+	border: 1px solid;
 	border-radius: 6px;
-}
-
-.ph-toggle-editor {
-	cursor: pointer;
-	border: none;
-	font-weight: 200;
-	border-bottom: 2px solid transparent;
-	margin-bottom: 20px;
-	margin-top: 10px;
-}
-
-.ph-toggle-editor:hover {
-	border-bottom-color: #0072C6;
-}
-
-.ph-edit-btn {
-	/*margin: 10px;*/
+	font-weight: 700;
+	font-style: normal;
+	padding: 10px 20px;
 }
 
 .ph-edit-btn i {
@@ -37,24 +26,44 @@
 	font-style: normal;
 }
 
-#ph-buttons #ph-save {
-	/*background-color: #454545;*/
-	background-color: #00B16A;
+#ph-buttons #ph-toggle-editor {
+	float: left;
+	color: #454545;
+	border-color: transparent;
+	background-color: #FFFFFF;
+}
+
+#ph-buttons #ph-toggle-editor:active {
 	color: #FFFFFF;
-	border: 1px solid;
-	font-weight: 700;
-	padding: 10px 20px;
+	background-color: #454545;
+	/*border-color: #454545;*/
 }
 
-#ph-create {
-	display: block;
-	position: relative;
-	border: 1px solid;
-	max-width: 160px;
+#ph-buttons #ph-create {
+	float: right;
+	color: #FF9000;
+	border-color: transparent;
+	background-color: #FFFFFF;
 	text-align: center;
-	margin-bottom: 10px;
+	margin-left: 10px;
 }
 
-.fullPage #ph-buttons {
+#ph-buttons #ph-create:active {
+	border-color: #FF9000;
+}
+
+#ph-buttons #ph-save {
+	float: right;
+	color: #FFFFFF;
+	background-color: #00B16A;
+}
+
+#ph-buttons #ph-save:active {
+	color: #00B16A;
+	border-color: #00B16A;
+	background-color: #FFFFFF;
+}
+
+.fullPage .ph-edit-btn {
 	display: none;
 }

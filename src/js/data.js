@@ -86,7 +86,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		events.emit("missing", path);
 		return false;
 	}
-	if ( DOM.state.path === path ) {
+	if ( DOM.state.path === path || DOM.state.nextPath === path ) {
 		return false;
 	}
 	DOM.setState({
@@ -95,7 +95,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		nextParent: parent,
 		contentChanging: true
 	});
-	DOM.output.innerHTML = "<div id='ph-loader' class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	DOM.output.innerHTML = "<div class='loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
@@ -109,9 +109,8 @@ events.on("content.loading", function ( path, level, parent ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			console.log(DOM.state.nextPath, path);
+		// Prevent accidental load of previously clicked destination
 			if ( DOM.state.nextPath !== path ) {
-				// Prevent accidental load of previously clicked destination
 				return false;
 			}
 			events.emit("content.loaded", data);
@@ -314,6 +313,7 @@ events.on("content.save", function () {
 });
 
 events.on("title.save", function ( title ) {
+	title = title.replace(misc.regSanitize, " ");
 	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
 		return false;
 	}
