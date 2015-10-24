@@ -63,7 +63,7 @@ app.get("/opt", function ( req, res ) {
 						Value: "img"
 					}, {
 						Variable: "scrollOnNav",
-						Value: true
+						Value: false
 					}, {
 						Variable: "resetOpenOnNav",
 						Value: false

@@ -10,7 +10,6 @@ function renderTabs ( DOM ) {
 					( pages.options.hideEmptyTabs && pages.current[tabName].length < 1 && tabName !== "Contributions" ) ? ".tab-empty" : "" ) + (
 					( DOM.state.tab !== tabName ) ? "" : ".tab-current"
 				);
-
 			return (
 				h("li" + className, [
 					h(".ph-tab-box", [
@@ -28,7 +27,7 @@ function renderTabs ( DOM ) {
 							}
 						}, [ h("span", [tab.title]) ])
 					]),
-					( tabName === "Contributions" && pages.options.contribPOCEmail ) ?
+					( DOM.state.fullPage && tabName === "Contributions" && pages.options.contribPOCEmail ) ?
 						h("a.ph-contrib-poc", {
 							href: "mailto:" + pages.options.contribPOCEmail,
 							title: "POC: " + pages.options.contribPOCName

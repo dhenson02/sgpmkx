@@ -195,7 +195,7 @@ events.on("content.loaded", function ( data ) {
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
 		tab: tab
-	}, true, false);
+	}, true, false, true, true);
 	DOM.renderOut();
 });
 

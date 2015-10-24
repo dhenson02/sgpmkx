@@ -21,7 +21,7 @@ function renderButtons ( DOM ) {
 					}
 					DOM.setState({
 						fullPage: !DOM.state.fullPage
-					});
+					}, false, false, true, false);
 				}
 			}, [ DOM.state.fullPage ? "Show editor" : "Hide editor" ]),
 
