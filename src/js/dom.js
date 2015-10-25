@@ -12,8 +12,7 @@ var vdom = require("virtual-dom"),
 	renderTags = require("./tags"),
 	renderButtons = require("./buttons"),
 	renderSearch = require("./search"),
-	renderPage = require("./page"),
-	regLink = /<a (href=["']https?:\/\/)/gi;
+	renderPage = require("./page");
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -31,6 +30,7 @@ function DOM () {
 		nextParent: "",
 		opened: {},
 		tab: "",
+		text: "",
 		revertScroll: 254,
 		tagsChanging: false,
 		titleChanging: false,
@@ -57,9 +57,7 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
 	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
-
 	this.searchDOM = this.searchDOM || renderSearch();
-
 	return renderPage(this);
 };
 
@@ -71,9 +69,7 @@ DOM.prototype.init = function () {
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
 	this.editor = null;
-	this.searchInput = document.getElementById("ph-search");
 	this.textarea = document.getElementById("ph-textarea");
-	this.output = document.getElementById("ph-output");
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -125,26 +121,27 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( !self.state.contentSaving ) {
-					events.emit("content.save");
-				}
+				events.emit("content.save");
 			}
 		}
 	});
 	this.editor.on("change", function ( e ) {
-		pages.current.set(self.state.tab, e.getValue());
-		self.renderOut();
+		var val = e.getValue();
+		pages.current.set(self.state.tab, val);
+		self.setState({
+			text: val
+		},true, true, true, true);
 	});
 	this.editor.refresh();
 };
 
-DOM.prototype.renderOut = function () {
+/*DOM.prototype.renderOut = function () {
 	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
 	var self = this;
 	fastdom.write(function () {
 		self.output.innerHTML = misc.md.render(pages.current[ self.state.tab ]).replace(regLink, "<a target='_blank' $1");
 	});
-};
+};*/
 
 var dom = new DOM();
 

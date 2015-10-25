@@ -16,8 +16,8 @@ function renderTags ( DOM ) {
 		if ( DOM.state.tagsLocked || !addTag.value.trim() ) {
 			return false;
 		}
-		var val = addTag.value.trim().replace(misc.regPubs, "").replace(misc.regSplit, ",").split(/,/g).filter(function ( tag ) {
-			var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
+		var val = addTag.value.trim().replace(misc.regSpaces, "").replace(misc.regPubs, "").replace(misc.regSplit, ",").split(/,/g).filter(function ( tag ) {
+			var regVal = new RegExp("\\b" + tag + "\\b", "gi");
 			return !regVal.test(pages.current.Tags);
 		}).join(",");
 		addTag.value = "";
@@ -37,7 +37,7 @@ function renderTags ( DOM ) {
 		}
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
-		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
+		var regVal = new RegExp("\\b" + val + "\\b,?", "i");
 		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
 

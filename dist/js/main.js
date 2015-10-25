@@ -12915,7 +12915,6 @@ function renderButtons ( DOM ) {
 				}
 			}, [ h("span.btn-title", [ !DOM.state.addingContent ? "New" : "Cancel" ]) ]),
 
-
 			h("h1#ph-title" + ( !DOM.state.fullPage ? ".ph-cm" : "" ) + ( !DOM.state.titleChanging ? "" : ".loading" ), {
 				contentEditable: ( !DOM.state.fullPage && !DOM.state.titleChanging ),
 				style: DOM.state.titleStyle,
@@ -12939,6 +12938,7 @@ function renderButtons ( DOM ) {
 
 			h("a#ph-toggle-editor.ph-btn", {
 				href: "#",
+				style: ( !DOM.state.path ? { display: "none" } : {}),
 				onclick: function ( e ) {
 					e = e || window.event;
 					if ( e.stopPropagation ) e.stopPropagation();
@@ -12962,7 +12962,7 @@ function renderButtons ( DOM ) {
 
 module.exports = renderButtons;
 
-},{"./events":132,"./helpers":133,"./pages":137,"virtual-dom":98}],130:[function(require,module,exports){
+},{"./events":132,"./helpers":133,"./pages":138,"virtual-dom":98}],130:[function(require,module,exports){
 var reqwest = require("reqwest"),
 	sweetAlert = require("sweetalert"),
 	pages = require("./pages"),
@@ -13051,7 +13051,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		events.emit("missing", path);
 		return false;
 	}
-	if ( DOM.state.path === path || DOM.state.nextPath === path ) {
+	if ( DOM.state.contentSaving || DOM.state.contentChanging || DOM.state.path === path || DOM.state.nextPath === path ) {
 		return false;
 	}
 	DOM.setState({
@@ -13060,7 +13060,7 @@ events.on("content.loading", function ( path, level, parent ) {
 		nextParent: parent,
 		contentChanging: true
 	});
-	DOM.output.innerHTML = "<div class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	//DOM.output.innerHTML = "<div id='ph-loader' class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
 
 	reqwest({
 		url: sitePath + "/items(" + pages[path].ID + ")",
@@ -13153,7 +13153,7 @@ events.on("content.create", function ( data, path, title ) {
 */
 
 events.on("content.save", function () {
-	if ( DOM.state.contentSaving ) {
+	if ( DOM.state.contentSaving || DOM.state.contentChanging ) {
 		return false;
 	}
 	DOM.setState({
@@ -13163,7 +13163,19 @@ events.on("content.save", function () {
 			backgroundColor: "#FFFFFF"
 		},
 		contentSaving: true
-	}, true, true, true, false);
+	}, true, true, false, false);
+
+	var pubs = "", pub;
+	while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
+		pubs = ( pubs ) ?
+		pubs + "," + pub :
+			pub;
+	}
+
+	pages.current.set({
+		Pubs: pubs,
+		Modified: new Date()
+	});
 	var data = {
 		'__metadata': {
 			'type': pages.current.listItemType
@@ -13209,16 +13221,7 @@ events.on("content.save", function () {
 							color: "#FFFFFF"
 						},
 						contentSaving: false
-					}, true, true, true, false);
-
-					var pubs = "", pub;
-					while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
-						pubs += " " + pub;
-					}
-					pages.current.set({
-						Pubs: pubs,
-						Modified: new Date()
-					});
+					}, true, true, false, false);
 				},
 				error: function ( error ) {
 					sweetAlert({
@@ -13235,7 +13238,7 @@ events.on("content.save", function () {
 							color: "#FFFFFF"
 						},
 						contentSaving: false
-					}, true, true, true, false);
+					}, true, true, false, false);
 					console.log("Content save error: ", error);
 				},
 				complete: function () {
@@ -13246,7 +13249,7 @@ events.on("content.save", function () {
 								color: "#FFFFFF",
 								backgroundColor: "#00B16A"
 							}
-						}, true, true, true, false);
+						}, true, true, false, false);
 					}, 500);
 				}
 			});
@@ -13266,7 +13269,7 @@ events.on("content.save", function () {
 					color: "#FFFFFF"
 				},
 				contentSaving: false
-			}, true, true, true, false);
+			}, true, true, false, false);
 			console.log("Content save error (couldn't get digest): ", error);
 			setTimeout(function () {
 				DOM.setState({
@@ -13275,7 +13278,7 @@ events.on("content.save", function () {
 						color: "#FFFFFF",
 						backgroundColor: "#00B16A"
 					}
-				}, true, true, true, false);
+				}, true, true, false, false);
 			}, 500);
 		}
 	});
@@ -13459,7 +13462,7 @@ events.on("tags.save", function ( tags ) {
 
 module.exports = init;
 
-},{"./dom":131,"./events":132,"./helpers":133,"./pages":137,"reqwest":93,"sweetalert":94}],131:[function(require,module,exports){
+},{"./dom":131,"./events":132,"./helpers":133,"./pages":138,"reqwest":93,"sweetalert":94}],131:[function(require,module,exports){
 var vdom = require("virtual-dom"),
 	h = vdom.h,
 	diff = vdom.diff,
@@ -13474,8 +13477,7 @@ var vdom = require("virtual-dom"),
 	renderTags = require("./tags"),
 	renderButtons = require("./buttons"),
 	renderSearch = require("./search"),
-	renderPage = require("./page"),
-	regLink = /<a (href=["']https?:\/\/)/gi;
+	renderPage = require("./page");
 
 function DOM () {
 	if ( !(this instanceof DOM) ) {
@@ -13493,6 +13495,7 @@ function DOM () {
 		nextParent: "",
 		opened: {},
 		tab: "",
+		text: "",
 		revertScroll: 254,
 		tagsChanging: false,
 		titleChanging: false,
@@ -13519,9 +13522,7 @@ DOM.prototype.preRender = function ( navOld, tabsOld, tagsOld, buttonsOld ) {
 	this.tabsDOM = ( this.tabsDOM && tabsOld ) ? this.tabsDOM : renderTabs(this);
 	this.tagsDOM = ( this.tagsDOM && tagsOld ) ? this.tagsDOM : renderTags(this);
 	this.buttonsDOM = ( this.buttonsDOM && buttonsOld ) ? this.buttonsDOM : renderButtons(this);
-
 	this.searchDOM = this.searchDOM || renderSearch();
-
 	return renderPage(this);
 };
 
@@ -13533,9 +13534,7 @@ DOM.prototype.init = function () {
 	wrapper.parentNode.replaceChild(this.rootNode, wrapper);
 
 	this.editor = null;
-	this.searchInput = document.getElementById("ph-search");
 	this.textarea = document.getElementById("ph-textarea");
-	this.output = document.getElementById("ph-output");
 };
 
 DOM.prototype.set = function ( data, ctx ) {
@@ -13587,32 +13586,33 @@ DOM.prototype.initEditor = function () {
 		extraKeys: {
 			"Enter": "newlineAndIndentContinueMarkdownList",
 			"Ctrl-S": function () {
-				if ( !self.state.contentSaving ) {
-					events.emit("content.save");
-				}
+				events.emit("content.save");
 			}
 		}
 	});
 	this.editor.on("change", function ( e ) {
-		pages.current.set(self.state.tab, e.getValue());
-		self.renderOut();
+		var val = e.getValue();
+		pages.current.set(self.state.tab, val);
+		self.setState({
+			text: val
+		},true, true, true, true);
 	});
 	this.editor.refresh();
 };
 
-DOM.prototype.renderOut = function () {
+/*DOM.prototype.renderOut = function () {
 	//var type = ( this.state.level > 1 ) ? ( "## " + this.state.tab + "\n" ) : "";
 	var self = this;
 	fastdom.write(function () {
 		self.output.innerHTML = misc.md.render(pages.current[ self.state.tab ]).replace(regLink, "<a target='_blank' $1");
 	});
-};
+};*/
 
 var dom = new DOM();
 
 module.exports = dom;
 
-},{"./buttons":129,"./events":132,"./helpers":133,"./nav":135,"./page":136,"./pages":137,"./search":138,"./tabs":139,"./tags":140,"fastdom":3,"virtual-dom":98}],132:[function(require,module,exports){
+},{"./buttons":129,"./events":132,"./helpers":133,"./nav":135,"./page":137,"./pages":138,"./search":139,"./tabs":140,"./tags":141,"fastdom":3,"virtual-dom":98}],132:[function(require,module,exports){
 var Events = require("event");
 Events.prototype.emit = Events.prototype.fire;
 var events = new Events({});
@@ -13636,17 +13636,20 @@ var markdownit = require("markdown-it"),
 		quotes: '“”‘’'
 	}),
 	codeMirror = CodeMirror,
-	regSplit = /[^a-zA-Z0-9]+/g,
+	regLink = /<a (href=["']https?:\/\/)/gi,
+	regSpaces = /\s{2,}/g,
+	regSplit = /[^a-zA-Z0-9\/.%_\-: ]+/g,
 	regSplit2 = /[^a-zA-Z0-9-_]+/g,
-	//regSplit2 = /\b; ?|\b /g,
 	regSanitize = /([^a-zA-Z0-9-_.&\s]+)/g,
-	regPubs = regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
+	regPubs = /\d* ?[-_a-z]+[\s\.\-]*[0-9]+(?:-|\.)[0-9]+(?:_?sup[a-z]*)?/gi;
 
 module.exports = {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	md: md,
 	codeMirror: codeMirror,
+	regLink: regLink,
+	regSpaces: regSpaces,
 	regSplit: regSplit,
 	regSplit2: regSplit2,
 	regSanitize: regSanitize,
@@ -13764,7 +13767,9 @@ events.on("content.loaded", function ( data ) {
 
 	var pubs = "", pub;
 	while ( pub = misc.regPubs.exec(obj.Policy) ) {
-		pubs += ", " + pub;
+		pubs = ( pubs ) ?
+			pubs + "," + pub :
+			pub;
 	}
 
 	pages.current = pages.current.reset({
@@ -13772,7 +13777,7 @@ events.on("content.loaded", function ( data ) {
 		Title: obj.Title || "",
 		_title: obj.Title || "",
 		Pubs: pubs || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regSplit, ",") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSpaces, "").replace(misc.regPubs, "").replace(misc.regSplit, ",") || "",
 		Icon: obj.Icon || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
@@ -13810,13 +13815,11 @@ events.on("content.loaded", function ( data ) {
 		contentChanging: false,
 		tagsLocked: (pages.current.Tags.length > 1)
 	});
-	console.log(pages.current.Tags.length);
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
 		var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		fastdom.write(function () {
 			window.scrollBy(0, scrollTop);
-			//window.scrollTo(0, scrollTop || 254);
 		});
 		/*var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
 		var interval = 300 / scrollTop;
@@ -13835,9 +13838,9 @@ events.on("content.loaded", function ( data ) {
 
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: tab
+		tab: tab,
+		text: pages.current[ tab ]
 	}, true, false, true, true);
-	DOM.renderOut();
 });
 
 events.on("content.found", function ( path ) {
@@ -13847,7 +13850,7 @@ events.on("content.found", function ( path ) {
 pageInit();
 
 
-},{"./data":130,"./dom":131,"./events":132,"./helpers":133,"./pages":137,"director/build/director":1,"fastdom":3,"sweetalert":94,"virtual-dom":98}],135:[function(require,module,exports){
+},{"./data":130,"./dom":131,"./events":132,"./helpers":133,"./pages":138,"director/build/director":1,"fastdom":3,"sweetalert":94,"virtual-dom":98}],135:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
@@ -13988,27 +13991,52 @@ function renderNav ( DOM ) {
 
 module.exports = renderNav;
 
-},{"./events":132,"./pages":137,"virtual-dom":98}],136:[function(require,module,exports){
+},{"./events":132,"./pages":138,"virtual-dom":98}],136:[function(require,module,exports){
+var h = require("virtual-dom").h,
+	misc = require("./helpers");
+
+function OutputWidget ( text ) { this.text = text || "" }
+
+OutputWidget.prototype.type = "Widget";
+OutputWidget.prototype.text = "";
+OutputWidget.prototype.init = function () {
+	var output = document.createElement("div");
+	output.id = "ph-output";
+	output.innerHTML = misc.md.render(this.text).replace(misc.regLink, "<a target='_blank' $1");
+	return output;
+};
+OutputWidget.prototype.update = function ( prev ) {
+	return ( prev.text !== this.text ? this.init() : null );
+};
+
+module.exports = OutputWidget;
+
+},{"./helpers":133,"virtual-dom":98}],137:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
-	events = require("./events");
+	events = require("./events"),
+	OutputWidget = require("./output");
 
-/*function renderLoader () {
- return (
- h("#ph-loader", [
- h(".loader-group", [
- h(".bigSqr", [
- h(".square.first"),
- h(".square.second"),
- h(".square.third"),
- h(".square.fourth")
- ]),
- h(".text", [ "loading..." ])
- ])
- ])
- );
- }*/
+function renderLoader ( DOM ) {
+	return (
+		h("#ph-loader.ph-loader", {
+			style: ( !DOM.state.contentChanging && !DOM.state.contentSaving && DOM.state.path ?
+				{ display: "none" } : {}
+			)
+		}, [
+			h(".loader-group", [
+				h(".bigSqr", [
+					h(".square.first"),
+					h(".square.second"),
+					h(".square.third"),
+					h(".square.fourth")
+				]),
+				h(".text", [ "loading..." ])
+			])
+		])
+	);
+}
 
 function renderAddContent ( DOM ) {
 	return (
@@ -14063,7 +14091,7 @@ function renderEditor ( DOM ) {
 				h("#ph-input", [
 					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
-				h("#ph-output"),
+				new OutputWidget( DOM.state.text /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
@@ -14078,9 +14106,9 @@ function renderDefault ( DOM ) {
 		h("#ph-content", [
 			h("h1#ph-title", [ pages.current.Title ]),
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
-			h("#ph-contentWrap", [
+			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
-				h("#ph-output"),
+				new OutputWidget(DOM.state.text /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
@@ -14094,6 +14122,8 @@ function renderPage ( DOM ) {
 
 	return (
 		h("#ph-wrapper" + ( DOM.state.fullPage ? ".fullPage" : "" ), [
+
+			renderLoader(DOM),
 
 			h("#ph-search-wrap", {
 				style: ( !DOM.state.fullPage && pages.options.hideSearchWhileEditing ? { display: "none" } : {} )
@@ -14110,7 +14140,7 @@ function renderPage ( DOM ) {
 
 module.exports = renderPage;
 
-},{"./events":132,"./helpers":133,"./pages":137,"virtual-dom":98}],137:[function(require,module,exports){
+},{"./events":132,"./helpers":133,"./output":136,"./pages":138,"virtual-dom":98}],138:[function(require,module,exports){
 var misc = require("./helpers"),
 	events = require("./events");
 
@@ -14457,7 +14487,7 @@ module.exports = pages;
  *  Trackers
  */
 
-},{"./events":132,"./helpers":133}],138:[function(require,module,exports){
+},{"./events":132,"./helpers":133}],139:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events"),
@@ -14508,7 +14538,7 @@ function renderSearch () {
 
 module.exports = renderSearch;
 
-},{"./events":132,"./pages":137,"horsey":6,"virtual-dom":98}],139:[function(require,module,exports){
+},{"./events":132,"./pages":138,"horsey":6,"virtual-dom":98}],140:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	pages = require("./pages"),
 	events = require("./events");
@@ -14555,13 +14585,14 @@ function renderTabs ( DOM ) {
 
 module.exports = renderTabs;
 
-},{"./events":132,"./pages":137,"virtual-dom":98}],140:[function(require,module,exports){
+},{"./events":132,"./pages":138,"virtual-dom":98}],141:[function(require,module,exports){
 var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
 	events = require("./events");
 
 function renderTags ( DOM ) {
+
 	var addTag = function ( e ) {
 		e = e || window.event;
 		if ( e.stopPropagation ) e.stopPropagation();
@@ -14569,16 +14600,17 @@ function renderTags ( DOM ) {
 		if ( e.preventDefault ) e.preventDefault();
 		else e.returnValue = false;
 
-		if ( DOM.state.tagsLocked ) {
+		var addTag = document.querySelector("input[name='ph-add-tag']");
+		if ( DOM.state.tagsLocked || !addTag.value.trim() ) {
 			return false;
 		}
-		var addTag = document.querySelector("input[name='ph-add-tag']"),
-			val = addTag.value.trim().split(misc.regSplit).filter(function ( tag ) {
-				var regVal = new RegExp(" ?\\b" + tag + "\\b,? ?", "gi");
-				return !regVal.test(pages.current.Tags);
-			}).join(",");
+		var val = addTag.value.trim().replace(misc.regSpaces, "").replace(misc.regPubs, "").replace(misc.regSplit, ",").split(/,/g).filter(function ( tag ) {
+			var regVal = new RegExp("\\b" + tag + "\\b", "gi");
+			return !regVal.test(pages.current.Tags);
+		}).join(",");
+		addTag.value = "";
 		addTag.focus();
-		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + ", " + val : val ));
+		events.emit("tags.save", ( pages.current.Tags ? pages.current.Tags + "," + val : val ));
 	};
 
 	var removeTag = function ( e ) {
@@ -14593,17 +14625,18 @@ function renderTags ( DOM ) {
 		}
 		var val = this.textContent || this.innerText || this.innerHTML;
 		val = val.trim();
-		var regVal = new RegExp("\\b" + val + "\\b,? ?", "i");
+		var regVal = new RegExp("\\b" + val + "\\b,?", "i");
 		events.emit("tags.save", pages.current.Tags.trim().replace(regVal, ""))
 	};
+
 	return (
-		h("div", [
+		h(( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), [
 			h("label.ph-input-wrap", [
 				h("input.ph-add-tag", {
 					type: "text",
 					name: "ph-add-tag",
 					placeholder: "Add keyword(s)",
-					autofocus: true,
+					autofocus: !DOM.state.tagsLocked,
 					onkeypress: function ( e ) {
 						if ( e.which == 13 || e.keyCode == 13 ) {
 							e = e || window.event;
@@ -14616,7 +14649,7 @@ function renderTags ( DOM ) {
 						}
 					}
 				}),
-				h("a.ph-add-tag-btn.icon.icon-plus", {
+				h("a.ph-add-tag-btn.icon.icon-right-arrow", {
 					href: "#",
 					role: "button",
 					onclick: addTag
@@ -14625,7 +14658,7 @@ function renderTags ( DOM ) {
 			(
 				pages.current.Tags ?
 					h(".ph-tag-container", [
-						h("i.icon.icon-lock" + ( DOM.state.tagsLocked ? ".locked" : ".unlocked" ), {
+						h("i.icon.icon-lock", {
 							role: "button",
 							onclick: function () {
 								DOM.setState({
@@ -14633,14 +14666,15 @@ function renderTags ( DOM ) {
 								}, true, true, false, true);
 							}
 						}),
-						h("h4.ph-tag-wrapper" + ( DOM.state.tagsLocked ? ".loading" : "" ), [
-							pages.current.Tags.split(misc.regSplit).map(function ( tag ) {
+						h(".ph-tag-wrapper", [
+							pages.current.Tags.split(/,/g).map(function ( tag ) {
 								return ( tag.trim() ?
-									h("small", {
-										role: "button",
-										onclick: removeTag
-									}, [ tag.trim() ]) :
-									null );
+										h("small", {
+											role: "button",
+											onclick: removeTag
+										}, [ tag.trim() ]) :
+										null
+								);
 							})
 						])
 					]) :
@@ -14652,4 +14686,4 @@ function renderTags ( DOM ) {
 
 module.exports = renderTags;
 
-},{"./events":132,"./helpers":133,"./pages":137,"virtual-dom":98}]},{},[134]);
+},{"./events":132,"./helpers":133,"./pages":138,"virtual-dom":98}]},{},[134]);

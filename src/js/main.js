@@ -118,7 +118,7 @@ events.on("content.loaded", function ( data ) {
 		Title: obj.Title || "",
 		_title: obj.Title || "",
 		Pubs: pubs || "",
-		Tags: obj.Tags && obj.Tags.replace(misc.regPubs, "").replace(misc.regSplit, ",") || "",
+		Tags: obj.Tags && obj.Tags.replace(misc.regSpaces, "").replace(misc.regPubs, "").replace(misc.regSplit, ",") || "",
 		Icon: obj.Icon || "",
 		Overview: obj.Overview || "",
 		Policy: obj.Policy || "",
@@ -156,7 +156,6 @@ events.on("content.loaded", function ( data ) {
 		contentChanging: false,
 		tagsLocked: (pages.current.Tags.length > 1)
 	});
-	console.log(pages.current.Tags.length);
 	document.title = pages.current.Title;
 	if ( pages.options.scrollOnNav ) {
 		var scrollTop = DOM.rootNode.getBoundingClientRect().top - 50;
@@ -180,9 +179,9 @@ events.on("content.loaded", function ( data ) {
 
 events.on("tab.change", function ( tab ) {
 	DOM.setState({
-		tab: tab
+		tab: tab,
+		text: pages.current[ tab ]
 	}, true, false, true, true);
-	DOM.renderOut();
 });
 
 events.on("content.found", function ( path ) {

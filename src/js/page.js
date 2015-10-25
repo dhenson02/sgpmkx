@@ -1,7 +1,8 @@
 var h = require("virtual-dom").h,
 	misc = require("./helpers"),
 	pages = require("./pages"),
-	events = require("./events");
+	events = require("./events"),
+	OutputWidget = require("./output");
 
 function renderLoader ( DOM ) {
 	return (
@@ -76,7 +77,7 @@ function renderEditor ( DOM ) {
 				h("#ph-input", [
 					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
 				]),
-				h("#ph-output"),
+				new OutputWidget( DOM.state.text /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
@@ -93,7 +94,7 @@ function renderDefault ( DOM ) {
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
-				h("#ph-output"),
+				new OutputWidget(DOM.state.text /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
