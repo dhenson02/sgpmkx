@@ -13,8 +13,6 @@
 }
 
 .ph-loader {
-	backface-visibility: hidden;
-	transform: translate3d(0,30px,2px);
 	/*padding: 50px;*/
 }
 

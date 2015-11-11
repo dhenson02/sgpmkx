@@ -60,7 +60,7 @@ app.get("/opt", function ( req, res ) {
 						Value: true
 					}, {
 						Variable: "images",
-						Value: "img"
+						Value: "https://jsbin-user-assets.s3.amazonaws.com/dhenson02"
 					}, {
 						Variable: "scrollOnNav",
 						Value: false
@@ -142,7 +142,7 @@ app.get("/check/true", function ( req, res ) {
 	}, timeout);
 });
 
-var server = app.listen(3000, function () {
+var server = app.listen(3001, function () {
 	var host = server.address().address;
 	var port = server.address().port;
 
