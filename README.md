@@ -2,8 +2,7 @@
 
 ### Requirements
 - Node.js + npm
-- grunt
-- browserify
+  - Get here: https://nodejs.org
 
 ## Setup
 
