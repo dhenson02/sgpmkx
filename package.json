@@ -2,18 +2,16 @@
   "name": "USAFPublicHealth",
   "version": "0.8.0",
   "dependencies": {
-    "animate.css": "^3.4.0",
     "director": "^1.2.8",
     "dom2hscript": "^0.2.3",
     "event": "git://github.com/wilsonpage/event",
-    "eventemitter2": "^0.4.14",
     "fastdom": "^0.8.6",
     "horsey": "^2.6.1",
     "lodash": "^3.10.1",
     "markdown-it": "^5.0.0",
     "reqwest": "^2.0.1",
     "sweetalert": "^1.1.0",
-    "virtual-dom": ">=2.0.1"
+    "virtual-dom": ">=2.1.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.0.3",
@@ -24,8 +22,7 @@
     "cssnano": "^3.3.0",
     "express": "^4.13.3",
     "grunt-browserify": ">=3.8.0",
-    "grunt-contrib-cssmin": "~0.12.3",
-    "grunt-contrib-uglify": ">=0.9.1",
+    "grunt-contrib-uglify": "^0.10.1",
     "grunt-contrib-watch": "0.6.1",
     "grunt-postcss": "^0.6.0",
     "grunt-purifycss": ">=0.1.0",
