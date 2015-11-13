@@ -27,5 +27,6 @@
     <orderEntry type="library" name="src node_modules" level="project" />
     <orderEntry type="library" name="sgpm node_modules" level="project" />
     <orderEntry type="library" name="sgpmkx node_modules" level="project" />
+    <orderEntry type="library" name="browserify-DefinitelyTyped" level="application" />
   </component>
 </module>

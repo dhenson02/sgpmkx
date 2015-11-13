@@ -45,7 +45,6 @@ module.exports = function ( grunt ) {
 						sequences: true,
 						cascade: true
 					},
-					screwIE8: true,
 					reserved: "CodeMirror",
 					wrap: false,
 					mangle: true,
@@ -60,7 +59,6 @@ module.exports = function ( grunt ) {
 				options: {
 					compress: false,
 					beautify: true,
-					screwIE8: true,
 					mangle: false,
 					wrap: false,
 					reserved: "CodeMirror",
