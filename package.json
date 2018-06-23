@@ -8,10 +8,13 @@
     "event": "git://github.com/wilsonpage/event",
     "eventemitter2": "^0.4.14",
     "fastdom": "^0.8.6",
+    "grunt": "^1.0.3",
     "horsey": "^2.6.1",
+    "immutable": "^3.8.2",
     "lodash": "^3.10.1",
     "markdown-it": "^5.0.0",
     "reqwest": "^2.0.1",
+    "store": "^2.0.12",
     "sweetalert": "^1.1.0",
     "virtual-dom": ">=2.0.1"
   },
@@ -29,6 +32,7 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-postcss": "^0.6.0",
     "grunt-purifycss": ">=0.1.0",
+    "immutable-devtools": "^0.1.3",
     "minifyify": "^7.1.0",
     "pixrem": "^3.0.0"
   }

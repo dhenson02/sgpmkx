@@ -1,12 +1,6 @@
 module.exports = function ( grunt ) {
 	grunt.initConfig({
 		browserify: {
-			/*options: {
-				plugin: ["minifyify"],
-				browserifyOptions: {
-					debug: true
-				}
-			},*/
 			dist: {
 				files: {
 					'.tmp/main.min.js': 'src/js/main.js'
@@ -14,7 +8,6 @@ module.exports = function ( grunt ) {
 			},
 			dev: {
 				files: {
-					//'dist/js/main.min.js': 'src/js/main.js',
 					'dist/js/main.js': 'src/js/main.js'
 				}
 			}
@@ -27,7 +20,6 @@ module.exports = function ( grunt ) {
 						width: 80,
 						quote_style: 0,
 						max_line_len: 4000,
-						bracketize: true,
 						semicolons: true
 					},
 					compress: {
@@ -42,8 +34,7 @@ module.exports = function ( grunt ) {
 						comparisons: true,
 						conditionals: true,
 						dead_code: true,
-						sequences: true,
-						cascade: true
+						sequences: true
 					},
 					reserved: "CodeMirror",
 					wrap: false,
@@ -63,7 +54,7 @@ module.exports = function ( grunt ) {
 					wrap: false,
 					reserved: "CodeMirror",
 					sourceMap: false,
-					preserveComments: false//"all"
+					preserveComments: false
 				},
 				files: {
 					'dist/js/main.js': '.tmp/main.js'
@@ -133,29 +124,6 @@ module.exports = function ( grunt ) {
 				dest: 'dist/css/main.css'
 			}
 		},
-		/*cssmin: {
-			options: {
-				roundingPrecision: -1,
-				compatibility: 'ie8',
-				processImport: false
-			},
-			dist: {
-				options: {
-					keepSpecialComments: 1
-				},
-				files: {
-					'dist/css/main.min.css': '.tmp/main.css'
-				}
-			},
-			dev: {
-				options: {
-					keepSpecialComments: 2
-				},
-				files: {
-					'dist/css/main.css': 'dist/css/main.css'
-				}
-			}
-		},*/
 		watch: {
 			configFiles: {
 				options: {
@@ -174,12 +142,10 @@ module.exports = function ( grunt ) {
 					'src/css/*.css',
 					'node_modules/sweetalert/dist/*.css',
 					'node_modules/horsey/dist/*.css'
-					/*'node_modules/animate.css/!*.min.css'*/
 				],
 				tasks: [
 					'purifycss:dev',
 				    'postcss:dev'
-					//'cssmin:dev'
 				]
 			},
 			scripts: {
@@ -193,10 +159,8 @@ module.exports = function ( grunt ) {
 				],
 				tasks: [
 					'browserify:dev',
-					//'uglify:dev',
 					'purifycss:dev',
 				    'postcss:dev'
-					//'cssmin:dev'
 				]
 			}
 		}
@@ -205,7 +169,6 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-purifycss');
 	grunt.loadNpmTasks('grunt-postcss');
-	//grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -214,13 +177,11 @@ module.exports = function ( grunt ) {
 		'uglify:dist',
 		'purifycss:dist',
 	    'postcss:dist'
-		//'cssmin:dist'
 	]);
+
 	grunt.registerTask('dev', [
 		'browserify:dev',
-		//'uglify:dev',
 		'purifycss:dev',
 	    'postcss:dev'
-		//'cssmin:dev'
 	]);
 };

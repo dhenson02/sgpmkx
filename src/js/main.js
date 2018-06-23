@@ -1,7 +1,5 @@
-/**
- * @license
- * Test but it'd be MIT if anything.
- */
+'use strict';
+
 var vdom = require("virtual-dom"),
 	h = vdom.h,
 	diff = vdom.diff,
@@ -14,7 +12,7 @@ var vdom = require("virtual-dom"),
 	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
-	pageInit = require("./data"),
+	pageInit = require("./data-handler"),
 
 	router = Router({
 		'/': {

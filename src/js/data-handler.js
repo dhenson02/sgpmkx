@@ -1,11 +1,46 @@
-var reqwest = require("reqwest"),
-	sweetAlert = require("sweetalert"),
-	pages = require("./pages"),
+'use strict';
+
+var	sweetAlert = require("sweetalert");
+var reqwest = require('reqwest');
+var DB = require("./db");
+var db = new DB();
+
+var	pages = require("./pages"),
 	events = require("./events"),
 	DOM = require("./dom"),
 	misc = require("./helpers");
 
-function init () {
+var useNetwork = false;
+// var useNetwork = true;
+
+function setOption ( data ) {
+	pages.setOption(data.d.results.reduce(function ( obj, option ) {
+		obj[option.Variable] = option.Value;
+		return obj;
+	}, {}));
+}
+
+function loadPage ( data ) {
+	pages.init(data);
+	if ( misc.codeMirror && pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true ) {
+		sweetAlert({
+			title: "Tabs missing?",
+			text: misc.md.renderInline("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
+			type: "info",
+			html: true,
+			showCancelButton: false,
+			confirmButtonText: "Got it!"
+		});
+	}
+}
+
+async function init () {
+	if ( !useNetwork ) {
+		await db.loadData();
+		setOption(db.getData('/opt'));
+		return events.emit("page.loading");
+	}
+
 	reqwest({
 		url: baseURL + phOptionsURI,
 		method: "GET",
@@ -18,10 +53,7 @@ function init () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			pages.setOption(data.d.results.reduce(function ( obj, option ) {
-				obj[option.Variable] = option.Value;
-				return obj;
-			}, {}));
+			setOption(data);
 		},
 		error: function ( error ) {
 			console.log("Error loading settings, will go with defaults.  Error: ", error);
@@ -50,7 +82,11 @@ function init () {
 	});
 });*/
 
-events.on("page.loading", function () {
+function handlePageLoading () {
+	loadPage(db.getData('/items'));
+}
+
+function handlePageLoadingNetwork () {
 	reqwest({
 		url: sitePath + "/items/?$select=ID,Title,Icon,Section,Program,Page,rabbitHole,Policy,Tags,Link,Created,Modified,Published",
 		method: "GET",
@@ -63,25 +99,26 @@ events.on("page.loading", function () {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-			pages.init(data);
-			if ( misc.codeMirror && pages.options.hideEmptyTabs === true && pages.options.emptyTabsNotify === true ) {
-				sweetAlert({
-					title: "Tabs missing?",
-					text: misc.md.renderInline("Only tabs with content in them are visible.  To view all tabs, simply click `Show editor`.\n\n Adjust this behavior through the [Options list](/kj/kx7/PublicHealth/Lists/Options)"),
-					type: "info",
-					html: true,
-					showCancelButton: false,
-					confirmButtonText: "Got it!"
-				});
-			}
+			loadPage(data);
 		},
 		error: function ( error ) {
 			console.log("error connecting:", error);
 		}
 	});
-});
+}
 
-events.on("content.loading", function ( path, level, parent ) {
+events.on("page.loading", useNetwork ? handlePageLoadingNetwork : handlePageLoading);
+
+
+function loadContent ( data, path ) {
+	// Prevent accidental load of previously clicked destination
+	if ( DOM.state.nextPath !== path ) {
+		return false;
+	}
+	events.emit("content.loaded", data);
+}
+
+function verifyCorrectPage ( path ) {
 	if ( !pages[path] ) {
 		events.emit("missing", path);
 		return false;
@@ -89,16 +126,43 @@ events.on("content.loading", function ( path, level, parent ) {
 	if ( DOM.state.contentSaving || DOM.state.contentChanging || DOM.state.path === path || DOM.state.nextPath === path ) {
 		return false;
 	}
-	DOM.setState({
-		nextPath: path,
-		nextLevel: level,
-		nextParent: parent,
-		contentChanging: true
-	});
-	//DOM.output.innerHTML = "<div id='ph-loader' class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+	return true;
+}
+
+function getNewPath ( path, level, parent ) {
+	if ( verifyCorrectPage(path) ) {
+		DOM.setState({
+			nextPath: path,
+			nextLevel: level,
+			nextParent: parent,
+			contentChanging: true
+		});
+
+		return "/items(" + pages[path].ID + ")";
+	}
+
+	return '';
+}
+
+function handleContentLoading ( path, level, parent ) {
+	var itemPath = getNewPath(path, level, parent);
+
+	if ( !itemPath ) {
+		return false;
+	}
+
+	return loadContent(db.getData(itemPath), path);
+}
+
+function handleContentLoadingNetwork ( path, level, parent ) {
+	var itemPath = getNewPath(path, level, parent);
+
+	if ( !itemPath ) {
+		return false;
+	}
 
 	reqwest({
-		url: sitePath + "/items(" + pages[path].ID + ")",
+		url: sitePath + itemPath,
 		method: "GET",
 		type: "json",
 		contentType: "application/json",
@@ -109,11 +173,7 @@ events.on("content.loading", function ( path, level, parent ) {
 			"Content-Type": "application/json;odata=verbose"
 		},
 		success: function ( data ) {
-		// Prevent accidental load of previously clicked destination
-			if ( DOM.state.nextPath !== path ) {
-				return false;
-			}
-			events.emit("content.loaded", data);
+			loadContent(data, path);
 		},
 		error: function ( error ) {
 			DOM.setState({
@@ -125,10 +185,28 @@ events.on("content.loading", function ( path, level, parent ) {
 			console.log("error connecting:", error);
 		}
 	});
-});
+}
 
-/*
-events.on("content.create", function ( data, path, title ) {
+events.on("content.loading", useNetwork ? handleContentLoadingNetwork : handleContentLoading);
+
+function handleCreate ( data, path, title ) {
+	// Used for authentication - not needed with no live network data
+	// var ctx = db.getData(phContext + "/_api/contextinfo");
+
+	db.saveItem(data);
+	// .getData('/items');  // only needed if we want to return the new list
+
+	sweetAlert({
+		title: "Success!",
+		text: misc.md.renderInline(title + " was created at [" + path + "](#" + path + ")"),
+		type: "success",
+		showConfirmButton: false,
+		showCancelButton: false,
+		html: true
+	});
+}
+
+function handleCreateNetwork ( data, path, title ) {
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -184,12 +262,13 @@ events.on("content.create", function ( data, path, title ) {
 			console.log("Error getting new digest: ", error);
 		}
 	});
-});
-*/
+}
 
-events.on("content.save", function () {
+events.on("content.create", useNetwork ? handleCreateNetwork : handleCreate);
+
+function transitionPageContent () {
 	if ( DOM.state.contentSaving || DOM.state.contentChanging ) {
-		return false;
+		return '';
 	}
 	DOM.setState({
 		saveText: "...saving...",
@@ -202,16 +281,25 @@ events.on("content.save", function () {
 
 	var pubs = "", pub;
 	while ( pub = misc.regPubs.exec(pages.current.Policy) ) {
-		pubs = ( pubs ) ?
-		pubs + "," + pub :
-			pub;
+		pubs = pubs
+			? pubs + "," + pub
+			: pub;
 	}
 
 	pages.current.set({
 		Pubs: pubs,
 		Modified: new Date()
 	});
+
+	return "/items(" + pages.current.ID + ")";
+}
+
+function getContentData ( itemPath ) {
+	var id = ~~itemPath.replace(/\/items\((\d+)\)/, '$1');
+
 	var data = {
+		'ID': id,
+		'Id': id,
 		'__metadata': {
 			'type': pages.current.listItemType
 		},
@@ -225,6 +313,66 @@ events.on("content.save", function () {
 		'Tools': pages.current.Tools,
 		'Contributions': pages.current.Contributions
 	};
+
+	return data;
+}
+
+function showContentSaveSuccess () {
+	DOM.setState({
+		saveText: "Saved!",
+		saveStyle: {
+			backgroundColor: "#00B16A",
+			color: "#FFFFFF"
+		},
+		contentSaving: false
+	}, true, true, false, false);
+}
+
+function showContentSaveComplete () {
+	setTimeout(function () {
+		DOM.setState({
+			saveText: "Save",
+			saveStyle: {
+				color: "#FFFFFF",
+				backgroundColor: "#00B16A"
+			}
+		}, true, true, false, false);
+	}, 500);
+}
+
+function showContentSaveFailure ( error ) {
+	sweetAlert({
+		title: "Failure",
+		text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
+		type: "fail",
+		showCancelButton: false,
+		html: true
+	});
+	DOM.setState({
+		saveText: "Failed :(",
+		saveStyle: {
+			backgroundColor: "#ec6c62",
+			color: "#FFFFFF"
+		},
+		contentSaving: false
+	}, true, true, false, false);
+	console.log("Content save error: ", error);
+}
+
+function handleContentSave () {
+	var itemPath = transitionPageContent();
+	var data = getContentData(itemPath);
+
+	db.saveItem(data);
+
+	showContentSaveSuccess();
+	showContentSaveComplete();
+}
+
+function handleContentSaveNetwork () {
+	var itemPath = transitionPageContent();
+	var data = getContentData(itemPath);
+
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -235,7 +383,7 @@ events.on("content.save", function () {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + pages.current.ID + ")",
+				url: sitePath + itemPath,
 				method: "POST",
 				data: JSON.stringify(data),
 				type: "json",
@@ -249,43 +397,13 @@ events.on("content.save", function () {
 					"IF-MATCH": "*"
 				},
 				success: function () {
-					DOM.setState({
-						saveText: "Saved!",
-						saveStyle: {
-							backgroundColor: "#00B16A",
-							color: "#FFFFFF"
-						},
-						contentSaving: false
-					}, true, true, false, false);
+					showContentSaveSuccess();
 				},
 				error: function ( error ) {
-					sweetAlert({
-						title: "Failure",
-						text: misc.md.renderInline(pages.current.Title + " **was not** able to be saved"),
-						type: "fail",
-						showCancelButton: false,
-						html: true
-					});
-					DOM.setState({
-						saveText: "Failed :(",
-						saveStyle: {
-							backgroundColor: "#ec6c62",
-							color: "#FFFFFF"
-						},
-						contentSaving: false
-					}, true, true, false, false);
-					console.log("Content save error: ", error);
+					showContentSaveFailure(error);
 				},
 				complete: function () {
-					setTimeout(function () {
-						DOM.setState({
-							saveText: "Save",
-							saveStyle: {
-								color: "#FFFFFF",
-								backgroundColor: "#00B16A"
-							}
-						}, true, true, false, false);
-					}, 500);
+					showContentSaveComplete();
 				}
 			});
 		},
@@ -317,10 +435,58 @@ events.on("content.save", function () {
 			}, 500);
 		}
 	});
-});
+}
 
-events.on("title.save", function ( title ) {
-	title = title.replace(misc.regSanitize, "");
+events.on("content.save", useNetwork ? handleContentSaveNetwork : handleContentSave);
+
+
+function handleTitleSave ( titleInput ) {
+	title = titleInput.replace(misc.regSanitize, "");
+	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
+		return false;
+	}
+
+	DOM.setState({
+		titleChanging: true,
+		titleStyle: {
+			borderBottomColor: "#FF9000",
+			color: "#FF9000"
+		}
+	}, true, true, true, false);
+
+	var data = {
+		'ID': pages.current.ID,
+		'__metadata': {
+			'type': pages.current.listItemType
+		},
+		'Title': title
+	};
+
+	db.saveItem(data);
+
+	pages.current.set({
+		Title: title,
+		_title: title
+	});
+	document.title = title;
+	DOM.setState({
+		titleStyle: {
+			borderBottomColor: "#00B16A",
+			color: "#00B16A"
+		}
+	}, false, true, true, false);
+
+	// Change UI back after 500ms
+	setTimeout(function () {
+		DOM.setState({
+			titleChanging: false,
+			titleStyle: {}
+		}, true, true, true, false);
+	}, 500);
+}
+
+function handleTitleSaveNetwork ( titleInput ) {
+	title = titleInput.replace(misc.regSanitize, "");
 	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
 		return false;
 	}
@@ -331,6 +497,16 @@ events.on("title.save", function ( title ) {
 			color: "#FF9000"
 		}
 	}, true, true, true, false);
+
+	var data = {
+		'__metadata': {
+			'type': pages.current.listItemType
+		},
+		'Title': title
+	};
+
+	var itemPath = "/items(" + pages.current.ID + ")";
+
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -341,14 +517,9 @@ events.on("title.save", function ( title ) {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + pages.current.ID + ")",
+				url: sitePath + itemPath,
 				method: "POST",
-				data: JSON.stringify({
-					'__metadata': {
-						'type': pages.current.listItemType
-					},
-					'Title': title
-				}),
+				data: JSON.stringify(data),
 				type: "json",
 				withCredentials: phLive,
 				headers: {
@@ -421,12 +592,48 @@ events.on("title.save", function ( title ) {
 			}, 500);
 		}
 	});
-});
+}
 
-events.on("tags.save", function ( tags ) {
+events.on("title.save", useNetwork ? handleTitleSaveNetwork : handleTitleSave);
+
+
+function handleTagSave ( tags ) {
 	DOM.setState({
 		tagsChanging: true
 	}, true, true, false, true);
+
+	var data = {
+		'ID': pages.current.ID,
+		'__metadata': {
+			'type': pages.current.listItemType
+		},
+		'Tags': tags
+	};
+
+	db.saveItem(data);
+
+	pages.current.set({
+		Tags: tags
+	});
+	DOM.setState({
+		tagsChanging: false
+	}, true, true, false, true);
+}
+
+function handleTagSaveNetwork ( tags ) {
+	DOM.setState({
+		tagsChanging: true
+	}, true, true, false, true);
+
+	var data = {
+		'__metadata': {
+			'type': pages.current.listItemType
+		},
+		'Tags': tags
+	};
+
+	var itemPath = "/items(" + pages.current.ID + ")";
+
 	reqwest({
 		url: baseURL + phContext + "/_api/contextinfo",
 		method: "POST",
@@ -437,14 +644,9 @@ events.on("tags.save", function ( tags ) {
 		},
 		success: function ( ctx ) {
 			reqwest({
-				url: sitePath + "/items(" + pages.current.ID + ")",
+				url: sitePath + itemPath,
 				method: "POST",
-				data: JSON.stringify({
-					'__metadata': {
-						'type': pages.current.listItemType
-					},
-					'Tags': tags
-				}),
+				data: JSON.stringify(data),
 				type: "json",
 				withCredentials: phLive,
 				headers: {
@@ -493,6 +695,8 @@ events.on("tags.save", function ( tags ) {
 			}, true, true, false, true);
 		}
 	});
-});
+}
+
+events.on("tags.save", useNetwork ? handleTagSaveNetwork : handleTagSave);
 
 module.exports = init;

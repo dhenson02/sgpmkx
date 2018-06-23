@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<style type="text/css">
+		@charset "UTF-8";
+		body { opacity: 0; }
+		body { opacity: 1; }
+	</style>
+	<title>Content</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+</head>
+<body>
+	<div id="ph-root"></div>
+	<script type="text/javascript">
+		//<![CDATA[
+		var _spPageContextInfo = {
+			webAbsoluteUrl: location.protocol + "//" + location.hostname + ':3001'
+		};
+
+		var	baseURL = _spPageContextInfo.webAbsoluteUrl,
+			sitePath = baseURL,
+			phCMCheckURL = baseURL + "/check/true", // Add true or false to the end
+			phContext = "/Pages/content",
+			phLive = false,
+			phEditorTheme = "base16-light",
+			phOptionsURI = "/opt",
+			phAddClass = "",
+			CodeMirror = null,
+			leftNav = document.getElementById("leftnav"),
+			s4Workspace = document.getElementById("s4-workspace"),
+			phWrapper = document.createElement("div"),
+			phWrapperTemp = document.getElementById("wrapper") || document.getElementById("ph-root") || document.querySelector(".tabs-wrapper + div"),
+			phTabs = [
+				{
+					title: "Overview",
+					icon: "home"
+				},
+				{
+					title: "Policy",
+					icon: "notebook"
+				},
+				{
+					title: "Training",
+					icon: "display1"
+				},
+				{
+					title: "Resources",
+					icon: "cloud-upload"
+				},
+				{
+					title: "Tools",
+					icon: "tools"
+				},
+				{
+					title: "Contributions",
+					icon: "users"
+				}
+			];
+
+		/* Get rid of the ugly nav on the left if it's there */
+		if ( leftNav ) {
+			leftNav.parentNode.removeChild(leftNav);
+		}
+		if ( s4Workspace ) {
+			s4Workspace.removeAttribute("class");
+			s4Workspace.removeAttribute("style");
+			s4Workspace.removeAttribute("id");
+		}
+		phWrapper.id = "wrapper";
+//		phWrapper.innerHTML = "<div id='ph-loader' class='ph-loader loading'><div class='loader-group'><div class='bigSqr'><div class='square first'></div><div class='square second'></div><div class='square third'></div><div class='square fourth'></div></div>loading...</div></div>";
+		if ( phWrapperTemp ) {
+			phWrapperTemp.parentNode.replaceChild(phWrapper, phWrapperTemp);
+		}
+		else {
+			document.body.appendChild(phWrapper);
+		}
+		//]]>
+	</script>
+	<style type="text/css">
+		@import url("css/editor/editor.min.css");
+		@import url("css/editor/base16-light.css");
+		@import url("css/main.css");
+		html { overflow-y: scroll; }
+	</style>
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="js/dependencies.min.js"></script>
+	<![endif]-->
+
+	<script type="text/javascript" src="js/editor3.min.js"></script>
+	<script>
+//		CodeMirror = null;
+	</script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
