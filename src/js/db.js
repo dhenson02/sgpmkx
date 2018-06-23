@@ -70,9 +70,15 @@ class DB {
         this.itemMap = this.mapResults(this.itemList);
 
         var resultsArray = List(results).toArray();
-        var resultsString = JSON.stringify(resultsArray);
-        localStorage.setItem('kxdb', resultsString);
-        localStorage.setItem('dbTimestamp', Date.now());
+        if ( resultsArray.length > 0 ) {
+            var resultsString = JSON.stringify(resultsArray);
+            localStorage.setItem('kxdb', resultsString);
+            localStorage.setItem('dbTimestamp', Date.now());
+        }
+        else {
+            localStorage.removeItem('kxdb');
+            localStorage.removeItem('dbTimestamp');
+        }
     }
 
     processItems ( path ) {
@@ -162,11 +168,18 @@ class DB {
         var kxdb = localStorage.getItem('kxdb');
         var dbTimestamp = localStorage.getItem('dbTimestamp');
         if ( kxdb && dbTimestamp + 86400000 > Date.now() ) {
-            this.data = List(JSON.parse(kxdb));
-            return this;
+            var array = JSON.parse(kxdb);
+            if ( Array.isArray(array) && array.length > 0 ) {
+                this.data = List(array);
+                return this;
+            }
+            else {
+                localStorage.removeItem('kxdb');
+                localStorage.removeItem('dbTimestamp');
+            }
         }
 
-        var req = new Request('/db1.json');
+        var req = new Request('/db.json');
 
         try {
             var res = await fetch(req);

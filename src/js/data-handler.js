@@ -441,7 +441,7 @@ events.on("content.save", useNetwork ? handleContentSaveNetwork : handleContentS
 
 
 function handleTitleSave ( titleInput ) {
-	title = titleInput.replace(misc.regSanitize, "");
+	const title = titleInput.replace(misc.regSanitize, "");
 	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
 		return false;
 	}
@@ -486,7 +486,7 @@ function handleTitleSave ( titleInput ) {
 }
 
 function handleTitleSaveNetwork ( titleInput ) {
-	title = titleInput.replace(misc.regSanitize, "");
+	const title = titleInput.replace(misc.regSanitize, "");
 	if ( title === pages.current._title || DOM.state.titleChanging || !pages.options.saveTitleAfterEdit ) {
 		return false;
 	}
