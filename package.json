@@ -1,6 +1,6 @@
 {
-  "name": "USAFPublicHealth",
-  "version": "0.8.0",
+  "name": "sgpmkx",
+  "version": "0.9.0",
   "dependencies": {
     "animate.css": "^3.4.0",
     "director": "^1.2.8",

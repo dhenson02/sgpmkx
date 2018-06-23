@@ -1,5 +1,10 @@
-var misc = require("./helpers"),
-	events = require("./events");
+'use strict';
+
+const misc = require("./helpers");
+
+const {
+    emitEvent
+} = require("./events");
 
 function Content ( data ) {
 	if ( !(this instanceof Content) ) {
@@ -156,7 +161,7 @@ Pages.prototype.init = function ( data ) {
 		self[result.path] = result;
 	});
 	this.navPrep();
-	events.emit("page.loaded");
+	emitEvent("page.loaded");
 };
 
 Pages.prototype.navPrep = function () {
