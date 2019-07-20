@@ -1,3 +1,6 @@
+'use strict';
+
+const path = require('path');
 var express = require('express');
 var app = express();
 var fs = require("fs");
@@ -19,6 +22,8 @@ var db_ = db.d.results.reduce(function ( obj, item ) {
 	obj[item.ID] = { d: item };
 	return obj;
 }, {});
+
+app.use(express.static(path.join(__dirname, './dist')));
 
 // GET LIST
 app.get("/items", function ( req, res ) {
@@ -142,7 +147,7 @@ app.get("/check/true", function ( req, res ) {
 	}, timeout);
 });
 
-var server = app.listen(3001, function () {
+var server = app.listen(process.env.PORT || 3001, function () {
 	var host = server.address().address;
 	var port = server.address().port;
 
