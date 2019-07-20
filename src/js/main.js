@@ -1,67 +1,28 @@
 'use strict';
 
-var vdom = require("virtual-dom"),
-	h = vdom.h,
-	diff = vdom.diff,
-	patch = vdom.patch,
-	Router = require("director/build/director").Router,
-	sweetAlert = require("sweetalert"),
-	fastdom = require("fastdom"),
+const vdom = require("virtual-dom");
+const h = vdom.h;
+const diff = vdom.diff;
+const patch = vdom.patch;
 
-	misc = require("./helpers"),
-	pages = require("./pages"),
-	events = require("./events"),
-	DOM = require("./dom"),
-	pageInit = require("./data-handler"),
+const {
+	Router
+} = require("director/build/director");
 
-	router = Router({
-		'/': {
-			on: function () {
-				events.emit("content.loading", "/", 0, "");
-			}
-		},
-		'/(\\w+)': {
-			on: function ( section ) {
-				var path = "/" + section.replace(/\s/g, "");
-				events.emit("content.loading", path, 1, "");
-			},
-			'/(\\w+)': {
-				on: function ( section, program ) {
-					var path = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, "");
-					events.emit("content.loading", path, 2, path);
-				},
-				'/(\\w+)': {
-					on: function ( section, program, page ) {
+const sweetAlert = require("sweetalert");
+const fastdom = require("fastdom");
+const misc = require("./helpers");
+const pages = require("./pages");
 
-						var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
-							path = parent + "/" + page.replace(/\s/g, "");
-						events.emit("content.loading", path, 3, parent);
-					},
-					'/(\\w+)': {
-						on: function ( section, program, page, rabbitHole ) {
-							var parent = "/" + section.replace(/\s/g, "") + "/" + program.replace(/\s/g, ""),
-								path = parent + "/" + page.replace(/\s/g, "") + "/" + rabbitHole.replace(/\s/g, "");
-							events.emit("content.loading", path, 4, parent);
-						}
-					}
-				}
-			}
-		}
-	}).configure({
-		strict: false,
-		notfound: function () {
-			sweetAlert({
-				title: "Oops",
-				text: "Page doesn\'t exist.  Sorry :( \nI\'ll redirect you to the homepage instead.",
-				timer: 2000,
-				showConfirmButton: false,
-				showCancelButton: false,
-				allowOutsideClick: true
-			}, function () {
-				router.setRoute("/");
-			});
-		}
-	});
+const {
+	events,
+	setupListeners
+} = require("./events");
+
+const DOM = require("./dom");
+const pageInit = require("./data-handler");
+
+
 
 sweetAlert.setDefaults({
 	allowOutsideClick: true,
@@ -70,15 +31,11 @@ sweetAlert.setDefaults({
 	confirmButtonText: "Yes!"
 });
 
-events.on("page.loaded", function () {
-	DOM.init();
-	if ( window.location.hash ) {
-		router.init();
-	}
-	else {
-		router.init("/");
-	}
-});
+setupListeners([
+
+])
+
+events.on("page.loaded", );
 
 events.on("missing", function ( path ) {
 	sweetAlert({

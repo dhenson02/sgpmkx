@@ -23,6 +23,7 @@ module.exports = function ( grunt ) {
 						semicolons: true
 					},
 					compress: {
+					    es6: true,
 						unsafe: true,
 						drop_console: true,
 						keep_fargs: false,
@@ -184,4 +185,11 @@ module.exports = function ( grunt ) {
 		'purifycss:dev',
 	    'postcss:dev'
 	]);
+
+    grunt.registerTask('dev-min', [
+        'browserify:dist',
+        'uglify:dist',
+        'purifycss:dev',
+        'postcss:dev'
+    ]);
 };

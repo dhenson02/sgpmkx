@@ -168,10 +168,10 @@ Pages.prototype.navPrep = function () {
 		_result = self[_url];
 		if ( _result.level === 1 ) {
 			self.sections[_result.Section] = {
-				path: ( !_result.Link ) ? _result.path : _result.Link,
-				title: _result.Title,
-				id: _result.ID,
-				links: []
+				'path': ( !_result.Link ) ? _result.path : _result.Link,
+				'title': _result.Title,
+				'id': _result.ID,
+				'links': []
 			};
 		}
 		if ( _result.level === 4 ) {
@@ -200,9 +200,9 @@ Pages.prototype.navPrep = function () {
 		 * Used for searching the site quick and easy using Horsey.
 		 */
 		self.titles.push({
-			text: page.Title + " " + tags + " " + pubs,
-			value: page.path,
-			renderText: page.Title
+			'text': page.Title + " " + tags + " " + pubs,
+			'value': page.path,
+			'renderText': page.Title
 		});
 		switch ( page.level ) {
 			case 2:
@@ -218,16 +218,16 @@ Pages.prototype.navPrep = function () {
 
 		if ( page.level > 1 ) {
 			self.sections[page.Section].links.push({
-				path: page.path,
-				href: ( !page.Link ) ? "#" + page.path : page.Link,
-				title: page.Title,
-				level: page.level,
-				className: className,
-				name: name,
-				parent: ( !self.subParents[parent] ? parent : grandParent ),
-				children: ( self.parents[page.path] ),
-				id: page.ID,
-				icon: page.Icon || ""
+				'path': page.path,
+				'href': ( !page.Link ) ? "#" + page.path : page.Link,
+				'title': page.Title,
+				'level': page.level,
+				'className': className,
+				'name': name,
+				'parent': ( !self.subParents[parent] ? parent : grandParent ),
+				'children': ( self.parents[page.path] ),
+				'id': page.ID,
+				'icon': page.Icon || ""
 			});
 		}
 	});

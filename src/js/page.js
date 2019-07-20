@@ -75,9 +75,9 @@ function renderEditor ( DOM ) {
 
 			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				h("#ph-input", [
-					h("textarea#ph-textarea", [ pages.current[ DOM.state.tab ] ])
+					h("textarea#ph-textarea", [ String(pages.current[ DOM.state.tab ] || '').replace(misc.regPhone, '555-5555') ])
 				]),
-				new OutputWidget( DOM.state.text /*pages.current[ DOM.state.tab]*/),
+				new OutputWidget( String(DOM.state.text || '').replace(misc.regPhone, '555-5555') /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
@@ -94,7 +94,7 @@ function renderDefault ( DOM ) {
 			h("#ph-tabs", [ DOM.state.level > 1 ? DOM.tabsDOM : null ]),
 			h("#ph-contentWrap" + ( !DOM.state.contentChanging && !DOM.state.contentSaving ? "" : ".loading" ), [
 				//( DOM.state.level > 1 ? h("h2", [ DOM.state.tab ]) : h("") ),
-				new OutputWidget(DOM.state.text /*pages.current[ DOM.state.tab]*/),
+				new OutputWidget(String(DOM.state.text || '').replace(misc.regPhone, '555-5555') /*pages.current[ DOM.state.tab]*/),
 				h(".clearfix"),
 				h("small.ph-modified-date", [
 					"Last updated: " + pages.current.Modified.toLocaleDateString()
