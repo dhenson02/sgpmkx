@@ -1,8 +1,7 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
-var mapValues = require("lodash/object/mapValues");
-var assign = require("lodash/object/assign");
+var { mapValues } = require("lodash");
 
 var bp = require("body-parser");
 var cors = require("cors");
@@ -96,7 +95,7 @@ app.post("/items(:id)", function ( req, res ) {
 	});
 	data.ID = id;
 	data.Id = id;
-	db_[id].d = assign(db_[id].d, data);
+	db_[id].d = Object.assign({}, db_[id].d, data);
 	db.d.results = db.d.results.map(function ( item ) {
 		if ( item.ID === id ) {
 			item = db_[id].d;

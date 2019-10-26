@@ -1,4 +1,7 @@
+.idea
 node_modules
 .tmp/*
 dist/css/main*css*
 dist/js/main*js*
+*.log
+

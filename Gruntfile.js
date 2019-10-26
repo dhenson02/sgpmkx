@@ -27,7 +27,7 @@ module.exports = function ( grunt ) {
 						width: 80,
 						quote_style: 0,
 						max_line_len: 4000,
-						bracketize: true,
+						// bracketize: true,
 						semicolons: true
 					},
 					compress: {
@@ -43,7 +43,7 @@ module.exports = function ( grunt ) {
 						conditionals: true,
 						dead_code: true,
 						sequences: true,
-						cascade: true
+						//cascade: true
 					},
 					reserved: "CodeMirror",
 					wrap: false,
